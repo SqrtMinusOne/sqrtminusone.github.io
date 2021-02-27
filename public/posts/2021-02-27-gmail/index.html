@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Multiple Gmail accounts &amp; labels with Emacs</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/">
+                        Posts
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<div class="container">
+    <h2 id="intro">Intro</h2>
+<p>For quite some time, e-mail seemed like an anomaly in my workflow. I am a long time Gmail user, and my decade-old account has a somewhat formidable quantity of labels and filters. My messages are often assigned multiple labels, and I also like to keep only a bunch of messages in the inbox.</p>
+<p>Although, in my opinion, Gmail web UI was and still is leagues ahead of many of its competitors and even allows keyboard-centric workflow, it&rsquo;s awkward to use with a keyboard-driven browser, and for no money on Earth I would enable browser notifications.</p>
+<p>Any classical IMAP/SMTP client is hard to use in my case, because a message with multiple labels is copied to IMAP folders for each of the label plus the inbox folder, and the copies look like different messages from the client-side. For example, a message can be read in one label and unread in another.</p>
+<p>For a few years, my solution was <a href="https://getmailspring.com/">Mailspring</a>, which provides first-class support for labels. However, it has a feature to deploy <a href="https://www.bbc.com/news/technology-56071437">spy pixels</a> on emails (and offers no protection from them, obviously), the client is Electron-based with a mouse-driven interface, and the sync engine was closed-source at the time.</p>
+<p>So, I found an alternative in Emacs+notmuch+lieer and ditched one more proprietary app (the last big one I can&rsquo;t let go of is DataGrip).</p>
+<figure>
+    <img src="/ox-hugo/main.png"/> 
+</figure>
+
+<figure>
+    <img src="/ox-hugo/mail.png"/> 
+</figure>
+
+<p>Notmuch&rsquo;s tags are just as advanced as Gmail&rsquo;s labels, so I have basically the same mail structure accessible from Emacs, Gmail Android client and even the web UI when I don&rsquo;t have access to the first two.</p>
+<p>Also, I think the setup I describe here is pretty straightforward and less complex than many I encountered, but my impression is not the most reliable source of such knowledge.</p>
+<p>In any case, what follows is a description of my current workflow with instructions of varying levels of precision of how to get there.</p>
+<h2 id="setting-up">Setting up</h2>
+<h3 id="gmail">Gmail</h3>
+<p>Before we start, some setup is required for the Gmail account.</p>
+<p>First, as there is no way to enable SMTP without IMAP on Gmail, you have to set &ldquo;Enable IMAP&rdquo; in the &ldquo;Forwarding and POP/IMAP&rdquo; tab in the settings. If you use two-factor auth, generate an <a href="https://support.google.com/accounts/answer/185833?hl=en">app password</a>.</p>
+<p>Also, make sure your labels do not contain whitespaces because if they do, you will have to type them in quotes all the time.</p>
+<h3 id="lieer">lieer</h3>
+<p><a href="https://github.com/gauteh/lieer">lieer</a> (formerly gmailieer) is a program that uses Gmail API to download email and synchronize Gmail labels with notmuch tags. Because of its usage of Gmail API instead of IMAP, there are no problems with duplicating emails in different labels, etc.</p>
+<p>As I need to use multiple versions of Python &amp; Node.js for other reasons, I manage my installations of them with <a href="https://anaconda.org">Anaconda</a> (Miniconda, to be precise). You may instead use <a href="https://docs.python.org/3/library/venv.html">venv</a> or even the system-wide installation of Python and omit the <code>conda</code> clauses, but in my experience Anaconda makes life easier in that regard.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Create an environment with the name &#34;mail&#34;</span>
+conda create --name mail
+<span style="color:#75715e"># Activate the environment</span>
+conda activate mail
+<span style="color:#75715e"># Install Python</span>
+conda install python
+<span style="color:#75715e"># Download and install lieer</span>
+git clone https://github.com/gauteh/lieer.git
+cd lieer
+pip install .
+</code></pre></div><p>After which we may check if the <code>gmi</code> executable is available:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">which gmi
+</code></pre></div><h3 id="notmuch">Notmuch</h3>
+<p><a href="https://notmuchmail.org/">Notmuch</a> is present in most of the package repositories, so you can install it with your package manager, which is <code>pacman</code> in my case.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo pacman -S notmuch
+</code></pre></div><p>After the installation, run <code>notmuch setup</code>. That will inquire the parameters and create the <code>.notmuch-config</code> file with the answers.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Your full name <span style="color:#f92672">[</span>Pavel<span style="color:#f92672">]</span>: Pavel Korytov
+Your primary email address <span style="color:#f92672">[</span>pavel@pdsk.<span style="color:#f92672">(</span>none<span style="color:#f92672">)]</span>: thexcloud@gmail.com
+Additional email address <span style="color:#f92672">[</span>Press <span style="color:#e6db74">&#39;Enter&#39;</span> <span style="color:#66d9ef">if</span> none<span style="color:#f92672">]</span>:
+Top-level directory of your email archive <span style="color:#f92672">[</span>/home/pavel/mail<span style="color:#f92672">]</span>: /home/pavel/Mail
+Tags to apply to all new messages <span style="color:#f92672">(</span>separated by spaces<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>unread inbox<span style="color:#f92672">]</span>: new
+Tags to exclude when searching messages <span style="color:#f92672">(</span>separated by spaces<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>deleted spam<span style="color:#f92672">]</span>:
+</code></pre></div><p>It is important to set the <code>new</code> tag for the new messages instead of the default <code>unread</code> and <code>inbox</code>.</p>
+<p>Next, add the rule to ignore JSON files to the <code>[new]</code> section of the <code>.notmuch-config</code> file, so it would look like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#f92672">[</span>new<span style="color:#f92672">]</span>
+tags<span style="color:#f92672">=</span>new
+ignore<span style="color:#f92672">=</span>/.*<span style="color:#f92672">[</span>.<span style="color:#f92672">](</span>json|lock|bak<span style="color:#f92672">)</span>$/
+</code></pre></div><p>That is needed to ignore the lieer config files. Although, as I have noticed, notmuch is generally pretty good at detecting wrong files in its directories, an explicit ignore rule won&rsquo;t hurt.</p>
+<p>Now, create the mail directory and run the <a href="https://notmuchmail.org/manpages/notmuch-new-1/">notmuch new</a> command. As notmuch has probably already noticed you, it uses the <a href="https://en.wikipedia.org/wiki/Maildir">maildir</a> format, which basically means that one message is stored in one file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># The same directory mentioned in the 4th question</span>
+mkdir ~/Mail
+<span style="color:#75715e"># Initialize notmuch</span>
+notmuch new
+</code></pre></div><h3 id="add-an-account">Add an account</h3>
+<p>After that, we can create a directory for a mail account and initialize lieer.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ~/Mail
+<span style="color:#75715e"># Use whatever name you want</span>
+mkdir thexcloud
+cd thexcloud
+<span style="color:#75715e"># Intialize lieer</span>
+gmi init thexcloud@gmail.com
+</code></pre></div><p>Running <code>gmi init</code> will run an OAuth authentication to your Gmail account. The credentials will be stored in <code>.credentials.gmailieer.json</code> file, so make sure not to expose it somewhere.</p>
+<p>We also can add a few settings for lieer, which will make life easier. First, dots seem to be less awkward to type than slashes for the nested tags:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gmi set --replace-slash-with-dot
+</code></pre></div><p>Then, we don&rsquo;t want the <code>new</code> tag to be pushed back to Gmail</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gmi set --ignore-tags-local new
+</code></pre></div><p>Now we can finally download the mail directory. To initiate the download, run</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gmi sync
+</code></pre></div><p>The first download can easily take several hours, depending on the size of your email and the speed of your internet connection, but subsequent runs will be much faster.</p>
+<p>The last thing to do here is to add the <code>gmi sync</code> command to notmuch&rsquo;s <a href="https://notmuchmail.org/manpages/notmuch-hooks-5/">pre-new hook</a>, so that the email will be synchronized on the <code>notmuch new</code> command.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Create the hooks folder</span>
+mkdir -p ~/Mail/.notmuch/hooks
+<span style="color:#75715e"># Create the file</span>
+cd ~/Mail/.notmuch/hooks
+cat &gt; pre-new <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="color:#e6db74">#!/bin/bash
+</span><span style="color:#e6db74">eval &#34;$(conda shell.bash hook)&#34;
+</span><span style="color:#e6db74">conda activate mail
+</span><span style="color:#e6db74">(cd /home/pavel/Mail/thexcloud/ &amp;&amp; gmi sync)
+</span><span style="color:#e6db74">EOF</span>
+chmod +x pre-new
+</code></pre></div><p>Side note: as a hook for <code>conda</code> tends to be rather slow, I run the <code>gmi</code> command with system-wide Python as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>GMI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
+<span style="color:#f92672">(</span>cd /home/pavel/Mail/thexcloud/ <span style="color:#f92672">&amp;&amp;</span> $GMI sync<span style="color:#f92672">)</span>
+</code></pre></div><p>Which doesn&rsquo;t seem to cause any particular trouble in that case.</p>
+<h3 id="emacs">Emacs</h3>
+<p>There are plenty of different <a href="https://notmuchmail.org/frontends/">frontends</a> for notmuch (even GUI apps), but the one I&rsquo;m sticking with the Emacs.</p>
+<p>Configuration for Emacs is pretty straightforward, but you probably want to use the notmuch package which came with the system package, because otherwise, you may end up with different versions of frontend and backend.</p>
+<p>That&rsquo;s how it can be done with <code>use-package</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package notmuch
+  :ensure <span style="color:#66d9ef">nil</span>
+  :commands (notmuch)
+  :config
+  (add-hook <span style="color:#e6db74">&#39;notmuch-hello-mode-hook</span>
+            (lambda () (display-line-numbers-mode <span style="color:#ae81ff">0</span>))))
+</code></pre></div><p>The only notable observation here is that <code>display-line-numbers-mode</code> seems to break formatting of the <code>notmuch-hello</code> page.</p>
+<p>If you use evil-mode, you also should enable the <a href="https://github.com/emacs-evil/evil-collection/blob/master/modes/notmuch/evil-collection-notmuch.el">evil-collection mode for notmuch</a>.</p>
+<p>Now run <code>M-x notmuch</code> and the <code>notmuch-hello</code> page should appear. Running <code>notmuch-poll-and-refresh-this-buffer</code> (<code>gR</code> with evil bindings) will run the <code>notmuch new</code> command and refresh the buffer. All the syncronized messages should be present.</p>
+<p>I should note that <a href="https://notmuchmail.org/notmuch-emacs/">notmuch frontend for Emacs</a> is the most user-friendly Emacs app I have seen so far. UI, commands and keybindings are self-descriptive, all the options can be configured with the build-in <code>customize</code> interface. It may be useful to look through <a href="https://notmuchmail.org/emacstips/">emacs tips</a> at the official site and <a href="https://notmuchmail.org/manpages/">notmuch man pages</a>, in particular <a href="https://notmuchmail.org/manpages/notmuch-search-terms-7/">syntax for notmuch queries</a>.</p>
+<h3 id="reading-mail">Reading mail</h3>
+<p><code>notmuch-search-show-thread</code> (<code>RET</code>) opens the thread under the cursor.</p>
+<p><code>notmuch-show-view-part</code> (<code>. v</code> with evil) opens an attachment with associations defined in <a href="https://linux.die.net/man/4/mailcap">.mailcap</a> file. Mine looks like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">audio/*; mpc add %s
+
+image/*; feh %s
+
+application/msword; /usr/bin/xdg-open %s
+application/pdf; zathura %s
+application/postscript ; zathura %s
+
+text/html; /usr/bin/xdg-open %s
+</code></pre></div><p>Here watch out for the last line, default version of which may be set as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">text/html; /usr/bin/xdg-open %s ; copiousoutput
+</code></pre></div><p>Which causes a temporary file to be deleted before it could be opened because recent versions of <code>xdg-open</code> do not block the input.</p>
+<p>As expected, Emacs mail reader does not trigger any <a href="https://www.emailprivacytester.com/">spy pixels or other tracking contents of email</a> (not any I know of, at least). However, opening an HTML email in a browser will even run embedded JavaScript. Therefore, <strong>in no case open emails you do not trust with <code>xdg-open</code></strong>. Even if you use NoScript, the browser will still load all the CSS, videos and even iframes, which can be used to track you.</p>
+<p>Even Gmail web UI is preferable to view the message in a browser, because the former blocks most of the malicious stuff and does not seem to leak your IP to the sender, for what it&rsquo;s worth.</p>
+<h3 id="sending-mail">Sending mail</h3>
+<p>To start composing a message, run <code>notmuch-mua-new-mail</code> (<code>C</code> with evil bindings).</p>
+<p>After doing so, <code>C-c C-c</code> will run <code>notmuch-mua-send-and-exit</code>, which will invoke the function stated in the <code>message-send-mail-function</code> variable. The default value of the variable is <code>sendmail-query-once</code>, which will inquire the parameters and save them as custom variables.</p>
+<p>If SMTP is used, <code>send-mail-function</code> will be set to the one from the built-it <a href="https://www.emacswiki.org/emacs/SendingMail">smtpmail</a> package. SMTP parameters for Gmail are listed <a href="https://support.google.com/mail/answer/7126229?hl=en">here</a>.</p>
+<p>Authorization parameters will be saved to your <a href="https://www.emacswiki.org/emacs/GnusAuthinfo">authinfo</a> file. If you didn&rsquo;t have one, the plaintext <code>.authinfo</code> will be created, so it&rsquo;s reasonable to encrypt it:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ~
+gpg -o .authinfo.gpg -c --cipher-algo AES256 .authinfo
+</code></pre></div><p>However, if you plan to use multiple accounts with different SMTP servers, it makes more sense to use something like <a href="https://marlam.de/msmtp/msmtp.html">MSMTP</a> to manage multiple accounts. Here are a couple of examples (<a href="https://www.reddit.com/r/emacs/comments/9piml5/a%5Ffew%5Fquick%5Femacsnotmuch%5Fquestions/e83zcck?utm%5Fsource=share&amp;utm%5Fmedium=web2x&amp;context=3">1</a>, <a href="https://www.reddit.com/r/emacs/comments/9piml5/a%5Ffew%5Fquick%5Femacsnotmuch%5Fquestions/e84otah?utm%5Fsource=share&amp;utm%5Fmedium=web2x&amp;context=3">2</a>) how to do that.</p>
+<p>Another alternative for Gmail is to use <a href="https://github.com/gauteh/lieer/wiki/GNU-Emacs-and-Lieer">lieer as sendmail program</a>. That may make sense if you don&rsquo;t want to enable IMAP and SMTP on your account.</p>
+<p>There are also <a href="https://notmuchmail.org/emacstips/#index13h2">a bunch of ways</a> to set up address completion if the built-in completion based on notmuch database does not suffice.</p>
+<p>I also use <a href="https://github.com/mhayashi1120/Emacs-langtool">LanguageTool for Emacs</a> to do a spell checking of important emails (integrations like that really make Emacs shine). For some reason, developers don&rsquo;t give a link to download the server on the frontpage, so <a href="https://dev.languagetool.org/http-server">here it is</a>. And here is the relevant part of my Emacs config:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package langtool
+  :straight <span style="color:#66d9ef">t</span>
+  :commands (langtool-check)
+  :config
+  (setq langtool-language-tool-server-jar <span style="color:#e6db74">&#34;/home/pavel/Programs/LanguageTool-5.1/languagetool-server.jar&#34;</span>)
+  (setq langtool-mother-tongue <span style="color:#e6db74">&#34;ru&#34;</span>))
+</code></pre></div><p>As a last note here, to set up a signature create the <code>.signature</code> file in the <code>$HOME</code> directory. If you need more complex logic here, for instance, different signatures for different accounts, you can put an arbitrary expression to the <code>mail-signature</code> variable or apply <a href="https://notmuchmail.org/emacstips/#index16h2">this gnus-alias tip</a>.</p>
+<h2 id="another-account">Another account</h2>
+<h3 id="adding-an-account">Adding an account</h3>
+<p>Now we can send and receive mail from one account. Adding another account is also pretty easy.</p>
+<p>If another account is Gmail, the process starts the same as before:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Create a directory</span>
+mkdir -p ~/Mail/progin6304
+cd ~/Mail/progin6304
+<span style="color:#75715e"># OAuth</span>
+gmi init progin6304@gmail.com
+<span style="color:#75715e"># Settings</span>
+gmi set --replace-slash-with-dot
+</code></pre></div><p>However, before running <code>gmi sync</code> for the second account, we want to make sure that we can distinguish the message from different accounts. To do that, I add the <code>main</code> for the main account and <code>progin</code> for the second account. We also don&rsquo;t want these labels to be pushed:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ~/Mail/thexcloud
+gmi set --ignore-tags-local new,mail,progin
+cd ~/Mail/progin6304
+gmi set --ignore-tags-local new,mail,progin
+</code></pre></div><p>Now we can use notmuch&rsquo;s <code>post-new</code> hook to tag the messages based on their folder as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd ~/Mail/.notmuch/hooks
+cat &gt; post-new <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="color:#e6db74">#!/bin/bash
+</span><span style="color:#e6db74">notmuch tag +main &#34;path:thexcloud/** AND tag:new&#34;
+</span><span style="color:#e6db74">notmuch tag +progin &#34;path:progin6304/** AND tag:new&#34;
+</span><span style="color:#e6db74">notmuch tag -new &#34;tag:new&#34;
+</span><span style="color:#e6db74">EOF</span>
+chmod +x post-new
+</code></pre></div><p>Now it finally makes sense why we wanted to use the <code>new</code> tag in the first place. In principle, any kind of tagging logic can be applied here, but for the reasons I stated earlier, I prefer to set up filters in the Gmail web interface.</p>
+<p>The last thing to do is to modify the <code>pre-new</code> hook:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>GMI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
+<span style="color:#f92672">(</span>cd /home/pavel/Mail/thexcloud/ <span style="color:#f92672">&amp;&amp;</span> $GMI sync<span style="color:#f92672">)</span>
+<span style="color:#f92672">(</span>cd /home/pavel/Mail/progin6304/ <span style="color:#f92672">&amp;&amp;</span> $GMI sync<span style="color:#f92672">)</span>
+</code></pre></div><p>After which we can finally tag the existing messages and download ones from the new account</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">notmuch tag +main <span style="color:#e6db74">&#34;path:thexcloud/**&#34;</span>
+notmuch new
+</code></pre></div><p>The obvious problem, however, is that the messages are fetched sequentially, which is rather slow. A solution is to use something like <a href="http://www.gnu.org/software/parallel/">GNU Parallel</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>GMI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
+parallel -j0 <span style="color:#e6db74">&#34;(cd /home/pavel/Mail/{}/ &amp;&amp; </span>$GMI<span style="color:#e6db74"> sync)&#34;</span> ::: thexcloud progin6304
+</code></pre></div><p>I haven&rsquo;t encountered any trouble with that solution so far (and I don&rsquo;t see anything thread-unsafe in the lieer code), but I&rsquo;ll keep an eye on that.</p>
+<p>In principle, it shouldn&rsquo;t be too hard to add a normal IMAP account as well with <a href="https://isync.sourceforge.io/mbsync.html">mbsync</a>, but I expect it would require something like iterating through the directory structure and assigning notmuch labels based on that. I&rsquo;ll probably try that some time in the future.</p>
+<h3 id="emacs">Emacs</h3>
+<p>With that done, I also want separate entries on the start page for each of the accounts. Doing that is easy enough, just modify the <code>notmuch-saved-searches</code> variable with <code>customize-group</code> or like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq notmuch-saved-searches
+   <span style="color:#f92672">&#39;</span>((:name <span style="color:#e6db74">&#34;inbox (main)&#34;</span> :query <span style="color:#e6db74">&#34;tag:inbox AND tag:main&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;unread (main)&#34;</span> :query <span style="color:#e6db74">&#34;tag:unread AND tag:main&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;sent (main)&#34;</span> :query <span style="color:#e6db74">&#34;tag:sent AND tag:main&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;all mail (main)&#34;</span> :query <span style="color:#e6db74">&#34;tag:main&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;inbox (progin)&#34;</span> :query <span style="color:#e6db74">&#34;tag:inbox AND tag:progin&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;unread (progin)&#34;</span> :query <span style="color:#e6db74">&#34;tag:unread AND tag:progin&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;sent (progin)&#34;</span> :query <span style="color:#e6db74">&#34;tag:sent AND tag:progin&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;all main (progin)&#34;</span> :query <span style="color:#e6db74">&#34;tag:progin&#34;</span>)
+     (:name <span style="color:#e6db74">&#34;drafts&#34;</span> :query <span style="color:#e6db74">&#34;tag:draft&#34;</span>)))
+</code></pre></div><h2 id="notification-for-new-messages">Notification for new messages</h2>
+<p>Now, we can send and receive mail, but we also probably want notifications for new emails. To do that, I wrote a simple script:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span><span style="color:#75715e"># To run notify-send from cron</span>
+export DISPLAY<span style="color:#f92672">=</span>:0
+<span style="color:#75715e"># A file with last time of sync</span>
+CHECK_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/Mail/.last_check&#34;</span>
+QUERY<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tag:unread&#34;</span>
+ALL_QUERY<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;tag:unread&#34;</span>
+<span style="color:#75715e"># If the file exists, check also the new messages from the last sync</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;</span>$CHECK_FILE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    DATE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>cat <span style="color:#e6db74">&#34;</span>$CHECK_FILE<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+    QUERY<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$QUERY<span style="color:#e6db74"> and date:@</span>$DATE<span style="color:#e6db74">..&#34;</span>
+<span style="color:#66d9ef">fi</span>
+
+notmuch new
+NEW_UNREAD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>notmuch count <span style="color:#e6db74">&#34;</span>$QUERY<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+ALL_UNREAD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>notmuch count <span style="color:#e6db74">&#34;</span>$ALL_QUERY<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+
+<span style="color:#75715e"># I don&#39;t really care if there are unread messages for which I&#39;ve already seen a notification</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> $NEW_UNREAD -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    MAIN_UNREAD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>notmuch count <span style="color:#e6db74">&#34;tag:unread AND tag:main&#34;</span><span style="color:#66d9ef">)</span>
+    PROGIN_UNREAD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>notmuch count <span style="color:#e6db74">&#34;tag:unread AND tag:progin&#34;</span><span style="color:#66d9ef">)</span>
+    read -r -d <span style="color:#e6db74">&#39;&#39;</span> NOTIFICATION <span style="color:#e6db74">&lt;&lt;EOM
+</span><span style="color:#e6db74">$NEW_UNREAD new messages
+</span><span style="color:#e6db74">$MAIN_UNREAD thexcloud@gmail.com
+</span><span style="color:#e6db74">$PROGIN_UNREAD progin6304@gmail.com
+</span><span style="color:#e6db74">$ALL_UNREAD total
+</span><span style="color:#e6db74">EOM</span>
+    notify-send <span style="color:#e6db74">&#34;New Mail&#34;</span> <span style="color:#e6db74">&#34;</span>$NOTIFICATION<span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">fi</span>
+
+<span style="color:#75715e"># Save sync timestamp</span>
+echo <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>date +%s<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> &gt; $CHECK_FILE
+</code></pre></div><p>The script is launched with cron every 5 minutes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">*/5 * * * * bash /home/pavel/bin/scripts/check-email
+</code></pre></div><p>Here&rsquo;s how the notification looks like:
+<img src="/ox-hugo/notification.png" alt=""></p>
+<h2 id="caveats">Caveats</h2>
+<ul>
+<li><a href="https://github.com/gauteh/lieer#caveats">lieer</a> has an extensive list of caveats concerning Gmail API</li>
+<li>Make sure that you understand the <a href="https://github.com/gauteh/lieer#changing-ignored-tags-and-translation-after-initial-sync">implications</a> of lieer&rsquo;s <code>--ignore-tags-locally</code> and <code>--ignore-tags-remote</code></li>
+<li>If two of your accounts receive the same email, it will be stored as one email in notmuch, so tags from these accounts will be merged and pushed back on the next sync. To solve that, you can set tags from one account to be ignored on the rest of the accounts</li>
+<li>A sent email is being downloaded again on the next sync. Not a great deal, but it is somewhat annoying to download recently sent attachments.</li>
+</ul>
+
+</div>
+
+        </div><div id="footer" class="mb-5">
+    
+        <hr>
+        <div class="container text-center">
+            <a href="https://sqrtminusone.xyz/"><small>Pavel Korytov, 2021</small></a>
+        </div>
+    
+</div>
+</body>
+</html>
