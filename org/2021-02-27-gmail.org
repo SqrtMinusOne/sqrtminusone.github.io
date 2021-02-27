@@ -1,0 +1,342 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: Multiple Gmail accounts & labels with Emacs
+#+DATE: 2021-02-27
+#+HUGO_DRAFT: true
+
+#+PROPERTY: header-args :exports both
+
+* Intro
+For quite some time, e-mail seemed like an anomaly in my workflow. I am a long time Gmail user, and my decade-old account has a somewhat formidable quantity of labels and filters. My messages are often assigned multiple labels, and I also like to keep only a bunch of messages in the inbox.
+
+Although, in my opinion, Gmail web UI was and still is leagues ahead of many of its competitors and even allows keyboard-centric workflow, it's awkward to use with keyboard-driven browser, and for no money on Earth I would enable browser notifications.
+
+Any classical IMAP/SMTP client is hard to use in my case, because a message with multiple labels is copied to IMAP folders for each of the label plus the inbox folder, and the copies look like different messages from the client side. For example, a message can be read in one label and unread in another.
+
+For a few years my solution was [[https://getmailspring.com/][Mailspring]], which provides first-class support for labels. However, it has a feature to deploy [[https://www.bbc.com/news/technology-56071437][spy pixels]] on emails (and offers no protection from them, obviously), the client is Electron-based with mouse-driven interface, and the sync engine was closed-source at the time.
+
+So, I found an alternative in Emacs+notmuch+lieer and ditched one more proprierary app (the last big one I can't let go is DataGrip).
+
+[[file:images/gmail/main.png]]
+
+[[file:images/gmail/mail.png]]
+
+Notmuch's tags are just as advanced as Gmail's labels, so I have basically the same mail structure acccessible from Emacs, Gmail Android client and even the web UI, when I don't have access to the first two.
+
+Also, I think the setup I describe here is pretty straightforward and less complex than many I encountered, but my impression is not the most reliable source of such knowledge.
+
+At any case, what follows is a description of my current workflow with instructions of varying levels of precision of how to get there.
+* Setting up
+** Gmail
+Before we start, some setup is required for Gmail account.
+
+First, as there is no way to enable SMTP without IMAP on Gmail, you have to set "Enable IMAP" in the "Forwarding and POP/IMAP" tab in the settings. If you use two-factor auth, generate an [[https://support.google.com/accounts/answer/185833?hl=en][app password]].
+
+Also, make sure your labels do not contain whitespaces, because if they do, you will have to type them in quotes all the time.
+** lieer
+[[https://github.com/gauteh/lieer][lieer]] (formerly gmailieer) is a program which uses Gmail API to download email and synchronize Gmail labels with notmuch tags. Because of its usage of Gmail API instead of IMAP, there are no problems with duplicating emails in different labels, etc.
+
+As I need to use multiple versions of Python & Node.js for other reasons, I manage my installations of them with [[https://anaconda.org][Anaconda]] (Miniconda, to be precise). You may instead use [[https://docs.python.org/3/library/venv.html][venv]] or even the system-wide installation of Python and omit the =conda= clauses, but in my experience Anaconda makes life easier in that regard.
+
+#+begin_src bash :eval no
+# Create an environment with name "mail"
+conda create --name mail
+# Activate the environment
+conda activate mail
+# Install Python
+conda install python
+# Download and install lieer
+git clone https://github.com/gauteh/lieer.git
+cd lieer
+pip install .
+#+end_src
+
+After which we may check if the =gmi= executable is available:
+#+begin_src bash
+which gmi
+#+end_src
+
+#+RESULTS:
+: /home/pavel/Programs/miniconda3/envs/mail/bin/gmi
+** Notmuch
+[[https://notmuchmail.org/][Notmuch]] is present in most of the package repositories, so you can install it with your package manager, which is =pacman= in my case.
+#+begin_src bash :eval no
+sudo pacman -S notmuch
+#+end_src
+
+After the installation, run =notmuch setup=. That will inquire the parameters and create the =.notmuch-config= file with the answers.
+#+begin_src bash :eval no
+Your full name [Pavel]: Pavel Korytov
+Your primary email address [pavel@pdsk.(none)]: thexcloud@gmail.com
+Additional email address [Press 'Enter' if none]:
+Top-level directory of your email archive [/home/pavel/mail]: /home/pavel/Mail
+Tags to apply to all new messages (separated by spaces) [unread inbox]: new
+Tags to exclude when searching messages (separated by spaces) [deleted spam]:
+#+end_src
+It is important to set the =new= tag for the new messages instead of the default =unread= and =inbox=.
+
+Next, add the rule to ignore JSON files to the =[new]= section of the =.notmuch-config= file, so it would look like this:
+#+begin_src bash :eval no
+[new]
+tags=new
+ignore=/.*[.](json|lock|bak)$/
+#+end_src
+
+That is needed to ignore the lieer config files. Although, as I have noticed, notmuch is generally pretty good at detecting wrong files in its directories, an explicit ignore rule won't hurt.
+
+Now, create the mail directory and run the [[https://notmuchmail.org/manpages/notmuch-new-1/][notmuch new]] command. As notmuch has probably already noticed you, it uses the [[https://en.wikipedia.org/wiki/Maildir][maildir]] format, which basically means that one message is stored in one file.
+#+begin_src bash :eval no
+# The same directory mentioned in the 4th question
+mkdir ~/Mail
+# Initialize notmuch
+notmuch new
+#+end_src
+** Add an account
+After that, we can create a directory for a mail account and initialize lieer.
+#+begin_src bash :eval no
+cd ~/Mail
+# Use whatever name you want
+mkdir thexcloud
+cd thexcloud
+# Intialize lieer
+gmi init thexcloud@gmail.com
+#+end_src
+Running =gmi init= will run an OAuth authentication to your Gmail account. The credentials will be stored in =.credentials.gmailieer.json= file, so make sure not to expose it somewhere.
+
+We also can add a few settings for lieer, which will make the life easier. First, dots seem to be less awkward to type than slashes for the nested tags:
+#+begin_src bash :eval no
+gmi set --replace-slash-with-dot
+#+end_src
+
+Then, we don't want the =new= tag to be pushed back to Gmail
+#+begin_src bash :eval no
+gmi set --ignore-tags-local new
+#+end_src
+
+Now we can finally download the mail directory. To initiate the download, run
+#+begin_src bash :eval no
+gmi sync
+#+end_src
+
+The first download can easily take several hours, depending on the size of your email and the speed of your internet connection, but subsequent runs will be much faster.
+
+The last thing to do here is to add the =gmi sync= command to notmuch's [[https://notmuchmail.org/manpages/notmuch-hooks-5/][pre-new hook]], so that the email will be synchronized on the =notmuch new= command.
+#+begin_src bash :eval no
+# Create the hooks folder
+mkdir -p ~/Mail/.notmuch/hooks
+# Create the file
+cd ~/Mail/.notmuch/hooks
+cat > pre-new <<EOF
+#!/bin/bash
+eval "$(conda shell.bash hook)"
+conda activate mail
+(cd /home/pavel/Mail/thexcloud/ && gmi sync)
+EOF
+chmod +x pre-new
+#+end_src
+
+Side note: as a hook for =conda= tends to be rather slow, I run the =gmi= command with system-wide Python as follows:
+#+begin_src bash :eval no
+#!/bin/bash
+GMI="/home/pavel/Programs/miniconda3/envs/mail/bin/gmi"
+(cd /home/pavel/Mail/thexcloud/ && $GMI sync)
+#+end_src
+Which doesn't seem to cause any particular trouble in that case.
+** Emacs
+There are plenty of different [[https://notmuchmail.org/frontends/][frontends]] for notmuch (even GUI apps), but the one I'm sticking with the Emacs.
+
+Configuration for Emacs is pretty straightforward, but you probably want to use the notmuch package which came with the system package, because otherwise you may end up with different versions of frontend and backend.
+
+That's how it can be done with =use-package=:
+#+begin_src emacs-lisp :eval no
+(use-package notmuch
+  :ensure nil
+  :commands (notmuch)
+  :config
+  (add-hook 'notmuch-hello-mode-hook
+            (lambda () (display-line-numbers-mode 0))))
+#+end_src
+The only notable observation here is that =display-line-numbers-mode= seems to break formatting of the =notmuch-hello= page.
+
+If you use evil-mode, you also should enable the [[https://github.com/emacs-evil/evil-collection/blob/master/modes/notmuch/evil-collection-notmuch.el][evil-collection mode for notmuch]].
+
+Now run =M-x notmuch= and the =notmuch-hello= page should appear. Running =notmuch-poll-and-refresh-this-buffer= (=gR= with evil bindings) will run the =notmuch new= command and refresh the buffer. All the syncronized messages should be present.
+
+I should note that [[https://notmuchmail.org/notmuch-emacs/][notmuch frontend for Emacs]] is the most user-friendly Emacs app I have seen so far. UI, commands and keybindings are self-descriptive, all the options can be configured with the build-in =customize= interface. It may be useful to look through [[https://notmuchmail.org/emacstips/][emacs tips]] at the official site and [[https://notmuchmail.org/manpages/][notmuch man pages]], in particular [[https://notmuchmail.org/manpages/notmuch-search-terms-7/][syntax for notmuch queries]].
+** Reading mail
+=notmuch-search-show-thread= (=RET=) opens the thread under the cursor.
+
+=notmuch-show-view-part= (=. v= with evil) opens an attachment with associations defined in [[https://linux.die.net/man/4/mailcap][.mailcap]] file. Mine looks like this:
+#+begin_src bash :eval no
+audio/*; mpc add %s
+
+image/*; feh %s
+
+application/msword; /usr/bin/xdg-open %s
+application/pdf; zathura %s
+application/postscript ; zathura %s
+
+text/html; /usr/bin/xdg-open %s
+#+end_src
+
+Here watch out for the last line, default version of which may be set as follows:
+#+begin_src bash :eval no
+text/html; /usr/bin/xdg-open %s ; copiousoutput
+#+end_src
+Which causes a temporary file to be deleted before it could be opened, because recent versions of =xdg-open= do not block the input.
+
+As expected, Emacs mail reader does not trigger any [[https://www.emailprivacytester.com/][spy pixels or other tracking contents of email]] (not any I know of, at least). However, opening HTML email in browser will even run embedded JavaScript. Therefore, *in no case open emails you do not trust with =xdg-open=*. Even if you use NoScript, the browser will still load all the CSS, videos and even iframes, which can be used to track you.
+
+Even Gmail web UI is preferable to viewing the message in a browser, because the former blocks most of the malicious stuff and does not seem to leak your IP to the sender, for what it is worth.
+** Sending mail
+To start composing a message, run =notmuch-mua-new-mail= (=C= with evil bindings).
+
+After doing so, =C-c C-c= will run =notmuch-mua-send-and-exit=, which will invoke the function stated in the =message-send-mail-function= variable. The default value of the variable is =sendmail-query-once=, which will inquire the parameters and save them as custom variables.
+
+If SMTP is used, =send-mail-function= will be set to the one from the built-it [[https://www.emacswiki.org/emacs/SendingMail][smtpmail]] package. SMTP parameters for Gmail are listed [[https://support.google.com/mail/answer/7126229?hl=en][here]].
+
+Authorization parameters will be saved to your [[https://www.emacswiki.org/emacs/GnusAuthinfo][authinfo]] file. If you didn't have one, the plaintext =.authinfo= will be created, so it's reasonable to encrypt it:
+#+begin_src bash :tangle no :eval no
+cd ~
+gpg -o .authinfo.gpg -c --cipher-algo AES256 .authinfo
+#+end_src
+
+However, if you plan to use multiple accounts with different SMTP servers, it makes mores sense to use something like [[https://marlam.de/msmtp/msmtp.html][MSMTP]] to manage multiple accounts. Here are a couple of examples ([[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e83zcck?utm_source=share&utm_medium=web2x&context=3][1]], [[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e84otah?utm_source=share&utm_medium=web2x&context=3][2]]) how to do that.
+
+Another alternative for Gmail is to use [[https://github.com/gauteh/lieer/wiki/GNU-Emacs-and-Lieer][lieer as sendmail program]]. That may make sense if you don't want to enable IMAP and SMTP on your account.
+
+There are also [[https://notmuchmail.org/emacstips/#index13h2][a bunch of ways]] to set up address completion, if the built-in completion based on notmuch database does not suffice.
+
+I also use [[https://github.com/mhayashi1120/Emacs-langtool][LanguageTool for Emacs]] to do a spell checking of important emails (integrations like that really make Emacs shine). For some reason, developers don't give a link to download the server on the frontpage, so [[https://dev.languagetool.org/http-server][here it is]]. And here is the relevant part of my Emacs config:
+#+begin_src emacs-lisp :eval no
+(use-package langtool
+  :straight t
+  :commands (langtool-check)
+  :config
+  (setq langtool-language-tool-server-jar "/home/pavel/Programs/LanguageTool-5.1/languagetool-server.jar")
+  (setq langtool-mother-tongue "ru"))
+#+end_src
+
+As a last note here, in order to set up a signature create the =.signature= file in the =$HOME= directory. If you need more complex logic here, for instance different signatures for different accounts, you can put an arbitrary expression to the =mail-signature= variable or apply [[https://notmuchmail.org/emacstips/#index16h2][this gnus-alias tip]].
+* Another account
+** Adding an account
+Now we can send and receive mail from one account. Adding another account is also pretty easy.
+
+If another account is Gmail, the process starts the same as before:
+#+begin_src bash :eval no
+# Create a directory
+mkdir -p ~/Mail/progin6304
+cd ~/Mail/progin6304
+# OAuth
+gmi init progin6304@gmail.com
+# Settings
+gmi set --replace-slash-with-dot
+#+end_src
+
+However, before running =gmi sync= for the second account, we want to make sure that we can distinguish message from different accounts. To do that, I add the =main= for the main account and =progin= for the second account. We also don't want these labels to be pushed:
+#+begin_src bash :eval no
+cd ~/Mail/thexcloud
+gmi set --ignore-tags-local new,mail,progin
+cd ~/Mail/progin6304
+gmi set --ignore-tags-local new,mail,progin
+#+end_src
+
+Now we can use notmuch's =post-new= hook to tag the messages based on their folder as follows:
+#+begin_src bash :eval no
+cd ~/Mail/.notmuch/hooks
+cat > post-new <<EOF
+#!/bin/bash
+notmuch tag +main "path:thexcloud/** AND tag:new"
+notmuch tag +progin "path:progin6304/** AND tag:new"
+notmuch tag -new "tag:new"
+EOF
+chmod +x post-new
+#+end_src
+Now it finally makes sense why we wanted to use the =new= tag in the first place. In principle, any kind of tagging logic can be applied here, but for the reasons I stated earlier, I prefer to setup filters in Gmail web interface.
+
+The last thing to do is to modify the =pre-new= hook:
+#+begin_src bash :eval no
+#!/bin/bash
+GMI="/home/pavel/Programs/miniconda3/envs/mail/bin/gmi"
+(cd /home/pavel/Mail/thexcloud/ && $GMI sync)
+(cd /home/pavel/Mail/progin6304/ && $GMI sync)
+#+end_src
+After which we can finally tag the existing messages and download ones from the new account
+#+begin_src bash :eval no
+notmuch tag +main "path:thexcloud/**"
+notmuch new
+#+end_src
+
+The obvious problem, however, is that the messages are fetched sequentially, which is rather slow. A solution is to use something like [[http://www.gnu.org/software/parallel/][GNU Parallel]]:
+#+begin_src bash :eval no
+#!/bin/bash
+GMI="/home/pavel/Programs/miniconda3/envs/mail/bin/gmi"
+parallel -j0 "(cd /home/pavel/Mail/{}/ && $GMI sync)" ::: thexcloud progin6304
+#+end_src
+I haven't encountered any trouble with that solution so far (and I don't see anything thread-unsafe in the lieer code), but I'll keep an eye on that.
+
+In principle, it shouldn't be too hard to add a normal IMAP account as well with [[https://isync.sourceforge.io/mbsync.html][mbsync]], but I expect it would require something like iterating through the directory structure and assigning notmuch labels based on that. I'll probably try that some time in the future.
+** Emacs
+With that done, I also want separate entries on the start page for each of the accounts. Doing that is easy enough, just modify the =notmuch-saved-searches= variable with =customize-group= or like this:
+#+begin_src emacs-lisp :eval no
+(setq notmuch-saved-searches
+   '((:name "inbox (main)" :query "tag:inbox AND tag:main")
+     (:name "unread (main)" :query "tag:unread AND tag:main")
+     (:name "sent (main)" :query "tag:sent AND tag:main")
+     (:name "all mail (main)" :query "tag:main")
+     (:name "inbox (progin)" :query "tag:inbox AND tag:progin")
+     (:name "unread (progin)" :query "tag:unread AND tag:progin")
+     (:name "sent (progin)" :query "tag:sent AND tag:progin")
+     (:name "all main (progin)" :query "tag:progin")
+     (:name "drafts" :query "tag:draft")))
+#+end_src
+
+* Notification for new messages
+Now, we can send and receive mail, but we also probably want notifications for new emails. To do that, I wrote a simple script:
+#+begin_src bash :eval no
+#!/bin/bash
+# To run notify-send from cron
+export DISPLAY=:0
+# A file with last time of sync
+CHECK_FILE="/home/pavel/Mail/.last_check"
+QUERY="tag:unread"
+ALL_QUERY="tag:unread"
+# If the file exists, check also the new messages from the last sync
+if [ -f "$CHECK_FILE" ]; then
+    DATE=$(cat "$CHECK_FILE")
+    QUERY="$QUERY and date:@$DATE.."
+fi
+
+notmuch new
+NEW_UNREAD=$(notmuch count "$QUERY")
+ALL_UNREAD=$(notmuch count "$ALL_QUERY")
+
+# I don't really care, if there are unread messages for which I've already seen a notification
+if [ $NEW_UNREAD -gt 0 ]; then
+    MAIN_UNREAD=$(notmuch count "tag:unread AND tag:main")
+    PROGIN_UNREAD=$(notmuch count "tag:unread AND tag:progin")
+    read -r -d '' NOTIFICATION <<EOM
+$NEW_UNREAD new messages
+$MAIN_UNREAD thexcloud@gmail.com
+$PROGIN_UNREAD progin6304@gmail.com
+$ALL_UNREAD total
+EOM
+    notify-send "New Mail" "$NOTIFICATION"
+fi
+
+# Save sync timestamp
+echo "$(date +%s)" > $CHECK_FILE
+#+end_src
+
+The script is launched with cron every 5 minutes:
+#+begin_src bash :eval no
+*/5 * * * * bash /home/pavel/bin/scripts/check-email
+#+end_src
+
+Here's how the notification looks like:
+[[file:images/gmail/notification.png]]
+* Caveats
+- [[https://github.com/gauteh/lieer#caveats][lieer]] has an extensive list of caveats concerning Gmail API
+- Make sure that you understand the [[https://github.com/gauteh/lieer#changing-ignored-tags-and-translation-after-initial-sync][implications]] of lieer's =--ignore-tags-locally= and =--ignore-tags-remote=
+- If two of your accounts receive the same email, it will be stored as one email in notmuch, so tags from these accounts will be merged and pushed back on the next sync. To solve that, you can set tags from one account to be ignored on the rest of accounts
+- A sent email is being downloaded again on the next sync. Not a great deal, but it is somewhat annoying to download recently sent attachments.
