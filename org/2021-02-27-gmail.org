@@ -2,44 +2,46 @@
 #+HUGO_BASE_DIR: ../
 #+TITLE: Multiple Gmail accounts & labels with Emacs
 #+DATE: 2021-02-27
-#+HUGO_DRAFT: true
+#+HUGO_DRAFT: false
+#+HUGO_TAGS: emacs
+#+HUGO_TAGS: mail
 
 #+PROPERTY: header-args :exports both
 
 * Intro
 For quite some time, e-mail seemed like an anomaly in my workflow. I am a long time Gmail user, and my decade-old account has a somewhat formidable quantity of labels and filters. My messages are often assigned multiple labels, and I also like to keep only a bunch of messages in the inbox.
 
-Although, in my opinion, Gmail web UI was and still is leagues ahead of many of its competitors and even allows keyboard-centric workflow, it's awkward to use with keyboard-driven browser, and for no money on Earth I would enable browser notifications.
+Although, in my opinion, Gmail web UI was and still is leagues ahead of many of its competitors and even allows keyboard-centric workflow, it's awkward to use with a keyboard-driven browser, and for no money on Earth I would enable browser notifications.
 
-Any classical IMAP/SMTP client is hard to use in my case, because a message with multiple labels is copied to IMAP folders for each of the label plus the inbox folder, and the copies look like different messages from the client side. For example, a message can be read in one label and unread in another.
+Any classical IMAP/SMTP client is hard to use in my case, because a message with multiple labels is copied to IMAP folders for each of the label plus the inbox folder, and the copies look like different messages from the client-side. For example, a message can be read in one label and unread in another.
 
-For a few years my solution was [[https://getmailspring.com/][Mailspring]], which provides first-class support for labels. However, it has a feature to deploy [[https://www.bbc.com/news/technology-56071437][spy pixels]] on emails (and offers no protection from them, obviously), the client is Electron-based with mouse-driven interface, and the sync engine was closed-source at the time.
+For a few years, my solution was [[https://getmailspring.com/][Mailspring]], which provides first-class support for labels. However, it has a feature to deploy [[https://www.bbc.com/news/technology-56071437][spy pixels]] on emails (and offers no protection from them, obviously), the client is Electron-based with a mouse-driven interface, and the sync engine was closed-source at the time.
 
-So, I found an alternative in Emacs+notmuch+lieer and ditched one more proprierary app (the last big one I can't let go is DataGrip).
+So, I found an alternative in Emacs+notmuch+lieer and ditched one more proprietary app (the last big one I can't let go of is DataGrip).
 
 [[file:images/gmail/main.png]]
 
 [[file:images/gmail/mail.png]]
 
-Notmuch's tags are just as advanced as Gmail's labels, so I have basically the same mail structure acccessible from Emacs, Gmail Android client and even the web UI, when I don't have access to the first two.
+Notmuch's tags are just as advanced as Gmail's labels, so I have basically the same mail structure accessible from Emacs, Gmail Android client and even the web UI when I don't have access to the first two.
 
 Also, I think the setup I describe here is pretty straightforward and less complex than many I encountered, but my impression is not the most reliable source of such knowledge.
 
-At any case, what follows is a description of my current workflow with instructions of varying levels of precision of how to get there.
+In any case, what follows is a description of my current workflow with instructions of varying levels of precision of how to get there.
 * Setting up
 ** Gmail
-Before we start, some setup is required for Gmail account.
+Before we start, some setup is required for the Gmail account.
 
 First, as there is no way to enable SMTP without IMAP on Gmail, you have to set "Enable IMAP" in the "Forwarding and POP/IMAP" tab in the settings. If you use two-factor auth, generate an [[https://support.google.com/accounts/answer/185833?hl=en][app password]].
 
-Also, make sure your labels do not contain whitespaces, because if they do, you will have to type them in quotes all the time.
+Also, make sure your labels do not contain whitespaces because if they do, you will have to type them in quotes all the time.
 ** lieer
-[[https://github.com/gauteh/lieer][lieer]] (formerly gmailieer) is a program which uses Gmail API to download email and synchronize Gmail labels with notmuch tags. Because of its usage of Gmail API instead of IMAP, there are no problems with duplicating emails in different labels, etc.
+[[https://github.com/gauteh/lieer][lieer]] (formerly gmailieer) is a program that uses Gmail API to download email and synchronize Gmail labels with notmuch tags. Because of its usage of Gmail API instead of IMAP, there are no problems with duplicating emails in different labels, etc.
 
 As I need to use multiple versions of Python & Node.js for other reasons, I manage my installations of them with [[https://anaconda.org][Anaconda]] (Miniconda, to be precise). You may instead use [[https://docs.python.org/3/library/venv.html][venv]] or even the system-wide installation of Python and omit the =conda= clauses, but in my experience Anaconda makes life easier in that regard.
 
 #+begin_src bash :eval no
-# Create an environment with name "mail"
+# Create an environment with the name "mail"
 conda create --name mail
 # Activate the environment
 conda activate mail
@@ -103,7 +105,7 @@ gmi init thexcloud@gmail.com
 #+end_src
 Running =gmi init= will run an OAuth authentication to your Gmail account. The credentials will be stored in =.credentials.gmailieer.json= file, so make sure not to expose it somewhere.
 
-We also can add a few settings for lieer, which will make the life easier. First, dots seem to be less awkward to type than slashes for the nested tags:
+We also can add a few settings for lieer, which will make life easier. First, dots seem to be less awkward to type than slashes for the nested tags:
 #+begin_src bash :eval no
 gmi set --replace-slash-with-dot
 #+end_src
@@ -145,7 +147,7 @@ Which doesn't seem to cause any particular trouble in that case.
 ** Emacs
 There are plenty of different [[https://notmuchmail.org/frontends/][frontends]] for notmuch (even GUI apps), but the one I'm sticking with the Emacs.
 
-Configuration for Emacs is pretty straightforward, but you probably want to use the notmuch package which came with the system package, because otherwise you may end up with different versions of frontend and backend.
+Configuration for Emacs is pretty straightforward, but you probably want to use the notmuch package which came with the system package, because otherwise, you may end up with different versions of frontend and backend.
 
 That's how it can be done with =use-package=:
 #+begin_src emacs-lisp :eval no
@@ -183,11 +185,11 @@ Here watch out for the last line, default version of which may be set as follows
 #+begin_src bash :eval no
 text/html; /usr/bin/xdg-open %s ; copiousoutput
 #+end_src
-Which causes a temporary file to be deleted before it could be opened, because recent versions of =xdg-open= do not block the input.
+Which causes a temporary file to be deleted before it could be opened because recent versions of =xdg-open= do not block the input.
 
-As expected, Emacs mail reader does not trigger any [[https://www.emailprivacytester.com/][spy pixels or other tracking contents of email]] (not any I know of, at least). However, opening HTML email in browser will even run embedded JavaScript. Therefore, *in no case open emails you do not trust with =xdg-open=*. Even if you use NoScript, the browser will still load all the CSS, videos and even iframes, which can be used to track you.
+As expected, Emacs mail reader does not trigger any [[https://www.emailprivacytester.com/][spy pixels or other tracking contents of email]] (not any I know of, at least). However, opening an HTML email in a browser will even run embedded JavaScript. Therefore, *in no case open emails you do not trust with =xdg-open=*. Even if you use NoScript, the browser will still load all the CSS, videos and even iframes, which can be used to track you.
 
-Even Gmail web UI is preferable to viewing the message in a browser, because the former blocks most of the malicious stuff and does not seem to leak your IP to the sender, for what it is worth.
+Even Gmail web UI is preferable to view the message in a browser, because the former blocks most of the malicious stuff and does not seem to leak your IP to the sender, for what it's worth.
 ** Sending mail
 To start composing a message, run =notmuch-mua-new-mail= (=C= with evil bindings).
 
@@ -201,11 +203,11 @@ cd ~
 gpg -o .authinfo.gpg -c --cipher-algo AES256 .authinfo
 #+end_src
 
-However, if you plan to use multiple accounts with different SMTP servers, it makes mores sense to use something like [[https://marlam.de/msmtp/msmtp.html][MSMTP]] to manage multiple accounts. Here are a couple of examples ([[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e83zcck?utm_source=share&utm_medium=web2x&context=3][1]], [[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e84otah?utm_source=share&utm_medium=web2x&context=3][2]]) how to do that.
+However, if you plan to use multiple accounts with different SMTP servers, it makes more sense to use something like [[https://marlam.de/msmtp/msmtp.html][MSMTP]] to manage multiple accounts. Here are a couple of examples ([[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e83zcck?utm_source=share&utm_medium=web2x&context=3][1]], [[https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e84otah?utm_source=share&utm_medium=web2x&context=3][2]]) how to do that.
 
 Another alternative for Gmail is to use [[https://github.com/gauteh/lieer/wiki/GNU-Emacs-and-Lieer][lieer as sendmail program]]. That may make sense if you don't want to enable IMAP and SMTP on your account.
 
-There are also [[https://notmuchmail.org/emacstips/#index13h2][a bunch of ways]] to set up address completion, if the built-in completion based on notmuch database does not suffice.
+There are also [[https://notmuchmail.org/emacstips/#index13h2][a bunch of ways]] to set up address completion if the built-in completion based on notmuch database does not suffice.
 
 I also use [[https://github.com/mhayashi1120/Emacs-langtool][LanguageTool for Emacs]] to do a spell checking of important emails (integrations like that really make Emacs shine). For some reason, developers don't give a link to download the server on the frontpage, so [[https://dev.languagetool.org/http-server][here it is]]. And here is the relevant part of my Emacs config:
 #+begin_src emacs-lisp :eval no
@@ -217,7 +219,7 @@ I also use [[https://github.com/mhayashi1120/Emacs-langtool][LanguageTool for Em
   (setq langtool-mother-tongue "ru"))
 #+end_src
 
-As a last note here, in order to set up a signature create the =.signature= file in the =$HOME= directory. If you need more complex logic here, for instance different signatures for different accounts, you can put an arbitrary expression to the =mail-signature= variable or apply [[https://notmuchmail.org/emacstips/#index16h2][this gnus-alias tip]].
+As a last note here, to set up a signature create the =.signature= file in the =$HOME= directory. If you need more complex logic here, for instance, different signatures for different accounts, you can put an arbitrary expression to the =mail-signature= variable or apply [[https://notmuchmail.org/emacstips/#index16h2][this gnus-alias tip]].
 * Another account
 ** Adding an account
 Now we can send and receive mail from one account. Adding another account is also pretty easy.
@@ -233,7 +235,7 @@ gmi init progin6304@gmail.com
 gmi set --replace-slash-with-dot
 #+end_src
 
-However, before running =gmi sync= for the second account, we want to make sure that we can distinguish message from different accounts. To do that, I add the =main= for the main account and =progin= for the second account. We also don't want these labels to be pushed:
+However, before running =gmi sync= for the second account, we want to make sure that we can distinguish the message from different accounts. To do that, I add the =main= for the main account and =progin= for the second account. We also don't want these labels to be pushed:
 #+begin_src bash :eval no
 cd ~/Mail/thexcloud
 gmi set --ignore-tags-local new,mail,progin
@@ -252,7 +254,7 @@ notmuch tag -new "tag:new"
 EOF
 chmod +x post-new
 #+end_src
-Now it finally makes sense why we wanted to use the =new= tag in the first place. In principle, any kind of tagging logic can be applied here, but for the reasons I stated earlier, I prefer to setup filters in Gmail web interface.
+Now it finally makes sense why we wanted to use the =new= tag in the first place. In principle, any kind of tagging logic can be applied here, but for the reasons I stated earlier, I prefer to set up filters in the Gmail web interface.
 
 The last thing to do is to modify the =pre-new= hook:
 #+begin_src bash :eval no
@@ -311,7 +313,7 @@ notmuch new
 NEW_UNREAD=$(notmuch count "$QUERY")
 ALL_UNREAD=$(notmuch count "$ALL_QUERY")
 
-# I don't really care, if there are unread messages for which I've already seen a notification
+# I don't really care if there are unread messages for which I've already seen a notification
 if [ $NEW_UNREAD -gt 0 ]; then
     MAIN_UNREAD=$(notmuch count "tag:unread AND tag:main")
     PROGIN_UNREAD=$(notmuch count "tag:unread AND tag:progin")
@@ -338,5 +340,5 @@ Here's how the notification looks like:
 * Caveats
 - [[https://github.com/gauteh/lieer#caveats][lieer]] has an extensive list of caveats concerning Gmail API
 - Make sure that you understand the [[https://github.com/gauteh/lieer#changing-ignored-tags-and-translation-after-initial-sync][implications]] of lieer's =--ignore-tags-locally= and =--ignore-tags-remote=
-- If two of your accounts receive the same email, it will be stored as one email in notmuch, so tags from these accounts will be merged and pushed back on the next sync. To solve that, you can set tags from one account to be ignored on the rest of accounts
+- If two of your accounts receive the same email, it will be stored as one email in notmuch, so tags from these accounts will be merged and pushed back on the next sync. To solve that, you can set tags from one account to be ignored on the rest of the accounts
 - A sent email is being downloaded again on the next sync. Not a great deal, but it is somewhat annoying to download recently sent attachments.
