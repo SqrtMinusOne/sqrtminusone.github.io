@@ -1,0 +1,178 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: Replacing Jupyter Notebook with Org Mode
+#+DATE: 2021-04-07
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: emacs
+#+HUGO_TAGS: org
+#+PROPERTY: header-args:python :session *hugo*
+#+PROPERTY: header-args:python+ :exports both
+#+PROPERTY: header-args:python+ :tangle yes
+#+PROPERTY: header-args:python+ :async yes
+#+PROPERTY: header-args :exports both
+
+* Why?
+* Basic setup
+There are multiple ways of doing literate programming with Python & Org Mode, [[https://github.com/millejoh/emacs-ipython-notebook][ein]] being one of the notable alternatives.
+
+I go with the [[https://github.com/nnicandro/emacs-jupyter][emacs-jupyter]] package. Installing it is pretty straightforward, I use =use-package= with =straight.el=:
+#+begin_src emacs-lisp :eval no
+(use-package jupyter
+  :straight t)
+#+end_src
+
+Then, we have to enable languages for =org-babel=. The following isn't the best practice for startup performance time, but the least problematic in my experience. 
+
+#+begin_src emacs-lisp :eval no
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) ;; Other languages
+   (shell . t)
+   ;; Python & Jupyter
+   (python . t)
+   (jupyter . t)))
+#+end_src
+
+That adds Org source blocks with names like ~jupyter-LANG~, e.g. ~jupyter-python~. To use just ~LANG~ src blocks, call the following function after ~org-babel-do-load-languages~:
+#+begin_src emacs-lisp :eval no
+(org-babel-jupyter-override-src-block "python")
+#+end_src
+
+That overrides built-in ~python~ block with ~jupyter-python~.
+
+If you use [[https://github.com/astahlman/ob-async][ob-async]], you have to set ~jupyter-LANG~ blocks as ignored by this package, because emacs-jupyter has async executiong of its own.
+#+begin_src emacs-lisp :eval no
+(setq ob-async-no-async-languages-alist '("python" "jupyter-python"))
+#+end_src
+* Environments
+So, we've set up a basic emacs-jupyter configuration.
+
+The catch here is that Jupyter should be available on Emacs startup (at the time of evaluation of the =emacs-jupyter= package, to be precise). That means, if you are launching Emacs with something like application launcher, global Python & Jupyter will be used.
+
+#+begin_src python :eval no
+import sys
+sys.executable
+#+end_src
+
+#+RESULTS:
+: /usr/bin/python3
+
+Which is probably not what we want. To resolve that, we have to make the right Python available at the required time.
+
+** Anaconda
+If you were using Jupyter Lab or Notebook before, there is a good change you used it via [[https://anaconda.org/][Anaconda]]. If not, in a nutshell, it is a package & environment manager, which specializes on Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
+
+As one may expect, there is an Emacs package called [[https://github.com/necaris/conda.el][conda.el]] to help working with conda environments in Emacs. We have to put it somewhere before =emacs-jupyter= package and call ~conda-env-activate~:
+#+begin_src emacs-lisp
+(use-package conda
+  :straight t
+  :config
+  (setq conda-anaconda-home (expand-file-name "~/Programs/miniconda3/"))
+  (setq conda-env-home-directory (expand-file-name "~/Programs/miniconda3/"))
+  (setq conda-env-subdirectory "envs"))
+
+(unless (getenv "CONDA_DEFAULT_ENV")
+  (conda-env-activate "base"))
+#+end_src
+
+If you have Anaconda installed on a custom path, as I do, you'd have to add these 3 ~setq~ in the ~:config~ section. Also, there is no point in activating environment if Emacs is somehow already lauched in an environment.
+
+That'll give us Jupyter from a base conda environment.
+
+** virtualenv
+TODO
+
+** Switching an environment
+However, as you may have noticed, =emacs-jupyter= will always use the Python kernel found on startup. So if you switch a new environment, the code will still be ran on an old one, which is not too convinient.
+
+Fortunately, to fix that we have only to refresh the jupyter kernelspecs:
+#+begin_src emacs-lisp
+(defun my/jupyter-refresh-kernelspecs ()
+  "Refresh Jupyter kernelspecs"
+  (interactive)
+  (jupyter-available-kernelspecs t))
+#+end_src
+
+Calling =M-x my/jupyter-refresh-kernelspecs= after a switch will give you a new kernel. Just keep in mind that the kernelspec seems to be attached to a session, so you'd also have to change the session name to get a new kernel.
+#+begin_src python :session s1
+import sys
+sys.executable
+#+end_src
+
+#+RESULTS:
+: /home/pavel/Programs/miniconda3/bin/python
+
+#+begin_src emacs-lisp
+(conda-env-activate "ann")
+#+end_src
+
+#+begin_src python :session s2
+import sys
+sys.executable
+#+end_src
+
+#+RESULTS:
+: /home/pavel/Programs/miniconda3/bin/python
+
+#+begin_src emacs-lisp
+(my/jupyter-refresh-kernelspecs)
+#+end_src
+
+#+begin_src python :session s4
+import sys
+sys.executable
+#+end_src
+
+#+RESULTS:
+: /home/pavel/Programs/miniconda3/envs/ann/bin/python
+
+* Programming
+To test if everything is working correctly, run =M-x jupyter-run-repl=, which should give you a REPL with a chosen kernel. If so, we can finally start using Python in org mode.
+
+#+begin_example
+#+begin_src python :session hello :async yes
+print('Hello, world!')
+#+end_src
+
+#+RESULTS:
+: Hello, world!
+#+end_example
+
+To avoid repeating similar arguments for the src block, we can set the =header-args= property at the start of the file:
+#+begin_example
+#+PROPERTY: header-args:python :session hello
+#+PROPERTY: header-args:python+ :async yes
+#+end_example
+
+When a kernel is initialized, an associated REPL buffer is also created with a name like =*jupyter-repl[python 3.9.2]-hello*=. That may also come in handy, although I prefer running a standalone REPL, doing which will be discussed further.
+
+One advantage of emacs-jupyter is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:
+
+#+begin_example
+#+begin_src python
+name = input('Name: ')
+print(f'Hello, {name}!')
+#+end_src
+
+#+RESULTS:
+: Hello, Pavel!
+#+end_example
+
+without any additional setup.
+
+* Code output
+** Images
+If you want to display inline images right after the code execution, add the following hook:
+#+begin_src emacs-lisp :eval no
+(add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+#+end_src
+
+Otherwise, you'd have to call ~org-redisplay-inline-images~ every time you want to see the output image.
+** Tables
+** HTML
+** Widgets
+* Remote kernels
+* Export
+** HTML
+** LaTeX
+** ipynb
