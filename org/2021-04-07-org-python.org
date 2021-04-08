@@ -40,7 +40,7 @@ That adds Org source blocks with names like ~jupyter-LANG~, e.g. ~jupyter-python
 
 That overrides built-in ~python~ block with ~jupyter-python~.
 
-If you use [[https://github.com/astahlman/ob-async][ob-async]], you have to set ~jupyter-LANG~ blocks as ignored by this package, because emacs-jupyter has async executiong of its own.
+If you use [[https://github.com/astahlman/ob-async][ob-async]], you have to set ~jupyter-LANG~ blocks as ignored by this package, because emacs-jupyter has async execution of its own.
 #+begin_src emacs-lisp :eval no
 (setq ob-async-no-async-languages-alist '("python" "jupyter-python"))
 #+end_src
@@ -83,7 +83,7 @@ That'll give us Jupyter from a base conda environment.
 TODO
 
 ** Switching an environment
-However, as you may have noticed, =emacs-jupyter= will always use the Python kernel found on startup. So if you switch a new environment, the code will still be ran on an old one, which is not too convinient.
+However, as you may have noticed, =emacs-jupyter= will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be ran in the old one, which is not too convinient.
 
 Fortunately, to fix that we have only to refresh the jupyter kernelspecs:
 #+begin_src emacs-lisp
@@ -144,9 +144,9 @@ To avoid repeating similar arguments for the src block, we can set the =header-a
 #+PROPERTY: header-args:python+ :async yes
 #+end_example
 
-When a kernel is initialized, an associated REPL buffer is also created with a name like =*jupyter-repl[python 3.9.2]-hello*=. That may also come in handy, although I prefer running a standalone REPL, doing which will be discussed further.
+When a kernel is initialized, an associated REPL buffer is also created with a name like =*jupyter-repl[python 3.9.2]-hello*=. That may also come in handy, although you may prefer running a standalone REPL, doing which will be discussed further.
 
-One advantage of emacs-jupyter is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:
+Also, one advantage of emacs-jupyter is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:
 
 #+begin_example
 #+begin_src python
@@ -162,15 +162,124 @@ without any additional setup.
 
 * Code output
 ** Images
-If you want to display inline images right after the code execution, add the following hook:
+Image output show work out of box. Run =M-x org-toggle-inline-images= (=C-c C-x C-v=) after the execution to see the image inline.
+#+begin_example
+#+begin_src python
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+pass
+#+end_src
+
+#+RESULTS:
+[[file:./.ob-jupyter/86b3c5e1bbaee95d62610e1fb9c7e755bf165190.png]]
+#+end_example
+
+However, there is some room for improvement. First, you can add the following hook if you don't want press this awkward keybinding every time:
 #+begin_src emacs-lisp :eval no
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 #+end_src
 
-Otherwise, you'd have to call ~org-redisplay-inline-images~ every time you want to see the output image.
+Second, we may override the image save path like this:
+#+begin_example
+#+begin_src python :file img/hello.png
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+pass
+#+end_src
+
+#+RESULTS:
+[[file:img/hello.png]]
+#+end_example
+
+That can save you a =savefig= call if the image has to be used somewhere further.
+
+Finally, by default the image has tranparent background and ridiculously small size. That can be fixed with some matplotlib settings:
+#+begin_src python
+import matplotlib as mpl
+
+mpl.rcParams['figure.dpi'] = 200
+mpl.rcParams['figure.facecolor'] = '1'
+#+end_src
+
+Then, we can set image width to prevent images from becoming too large. I prefer to do it inside a =emacs-lisp= code block in the same org file:
+#+begin_src emacs-lisp
+(setq-local org-image-actual-width '(1024))
+#+end_src
 ** Tables
-** HTML
-** Widgets
+If you are evaluating something like pandas DataFrame, it will be outputted in the HTML format, wrapped in the =begin_export= block. To view the data in text format, you can set =:display plain=:
+#+begin_example
+#+begin_src python :display plain
+import pandas as pd
+pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+#+end_src
+
+#+RESULTS:
+:    a  b
+: 0  1  3
+: 1  2  4
+#+end_example
+
+Another solution is to use the [[https://pypi.org/project/tabulate/][tabulate]] package:
+#+begin_example
+#+begin_src python
+import pandas as pd
+import tabulate
+df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+print(tabulate.tabulate(df, headers=df.columns, tablefmt="orgtbl"))
+#+end_src
+
+#+RESULTS:
+: |    |   a |   b |
+: |----+-----+-----|
+: |  0 |   1 |   3 |
+: |  1 |   2 |   4 |
+#+end_example
+** HTML & other rich output
+Yet another solution is to use emacs-jupyter's option ~:pandoc t~, which invokes pandoc to convert HTML, LaTeX and Markdown to Org. Predictably, this is slower than the options above.
+#+begin_example
+#+begin_src python :pandoc t
+import pandas as pd
+df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+df
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+|   | a | b |
+|---+---+---|
+| 0 | 1 | 3 |
+| 1 | 2 | 4 |
+:END:
+#+end_example
+
+Finally, every once in a while I have to view an actual HTML in a browser, e.g. when using [[https://python-visualization.github.io/folium/][folium]]. To do that, I've written a small function, which performs =xdg-open= on the HTML export block under the cursor:
+#+begin_src emacs-lisp :eval no
+(setq my/org-view-html-tmp-dir "/tmp/org-html-preview/")
+
+(use-package f
+  :straight t)
+
+(defun my/org-view-html ()
+  (interactive)
+  (let ((elem (org-element-at-point))
+        (temp-file-path (concat my/org-view-html-tmp-dir (number-to-string (random (expt 2 32))) ".html")))
+    (cond
+     ((not (eq 'export-block (car elem)))
+      (message "Not in an export block!"))
+     ((not (string-equal (plist-get (car (cdr elem)) :type) "HTML"))
+      (message "Export block is not HTML!"))
+     (t (progn
+          (f-mkdir my/org-view-html-tmp-dir)
+          (f-write (plist-get (car (cdr elem)) :value) 'utf-8 temp-file-path)
+          (start-process "org-html-preview" nil "xdg-open" temp-file-path))))))
+#+end_src
+=f.el= is used by a lot of packages, including the above mentioned =conda.el=, so you probably already have it installed.
+
+Put a cursor on an export block and run =M-x my/org-view-html=.
+
+There also [[https://github.com/nnicandro/emacs-jupyter#building-the-widget-support-experimental][seems to be widgets support]] in emacs-jupyter, but I wan't able to make it work.
 * Remote kernels
 * Export
 ** HTML
