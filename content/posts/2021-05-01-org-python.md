@@ -3,7 +3,7 @@ title = "Replacing Jupyter Notebook with Org Mode"
 author = ["Pavel"]
 date = 2021-05-01
 tags = ["emacs", "org"]
-draft = true
+draft = false
 +++
 
 {{< figure src="/ox-hugo/screenshot.png" >}}
