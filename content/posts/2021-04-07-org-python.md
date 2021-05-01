@@ -8,20 +8,20 @@ draft = true
 
 ## Why? {#why}
 
-[Jupyter Notebook](https://jupyter-notebook.readthedocs.io/en/stable/) and its successor [Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/) providing an interactive development environment for many programming languages, are in lots of ways great pieces of software.
+[Jupyter Notebook](https://jupyter-notebook.readthedocs.io/en/stable/) and its successor [Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/) providing an interactive development environment for many programming languages are in lots of ways great pieces of software.
 
 But while I was using the former, and then the latter, I also was an as-full-time-as-one-can-get NeoVim user. "As one can get" is because, of course, there is no sensible way to extend the NeoVim editing experience to the Jupyter ecosystem.
 
-A possibilty for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.
+A possibility for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.
 
-Some time past that decision, it's time to wrap up the results. To start with, I'll breifly discuss the pros & cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:
+Sometime past that decision, it's time to wrap up the results. To start with, I'll briefly discuss the pros & cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:
 
--   Emacs, at least for me, is way more comfortable to use than browser
+-   Emacs, at least for me, is way more comfortable to use than a browser
 -   Org mode allows using multiple programming languages in one file or multiple sessions with one programming language
 -   Richer & way more flexible export & tangle capacities
 -   More reasonable version control because org mode is just plain text, contrary to Jupyter's JSONs
 
-The first point deserves to be spelled out with more detail. To start with, Emacs is objectively better text editor than Jupyter, as Emacs offers a considerable superset of Jupyter's features concerning just writing and editing text. The farthest one can go with Jupyter Lab is to install a vim emulation plugin, which still isn't as good as Evil mode.
+The first point deserves to be spelled out with more detail. To start with, Emacs is an objectively better text editor than Jupyter, as Emacs offers a considerable superset of Jupyter's features concerning just writing and editing text. The farthest one can go with Jupyter Lab is to install a vim emulation plugin, which still isn't as good as Evil mode.
 
 The fact that Emacs can be used for different purposes also helps. For instance, I often write LaTeX documents, which are loosely based on the nearby code, e.g. using some generated charts or tables. Switching an Emacs buffer is easier than switching between Emacs and browser, not to mention that Emacs buffers usually have the same set of keybindings.
 
@@ -30,21 +30,21 @@ Emacs' buffer management system, which is good enough for a window manager, is b
 As for why one may want to use Jupyter instead, here is my take on cons:
 
 -   Potential performance issues
--   The output is not as rich as in browser
+-   The output is not as rich as in the browser
 -   Collaboration with non-Emacs users is somewhat complicated
 
-Separation of kernels, server and client together with non-blocking JavaScript-based UI is a good for using Jupyter. It certainly won't be a problem for a browser to suddenly print a line a million characters long.
+Separation of kernels, server, and client together with non-blocking JavaScript-based UI is a good argument for using Jupyter. It certainly won't be a problem for a browser to suddenly print a line a million characters long.
 
-As for the richness of the output, while there are ways to work around the limitations of Emacs there, in some cases the best thing one can do is to open the output in question with a browser. I'll discuss doing that further below.
+As for the richness of the output, while there are ways to work around the limitations of Emacs there, in some cases the best thing one can do is open the output in question with a browser. I'll discuss doing that further below.
 
-The collaboration issue can be aleviated with rich export capabilities, but if someone wants to change something in your Org file, execute it and send it back to you, the have to use Emacs.
+The collaboration issue can be alleviated with rich export capabilities, but if someone wants to change something in your Org file, execute it and send it back to you, they have to use Emacs.
 
 
 ## Basic setup {#basic-setup}
 
 The core package to this whole venture is [emacs-jupyter](https://github.com/nnicandro/emacs-jupyter) (another notable alternative [ein](https://github.com/millejoh/emacs-ipython-notebook), using which can help with the collaboration problem).
 
-Install it however you install packages in Emacs, here is my preffered way with `use-package` and `straight.el`:
+Install it however you install packages in Emacs, here is my preferred way with `use-package` and `straight.el`:
 
 ```emacs-lisp
 (use-package jupyter
@@ -63,7 +63,7 @@ Then, we have to enable languages for `org-babel`. Put the following in your org
    (jupyter . t)))
 ```
 
-That adds Org source blocks with names like `jupyter-LANG`, e.g. `jupyter-python`. To use just `LANG` src blocks, call the following function after `org-babel-do-load-languages`:
+Now, you should be able to use source blocks with names like `jupyter-LANG`, e.g. `jupyter-python`. To use just `LANG` src blocks, call the following function after `org-babel-do-load-languages`:
 
 ```emacs-lisp
 (org-babel-jupyter-override-src-block "python")
@@ -98,7 +98,7 @@ Which is probably not what we want. To resolve that, we have to make the right P
 
 ### Anaconda {#anaconda}
 
-If you were using Jupyter Lab or Notebook before, there is a good change you install it via [Anaconda](https://anaconda.org/). If not, in a nutshell, it is a package & environment manager, which specializes on Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
+If you were using Jupyter Lab or Notebook before, there is a good chance you install it via [Anaconda](https://anaconda.org/). If not, in a nutshell, it is a package & environment manager, which specializes in Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
 
 As one may expect, there is an Emacs package called [conda.el](https://github.com/necaris/conda.el) to help working with conda environments in Emacs. We have to put it somewhere before `emacs-jupyter` package and call `conda-env-activate`:
 
@@ -114,16 +114,16 @@ As one may expect, there is an Emacs package called [conda.el](https://github.co
   (conda-env-activate "base"))
 ```
 
-If you have Anaconda installed on a custom path, as I do, you'd have to add these `setq` lines in the `:config` section. Also, there is no point in activating environment if Emacs is somehow already lauched in an environment.
+If you have Anaconda installed on a custom path, as I do, you'd have to add these `setq` lines in the `:config` section. Also, there is no point in activating the environment if Emacs is somehow already launched in an environment.
 
 That'll give us Jupyter from a base conda environment.
 
-If you use plain virtual environment, you can use [virtualenvwrapper.el](https://github.com/porterjamesj/virtualenvwrapper.el), which is similar in its design to conda.el (or, rather, the other way round).
+If you use a plain virtual environment, you can use [virtualenvwrapper.el](https://github.com/porterjamesj/virtualenvwrapper.el), which is similar in its design to conda.el (or, rather, the other way round).
 
 
 ### Switching an environment {#switching-an-environment}
 
-However, as you will notice rather soon, `emacs-jupyter` will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be ran in the old one, which is not too convinient.
+However, as you will notice rather soon, `emacs-jupyter` will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be running in the old one, which is not too convenient.
 
 Fortunately, to fix that we have only to force the refresh of Jupyter kernelspecs:
 
@@ -215,7 +215,7 @@ without any additional setup.
 
 ### Images {#images}
 
-Image output should work out of box. Run `M-x org-toggle-inline-images` (`C-c C-x C-v`) after the execution to see the image inline.
+Image output should work out of the box. Run `M-x org-toggle-inline-images` (`C-c C-x C-v`) after the execution to see the image inline.
 
 ```text
 #+begin_src python
@@ -229,7 +229,7 @@ pass
 [[file:./.ob-jupyter/86b3c5e1bbaee95d62610e1fb9c7e755bf165190.png]]
 ```
 
-There is some room for improvement though. First, you can add the following hook if you don't want press this awkward keybinding every time:
+There is some room for improvement though. First, you can add the following hook if you don't want to press this awkward keybinding every time:
 
 ```emacs-lisp
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
@@ -251,7 +251,7 @@ pass
 
 That can save you a `savefig` call if the image has to be used somewhere further.
 
-Finally, by default the image has tranparent background and ridiculously small size. That can be fixed with some matplotlib settings:
+Finally, by default, the image has a transparent background and a ridiculously small size. That can be fixed with some matplotlib settings:
 
 ```python
 import matplotlib as mpl
@@ -260,7 +260,7 @@ mpl.rcParams['figure.dpi'] = 200
 mpl.rcParams['figure.facecolor'] = '1'
 ```
 
-At the same time, we can set image width to prevent images from becoming too large. I prefer to do it inside a `emacs-lisp` code block in the same org file:
+At the same time, we can set the image width to prevent images from becoming too large. I prefer to do it inside a `emacs-lisp` code block in the same org file:
 
 ```emacs-lisp
 (setq-local org-image-actual-width '(1024))
@@ -303,7 +303,7 @@ print(tabulate.tabulate(df, headers=df.columns, tablefmt="orgtbl"))
 
 ### HTML & other rich output {#html-and-other-rich-output}
 
-Yet another solution is to use emacs-jupyter's option `:pandoc t`, which invokes pandoc to convert HTML, LaTeX and Markdown to Org. Predictably, this is slower than the options above.
+Yet another solution is to use emacs-jupyter's option `:pandoc t`, which invokes pandoc to convert HTML, LaTeX, and Markdown to Org. Predictably, this is slower than the options above.
 
 ```text
 #+begin_src python :pandoc t
@@ -321,7 +321,7 @@ df
 :END:
 ```
 
-Finally, every once in a while I have to view an actual, unconverted HTML in a browser, e.g. when using [folium](https://python-visualization.github.io/folium/) or [displaCy](https://spacy.io/usage/visualizers).
+Also, every once in a while I have to view an actual, unconverted HTML in a browser, e.g. when using [folium](https://python-visualization.github.io/folium/) or [displaCy](https://spacy.io/usage/visualizers).
 
 To do that, I've written a small function, which performs `xdg-open` on the HTML export block under the cursor:
 
@@ -346,7 +346,7 @@ To do that, I've written a small function, which performs `xdg-open` on the HTML
           (start-process "org-html-preview" nil "xdg-open" temp-file-path))))))
 ```
 
-`f.el` is used by a lot of packages, including the above mentioned `conda.el`, so you probably already have it installed.
+`f.el` is used by a lot of packages, including the above-mentioned `conda.el`, so you probably already have it installed.
 
 Put a cursor on the `begin_export html` block and run `M-x my/org-view-html`.
 
@@ -355,11 +355,11 @@ There also [seems to be widgets support](https://github.com/nnicandro/emacs-jupy
 
 ### DataFrames {#dataframes}
 
-Last but not least option I want to mention here is specifically about pandas' DataFrames. There aren't many good options to view the full dataframe inside Emacs. The way I can think of is to save the dataframe in csv and view it with `csv-mode`.
+Last but not least option I want to mention here is specifically about pandas' DataFrames. There aren't many good options to view the full dataframe inside Emacs. One way I can think of is to save the dataframe in CSV and view it with `csv-mode`.
 
-However, there are standalone packages to view dataframes. One I can point out to is [dtale](https://github.com/man-group/dtale), which is a Flask + React app designed just for that purpose. It has a rather extensive list of features, including charting, basic statistical instruments, filters, etc. [Here](http://alphatechadmin.pythonanywhere.com/dtale/main/1) is an online demo.
+However, there are standalone packages to view dataframes. One I can point out is [dtale](https://github.com/man-group/dtale), which is a Flask + React app designed just for that purpose. It has a rather extensive list of features, including charting, basic statistical instruments, filters, etc. [Here](http://alphatechadmin.pythonanywhere.com/dtale/main/1) is an online demo.
 
-The problem here is that it's a browser app, which means it defies one of the purposes of using Org Mode in the first place. What's more, this application is rather huge one with lots of dependencies, and they have to be installed in the same environment as your project.
+The problem here is that it's a browser app, which means it defies one of the purposes of using Org Mode in the first place. What's more, this application is a rather huge one with lots of dependencies, and they have to be installed in the same environment as your project.
 
 So this approach has its pros and cons as well. Example usage is as follows:
 
@@ -376,7 +376,7 @@ Another notable alternative is [PandasGUI](https://github.com/adamerose/pandasgu
 
 There are yet some problems in the current configuration.
 
--   Input/output handling is far from perfect. For instance, (at least in my configuration) Emacs tends to get slow for log-like outputs, e.g. Keras with `verbose=2`. It may even hang if an output is a one long line.
+-   Input/output handling is far from perfect. For instance, (at least in my configuration) Emacs tends to get slow for log-like outputs, e.g. Keras with `verbose=2`. It may even hang if the output is one long line.
 -   `ipdb` behaves awkwardly if called from an `src` block, although it at least will let you type `quit`.
 -   Whenever you close Emacs, kernels are stopped, so you'd have to execute the code again on the next start.
 
@@ -389,7 +389,7 @@ For the reasons above I sometimes prefer to use a standalone kernel. To start a 
 jupyter kernel --kernel=python
 ```
 
-After the kernel is launched, put the path to the connection file into the `:session` header and press `C-c C-c` to refresh the setup:
+After the kernel is launched, write the path to the connection file into the `:session` header and press `C-c C-c` to refresh the setup:
 
 ```text
 #+PROPERTY: header-args:python :session /home/pavel/.local/share/jupyter/runtime/kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
@@ -406,7 +406,7 @@ jupyter qtconsole --existing kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
 
 ### Some automation {#some-automation}
 
-Now, I wouldn't use Emacs if it wasn't possible to automate at least some the listed steps. So here are functions I've written for that.
+Now, I wouldn't use Emacs if it wasn't possible to automate at least some of the listed steps. So here are the functions I've written for that.
 
 First, we need to get open ports on the system:
 
@@ -473,7 +473,7 @@ The last one launches Jupyter QtConsole. `setsid` is required to run the program
 
 ### Cleaning up {#cleaning-up}
 
-I've also noticed that there are JSON files left in the runtime folder whenever kernel isn't stopped correctly. So here is a cleanup function.
+I've also noticed that there are JSON files left in the runtime folder whenever the kernel isn't stopped correctly. So here is a cleanup function.
 
 ```emacs-lisp
 (defun my/jupyter-cleanup-kernels ()
@@ -493,12 +493,12 @@ I've also noticed that there are JSON files left in the runtime folder whenever 
 
 ## Export {#export}
 
-A lot of articles have been written already on the subject of Org Mode export, so I will just cover my particular setup.
+An uncountable number of articles have been written already on the subject of Org Mode export, so I will just cover my particular setup.
 
 
 ### HTML {#html}
 
-Export to a standalone HTML is an easy way to share the code with someone who doesn't use Emacs. Just remember that HTML may not be the only file you would have to share if you have images in the document. Although you may use something like [htmlark](https://github.com/BitLooter/htmlark) to get a proper self-contained HTML.
+Export to a standalone HTML is an easy way to share the code with someone who doesn't use Emacs, just remember that HTML may not be the only file you'd have to share if you have images in the document. Although you may use something like [htmlark](https://github.com/BitLooter/htmlark) to get a proper self-contained HTML.
 
 To do the export, run `M-x org-html-export-to-html`. It should work out of the box, however, we can improve the output a bit.
 
@@ -518,7 +518,7 @@ To get a syntax highlighting, we need the `htmlize` package:
   (setq org-html-htmlize-output-type 'css))
 ```
 
-If you use the [rainbow-delimeters](https://github.com/Fanael/rainbow-delimiters) package, like I do, default colors for delimiters may not look good with the light theme. To fix such issues, to put an HTML snippet like this in a `begin_export html` block or in a css file:
+If you use the [rainbow-delimeters](https://github.com/Fanael/rainbow-delimiters) package, as I do, default colors for delimiters may not look good with the light theme. To fix such issues, put an HTML snippet like this in a `begin_export html` block or a CSS file:
 
 ```html
 <style type="text/css">
@@ -531,9 +531,9 @@ If you use the [rainbow-delimeters](https://github.com/Fanael/rainbow-delimiters
 
 ### LaTeX -> pdf {#latex-pdf}
 
-Despite the fact that I use LaTeX quite extensively, I don't like to add another layer of complexity here and 98% of the time write plain `.tex` files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to "traditional" text processors.
+Even though I use LaTeX quite extensively, I don't like to add another layer of complexity here and 98% of the time write plain `.tex` files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to "traditional" text processors.
 
-Nevertheless, I want to get at least a tolerable pdf, so here is piece of my config with some inline comments.
+Nevertheless, I want to get at least a tolerable pdf, so here is a piece of my config with some inline comments.
 
 ```emacs-lisp
 (defun my/setup-org-latex ()
@@ -589,7 +589,7 @@ After which you can put whatever you want in the preamble with `LATEX_HEADER`. M
 
 One last export backend I want to mention is [ox-ipynb](https://github.com/jkitchin/ox-ipynb), which allows exporting Org documents to Jupyter notebooks. Sometimes it works, sometimes it doesn't.
 
-Also the package isn't on MELPA, so you have to install it from the repo directly.
+Also, the package isn't on MELPA, so you have to install it from the repo directly.
 
 ```emacs-lisp
 (use-package ox-ipynb
