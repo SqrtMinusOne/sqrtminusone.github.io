@@ -1,16 +1,19 @@
 +++
 title = "Replacing Jupyter Notebook with Org Mode"
 author = ["Pavel"]
-date = 2021-04-08
+date = 2021-05-01
 tags = ["emacs", "org"]
 draft = true
 +++
+
+{{< figure src="/ox-hugo/screenshot.png" >}}
+
 
 ## Why? {#why}
 
 [Jupyter Notebook](https://jupyter-notebook.readthedocs.io/en/stable/) and its successor [Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/) providing an interactive development environment for many programming languages are in lots of ways great pieces of software.
 
-But while I was using the former, and then the latter, I also was an as-full-time-as-one-can-get NeoVim user. "As one can get" is because, of course, there is no sensible way to extend the NeoVim editing experience to the Jupyter ecosystem.
+But while I was using the former, and then the latter, I was also an as-full-time-as-one-can-get NeoVim user. "As one can get" is because, of course, there is no sensible way to extend the NeoVim editing experience to the Jupyter ecosystem.
 
 A possibility for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.
 
@@ -33,7 +36,7 @@ As for why one may want to use Jupyter instead, here is my take on cons:
 -   The output is not as rich as in the browser
 -   Collaboration with non-Emacs users is somewhat complicated
 
-Separation of kernels, server, and client together with non-blocking JavaScript-based UI is a good argument for using Jupyter. It certainly won't be a problem for a browser to suddenly print a line a million characters long.
+Separation of kernels, server, and client together with non-blocking JavaScript-based UI is a good argument for using Jupyter. And it certainly won't be a problem for a browser to suddenly print a line a million characters long.
 
 As for the richness of the output, while there are ways to work around the limitations of Emacs there, in some cases the best thing one can do is open the output in question with a browser. I'll discuss doing that further below.
 
@@ -100,7 +103,7 @@ Which is probably not what we want. To resolve that, we have to make the right P
 
 If you were using Jupyter Lab or Notebook before, there is a good chance you install it via [Anaconda](https://anaconda.org/). If not, in a nutshell, it is a package & environment manager, which specializes in Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
 
-As one may expect, there is an Emacs package called [conda.el](https://github.com/necaris/conda.el) to help working with conda environments in Emacs. We have to put it somewhere before `emacs-jupyter` package and call `conda-env-activate`:
+As one may expect, there is an Emacs package called [conda.el](https://github.com/necaris/conda.el) to help working with conda environments in Emacs. We have to put it somewhere before the `emacs-jupyter` package and call `conda-env-activate`:
 
 ```emacs-lisp
 (use-package conda
@@ -403,6 +406,8 @@ To open a REPL, run `M-x jupyter-connect-repl` and select the given JSON. Or lau
 jupyter qtconsole --existing kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
 ```
 
+Executing a piece of code in the REPL allows proper debugging, for instance with `%pdb` magic. Also, Jupyter QtConsole generally handles large outputs better and even allows certain kinds of rich output in the REPL.
+
 
 ### Some automation {#some-automation}
 
@@ -498,7 +503,7 @@ An uncountable number of articles have been written already on the subject of Or
 
 ### HTML {#html}
 
-Export to a standalone HTML is an easy way to share the code with someone who doesn't use Emacs, just remember that HTML may not be the only file you'd have to share if you have images in the document. Although you may use something like [htmlark](https://github.com/BitLooter/htmlark) to get a proper self-contained HTML.
+Export to a standalone HTML is an easy way to share the code with someone who doesn't use Emacs, just remember that HTML may not be the only file you'd have to share if you have images in the document. Although you may use something like [htmlark](https://github.com/BitLooter/htmlark) later to get a proper self-contained HTML.
 
 To do the export, run `M-x org-html-export-to-html`. It should work out of the box, however, we can improve the output a bit.
 
@@ -533,7 +538,7 @@ If you use the [rainbow-delimeters](https://github.com/Fanael/rainbow-delimiters
 
 Even though I use LaTeX quite extensively, I don't like to add another layer of complexity here and 98% of the time write plain `.tex` files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to "traditional" text processors.
 
-Nevertheless, I want to get at least a tolerable pdf, so here is a piece of my config with some inline comments.
+Nevertheless, I want to get at least a tolerable pdf from Org, so here is a piece of my config with some inline comments.
 
 ```emacs-lisp
 (defun my/setup-org-latex ()
@@ -573,7 +578,7 @@ In the document itself, add the following headers:
 #+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
 ```
 
-14pt size is required by certain state standards here for some reason.
+14pt size is required by certain state standards of ours for some reason.
 
 After which you can put whatever you want in the preamble with `LATEX_HEADER`. My workflow with LaTeX is to write a bunch of `.sty` files beforehand and import the necessary ones in the preamble. [Here](https://github.com/SqrtMinusOne/LaTeX%5Ftemplates) is the repo with these files, although quite predictably, it's a mess. At any rate, I have to write something like the following in the target Org file:
 
@@ -583,6 +588,8 @@ After which you can put whatever you want in the preamble with `LATEX_HEADER`. M
 #+LATEX_HEADER: \usepackage{styles/mintedSourceCode}
 #+LATEX_HEADER: \usepackage{styles/russianLocale}
 ```
+
+`M-x org-latex-export-to-latex` should export the document to the .tex file. As an alternative, run `M-x org-export-dispatch` (by default should be on `C-c C-e`) an pick the required option there.
 
 
 ### ipynb {#ipynb}
