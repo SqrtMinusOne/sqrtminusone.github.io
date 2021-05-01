@@ -13,10 +13,39 @@
 #+PROPERTY: header-args:emacs-lisp+ :eval never-export
 
 * Why?
-* Basic setup
-There are multiple ways of doing literate programming with Python in Emacs, [[https://github.com/millejoh/emacs-ipython-notebook][ein]] being one of the notable alternatives.
+[[https://jupyter-notebook.readthedocs.io/en/stable/][Jupyter Notebook]] and its successor [[https://jupyterlab.readthedocs.io/en/stable/][Jupyter Lab]] providing an interactive development environment for many programming languages, are in lots of ways great pieces of software.
 
-However, I go with the [[https://github.com/nnicandro/emacs-jupyter][emacs-jupyter]] package. Install it however you install packages in Emacs, here is my preffered way with =use-package= and =straight.el=:
+But while I was using the former, and then the latter, I also was an as-full-time-as-one-can-get NeoVim user. "As one can get" is because, of course, there is no sensible way to extend the NeoVim editing experience to the Jupyter ecosystem.
+
+A possibilty for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.
+
+Some time past that decision, it's time to wrap up the results. To start with, I'll breifly discuss the pros & cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:
+- Emacs, at least for me, is way more comfortable to use than browser
+- Org mode allows using multiple programming languages in one file or multiple sessions with one programming language
+- Richer & way more flexible export & tangle capacities
+- More reasonable version control because org mode is just plain text, contrary to Jupyter's JSONs
+
+The first point deserves to be spelled out with more detail. To start with, Emacs is objectively better text editor than Jupyter, as Emacs offers a considerable superset of Jupyter's features concerning just writing and editing text. The farthest one can go with Jupyter Lab is to install a vim emulation plugin, which still isn't as good as Evil mode.
+
+The fact that Emacs can be used for different purposes also helps. For instance, I often write LaTeX documents, which are loosely based on the nearby code, e.g. using some generated charts or tables. Switching an Emacs buffer is easier than switching between Emacs and browser, not to mention that Emacs buffers usually have the same set of keybindings.
+
+Emacs' buffer management system, which is good enough for a window manager, is barely comparable to the tabs of Jupyter Lab. And so on.
+
+As for why one may want to use Jupyter instead, here is my take on cons:
+- Potential performance issues
+- The output is not as rich as in browser
+- Collaboration with non-Emacs users is somewhat complicated
+
+Separation of kernels, server and client together with non-blocking JavaScript-based UI is a good for using Jupyter. It certainly won't be a problem for a browser to suddenly print a line a million characters long.
+
+As for the richness of the output, while there are ways to work around the limitations of Emacs there, in some cases the best thing one can do is to open the output in question with a browser. I'll discuss doing that further below.
+
+The collaboration issue can be aleviated with rich export capabilities, but if someone wants to change something in your Org file, execute it and send it back to you, the have to use Emacs.
+
+* Basic setup
+The core package to this whole venture is [[https://github.com/nnicandro/emacs-jupyter][emacs-jupyter]] (another notable alternative [[https://github.com/millejoh/emacs-ipython-notebook][ein]], using which can help with the collaboration problem).
+
+Install it however you install packages in Emacs, here is my preffered way with =use-package= and =straight.el=:
 #+begin_src emacs-lisp :eval no
 (use-package jupyter
   :straight t)
@@ -60,7 +89,7 @@ sys.executable
 Which is probably not what we want. To resolve that, we have to make the right Python available at the required time.
 
 ** Anaconda
-If you were using Jupyter Lab or Notebook before, there is a good change you used it via [[https://anaconda.org/][Anaconda]]. If not, in a nutshell, it is a package & environment manager, which specializes on Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
+If you were using Jupyter Lab or Notebook before, there is a good change you install it via [[https://anaconda.org/][Anaconda]]. If not, in a nutshell, it is a package & environment manager, which specializes on Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
 
 As one may expect, there is an Emacs package called [[https://github.com/necaris/conda.el][conda.el]] to help working with conda environments in Emacs. We have to put it somewhere before =emacs-jupyter= package and call ~conda-env-activate~:
 #+begin_src emacs-lisp
@@ -75,17 +104,15 @@ As one may expect, there is an Emacs package called [[https://github.com/necaris
   (conda-env-activate "base"))
 #+end_src
 
-If you have Anaconda installed on a custom path, as I do, you'd have to add these 3 ~setq~ in the ~:config~ section. Also, there is no point in activating environment if Emacs is somehow already lauched in an environment.
+If you have Anaconda installed on a custom path, as I do, you'd have to add these ~setq~ lines in the ~:config~ section. Also, there is no point in activating environment if Emacs is somehow already lauched in an environment.
 
 That'll give us Jupyter from a base conda environment.
 
-** virtualenv
-TODO
-
+If you use plain virtual environment, you can use [[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper.el]], which is similar in its design to conda.el (or, rather, the other way round).
 ** Switching an environment
-However, as you may have noticed, =emacs-jupyter= will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be ran in the old one, which is not too convinient.
+However, as you will notice rather soon, =emacs-jupyter= will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be ran in the old one, which is not too convinient.
 
-Fortunately, to fix that we have only to refresh the jupyter kernelspecs:
+Fortunately, to fix that we have only to force the refresh of Jupyter kernelspecs:
 #+begin_src emacs-lisp
 (defun my/jupyter-refresh-kernelspecs ()
   "Refresh Jupyter kernelspecs"
@@ -93,7 +120,7 @@ Fortunately, to fix that we have only to refresh the jupyter kernelspecs:
   (jupyter-available-kernelspecs t))
 #+end_src
 
-Calling =M-x my/jupyter-refresh-kernelspecs= after a switch will give you a new kernel. Just keep in mind that the kernelspec seems to be attached to a session, so you'd also have to change the session name to get a new kernel.
+Calling =M-x my/jupyter-refresh-kernelspecs= after an environment switch will give you a new kernel. Just keep in mind that a kernelspec seems to be attached to a session, so you'd also have to change the session name to get a new kernel.
 #+begin_src python :session s1
 import sys
 sys.executable
@@ -145,9 +172,9 @@ To avoid repeating similar arguments for the src block, we can set the =header-a
 #+PROPERTY: header-args:python+ :async yes
 #+end_example
 
-When a kernel is initialized, an associated REPL buffer is also created with a name like =*jupyter-repl[python 3.9.2]-hello*=. That may also come in handy, although you may prefer running a standalone REPL, doing which will be discussed further.
+When a kernel is initialized, an associated REPL buffer is also created with a name like =*jupyter-repl[python 3.9.2]-hello*=.
 
-Also, one advantage of emacs-jupyter is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:
+One advantage of emacs-jupyter over the standard Org source execution is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:
 
 #+begin_example
 #+begin_src python
@@ -176,7 +203,7 @@ pass
 [[file:./.ob-jupyter/86b3c5e1bbaee95d62610e1fb9c7e755bf165190.png]]
 #+end_example
 
-However, there is some room for improvement. First, you can add the following hook if you don't want press this awkward keybinding every time:
+There is some room for improvement though. First, you can add the following hook if you don't want press this awkward keybinding every time:
 #+begin_src emacs-lisp :eval no
 (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 #+end_src
@@ -286,9 +313,11 @@ There also [[https://github.com/nnicandro/emacs-jupyter#building-the-widget-supp
 ** DataFrames
 Last but not least option I want to mention here is specifically about pandas' DataFrames. There aren't many good options to view the full dataframe inside Emacs. The way I can think of is to save the dataframe in csv and view it with =csv-mode=.
 
-However, there are standalone packages to view dataframes. My favorite one is [[https://github.com/man-group/dtale][dtale]], which is a Flask + React app designed just for that purpose. It has a rather extensive list of features, including charting, basic statistical instruments, filters, etc. [[http://alphatechadmin.pythonanywhere.com/dtale/main/1][Here]] is an online demo.
+However, there are standalone packages to view dataframes. One I can point out to is [[https://github.com/man-group/dtale][dtale]], which is a Flask + React app designed just for that purpose. It has a rather extensive list of features, including charting, basic statistical instruments, filters, etc. [[http://alphatechadmin.pythonanywhere.com/dtale/main/1][Here]] is an online demo.
 
-And example usage:
+The problem here is that it's a browser app, which means it defies one of the purposes of using Org Mode in the first place. What's more, this application is rather huge one with lots of dependencies, and they have to be installed in the same environment as your project.
+
+So this approach has its pros and cons as well. Example usage is as follows:
 #+begin_src python :eval no
 import dtale
 d = dtale.show(df)
@@ -297,16 +326,15 @@ d.open_browser() # Or get an URL from d._url
 
 Another notable alternative is [[https://github.com/adamerose/pandasgui][PandasGUI]], which, as one can guess, is a GUI (PyQt5) application, although it uses QtWebEngine inside.
 
-The obvious downside is, of course, that these applications are huge ones with lots of dependencies, and they have to be installed in the same environment as your project.
 * Remote kernels
 There are yet some problems in the current configuration.
 
 - Input/output handling is far from perfect. For instance, (at least in my configuration) Emacs tends to get slow for log-like outputs, e.g. Keras with ~verbose=2~. It may even hang if an output is a one long line.
-- =ipdb= behaves rather awkwardly if called from an =src= block, although it at least will let you type =quit=.
+- =ipdb= behaves awkwardly if called from an =src= block, although it at least will let you type =quit=.
 - Whenever you close Emacs, kernels are stopped, so you'd have to execute the code again on the next start.
 
 ** Using a "remote" kernel
-For the reasons above I prefer to use a standalone kernel. To do that, execute the following command in the path and environment you need:
+For the reasons above I sometimes prefer to use a standalone kernel. To start a Jupyter kernel, run the following command in the environment and path you need:
 #+begin_src bash
 jupyter kernel --kernel=python
 #+end_src
@@ -323,13 +351,14 @@ After the kernel is launched, put the path to the connection file into the ~:ses
 #+PROPERTY: header-args:python :session /home/pavel/.local/share/jupyter/runtime/kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
 #+end_example
 
+Now python source blocks should be executed in the kernel.
+
 To open a REPL, run =M-x jupyter-connect-repl= and select the given JSON. Or launch a standalone REPL like this:
 #+begin_src bash
 jupyter qtconsole --existing kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
 #+end_src
-
 ** Some automation
-Now, I wouldn't use Emacs if it wasn't possible to automate at least some the listed steps. So here are some functions I've written.
+Now, I wouldn't use Emacs if it wasn't possible to automate at least some the listed steps. So here are functions I've written for that.
 
 First, we need to get open ports on the system:
 #+begin_src emacs-lisp
@@ -351,7 +380,7 @@ Then, list the available kernel JSONs:
     (lambda (x y) (not (time-less-p (nth 6 x) (nth 6 y)))))))
 #+end_src
 
-And query the user for an running kernel:
+And query the user for a running kernel:
 #+begin_src emacs-lisp
 (defun my/select-jupyter-kernel ()
   (let ((ports (my/get-open-ports))
@@ -383,12 +412,11 @@ After which we can use the ~my/select-jupyter-kernel~ function however we want:
                  (file-name-nondirectory (my/select-jupyter-kernel))))
 #+end_src
 
-The first function, which simply inserts the path to the kernel, is meant to be used on the ~:session~ header. One can go even further and locate the header automatically, but that's an idea for the next time.
+The first function, which simply inserts the path to the kernel, is meant to be used on the ~:session~ header. One can go even further and locate the header automatically, but that's an idea for next time.
 
 The second one opens a REPL provided by emacs-jupyter. The =t= argument is necessary to pop up the REPL immediately.
 
 The last one launches Jupyter QtConsole. =setsid= is required to run the program in a new session, so it won't close together with Emacs.
-
 ** Cleaning up
 I've also noticed that there are JSON files left in the runtime folder whenever kernel isn't stopped correctly. So here is a cleanup function.
 #+begin_src emacs-lisp
@@ -409,7 +437,9 @@ I've also noticed that there are JSON files left in the runtime folder whenever 
 A lot of articles have been written already on the subject of Org Mode export, so I will just cover my particular setup.
 
 ** HTML
-Export to html is pretty straightforward and should work out of box with =M-x org-html-export-to-html=. However, we can improve the output a bit.
+Export to a standalone HTML is an easy way to share the code with someone who doesn't use Emacs. Just remember that HTML may not be the only file you would have to share if you have images in the document. Although you may use something like [[https://github.com/BitLooter/htmlark][htmlark]] to get a proper self-contained HTML.
+
+To do the export, run =M-x org-html-export-to-html=. It should work out of the box, however, we can improve the output a bit.
 
 First, we can add a custom CSS to the file. I like this one:
 #+begin_example
@@ -425,7 +455,7 @@ To get a syntax highlighting, we need the =htmlize= package:
   (setq org-html-htmlize-output-type 'css))
 #+end_src
 
-If you use the [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimeters]] package, like I do, default colors for delimiters may not look good with the light theme. The easiest way I see to fix that is to put an HTML snippet like this in a =begin_export html= block:
+If you use the [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimeters]] package, like I do, default colors for delimiters may not look good with the light theme. To fix such issues, to put an HTML snippet like this in a =begin_export html= block or in a css file:
 #+begin_src html
 <style type="text/css">
 .org-rainbow-delimiters-depth-1, .org-rainbow-delimiters-depth-2, .org-rainbow-delimiters-depth-3, .org-rainbow-delimiters-depth-4 {
@@ -433,10 +463,6 @@ If you use the [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimeter
 }
 </style>
 #+end_src
-
-Of course, you can also modify the custom CSS, but that looks like a good way to provide a standalone HTML.
-
-Which brings me to the point of this option - exporting to a standalone HTML is an easy way to share a code with someone who doesn't use Emacs, at least one way.
 ** LaTeX -> pdf
 Despite the fact that I use LaTeX quite extensively, I don't like to add another layer of complexity here and 98% of the time write plain =.tex= files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to "traditional" text processors.
 
