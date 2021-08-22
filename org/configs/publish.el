@@ -30,6 +30,8 @@
 (setq org-hugo-section "configs")
 (setq org-hugo-base-dir "../../")
 
+;; (setq org-hugo-export-with-toc 6)
+
 (setq my/config-files '("README.org"
                         "Emacs.org"
                         "Desktop.org"
@@ -47,8 +49,13 @@
     (org-mode)
     (insert-file-contents file)
     (unless (string-equal file "README.org")
-      (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org)
       (org-make-toc))
+    (replace-string "conf-space" "vim" t (point-min) (point-max))
+    (replace-string "conf-unix" "ini" t (point-min) (point-max))
+    (replace-string "conf-windows" "ini" t (point-min) (point-max))
+    (replace-string "conf-xdefaults" "vim" t (point-min) (point-max))
+    (replace-string "conf-toml" "toml" t (point-min) (point-max))
+    (replace-string ":noweb yes" ":noweb no-export" nil (point-min) (point-max))
     (setq-local buffer-file-name file)
     (message "Publish %s" file)
     (org-hugo-export-to-md)))
