@@ -440,7 +440,7 @@ Rules to automatically assign applications to workspaces and do other stuff, lik
 
 Most apps can be distinguished by a WM class (you can get one with [xprop](https://www.x.org/releases/X11R7.5/doc/man/man1/xprop.1.html)), but in some cases it doesn't work, e.g. for terminal applications. In that case rules can be based on a window title, for instance.
 
-However, watch out for the following: rule such as `for_window [title="ncmpcpp.*"] move to workspace $w9` will move **any** windows with a title, starting with `ncmpcpp` to workspace `$w9`, which, for instance, may move your browser there if you google "ncmpcpp".
+However, watch out for the following: rule such as `for_window [title="ncmpcpp.*"] move to workspace $w9` will move **any** window with a title starting with `ncmpcpp` to workspace `$w9`. For instance, it moves your browser when you google "ncmpcpp".
 
 ```vim
 assign [class="Emacs"] $w1

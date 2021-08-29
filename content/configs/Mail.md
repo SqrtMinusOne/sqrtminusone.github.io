@@ -4,7 +4,7 @@ author = ["Pavel"]
 draft = false
 +++
 
-My email configration. Currently uses [lieer](https://github.com/gauteh/lieer) to fetch emails from Gmail, [davmail](http://davmail.sourceforge.net/) & [offlineimap](http://www.offlineimap.org/) to fetch emails from MS Exchange, [notmuch](https://notmuchmail.org/) to index, [msmtp](https://marlam.de/msmtp/) to send emails. Also using notmuch frontend from Emacs.
+My email configration. Currently I use [lieer](https://github.com/gauteh/lieer) to fetch emails from Gmail, [davmail](http://davmail.sourceforge.net/) & [offlineimap](http://www.offlineimap.org/) to fetch emails from MS Exchange, [notmuch](https://notmuchmail.org/) to index, [msmtp](https://marlam.de/msmtp/) to send emails. Also using notmuch frontend from Emacs.
 
 My problem with any particular mail setup was that I use Gmail labels quite extensively, and handling these over IMAP is rather awkward. Notmuch seems to be the only software that provides the same first-class support for labels.
 
@@ -86,7 +86,7 @@ davmail.imapAutoExpunge=false
 davmail.enableKeepalive=false
 ```
 
-Also it's a bit of problem to get it launched as it looks for some jars in pwd, so here is a script.
+Also it's a bit of problem to get it launched as it looks for its jars in the pwd, so here is a script.
 
 ```bash
 cd $HOME/bin/davmail-6.0.0-3375
@@ -102,9 +102,9 @@ Shepherd service is defined in [Desktop.org]({{< relref "Desktop" >}}).
 |-----------------|
 | offlineimap     |
 
-[OfflineIMAP](https://github.com/OfflineIMAP/offlineimap) is a program that can synchronize IMAP mailbox and Maildir. Lieer does everything by itself, but my pirate Exchange IMAP needs this program. There is also [isync](https://isync.sourceforge.io/), but I had some weird issues with duplicate UIDs, which don't occur for OfflineIMAP.
+[OfflineIMAP](https://github.com/OfflineIMAP/offlineimap) is a program that can synchronize IMAP mailbox and Maildir. Lieer does everything by itself, but my pirate Exchange IMAP needs this program. There is also [isync](https://isync.sourceforge.io/), but there I had some weird issues with duplicate UIDs, which don't occur for OfflineIMAP.
 
-I have a few options for setting a username and password. First, I can run `pass` in `remotepasswordeval`, and this is fine, but it will keep by keyring unlocked because I want to run `offlineimap` every couple of minutes.
+I have a few options for setting a username and password. First, I can run `pass` in `remotepasswordeval`, and while this will work, it will keep my keyring unlocked because I want to run `offlineimap` every couple of minutes.
 
 Another option is to use noweb and not push the file below to the version control. Then I have a plaintext password of email on my computer, but I think it's a lesser evil than the entire keyring.
 
@@ -150,7 +150,7 @@ ssl = no
 | notmuch         |
 | parallel        |
 
-Notmuch is an email indexer program, which handles labels in a way somewhat like Gmail. It also provides a frontend for Emacs, but it's not the only one available.
+Notmuch is an email indexer program, which handles labels in a way somewhat similar to Gmail. It also provides a frontend for Emacs, but it's not the only one available.
 
 
 ### Config {#config}
@@ -198,7 +198,7 @@ synchronize_flags=true
 
 ### Hooks {#hooks}
 
-Now we have to link up lieer & Maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.
+Now we have to link up lieer & davmail's maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.
 
 With lieer and Gmail, it is enough to simply run the program, because Gmail has first-class support for tags. Maildir does not, so I decide to synchronize notmuch tags and IMAP folders. In essence, the idea is to:
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head>
+<html lang=""><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -9,9 +9,10 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
 
     
-    <link rel="stylesheet" href="/sass/researcher.css">
+    <link rel="stylesheet" href="/sass/researcher.min.css">
 
     
         <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
@@ -24,7 +25,7 @@
 
     <body><div class="container mt-5">
     <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
-        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
           
           SqrtMinusOne
         </a>
@@ -32,21 +33,21 @@
             
                 
                 
-                    <a class="nav-item nav-link" href="/">
+                    <a class="nav-item nav-link" href="/" title="Index">
                         Index
                     </a>
                     
                         <span class="nav-item navbar-text mx-1">/</span>
                     
                 
-                    <a class="nav-item nav-link" href="/posts/">
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
                         Posts
                     </a>
                     
                         <span class="nav-item navbar-text mx-1">/</span>
                     
                 
-                    <a class="nav-item nav-link" href="/configs/readme">
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
                         Configs
                     </a>
                     
@@ -58,7 +59,7 @@
 <hr>
 <div id="content">
 <div class="container">
-    <p>My email configration. Currently uses <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
+    <p>My email configration. Currently I use <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
 <p>My problem with any particular mail setup was that I use Gmail labels quite extensively, and handling these over IMAP is rather awkward. Notmuch seems to be the only software that provides the same first-class support for labels.</p>
 <p>But I also have an Exchange account, with which I communicate via IMAP/SMTP adapter, and in this case, I synchronize notmuch tags and IMAP folders.</p>
 <p>References:</p>
@@ -132,7 +133,7 @@ gmi set --ignore-tags-local new
 
 <span style="color:#a6e22e">davmail.imapAutoExpunge</span><span style="color:#f92672">=</span><span style="color:#e6db74">false</span>
 <span style="color:#a6e22e">davmail.enableKeepalive</span><span style="color:#f92672">=</span><span style="color:#e6db74">false</span>
-</code></pre></div><p>Also it&rsquo;s a bit of problem to get it launched as it looks for some jars in pwd, so here is a script.</p>
+</code></pre></div><p>Also it&rsquo;s a bit of problem to get it launched as it looks for its jars in the pwd, so here is a script.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cd $HOME/bin/davmail-6.0.0-3375
 ./davmail davmail.properties
 </code></pre></div><p>Shepherd service is defined in <a href="/configs/desktop/">Desktop.org</a>.</p>
@@ -149,8 +150,8 @@ gmi set --ignore-tags-local new
 </tr>
 </tbody>
 </table>
-<p><a href="https://github.com/OfflineIMAP/offlineimap">OfflineIMAP</a> is a program that can synchronize IMAP mailbox and Maildir. Lieer does everything by itself, but my pirate Exchange IMAP needs this program. There is also <a href="https://isync.sourceforge.io/">isync</a>, but I had some weird issues with duplicate UIDs, which don&rsquo;t occur for OfflineIMAP.</p>
-<p>I have a few options for setting a username and password. First, I can run <code>pass</code> in <code>remotepasswordeval</code>, and this is fine, but it will keep by keyring unlocked because I want to run <code>offlineimap</code> every couple of minutes.</p>
+<p><a href="https://github.com/OfflineIMAP/offlineimap">OfflineIMAP</a> is a program that can synchronize IMAP mailbox and Maildir. Lieer does everything by itself, but my pirate Exchange IMAP needs this program. There is also <a href="https://isync.sourceforge.io/">isync</a>, but there I had some weird issues with duplicate UIDs, which don&rsquo;t occur for OfflineIMAP.</p>
+<p>I have a few options for setting a username and password. First, I can run <code>pass</code> in <code>remotepasswordeval</code>, and while this will work, it will keep my keyring unlocked because I want to run <code>offlineimap</code> every couple of minutes.</p>
 <p>Another option is to use noweb and not push the file below to the version control. Then I have a plaintext password of email on my computer, but I think it&rsquo;s a lesser evil than the entire keyring.</p>
 <p>I would use <code>password-store-get</code> from password-store.el, but I want this to be able to run without any 3rd party packages, so it&rsquo;s just bash.</p>
 <p><a id="code-snippet--mail-username"></a></p>
@@ -192,7 +193,7 @@ gmi set --ignore-tags-local new
 </tr>
 </tbody>
 </table>
-<p>Notmuch is an email indexer program, which handles labels in a way somewhat like Gmail. It also provides a frontend for Emacs, but it&rsquo;s not the only one available.</p>
+<p>Notmuch is an email indexer program, which handles labels in a way somewhat similar to Gmail. It also provides a frontend for Emacs, but it&rsquo;s not the only one available.</p>
 <h3 id="config">Config</h3>
 <p>Not much is going on here.</p>
 <p>First, the database path.</p>
@@ -214,7 +215,7 @@ gmi set --ignore-tags-local new
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[maildir]</span>
 <span style="color:#a6e22e">synchronize_flags</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
 </code></pre></div><h3 id="hooks">Hooks</h3>
-<p>Now we have to link up lieer &amp; Maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.</p>
+<p>Now we have to link up lieer &amp; davmail&rsquo;s maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.</p>
 <p>With lieer and Gmail, it is enough to simply run the program, because Gmail has first-class support for tags. Maildir does not, so I decide to synchronize notmuch tags and IMAP folders. In essence, the idea is to:</p>
 <ul>
 <li>move emails to their folders by tags <em>before</em> the synchronization</li>
@@ -593,10 +594,13 @@ text/html; firefox %s
 </div>
 
         </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
     
-        <hr>
         <div class="container text-center">
-            <a href="https://sqrtminusone.xyz/"><small>Pavel Korytov, 2021</small></a>
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2021"><small>Pavel Korytov, 2021</small></a>
         </div>
     
 </div>

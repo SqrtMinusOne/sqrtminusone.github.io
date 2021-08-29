@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head>
+<html lang=""><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -9,9 +9,10 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
 
     
-    <link rel="stylesheet" href="/sass/researcher.css">
+    <link rel="stylesheet" href="/sass/researcher.min.css">
 
     
         <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
@@ -24,7 +25,7 @@
 
     <body><div class="container mt-5">
     <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
-        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
           
           SqrtMinusOne
         </a>
@@ -32,21 +33,21 @@
             
                 
                 
-                    <a class="nav-item nav-link" href="/">
+                    <a class="nav-item nav-link" href="/" title="Index">
                         Index
                     </a>
                     
                         <span class="nav-item navbar-text mx-1">/</span>
                     
                 
-                    <a class="nav-item nav-link" href="/posts/">
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
                         Posts
                     </a>
                     
                         <span class="nav-item navbar-text mx-1">/</span>
                     
                 
-                    <a class="nav-item nav-link" href="/configs/readme">
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
                         Configs
                     </a>
                     
@@ -159,11 +160,7 @@
 <li><a href="#snippets">Snippets</a></li>
 <li><a href="#time-trackers">Time trackers</a>
 <ul>
-<li><a href="#wakatime">WakaTime</a>
-<ul>
-<li><a href="#fixes">Fixes</a></li>
-</ul>
-</li>
+<li><a href="#wakatime">WakaTime</a></li>
 <li><a href="#activitywatch">ActivityWatch</a></li>
 </ul>
 </li>
@@ -747,6 +744,7 @@
      helpful
      compile
      comint
+     git-timemachine
      magit
      prodigy)))
 </code></pre></div><h3 id="more-keybindings">More keybindings</h3>
@@ -1282,7 +1280,8 @@
   :hook (company-mode <span style="color:#f92672">.</span> company-box-mode))
 </code></pre></div><h3 id="git-and-magit">Git &amp; Magit</h3>
 <p><a href="https://magit.vc/">Magic</a> is a git interface for Emacs. The closest non-Emacs alternative (sans actual clones) I know is <a href="https://github.com/jesseduffield/lazygit">lazygit</a>, which I used before Emacs.</p>
-<p>Also, <a href="https://github.com/emacsorphanage/git-gutter">git-gutter</a> is plugin which shows git changes for each line (added/changed/deleted lines).</p>
+<p><a href="https://github.com/emacsorphanage/git-gutter">git-gutter</a> is a package which shows git changes for each line (added/changed/deleted lines).</p>
+<p><a href="https://github.com/emacsmirror/git-timemachine">git-timemachine</a> allows to visit previous versions of a file.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package magit
   :straight <span style="color:#66d9ef">t</span>
   :commands (magit-status magit-file-dispatch)
@@ -1306,6 +1305,10 @@
   :if (not my/slow-ssh)
   :config
   (global-git-gutter-mode <span style="color:#ae81ff">+1</span>))
+
+(use-package git-timemachine
+  :straight <span style="color:#66d9ef">t</span>
+  :commands (git-timemachine))
 
 (my-leader-def
   <span style="color:#e6db74">&#34;m&#34;</span> <span style="color:#e6db74">&#39;magit</span>
@@ -1358,57 +1361,13 @@
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package wakatime-mode
-  :straight <span style="color:#66d9ef">t</span>
+  :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/wakatime-mode&#34;</span>)
   :if (not my/is-termux)
   :config
   &lt;&lt;wakatime-fixes&gt;&gt;
   (advice-add <span style="color:#e6db74">&#39;wakatime-init</span> :after (lambda () (setq wakatime-cli-path <span style="color:#e6db74">&#34;/home/pavel/bin/wakatime-cli&#34;</span>)))
   <span style="color:#75715e">;; (setq wakatime-cli-path (executable-find &#34;wakatime&#34;))</span>
   (global-wakatime-mode))
-</code></pre></div><h5 id="fixes">Fixes</h5>
-<p>wakatime-mode.el seems to be incompatible with the latest Go cli. The fix is to replace <code>--file</code> with <code>--entity</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun wakatime-client-command (savep)
-  <span style="color:#e6db74">&#34;Return client command executable and arguments.
-</span><span style="color:#e6db74">   Set SAVEP to non-nil for write action.&#34;</span>
-  (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%s%s--entity \&#34;%s\&#34; --plugin \&#34;%s/%s\&#34; --time %.2f%s%s&#34;</span>
-    (if (s-blank wakatime-python-bin) <span style="color:#e6db74">&#34;&#34;</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;\&#34;%s\&#34; &#34;</span> wakatime-python-bin))
-    (if (s-blank wakatime-cli-path) <span style="color:#e6db74">&#34;wakatime &#34;</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;\&#34;%s\&#34; &#34;</span> wakatime-cli-path))
-    (<span style="color:#a6e22e">buffer-file-name</span> (<span style="color:#a6e22e">current-buffer</span>))
-    wakatime-user-agent
-    wakatime-version
-    (<span style="color:#a6e22e">float-time</span>)
-    (if savep <span style="color:#e6db74">&#34; --write&#34;</span> <span style="color:#e6db74">&#34;&#34;</span>)
-    (if (s-blank wakatime-api-key) <span style="color:#e6db74">&#34;&#34;</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34; --key %s&#34;</span> wakatime-api-key))))
-</code></pre></div><p>Also, until <a href="https://github.com/wakatime/wakatime-cli/issues/509">this issue</a> is resolved, I set <code>wakatime-call</code> to ignore exit-code 1.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun wakatime-call (savep)
-  <span style="color:#e6db74">&#34;Call WakaTime command.&#34;</span>
-  (let*
-      ((command (wakatime-client-command savep))
-       (process-environment (if wakatime-python-path (<span style="color:#a6e22e">cons</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;PYTHONPATH=%s&#34;</span> wakatime-python-path) process-environment) process-environment))
-       (process
-	(<span style="color:#a6e22e">start-process</span>
-	 <span style="color:#e6db74">&#34;Shell&#34;</span>
-	 (generate-new-buffer <span style="color:#e6db74">&#34; *WakaTime messages*&#34;</span>)
-	 shell-file-name
-	 shell-command-switch
-	 command)))
-
-    (<span style="color:#a6e22e">set-process-sentinel</span> process
-			  <span style="color:#f92672">`</span>(lambda (process <span style="color:#a6e22e">signal</span>)
-			     (when (<span style="color:#a6e22e">memq</span> (<span style="color:#a6e22e">process-status</span> process) <span style="color:#f92672">&#39;</span>(exit <span style="color:#a6e22e">signal</span>))
-			       (<span style="color:#a6e22e">kill-buffer</span> (<span style="color:#a6e22e">process-buffer</span> process))
-			       (let ((exit-status (<span style="color:#a6e22e">process-exit-status</span> process)))
-				 (when (and (not (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">0</span> exit-status)) (not (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">102</span> exit-status)) (not (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">1</span> exit-status)))
-				   (when wakatime-disable-on-error
-				     (wakatime-mode <span style="color:#ae81ff">-1</span>)
-				     (global-wakatime-mode <span style="color:#ae81ff">-1</span>))
-				   (cond
-				    ((<span style="color:#a6e22e">=</span> exit-status <span style="color:#ae81ff">103</span>) (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;WakaTime Error (%s) Config file parse error. Check your ~/.wakatime.cfg file.&#34;</span> exit-status))
-				    ((<span style="color:#a6e22e">=</span> exit-status <span style="color:#ae81ff">104</span>) (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables &#39;(wakatime-api-key \&#34;XXXX\&#34;))&#34;</span> exit-status))
-				    ((<span style="color:#a6e22e">=</span> exit-status <span style="color:#ae81ff">105</span>) (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode&#34;</span> exit-status))
-				    ((<span style="color:#a6e22e">=</span> exit-status <span style="color:#ae81ff">106</span>) (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode&#34;</span> exit-status))
-				    (<span style="color:#66d9ef">t</span> (<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;WakaTime Error (%s) Make sure this command runs in a Terminal: %s&#34;</span> exit-status (wakatime-client-command <span style="color:#66d9ef">nil</span>)))))))))
-    (<span style="color:#a6e22e">set-process-query-on-exit-flag</span> process <span style="color:#66d9ef">nil</span>)))
 </code></pre></div><h4 id="activitywatch">ActivityWatch</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package request
   :straight <span style="color:#66d9ef">t</span>)
@@ -2192,7 +2151,7 @@
   :init
   (my-leader-def <span style="color:#e6db74">&#34;ar&#34;</span> <span style="color:#e6db74">&#39;jupyter-run-repl</span>))
 </code></pre></div><p>Refresh kernelspecs.</p>
-<p>Kernelspecs by default are hashed, so even switching Anaconda environments doesn&rsquo;t change kernel (i.e. kernel from the first environment is run after the switch to the second one).</p>
+<p>Kernelspecs by default are hashed, so even switching Anaconda environments doesn&rsquo;t change the kernel (i.e. kernel from the first environment is run after the switch to the second one).</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/jupyter-refresh-kernelspecs ()
   <span style="color:#e6db74">&#34;Refresh Jupyter kernelspecs&#34;</span>
   (interactive)
@@ -4243,8 +4202,8 @@ MimeType=x-scheme-handler/org-protocol
     (when link
       (eww link))))
 </code></pre></div><h5 id="youtube">YouTube</h5>
-<p>Previously this block was opening MPV with <code>start-process</code>, but now I&rsquo;ve managed to hook up MPV with EMMS. So there is the integration of elfeed with EMMS.</p>
-<p>The following function converts URLs from Invidious to YouTube.</p>
+<p>Previously this block was opening MPV with <code>start-process</code>, but now I&rsquo;ve managed to hook up MPV with EMMS. So there is the EMMS+elfeed &ldquo;integration&rdquo;.</p>
+<p>The following function converts URLs from Invidious and the like to YouTube.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/get-youtube-url (link)
   (let ((watch-id (cadr
 		   (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#34;watch?v&#34;</span>
@@ -4273,7 +4232,7 @@ MimeType=x-scheme-handler/org-protocol
    :keymaps <span style="color:#e6db74">&#39;elfeed-show-mode-map</span>
    <span style="color:#e6db74">&#34;gm&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/elfeed-add-emms-youtube))
 </code></pre></div><h4 id="emms">EMMS</h4>
-<p>EMMS is the Emacs Multi-Media System. I control MPD from Emacs with its help.</p>
+<p>EMMS is the Emacs Multi-Media System. I use it to control MPD &amp; MPV.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://www.gnu.org/software/emms/manual/">EMMS Manual</a></li>
@@ -4327,16 +4286,16 @@ MimeType=x-scheme-handler/org-protocol
 (setq emms-player-mpd-server-name <span style="color:#e6db74">&#34;localhost&#34;</span>)
 (setq emms-player-mpd-server-port <span style="color:#e6db74">&#34;6600&#34;</span>)
 (setq emms-player-mpd-music-directory <span style="color:#e6db74">&#34;~/Music&#34;</span>)
-</code></pre></div><p>Connect on setup. For some reason, it stops mpd playback whenever it connects, but it is not a big issue.</p>
+</code></pre></div><p>Connect on setup. For some reason, it stops the mpd playback whenever it connects, but it is not a big issue.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-mpd-connect)
-</code></pre></div><p>Clear MPD playlist on clearing EMMS playlist. IDK if this is fine for MPD playlists, I don&rsquo;t use them anyhow.</p>
+</code></pre></div><p>Clear MPD playlist on clearing EMMS playlist. IDK if this is fine for MPD library playlist, I don&rsquo;t use them anyhow.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-hook <span style="color:#e6db74">&#39;emms-playlist-cleared-hook</span> <span style="color:#e6db74">&#39;emms-player-mpd-clear</span>)
-</code></pre></div><p>Set a custom regex for MPD. EMMS sets up the default regex from mpd diagnostic output so that regex opens basically everything, including videos, https links, etc. That is fine if MPD is the only player in EMMS, but as I want to use MPV as well, I override the regex.</p>
+</code></pre></div><p>Set a custom regex for MPD. EMMS sets up the default one from MPD&rsquo;s diagnostic output so that regex opens basically everything, including videos, https links, etc. That is fine if MPD is the only player in EMMS, but as I want to use MPV as well, I override the regex.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-set emms-player-mpd
 		 <span style="color:#e6db74">&#39;regex</span>
 		 (emms-player-simple-regexp
 		  <span style="color:#e6db74">&#34;m3u&#34;</span> <span style="color:#e6db74">&#34;ogg&#34;</span> <span style="color:#e6db74">&#34;flac&#34;</span> <span style="color:#e6db74">&#34;mp3&#34;</span> <span style="color:#e6db74">&#34;wav&#34;</span> <span style="color:#e6db74">&#34;mod&#34;</span> <span style="color:#e6db74">&#34;au&#34;</span> <span style="color:#e6db74">&#34;aiff&#34;</span>))
-</code></pre></div><p>Now, after all this is done, run <code>M-x emms-cache-set-from-mpd-all</code> to set cache from MPD. If everything is correct, EMMS browser will be populated with MPD database.</p>
+</code></pre></div><p>After all this is done, run <code>M-x emms-cache-set-from-mpd-all</code> to set cache from MPD. If everything is correct, EMMS browser will be populated with MPD database.</p>
 <h5 id="mpv">MPV</h5>
 <table>
 <thead>
@@ -4363,7 +4322,7 @@ MimeType=x-scheme-handler/org-protocol
 			    (<span style="color:#a6e22e">*</span> nonl)
 			    (regexp (<span style="color:#a6e22e">eval</span> (emms-player-simple-regexp
 					   <span style="color:#e6db74">&#34;mp4&#34;</span> <span style="color:#e6db74">&#34;mov&#34;</span> <span style="color:#e6db74">&#34;wmv&#34;</span> <span style="color:#e6db74">&#34;webm&#34;</span> <span style="color:#e6db74">&#34;flv&#34;</span> <span style="color:#e6db74">&#34;avi&#34;</span> <span style="color:#e6db74">&#34;mkv&#34;</span>)))))))
-</code></pre></div><p>By default MPV, plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose youtube quality.</p>
+</code></pre></div><p>By default MPV plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose the quality.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/youtube-dl-quality-list
       <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;bestvideo[height&lt;=720]+bestaudio/best[height&lt;=720]&#34;</span>
 	<span style="color:#e6db74">&#34;bestvideo[height&lt;=480]+bestaudio/best[height&lt;=480]&#34;</span>
@@ -4382,7 +4341,7 @@ MimeType=x-scheme-handler/org-protocol
 (my/set-emms-mpd-youtube-quality (<span style="color:#a6e22e">car</span> my/youtube-dl-quality-list))
 </code></pre></div><p>Now <code>emms-add-url</code> should work on YouTube URLs just fine. Just keep in mind that it will only add the URL to the playlist, not play it right away.</p>
 <h5 id="cache-cleanup">Cache cleanup</h5>
-<p>Now, all these URLs reside in EMMS cache after being played. I don&rsquo;t want them to stay there for a long time, so here is a handy function to clean it.</p>
+<p>All added URLs reside in the EMMS cache after being played. I don&rsquo;t want them to stay there for a long time, so here is a handy function to clean it.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/emms-cleanup-urls ()
   (interactive)
   (let ((keys-to-delete <span style="color:#f92672">&#39;</span>()))
@@ -4398,7 +4357,7 @@ MimeType=x-scheme-handler/org-protocol
 </code></pre></div><h5 id="fetching-lyrics">Fetching lyrics</h5>
 <p>My package for fetching EMMS lyrics and album covers.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package lyrics-fetcher
-  :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/lyrics-fetcher.el&#34;</span>)
+  :straight <span style="color:#66d9ef">t</span>
   :after (emms)
   :init
   (my-leader-def
@@ -4426,7 +4385,7 @@ MimeType=x-scheme-handler/org-protocol
    :keymaps <span style="color:#e6db74">&#39;emms-playlist-mode-map</span>
    <span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#e6db74">&#39;quit-window</span>))
 </code></pre></div><h5 id="emms-and-mpd-fixes">EMMS &amp; mpd Fixes</h5>
-<p>Some fixes until I submit a patch.</p>
+<p><del>Some fixes until I submit a patch.</del> I&rsquo;ve submitted a patch for with these fixes, so I&rsquo;ll remove this section eventually.</p>
 <p>For some reason EMMS doesn&rsquo;t fetch <code>albumartist</code> from MPD. Overriding this function fixes that.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun emms-info-mpd-process (track info)
   (dolist (data info)
@@ -4572,7 +4531,7 @@ tag2: value2&#39;
   <span style="color:#e6db74">&#34;t&#34;</span> <span style="color:#e6db74">&#39;google-translate-smooth-translate</span>)
 </code></pre></div><h3 id="reading-documentation">Reading documentation</h3>
 <h4 id="tldr">tldr</h4>
-<p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in in the Emacs package download is broken, so I use my own function.</p>
+<p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package tldr
   :straight <span style="color:#66d9ef">t</span>
   :commands (tldr)
@@ -4840,10 +4799,13 @@ tag2: value2&#39;
 </div>
 
         </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
     
-        <hr>
         <div class="container text-center">
-            <a href="https://sqrtminusone.xyz/"><small>Pavel Korytov, 2021</small></a>
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2021"><small>Pavel Korytov, 2021</small></a>
         </div>
     
 </div>

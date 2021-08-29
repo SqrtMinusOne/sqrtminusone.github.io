@@ -76,7 +76,6 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [Snippets](#snippets)
     - [Time trackers](#time-trackers)
         - [WakaTime](#wakatime)
-            - [Fixes](#fixes)
         - [ActivityWatch](#activitywatch)
 - [UI](#ui)
     - [General UI & GUI Settings](#general-ui-and-gui-settings)
@@ -690,6 +689,7 @@ I don't enable the entire package, just the modes I need.
      helpful
      compile
      comint
+     git-timemachine
      magit
      prodigy)))
 ```
@@ -1441,7 +1441,9 @@ A company frontend with nice icons.
 
 [Magic](https://magit.vc/) is a git interface for Emacs. The closest non-Emacs alternative (sans actual clones) I know is [lazygit](https://github.com/jesseduffield/lazygit), which I used before Emacs.
 
-Also, [git-gutter](https://github.com/emacsorphanage/git-gutter) is plugin which shows git changes for each line (added/changed/deleted lines).
+[git-gutter](https://github.com/emacsorphanage/git-gutter) is a package which shows git changes for each line (added/changed/deleted lines).
+
+[git-timemachine](https://github.com/emacsmirror/git-timemachine) allows to visit previous versions of a file.
 
 ```emacs-lisp
 (use-package magit
@@ -1467,6 +1469,10 @@ Also, [git-gutter](https://github.com/emacsorphanage/git-gutter) is plugin which
   :if (not my/slow-ssh)
   :config
   (global-git-gutter-mode +1))
+
+(use-package git-timemachine
+  :straight t
+  :commands (git-timemachine))
 
 (my-leader-def
   "m" 'magit
@@ -1543,67 +1549,13 @@ Before I figure out how to package this for Guix:
 
 ```emacs-lisp
 (use-package wakatime-mode
-  :straight t
+  :straight (:host github :repo "SqrtMinusOne/wakatime-mode")
   :if (not my/is-termux)
   :config
   <<wakatime-fixes>>
   (advice-add 'wakatime-init :after (lambda () (setq wakatime-cli-path "/home/pavel/bin/wakatime-cli")))
   ;; (setq wakatime-cli-path (executable-find "wakatime"))
   (global-wakatime-mode))
-```
-
-
-##### Fixes {#fixes}
-
-wakatime-mode.el seems to be incompatible with the latest Go cli. The fix is to replace `--file` with `--entity`.
-
-```emacs-lisp
-(defun wakatime-client-command (savep)
-  "Return client command executable and arguments.
-   Set SAVEP to non-nil for write action."
-  (format "%s%s--entity \"%s\" --plugin \"%s/%s\" --time %.2f%s%s"
-    (if (s-blank wakatime-python-bin) "" (format "\"%s\" " wakatime-python-bin))
-    (if (s-blank wakatime-cli-path) "wakatime " (format "\"%s\" " wakatime-cli-path))
-    (buffer-file-name (current-buffer))
-    wakatime-user-agent
-    wakatime-version
-    (float-time)
-    (if savep " --write" "")
-    (if (s-blank wakatime-api-key) "" (format " --key %s" wakatime-api-key))))
-```
-
-Also, until [this issue](https://github.com/wakatime/wakatime-cli/issues/509) is resolved, I set `wakatime-call` to ignore exit-code 1.
-
-```emacs-lisp
-(defun wakatime-call (savep)
-  "Call WakaTime command."
-  (let*
-      ((command (wakatime-client-command savep))
-       (process-environment (if wakatime-python-path (cons (format "PYTHONPATH=%s" wakatime-python-path) process-environment) process-environment))
-       (process
-	(start-process
-	 "Shell"
-	 (generate-new-buffer " *WakaTime messages*")
-	 shell-file-name
-	 shell-command-switch
-	 command)))
-
-    (set-process-sentinel process
-			  `(lambda (process signal)
-			     (when (memq (process-status process) '(exit signal))
-			       (kill-buffer (process-buffer process))
-			       (let ((exit-status (process-exit-status process)))
-				 (when (and (not (= 0 exit-status)) (not (= 102 exit-status)) (not (= 1 exit-status)))
-				   (when wakatime-disable-on-error
-				     (wakatime-mode -1)
-				     (global-wakatime-mode -1))
-				   (cond
-				    ((= exit-status 103) (error "WakaTime Error (%s) Config file parse error. Check your ~/.wakatime.cfg file." exit-status))
-				    ((= exit-status 104) (error "WakaTime Error (%s) Invalid API Key. Set your api key with: (custom-set-variables '(wakatime-api-key \"XXXX\"))" exit-status))
-				    ((= exit-status 105) (error "WakaTime Error (%s) Unknown wakatime-cli error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
-				    ((= exit-status 106) (error "WakaTime Error (%s) Malformed heartbeat error. Please check your ~/.wakatime.log file and open a new issue at https://github.com/wakatime/wakatime-mode" exit-status))
-				    (t (message "WakaTime Error (%s) Make sure this command runs in a Terminal: %s" exit-status (wakatime-client-command nil)))))))))
-    (set-process-query-on-exit-flag process nil)))
 ```
 
 
@@ -2648,7 +2600,7 @@ References:
 
 Refresh kernelspecs.
 
-Kernelspecs by default are hashed, so even switching Anaconda environments doesn't change kernel (i.e. kernel from the first environment is run after the switch to the second one).
+Kernelspecs by default are hashed, so even switching Anaconda environments doesn't change the kernel (i.e. kernel from the first environment is run after the switch to the second one).
 
 ```emacs-lisp
 (defun my/jupyter-refresh-kernelspecs ()
@@ -5377,9 +5329,9 @@ Open a URL with eww.
 
 ##### YouTube {#youtube}
 
-Previously this block was opening MPV with `start-process`, but now I've managed to hook up MPV with EMMS. So there is the integration of elfeed with EMMS.
+Previously this block was opening MPV with `start-process`, but now I've managed to hook up MPV with EMMS. So there is the EMMS+elfeed "integration".
 
-The following function converts URLs from Invidious to YouTube.
+The following function converts URLs from Invidious and the like to YouTube.
 
 ```emacs-lisp
 (defun my/get-youtube-url (link)
@@ -5418,7 +5370,7 @@ Now, a function to add YouTube link with metadata from elfeed to EMMS.
 
 #### EMMS {#emms}
 
-EMMS is the Emacs Multi-Media System. I control MPD from Emacs with its help.
+EMMS is the Emacs Multi-Media System. I use it to control MPD & MPV.
 
 References:
 
@@ -5483,19 +5435,19 @@ References:
 (setq emms-player-mpd-music-directory "~/Music")
 ```
 
-Connect on setup. For some reason, it stops mpd playback whenever it connects, but it is not a big issue.
+Connect on setup. For some reason, it stops the mpd playback whenever it connects, but it is not a big issue.
 
 ```emacs-lisp
 (emms-player-mpd-connect)
 ```
 
-Clear MPD playlist on clearing EMMS playlist. IDK if this is fine for MPD playlists, I don't use them anyhow.
+Clear MPD playlist on clearing EMMS playlist. IDK if this is fine for MPD library playlist, I don't use them anyhow.
 
 ```emacs-lisp
 (add-hook 'emms-playlist-cleared-hook 'emms-player-mpd-clear)
 ```
 
-Set a custom regex for MPD. EMMS sets up the default regex from mpd diagnostic output so that regex opens basically everything, including videos, https links, etc. That is fine if MPD is the only player in EMMS, but as I want to use MPV as well, I override the regex.
+Set a custom regex for MPD. EMMS sets up the default one from MPD's diagnostic output so that regex opens basically everything, including videos, https links, etc. That is fine if MPD is the only player in EMMS, but as I want to use MPV as well, I override the regex.
 
 ```emacs-lisp
 (emms-player-set emms-player-mpd
@@ -5504,7 +5456,7 @@ Set a custom regex for MPD. EMMS sets up the default regex from mpd diagnostic o
 		  "m3u" "ogg" "flac" "mp3" "wav" "mod" "au" "aiff"))
 ```
 
-Now, after all this is done, run `M-x emms-cache-set-from-mpd-all` to set cache from MPD. If everything is correct, EMMS browser will be populated with MPD database.
+After all this is done, run `M-x emms-cache-set-from-mpd-all` to set cache from MPD. If everything is correct, EMMS browser will be populated with MPD database.
 
 
 ##### MPV {#mpv}
@@ -5532,7 +5484,7 @@ Also a custom regex. My demands for MPV include running `youtube-dl`, so there i
 					   "mp4" "mov" "wmv" "webm" "flv" "avi" "mkv")))))))
 ```
 
-By default MPV, plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose youtube quality.
+By default MPV plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose the quality.
 
 ```emacs-lisp
 (setq my/youtube-dl-quality-list
@@ -5558,7 +5510,7 @@ Now `emms-add-url` should work on YouTube URLs just fine. Just keep in mind that
 
 ##### Cache cleanup {#cache-cleanup}
 
-Now, all these URLs reside in EMMS cache after being played. I don't want them to stay there for a long time, so here is a handy function to clean it.
+All added URLs reside in the EMMS cache after being played. I don't want them to stay there for a long time, so here is a handy function to clean it.
 
 ```emacs-lisp
 (defun my/emms-cleanup-urls ()
@@ -5582,7 +5534,7 @@ My package for fetching EMMS lyrics and album covers.
 
 ```emacs-lisp
 (use-package lyrics-fetcher
-  :straight (:host github :repo "SqrtMinusOne/lyrics-fetcher.el")
+  :straight t
   :after (emms)
   :init
   (my-leader-def
@@ -5619,7 +5571,7 @@ My package for fetching EMMS lyrics and album covers.
 
 ##### EMMS & mpd Fixes {#emms-and-mpd-fixes}
 
-Some fixes until I submit a patch.
+~~Some fixes until I submit a patch.~~ I've submitted a patch for with these fixes, so I'll remove this section eventually.
 
 For some reason EMMS doesn't fetch `albumartist` from MPD. Overriding this function fixes that.
 
@@ -5820,7 +5772,7 @@ References:
 
 #### tldr {#tldr}
 
-[tldr](https://tldr.sh/) is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in in the Emacs package download is broken, so I use my own function.
+[tldr](https://tldr.sh/) is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.
 
 ```emacs-lisp
 (use-package tldr
