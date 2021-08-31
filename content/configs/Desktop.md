@@ -897,7 +897,7 @@ The script below allows me to:
 ```bash
 hostname=$(hostname)
 # Settings varying on the hostname
-export WLAN_INTERFACE=$(nmcli -f DEVICE con show | grep -Ev "(.*docker.*|DEVICE|br.*|tun.*|--)" | xargs)
+export WLAN_INTERFACE=$(nmcli -f DEVICE con show | grep -Ev "(.*docker.*|DEVICE|br.*|tun.*|veth.*|--)" | xargs)
 if [ "$hostname" = "azure" ]; then
     TRAY_MONITOR="eDP-1"
     # export WLAN_INTERFACE="wlp3s0"
@@ -936,7 +936,7 @@ declare -A BLOCKS=(
 )
 
 # Geolocation for some modules
-export LOC="SPB"
+export LOC="TMN"
 
 export IPSTACK_API_KEY=$(pass show My_Online/APIs/ipstack | head -n 1)
 
@@ -2346,6 +2346,7 @@ This section generates manifests for various desktop software that I'm using.
 | dev      | node            |
 | dev      | openjdk         |
 | dev      | go              |
+| dev      | gcc-toolchain   |
 
 
 ### Manifests {#manifests}

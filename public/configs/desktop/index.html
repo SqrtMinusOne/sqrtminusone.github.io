@@ -894,7 +894,7 @@ setxkbmap -model pc105 -option <span style="color:#e6db74">&#39;grp:win_space_to
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hostname<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>hostname<span style="color:#66d9ef">)</span>
 <span style="color:#75715e"># Settings varying on the hostname</span>
-export WLAN_INTERFACE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>nmcli -f DEVICE con show | grep -Ev <span style="color:#e6db74">&#34;(.*docker.*|DEVICE|br.*|tun.*|--)&#34;</span> | xargs<span style="color:#66d9ef">)</span>
+export WLAN_INTERFACE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>nmcli -f DEVICE con show | grep -Ev <span style="color:#e6db74">&#34;(.*docker.*|DEVICE|br.*|tun.*|veth.*|--)&#34;</span> | xargs<span style="color:#66d9ef">)</span>
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$hostname<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;azure&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
     TRAY_MONITOR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;eDP-1&#34;</span>
     <span style="color:#75715e"># export WLAN_INTERFACE=&#34;wlp3s0&#34;</span>
@@ -933,7 +933,7 @@ declare -A BLOCKS<span style="color:#f92672">=(</span>
 <span style="color:#f92672">)</span>
 
 <span style="color:#75715e"># Geolocation for some modules</span>
-export LOC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SPB&#34;</span>
+export LOC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;TMN&#34;</span>
 
 export IPSTACK_API_KEY<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>pass show My_Online/APIs/ipstack | head -n 1<span style="color:#66d9ef">)</span>
 
@@ -2299,6 +2299,10 @@ $BUKU -f <span style="color:#ae81ff">4</span> -p | awk -F<span style="color:#e6d
 <tr>
 <td>dev</td>
 <td>go</td>
+</tr>
+<tr>
+<td>dev</td>
+<td>gcc-toolchain</td>
 </tr>
 </tbody>
 </table>

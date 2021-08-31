@@ -1364,7 +1364,7 @@
   :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/wakatime-mode&#34;</span>)
   :if (not my/is-termux)
   :config
-  &lt;&lt;wakatime-fixes&gt;&gt;
+  (setq wakatime-ignore-exit-codes <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">102</span>))
   (advice-add <span style="color:#e6db74">&#39;wakatime-init</span> :after (lambda () (setq wakatime-cli-path <span style="color:#e6db74">&#34;/home/pavel/bin/wakatime-cli&#34;</span>)))
   <span style="color:#75715e">;; (setq wakatime-cli-path (executable-find &#34;wakatime&#34;))</span>
   (global-wakatime-mode))
@@ -3217,7 +3217,7 @@ MimeType=x-scheme-handler/org-protocol
   :straight <span style="color:#66d9ef">t</span>
   :init
   (my-leader-def
-    :keymaps <span style="color:#f92672">&#39;</span>(js-mode-map typescript-mode-map vue-mode-map svelte-mode-map)
+    :keymaps <span style="color:#f92672">&#39;</span>(js-mode-map web-mode-map typescript-mode-map vue-mode-map svelte-mode-map)
     <span style="color:#e6db74">&#34;rr&#34;</span> <span style="color:#a6e22e">#&#39;</span>prettier-prettify))
 </code></pre></div><h4 id="typescript">TypeScript</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package typescript-mode
@@ -3265,7 +3265,8 @@ MimeType=x-scheme-handler/org-protocol
   :config
   (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#e6db74">&#39;smartparens-mode</span>)
   (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#e6db74">&#39;hs-minor-mode</span>)
-  (my/set-smartparens-indent <span style="color:#e6db74">&#39;web-mode</span>))
+  (my/set-smartparens-indent <span style="color:#e6db74">&#39;web-mode</span>)
+  (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> ))
 </code></pre></div><p>Hooking this up with lsp.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/web-mode-lsp-extensions
       <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(rx <span style="color:#e6db74">&#34;.svelte&#34;</span> eos)
@@ -3278,6 +3279,12 @@ MimeType=x-scheme-handler/org-protocol
     (lsp-deferred)))
 
 (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>my/web-mode-lsp)
+</code></pre></div><p>Vue settings</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/web-mode-vue-setup ()
+  (when (string-match-p (rx <span style="color:#e6db74">&#34;.vue&#34;</span> eos) (<span style="color:#a6e22e">buffer-name</span>))
+    (setq-local web-mode-script-padding <span style="color:#ae81ff">0</span>)))
+
+(add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#e6db74">&#39;my/web-mode-vue-setup</span>)
 </code></pre></div><h4 id="off--vue-dot-js"><span class="org-todo done OFF">OFF</span> (OFF) Vue.js</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package vue-mode
   :straight <span style="color:#66d9ef">t</span>
@@ -3794,7 +3801,7 @@ MimeType=x-scheme-handler/org-protocol
 	  (if asc
 	      (<span style="color:#a6e22e">cdr</span> asc)
 	    (let ((python-executable
-		   (string-trim (shell-command-to-string <span style="color:#e6db74">&#34;PIPENV_IGNORE_VIRTUALENVS=1 pipenv run which python&#34;</span>))))
+		   (string-trim (shell-command-to-string <span style="color:#e6db74">&#34;PIPENV_IGNORE_VIRTUALENVS=1 pipenv run which python 2&gt;/dev/null&#34;</span>))))
 	      (if (string-match-p <span style="color:#e6db74">&#34;.*not found.*&#34;</span> python-executable)
 		  (<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;Pipfile found, but not pipenv executable!&#34;</span>)
 		(<span style="color:#a6e22e">message</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;Found pipenv python: %s&#34;</span> python-executable))
@@ -4313,7 +4320,7 @@ MimeType=x-scheme-handler/org-protocol
 </tbody>
 </table>
 <p><a href="https://mpv.io/">mpv</a> is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span> <span style="color:#66d9ef">t</span>)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span>)
 </code></pre></div><p>Also a custom regex. My demands for MPV include running <code>youtube-dl</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-set emms-player-mpv
 		 <span style="color:#e6db74">&#39;regex</span>

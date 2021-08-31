@@ -13,7 +13,7 @@ The majority of the software is configured with [literate configuration](https:/
 
 The files themselves are managed and deployed via [yadm](https://yadm.io/), but I mostly use Org Mode rich noweb whenever I can instead of what yadm offers.
 
-My current GNU/Linux distribution is [GNU Guix](https://guix.gnu.org/). In the context of this repo, Guix allows me to list all the used programs in manifests, which means I have the same set of programs across multiple machines. Looks for Org tables with "Guix dependency" in the header.
+My current GNU/Linux distribution is [GNU Guix](https://guix.gnu.org/). In the context of this repo, Guix allows me to list all the used programs in manifests, which means I have the same set of programs across multiple machines. Look for the tables with "Guix dependency" in the header.
 
 Literate configuration files:
 
@@ -70,7 +70,7 @@ Some of the notable programs are listed in the table below.
 
 ## Some statistics {#some-statistics}
 
-Run the following to show the pictures with reasonable width:
+If you are viewing the file in Emacs, eval the following to show the pictures with reasonable width:
 
 ```elisp
 (setq-local org-image-actual-width '(1024))
