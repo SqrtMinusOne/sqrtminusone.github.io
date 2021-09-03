@@ -245,6 +245,15 @@
 <ul>
 <li><a href="#capture-templates-and-various-settings">Capture templates &amp; various settings</a></li>
 <li><a href="#custom-agendas">Custom agendas</a></li>
+<li><a href="#org-ql">org-ql</a></li>
+<li><a href="#review-workflow">Review workflow</a>
+<ul>
+<li><a href="#data-from-git-and-org-roam">Data from git &amp; org-roam</a></li>
+<li><a href="#data-from-org-journal">Data from org-journal</a></li>
+<li><a href="#data-from-org-agenda-via-org-ql">Data from org-agenda via org-ql</a></li>
+<li><a href="#capture-template">Capture template</a></li>
+</ul>
+</li>
 <li><a href="#org-journal">Org Journal</a></li>
 <li><a href="#org-roam">Org Roam</a>
 <ul>
@@ -425,7 +434,7 @@
 <li><a href="#elfeed">Elfeed</a>
 <ul>
 <li><a href="#some-additions">Some additions</a></li>
-<li><a href="#youtube">YouTube</a></li>
+<li><a href="#youtube-and-emms">YouTube &amp; EMMS</a></li>
 </ul>
 </li>
 <li><a href="#emms">EMMS</a>
@@ -2398,6 +2407,198 @@
 	(<span style="color:#e6db74">&#34;tp&#34;</span> <span style="color:#e6db74">&#34;Personal tasks&#34;</span>
 	 ((tags-todo <span style="color:#e6db74">&#34;personal&#34;</span>
 		     ((org-agenda-prefix-format <span style="color:#e6db74">&#34;  %i %-12:c [%e] &#34;</span>)))))))
+</code></pre></div><h4 id="org-ql">org-ql</h4>
+<p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;m using it in my review workflow, perhaps later I&rsquo;ll find another usecases.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-ql
+  :straight (:fetcher github
+		      :repo <span style="color:#e6db74">&#34;alphapapa/org-ql&#34;</span>
+		      :files (:defaults (:exclude <span style="color:#e6db74">&#34;helm-org-ql.el&#34;</span>))))
+</code></pre></div><h4 id="review-workflow">Review workflow</h4>
+<p>My take on a review workflow. As a baseline, I want to have a template that lists the important changes since the last review and other basic information. I&rsquo;m doing reviews regularly, but the time intervals still may vary, hence this flexibility.</p>
+<h5 id="data-from-git-and-org-roam">Data from git &amp; org-roam</h5>
+<p>First, as I have <a href="/configs/console/">autocommit</a> set up in my org directory, here is a handy function to get an alist of changed files of a form <code>(status . path)</code>. In principle, the <code>rev</code> parameter can be a commit, tag, etc but here I&rsquo;m interested in a form like <code>@{2021-08-30}</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/git-diff-status
+      <span style="color:#f92672">&#39;</span>((<span style="color:#e6db74">&#34;A&#34;</span> <span style="color:#f92672">.</span> added)
+	(<span style="color:#e6db74">&#34;C&#34;</span> <span style="color:#f92672">.</span> copied)
+	(<span style="color:#e6db74">&#34;D&#34;</span> <span style="color:#f92672">.</span> deleted)
+	(<span style="color:#e6db74">&#34;M&#34;</span> <span style="color:#f92672">.</span> modified)
+	(<span style="color:#e6db74">&#34;R&#34;</span> <span style="color:#f92672">.</span> renamed)
+	(<span style="color:#e6db74">&#34;T&#34;</span> <span style="color:#f92672">.</span> type-changed)
+	(<span style="color:#e6db74">&#34;U&#34;</span> <span style="color:#f92672">.</span> unmerged)))
+
+(defun my/get-files-status (rev)
+  (let ((files (shell-command-to-string (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;git diff --name-status &#34;</span> rev))))
+    (<span style="color:#a6e22e">mapcar</span>
+     (lambda (file)
+       (let ((elems (split-string file <span style="color:#e6db74">&#34;\t&#34;</span>)))
+	 (<span style="color:#a6e22e">cons</span>
+	  (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assoc</span> (<span style="color:#a6e22e">car</span> elems) my/git-diff-status))
+	  (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> elems))))
+     (split-string files <span style="color:#e6db74">&#34;\n&#34;</span> <span style="color:#66d9ef">t</span>))))
+</code></pre></div><p>I&rsquo;ll use it to get a list of added and changed Roam files since the last review. Date should have be in a format <code>YYYY-MM-DD</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-changed-files-since-date (date)
+  (let ((default-directory org-directory))
+    (my/get-files-status (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;@{%s}&#34;</span> date))))
+</code></pre></div><p>Now we are ready to format this list to insert it into the capture template.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-review-format-roam (rev)
+  (let* ((changes (my/org-changed-files-since-date rev))
+	 (new-roam
+	  (seq-filter
+	   (lambda (elem)
+	     (and (<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">car</span> elem) <span style="color:#e6db74">&#39;added</span>)
+		  (string-match-p (rx bos <span style="color:#e6db74">&#34;roam&#34;</span>) (<span style="color:#a6e22e">cdr</span> elem))))
+	   changes))
+	 (changed-roam
+	  (seq-filter
+	   (lambda (elem)
+	     (and (<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">car</span> elem) <span style="color:#e6db74">&#39;modified</span>)
+		  (string-match-p (rx bos <span style="color:#e6db74">&#34;roam&#34;</span>) (<span style="color:#a6e22e">cdr</span> elem))))
+	   changes)))
+    (<span style="color:#a6e22e">concat</span>
+     (unless (seq-empty-p new-roam)
+       (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;** New Roam entries \n&#34;</span>
+	       (<span style="color:#a6e22e">mapconcat</span>
+		(lambda (entry)
+		  (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;- [[file:%s][%s]]&#34;</span> (<span style="color:#a6e22e">cdr</span> entry) (<span style="color:#a6e22e">cdr</span> entry)))
+		new-roam
+		<span style="color:#e6db74">&#34;\n&#34;</span>)
+	       <span style="color:#e6db74">&#34;\n&#34;</span>))
+     (unless (seq-empty-p changed-roam)
+       (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;** Changed Roam entries \n&#34;</span>
+	       (<span style="color:#a6e22e">mapconcat</span>
+		(lambda (entry)
+		  (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;- [[file:%s][%s]]&#34;</span> (<span style="color:#a6e22e">cdr</span> entry) (<span style="color:#a6e22e">cdr</span> entry)))
+		changed-roam
+		<span style="color:#e6db74">&#34;\n&#34;</span>))))))
+</code></pre></div><h5 id="data-from-org-journal">Data from org-journal</h5>
+<p>Second, I want to have a list of new jounal entries since the last review.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-journal-entries-since-date (rev-date)
+  (<span style="color:#a6e22e">mapcar</span>
+   (lambda (date)
+     (let ((time (<span style="color:#a6e22e">encode-time</span> (parse-time-string date))))
+       <span style="color:#f92672">`</span>((file <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(org-journal--get-entry-path time))
+	 (header <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(<span style="color:#a6e22e">format-time-string</span> org-journal-date-format time)))))
+   (seq-filter
+    (lambda (date) (<span style="color:#a6e22e">string-lessp</span> rev-date date))
+    (<span style="color:#a6e22e">mapcar</span>
+     (lambda (date)
+       (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%04d-%02d-%02dT00:00:00+0300&#34;</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> date) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> date) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> date)))
+     (org-journal--list-dates)))))
+</code></pre></div><p>Format the results:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-review-format-journal (rev-date)
+  (<span style="color:#a6e22e">mapconcat</span>
+   (lambda (item)
+     (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;- [[file:%s::*%s][%s]]&#34;</span>
+	     (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#39;file</span> item))
+	     (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#39;header</span> item))
+	     (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#39;header</span> item))))
+   (my/org-journal-entries-since-date rev-date)
+   <span style="color:#e6db74">&#34;\n&#34;</span>))
+</code></pre></div><h5 id="data-from-org-agenda-via-org-ql">Data from org-agenda via org-ql</h5>
+<p>Third, I want to list some changes in my agenda. This section will change depending on what I&rsquo;m currently working on.</p>
+<p>So, here is a list of queries results of which I want to see in the review template. The format is <code>(name date-field order-by-field query)</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/org-ql-review-queries
+      <span style="color:#f92672">`</span>((<span style="color:#e6db74">&#34;Waitlist&#34;</span> scheduled scheduled
+	 (and
+	  (done)
+	  (tags-inherited <span style="color:#e6db74">&#34;waitlist&#34;</span>)))
+	(<span style="color:#e6db74">&#34;Personal tasks done&#34;</span> closed <span style="color:#f92672">,</span><span style="color:#66d9ef">nil</span>
+	 (and
+	  (tags-inherited <span style="color:#e6db74">&#34;personal&#34;</span>)
+	  (todo <span style="color:#e6db74">&#34;DONE&#34;</span>)))
+	(<span style="color:#e6db74">&#34;Attended meetings&#34;</span> closed scheduled
+	 (and
+	  (tags <span style="color:#e6db74">&#34;meeting&#34;</span>)
+	  (todo <span style="color:#e6db74">&#34;PASSED&#34;</span>)))
+	(<span style="color:#e6db74">&#34;Done project tasks&#34;</span> closed deadline
+	 (and
+	  (todo <span style="color:#e6db74">&#34;DONE&#34;</span>)
+	  (ancestors
+	   (heading <span style="color:#e6db74">&#34;Tasks&#34;</span>))))))
+</code></pre></div><p>The query will be executed like this: <code>(and (date-field :from rev-date) query)</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-review-exec-ql (saved rev-date)
+  (let ((query <span style="color:#f92672">`</span>(and
+		 (<span style="color:#f92672">,</span>(<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> saved) :from <span style="color:#f92672">,</span>rev-date)
+		 <span style="color:#f92672">,</span>(<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">3</span> saved))))
+    (org-ql-query
+      :select <span style="color:#a6e22e">#&#39;</span>element
+      :from (org-agenda-files)
+      :where query
+      :order-by (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> saved))))
+</code></pre></div><p>Format one element of query result.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-review-format-element (elem)
+  (<span style="color:#a6e22e">concat</span>
+   (string-pad
+    (<span style="color:#a6e22e">plist-get</span> (cadr elem) :raw-value)
+    <span style="color:#ae81ff">40</span>)
+   (when-let (scheduled (<span style="color:#a6e22e">plist-get</span> (cadr elem) :scheduled))
+     (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34; [SCHEDULED: &#34;</span> (<span style="color:#a6e22e">plist-get</span> (cadr scheduled) :raw-value) <span style="color:#e6db74">&#34;]&#34;</span>))
+   (when-let (deadline (<span style="color:#a6e22e">plist-get</span> (cadr elem) :deadline))
+     (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34; [DEADLINE: &#34;</span> (<span style="color:#a6e22e">plist-get</span> (cadr deadline) :raw-value) <span style="color:#e6db74">&#34;]&#34;</span>))))
+</code></pre></div><p>Execute all the saved queries and format an Org list for the capture template.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-review-format-queries (rev-date)
+  (<span style="color:#a6e22e">mapconcat</span>
+   (lambda (results)
+     (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;** &#34;</span> (<span style="color:#a6e22e">car</span> results) <span style="color:#e6db74">&#34;\n&#34;</span>
+	     (string-join
+	      (<span style="color:#a6e22e">mapcar</span> (lambda (r) (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;- &#34;</span> r)) (<span style="color:#a6e22e">cdr</span> results))
+	      <span style="color:#e6db74">&#34;\n&#34;</span>)
+	     <span style="color:#e6db74">&#34;\n&#34;</span>))
+   (seq-filter
+    (lambda (result)
+      (not (seq-empty-p (<span style="color:#a6e22e">cdr</span> result))))
+    (<span style="color:#a6e22e">mapcar</span>
+     (lambda (saved)
+       (<span style="color:#a6e22e">cons</span>
+	(<span style="color:#a6e22e">car</span> saved)
+	(<span style="color:#a6e22e">mapcar</span>
+	 <span style="color:#a6e22e">#&#39;</span>my/org-review-format-element
+	 (my/org-review-exec-ql saved rev-date))))
+     my/org-ql-review-queries))
+   <span style="color:#e6db74">&#34;\n&#34;</span>))
+</code></pre></div><h5 id="capture-template">Capture template</h5>
+<p>Now, we have to put all this together and define a capture template for the review.</p>
+<p>I&rsquo;ll use a separate directory for the review files, just like for org-journal and org-roam. The filename will have a format <code>YYYY-MM-DD.org</code>, which will also free me from the effort of storing the last review date somewhere.</p>
+<p>If somehow there are no files in the folder, fallback to the current date minus one week.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/org-review-directory <span style="color:#e6db74">&#34;review&#34;</span>)
+
+(defun my/org-review-get-filename ()
+  (<span style="color:#a6e22e">concat</span> my/org-review-directory <span style="color:#e6db74">&#34;/&#34;</span> (<span style="color:#a6e22e">format-time-string</span> <span style="color:#e6db74">&#34;%Y-%m-%d.org&#34;</span> (<span style="color:#a6e22e">current-time</span>))))
+
+(defun my/get-last-review-date ()
+  (<span style="color:#a6e22e">substring</span>
+   (or
+    (-max-by
+     <span style="color:#e6db74">&#39;string-greaterp</span>
+     (-filter
+      (lambda (f) (not (or (<span style="color:#a6e22e">string-equal</span> f <span style="color:#e6db74">&#34;.&#34;</span>) (<span style="color:#a6e22e">string-equal</span> f <span style="color:#e6db74">&#34;..&#34;</span>))))
+      (<span style="color:#a6e22e">directory-files</span> (f-join org-directory my/org-review-directory))))
+    (<span style="color:#a6e22e">format-time-string</span>
+     <span style="color:#e6db74">&#34;%Y-%m-%d&#34;</span>
+     (<span style="color:#a6e22e">time-subtract</span>
+      (<span style="color:#a6e22e">current-time</span>)
+      (seconds-to-time (<span style="color:#a6e22e">*</span> <span style="color:#ae81ff">60</span> <span style="color:#ae81ff">60</span> <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">7</span>)))))
+   <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">10</span>))
+</code></pre></div><p>A template looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/org-review-capture-template
+      <span style="color:#f92672">`</span>(<span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#e6db74">&#34;Review&#34;</span> plain (file <span style="color:#f92672">,</span>(my/org-review-get-filename))
+	<span style="color:#f92672">,</span>(string-join
+	  <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;#+TITLE: Review %t&#34;</span>
+	    <span style="color:#e6db74">&#34;&#34;</span>
+	    <span style="color:#e6db74">&#34;Last review date: %(org-timestamp-translate (org-timestamp-from-string (format \&#34;&lt;%s&gt;\&#34; (my/get-last-review-date))))&#34;</span>
+	    <span style="color:#e6db74">&#34;&#34;</span>
+	    <span style="color:#e6db74">&#34;* Roam&#34;</span>
+	    <span style="color:#e6db74">&#34;%(my/org-review-format-roam (my/get-last-review-date))&#34;</span>
+	    <span style="color:#e6db74">&#34;* Journal&#34;</span>
+	    <span style="color:#e6db74">&#34;New journal entries:&#34;</span>
+	    <span style="color:#e6db74">&#34;%(my/org-review-format-journal (my/get-last-review-date))&#34;</span>
+	    <span style="color:#e6db74">&#34;* Agenda&#34;</span>
+	    <span style="color:#e6db74">&#34;%(my/org-review-format-queries (my/get-last-review-date))&#34;</span>
+	    <span style="color:#e6db74">&#34;* Thoughts                                                            :crypt:&#34;</span>
+	    <span style="color:#e6db74">&#34;%?&#34;</span>)
+	  <span style="color:#e6db74">&#34;\n&#34;</span>)))
+
+(add-to-list <span style="color:#e6db74">&#39;org-capture-templates</span> my/org-review-capture-template <span style="color:#66d9ef">t</span>)
 </code></pre></div><h4 id="org-journal">Org Journal</h4>
 <p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a plugin for maintaining a journal in org mode. I want to have its entries separate from my knowledge base.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-journal
@@ -3265,8 +3466,7 @@ MimeType=x-scheme-handler/org-protocol
   :config
   (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#e6db74">&#39;smartparens-mode</span>)
   (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> <span style="color:#e6db74">&#39;hs-minor-mode</span>)
-  (my/set-smartparens-indent <span style="color:#e6db74">&#39;web-mode</span>)
-  (add-hook <span style="color:#e6db74">&#39;web-mode-hook</span> ))
+  (my/set-smartparens-indent <span style="color:#e6db74">&#39;web-mode</span>))
 </code></pre></div><p>Hooking this up with lsp.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/web-mode-lsp-extensions
       <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(rx <span style="color:#e6db74">&#34;.svelte&#34;</span> eos)
@@ -4208,7 +4408,7 @@ MimeType=x-scheme-handler/org-protocol
   (let ((link (elfeed-entry-link elfeed-show-entry)))
     (when link
       (eww link))))
-</code></pre></div><h5 id="youtube">YouTube</h5>
+</code></pre></div><h5 id="youtube-and-emms">YouTube &amp; EMMS</h5>
 <p>Previously this block was opening MPV with <code>start-process</code>, but now I&rsquo;ve managed to hook up MPV with EMMS. So there is the EMMS+elfeed &ldquo;integration&rdquo;.</p>
 <p>The following function converts URLs from Invidious and the like to YouTube.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/get-youtube-url (link)
@@ -4226,12 +4426,13 @@ MimeType=x-scheme-handler/org-protocol
     (let ((track (emms-track
 		  <span style="color:#e6db74">&#39;url</span> (my/get-youtube-url (elfeed-entry-link entry)))))
       (emms-track-set track <span style="color:#e6db74">&#39;info-title</span> (elfeed-entry-title entry))
-      (setq my/test track)
       (emms-playlist-insert-track track))))
 
 (defun my/elfeed-add-emms-youtube ()
   (interactive)
-  (emms-add-elfeed elfeed-show-entry))
+  (emms-add-elfeed elfeed-show-entry)
+  (elfeed-tag elfeed-show-entry <span style="color:#e6db74">&#39;watched</span>)
+  (elfeed-show-refresh))
 
 (with-eval-after-load <span style="color:#e6db74">&#39;elfeed</span>
   (general-define-key

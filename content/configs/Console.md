@@ -937,7 +937,7 @@ fi
 ```
 
 
-### `autocommmit` {#autocommmit}
+### `autocommit` {#autocommit}
 
 A script to autocommit files in a repository. I use it to sync my org directory and password store. I guess it's not how git is intended to be used, but it works for me.
 

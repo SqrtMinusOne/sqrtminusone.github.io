@@ -1552,7 +1552,7 @@ Before I figure out how to package this for Guix:
   :straight (:host github :repo "SqrtMinusOne/wakatime-mode")
   :if (not my/is-termux)
   :config
-  <<wakatime-fixes>>
+  (setq wakatime-ignore-exit-codes '(0 1 102))
   (advice-add 'wakatime-init :after (lambda () (setq wakatime-cli-path "/home/pavel/bin/wakatime-cli")))
   ;; (setq wakatime-cli-path (executable-find "wakatime"))
   (global-wakatime-mode))
@@ -4028,7 +4028,7 @@ My bit of config here:
   :straight t
   :init
   (my-leader-def
-    :keymaps '(js-mode-map typescript-mode-map vue-mode-map svelte-mode-map)
+    :keymaps '(js-mode-map web-mode-map typescript-mode-map vue-mode-map svelte-mode-map)
     "rr" #'prettier-prettify))
 ```
 
@@ -4101,7 +4101,8 @@ Trying this one out instead of vue-mode and svelte-mode, because this one seems 
   :config
   (add-hook 'web-mode-hook 'smartparens-mode)
   (add-hook 'web-mode-hook 'hs-minor-mode)
-  (my/set-smartparens-indent 'web-mode))
+  (my/set-smartparens-indent 'web-mode)
+  (add-hook 'web-mode-hook ))
 ```
 
 Hooking this up with lsp.
@@ -4118,6 +4119,16 @@ Hooking this up with lsp.
     (lsp-deferred)))
 
 (add-hook 'web-mode-hook #'my/web-mode-lsp)
+```
+
+Vue settings
+
+```emacs-lisp
+(defun my/web-mode-vue-setup ()
+  (when (string-match-p (rx ".vue" eos) (buffer-name))
+    (setq-local web-mode-script-padding 0)))
+
+(add-hook 'web-mode-hook 'my/web-mode-vue-setup)
 ```
 
 
@@ -4763,7 +4774,7 @@ For some reason it doesn't use pipenv python executable, so here is a small work
 	  (if asc
 	      (cdr asc)
 	    (let ((python-executable
-		   (string-trim (shell-command-to-string "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run which python"))))
+		   (string-trim (shell-command-to-string "PIPENV_IGNORE_VIRTUALENVS=1 pipenv run which python 2>/dev/null"))))
 	      (if (string-match-p ".*not found.*" python-executable)
 		  (message "Pipfile found, but not pipenv executable!")
 		(message (format "Found pipenv python: %s" python-executable))
@@ -5469,7 +5480,7 @@ After all this is done, run `M-x emms-cache-set-from-mpd-all` to set cache from 
 [mpv](https://mpv.io/) is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.
 
 ```emacs-lisp
-(add-to-list 'emms-player-list 'emms-player-mpv t)
+(add-to-list 'emms-player-list 'emms-player-mpv)
 ```
 
 Also a custom regex. My demands for MPV include running `youtube-dl`, so there is a regex that matches youtube.com or some of the video formats.
