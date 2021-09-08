@@ -172,14 +172,14 @@ convert cover.jpg -resize 200x200^ -gravity Center -extent 200x200 cover_medium.
 
 =lyrics-fetcher= can (try to) do this automatically by downloading the cover from genius.com with =M-x lyrics-fetcher-emms-browser-fetch-covers-at-point= in EMMS browser.
 * MPV and YouTube
-[[https://mpv.io/][MPV]] is a nice extensible media player, which integrates with [[https://github.com/ytdl-org/youtube-dl][youtube-dl]] and is controllable by EMMS, so it fits quite nicely in this setup.
+[[https://mpv.io/][MPV]] is an extensible media player, which integrates with [[https://github.com/ytdl-org/youtube-dl][youtube-dl]] and is controllable by EMMS, thus quite fitting for this setup.
 
 ** MPV and youtube-dl
 First, install both =mpv= and =youtube-dl= from your distribution's package repository.
 
 Then we can add another player to the list:
 #+begin_src emacs-lisp
-(add-to-list 'emms-player-list 'emms-player-mpv)
+(add-to-list 'emms-player-list 'emms-player-mpv t)
 #+end_src
 
 EMMS determines which player to use by a regexp. =emms-player-mpd= sets the default regexp from MPD's diagnostic output so that regex opens basically everything, including videos, HTTPS links, etc. That is fine if MPD is the only player in EMMS, but as we want to use MPV as well, we need to override the regexes.
