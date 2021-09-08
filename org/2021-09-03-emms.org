@@ -1,8 +1,7 @@
 #+HUGO_SECTION: posts
 #+HUGO_BASE_DIR: ../
 #+TITLE: My EMMS and elfeed setup
-#+DATE: 2021-09-03
-#+HUGO_DRAFT: true
+#+DATE: 2021-09-08
 #+HUGO_TAGS: emacs
 #+HUGO_TAGS: emms
 #+HUGO_TAGS: elfeed
@@ -16,7 +15,7 @@ Even before I lost my mind about customizing obscure keyboard-driven software, I
 
 The respective emacs packages, elfeed and EMMS, proved somewhat tricky to set up, i.e. I had to figure out the source code in both cases. I even submitted a small patch to EMMS to make it parse my MPD library correctly.
 
-But in the end, only extensive customization capacities of Emacs enabled me to make a setup where these parts nicely come together and do give or take exactly what I want. However, this means there are a lot of degrees of freedom involved, so I’ll try to cover the important parts and link to the original sources wherever possible.
+But in the end, only extensive customization capacities of Emacs enabled me to make a setup where these parts nicely come together and do more or less exactly what I want. However, this means there are a lot of degrees of freedom involved, so I’ll try to cover the important parts and link to the original sources wherever possible.
 
 I’d call it “workflow”, but the “work” part does not quite catch the point here.
 * MPD
@@ -69,9 +68,9 @@ Take a look at [[https://mpd.readthedocs.io/en/stable/user.html#configuration][t
 ** Music directory
 The next question after we've set up MPD is how to organize the music directory.
 
-MPD itself is not too concerned about the structure of your =music_directory=, because it uses audio tags to classify the files. However, if you want to have album covers in EMMS, you need to have one folder per one album. Otherwise and in other respects the structure can be arbitrary.
+MPD itself is not too concerned about the structure of your =music_directory=, because it uses audio tags to classify the files. However, if you want to have album covers in EMMS, you need to have one folder per one album. Otherwise and in other respects, the structure can be arbitrary.
 
-So we need to tag the audio files. My favorite audio-tagging software is [[https://picard.musicbrainz.org/][MusicBrainz Picard]], which can set tags automatially even if the file has no metadata at all, and move the file automatically according to the configuration. The aforementioned ncmpcpp also has a decent tag editor; finally there is a simple [[https://mutagen.readthedocs.io/en/latest/man/mid3v2.html][mutagen-based CLI tool]].
+So we need to tag the audio files. My favorite audio-tagging software is [[https://picard.musicbrainz.org/][MusicBrainz Picard]], which can set tags automatically even if the file has no metadata at all, and move the file automatically according to the configuration. The aforementioned ncmpcpp also has a decent tag editor; finally, there is a simple [[https://mutagen.readthedocs.io/en/latest/man/mid3v2.html][mutagen-based CLI tool]].
 
 * EMMS
 [[https://www.gnu.org/software/emms/][EMMS]] is the Emacs Multimedia System, a package that can get play stuff from various sources using various players. It is a part of Emacs, which means you can use the built-in version, but the git version has a few useful patches, so I advise using the latter.
@@ -113,7 +112,7 @@ Now we can connect EMMS to MPD. For some reason, executing this function stops t
 (emms-player-mpd-connect)
 #+end_src
 
-The last thing we may want is to link clearing EMMS playlist to clearing MPD playlist. I'm not sure how this interacts with MPD's own playlists because I don't use them, so you may need to watch out here if you do.
+The last thing we may want is to link EMMS playlist clearing to MPD playlist clearing. I'm not sure how this interacts with MPD's own playlists because I don't use them, so you may need to watch out here if you do.
 
 #+begin_src emacs-lisp
 (add-hook 'emms-playlist-cleared-hook 'emms-player-mpd-clear)
@@ -143,9 +142,9 @@ Take a look at the [[https://www.gnu.org/software/emms/manual/][EMMS manual]] fo
 ** Fetching lyrics
 One feature of ncmpcpp I was missing here is fetching lyrics, so I've written a small package to do just that.
 
-Debugging the package turned out to be quite funny, because apparently, there is no way around parsing HTML with this task. So I've chosen genius.com as the source, but the site turned out to provide different versions of itself (with different DOMs!) to different users.
+Debugging the package turned out to be quite funny because apparently, there is no way around parsing HTML with this task. So I've chosen genius.com as the source, but the site turned out to provide different versions of itself (with different DOMs!) to different users.
 
-At any rate, I've processed the cases I found, and it seems to be working, at least for me. To use the package, [[https://genius.com/api-clients/new][get the api key]] from Genius and install it:
+At any rate, I've processed the cases I found, and it seems to be working, at least for me. To use the package, [[https://genius.com/api-clients/new][get the API key]] from Genius and install it:
 
 #+begin_src emacs-lisp
 (use-package lyrics-fetcher
@@ -156,14 +155,14 @@ At any rate, I've processed the cases I found, and it seems to be working, at le
         (password-store-get "My_Online/APIs/genius.com")))
 #+end_src
 
-To fetch lyrics for the current playing EMMS song, run ~M-x lyrics-fetcher-show-lyrics~. Or run ~M-x lyrics-fetcher-emms-browser-show-at-point~ to fetch data for the current point in EMMS browser. See [[https://github.com/SqrtMinusOne/lyrics-fetcher.el][the package homepage]] for more information.
+To fetch lyrics for the current playing EMMS song, run ~M-x lyrics-fetcher-show-lyrics~. Or run ~M-x lyrics-fetcher-emms-browser-show-at-point~ to fetch data for the current point in the EMMS browser. See [[https://github.com/SqrtMinusOne/lyrics-fetcher.el][the package homepage]] for more information.
 
 ** Album covers
 I've mentioned above that EMMS supports displaying album covers.
 
 For this to work, it is necessary to have one album per one folder. By default the cover image should be saved to images named =cover_small= (100x100 recommended), =cover_medium= (200x200 recommended) and =cover_large=. The small version is to be displayed in the EMMS browser, the medium one in the playlist.
 
-It's not required for images be exactly of these sizes, but they definitely should be of one size across different albums to look nice in the interface.
+It's not required for images to be exactly of these sizes, but they definitely should be of one size across different albums to look nice in the interface.
 
 You can resize images with ImageMagick with commands like this:
 #+begin_src bash
@@ -183,7 +182,7 @@ Then we can add another player to the list:
 (add-to-list 'emms-player-list 'emms-player-mpv)
 #+end_src
 
-EMMS determines which player to use by a regexp. =emms-player-mpd= sets the default regexp from MPD's diagnostic output, so that regex opens basically everything, including videos, https links, etc. That is fine if MPD is the only player in EMMS, but as we want to use MPV as well, we need to override the regexes.
+EMMS determines which player to use by a regexp. =emms-player-mpd= sets the default regexp from MPD's diagnostic output so that regex opens basically everything, including videos, HTTPS links, etc. That is fine if MPD is the only player in EMMS, but as we want to use MPV as well, we need to override the regexes.
 
 MPD regexp can look like this:
 #+begin_src emacs-lisp
@@ -244,13 +243,13 @@ All the added URLs stay in the EMMS cache after being played. We probably don't 
 #+end_src
 * YouTube RSS
 ** Where to get URLs?
-So, we are able to watch YouTube videos by URLs, but where to get URLs from? A natual solution is to use [[https://github.com/skeeto/elfeed][elfeed]] and RSS feeds.
+So, we are able to watch YouTube videos by URLs, but where to get URLs from? A natural solution is to use [[https://github.com/skeeto/elfeed][elfeed]] and RSS feeds.
 
-I've tried a bunch of options to get feeds for YouTube channels. The first one is [[https://api.invidious.io/][Invidious]], a FOSS YouTube frontend. The problem here is that various instances I tried weren't particularly stable (at least when I was using them) and hosting the thing by myself would be an overkill. And switching instances is causing duplicate entries in the Elfeed DB.
+I've tried a bunch of options to get feeds for YouTube channels. The first one is [[https://api.invidious.io/][Invidious]], a FOSS YouTube frontend. The problem here is that various instances I tried weren't particularly stable (at least when I was using them) and hosting the thing by myself would be overkill. And switching instances is causing duplicate entries in the Elfeed DB.
 
-The second option is to use YouTube's own RSS. The feed URL looks like ~https://www.youtube.com/feeds/videos.xml?channel_id=<CHANNEL_ID>=~. [[https://stackoverflow.com/questions/14366648/how-can-i-get-a-channel-id-from-youtube][Here are]] a couple of options of figuring out =CHANNEL_ID= in case it's not easily available. The problem with YouTube RSS is that it uses fields which are not supported by elfeed, so the feed entry lacks a preview and description.
+The second option is to use YouTube's own RSS. The feed URL looks like ~https://www.youtube.com/feeds/videos.xml?channel_id=<CHANNEL_ID>=~. [[https://stackoverflow.com/questions/14366648/how-can-i-get-a-channel-id-from-youtube][Here are]] a couple of options of figuring out =CHANNEL_ID= in case it's not easily available. The problem with YouTube RSS is that it uses fields that are not supported by elfeed, so the feed entry lacks a preview and description.
 
-As mine workaround, I've written a small [[https://github.com/SqrtMinusOne/yt-rss][web-server]] which converts a RSS feed from YouTube to an elfeed-compatible Atom feed. It doesn't do much, so you can just download the thing and launch it:
+As my workaround, I've written a small [[https://github.com/SqrtMinusOne/yt-rss][web-server]] which converts an RSS feed from YouTube to an elfeed-compatible Atom feed. It doesn't do much, so you can just download the thing and launch it:
 
 #+begin_src bash :eval no
 git clone https://github.com/SqrtMinusOne/yt-rss.git
@@ -265,7 +264,7 @@ http://localhost:8000/<channel_id>?token=<token>
 #+end_example
 
 where =<token>= is set in =.env= file to the default value of =12345=.
-** TODO Elfeed
+** Elfeed
 [[https://github.com/skeeto/elfeed][Elfeed]] is an Emacs Atom & RSS reader. It's a pretty popular package with lots of information written over the years, so I'll cover just my particular setup.
 
 My elfeed config, sans keybindings, looks like this:
@@ -300,7 +299,7 @@ So, however you've got URLs for YouTube channels, put them into elfeed.
 
 To fetch the feeds, open elfeed with =M-x elfeed= and run =M-x elfeed-search-fetch= in the search buffer. And as usual, take a look at [[https://github.com/skeeto/elfeed][the package documentation]] for more information.
 
-To help navigating through the long list of entries, I've made the following function to narrow the search buffer to the feed of the entry under cursor:
+To help with navigating through the long list of entries, I've made the following function to narrow the search buffer to the feed of the entry under cursor:
 #+begin_src emacs-lisp
 (defun my/elfeed-search-filter-source (entry)
   "Filter elfeed search buffer by the feed under cursor."
@@ -345,7 +344,7 @@ The easiest way to put the URL to the playlist is to define a new source for EMM
 #+end_src
 Because =define-emms-source= is an EMMS macro, the code block above has to be evaluated with EMMS loaded. E.g. you can wrap it into =(with-eval-after-load 'emms ...)= or put in the =:config= section.
 
-The macro defines a bunch of functions to work with source, which we can use in another function:
+The macro defines a bunch of functions to work with the source, which we can use in another function:
 #+begin_src emacs-lisp
 (defun my/elfeed-add-emms-youtube ()
   (interactive)
