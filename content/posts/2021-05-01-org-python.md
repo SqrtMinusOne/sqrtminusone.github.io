@@ -1,12 +1,12 @@
 +++
 title = "Replacing Jupyter Notebook with Org Mode"
-author = ["Pavel"]
+author = ["Pavel Korytov"]
 date = 2021-05-01
 tags = ["emacs", "org"]
 draft = false
 +++
 
-{{< figure src="/ox-hugo/screenshot.png" >}}
+{{< figure src="/ox-hugo/org-python-screenshot.png" >}}
 
 
 ## Why? {#why}
