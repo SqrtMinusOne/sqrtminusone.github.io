@@ -578,6 +578,10 @@ guix clone https://github.com/SqrtMinusOne/dotfiles.git
 <td>system</td>
 <td>openvpn-update-resolve-conf</td>
 </tr>
+<tr>
+<td>system</td>
+<td>vpnc</td>
+</tr>
 </tbody>
 </table>
 <p>I&rsquo;m not sure how to properly spin up VPN on Guix, so here is what I&rsquo;m doing now, after some trial and error.</p>
@@ -657,7 +661,8 @@ nmcli connection up <span style="color:#e6db74">&#34;</span>$CONN<span style="co
 <p>Third, by default it tries to create envronments in <code>/gnu/store</code>. I think it&rsquo;s enough to create one environment like this to fix it:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir -p ~/.conda/envs
 conda create -p ~/.conda/envs/test
-</code></pre></div><p>Finally, I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
+</code></pre></div><p>Fourth, you may need to unset <code>$PYTHONPATH</code> if you have any global packages installed, otherwise Python from anaconda will try to import them instead of the conda versions.</p>
+<p>Finally, I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
 <p>So here is a script to set up conda hooks:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Get writable conda envs with npm &amp; without</span>
 readarray -t CONDA_ENVS_ALL <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#66d9ef">$(</span>conda env list --json | jq <span style="color:#e6db74">&#39;.envs[]&#39;</span><span style="color:#66d9ef">)</span>

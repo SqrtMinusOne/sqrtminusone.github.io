@@ -73,18 +73,19 @@
 <li><a href="#measure-startup-speed">Measure startup speed</a></li>
 <li><a href="#straight-dot-el">straight.el</a></li>
 <li><a href="#use-package">use-package</a></li>
+<li><a href="#config-variants-and-environment">config variants &amp; environment</a></li>
 <li><a href="#performance">Performance</a>
 <ul>
 <li><a href="#garbage-collection">Garbage collection</a></li>
 <li><a href="#run-garbage-collection-when-emacs-is-unfocused">Run garbage collection when Emacs is unfocused</a></li>
-<li><a href="#misc">Misc</a></li>
 <li><a href="#native-compilation">Native compilation</a></li>
 </ul>
 </li>
-<li><a href="#anaconda-and-environment">Anaconda &amp; environment</a></li>
+<li><a href="#anaconda">Anaconda</a></li>
 <li><a href="#custom-file-location">Custom file location</a></li>
 <li><a href="#private-config">Private config</a></li>
 <li><a href="#no-littering">No littering</a></li>
+<li><a href="#prevent-emacs-from-closing">Prevent Emacs from closing</a></li>
 </ul>
 </li>
 <li><a href="#global-editing-configuration">Global editing configuration</a>
@@ -288,7 +289,12 @@
 </ul>
 </li>
 <li><a href="#presentations">Presentations</a></li>
+<li><a href="#tools">Tools</a>
+<ul>
 <li><a href="#toc">TOC</a></li>
+<li><a href="#screenshots">Screenshots</a></li>
+</ul>
+</li>
 <li><a href="#system-configuration">System configuration</a>
 <ul>
 <li><a href="#tables-for-guix-dependencies">Tables for Guix Dependencies</a></li>
@@ -325,7 +331,7 @@
 <li><a href="#plugin">Plugin</a></li>
 </ul>
 </li>
-<li><a href="#off--format-all"><span class="org-todo todo CHECK">CHECK</span> (OFF) Format-all</a></li>
+<li><a href="#reformatter">Reformatter</a></li>
 <li><a href="#general-additional-config">General additional config</a></li>
 </ul>
 </li>
@@ -411,7 +417,9 @@
 <li><a href="#fish">fish</a></li>
 <li><a href="#sh">sh</a></li>
 <li><a href="#haskell">Haskell</a></li>
+<li><a href="#lua">Lua</a></li>
 <li><a href="#json">JSON</a></li>
+<li><a href="#sql">SQL</a></li>
 <li><a href="#yaml">YAML</a></li>
 <li><a href="#dot-env">.env</a></li>
 <li><a href="#csv">CSV</a></li>
@@ -531,6 +539,26 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(straight-use-package <span style="color:#e6db74">&#39;use-package</span>)
 (eval-when-compile (require <span style="color:#e6db74">&#39;use-package</span>))
  <span style="color:#75715e">;; (setq use-package-verbose t)</span>
+</code></pre></div><h3 id="config-variants-and-environment">config variants &amp; environment</h3>
+<p>The following variable is true when my machine is not powerful enough for some resource-heavy packages.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/lowpower (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;azure&#34;</span>))
+</code></pre></div><p>The following is true if Emacs is meant to be used with TRAMP over slow ssh.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/slow-ssh
+      (or
+       (string= (getenv <span style="color:#e6db74">&#34;IS_TRAMP&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>)
+       (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)))
+</code></pre></div><p>The following is true is Emacs is ran on a remote server where I don&rsquo;t need stuff like my org workflow</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/remote-server
+      (or (string= (getenv <span style="color:#e6db74">&#34;IS_REMOTE&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>)
+	  (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)))
+</code></pre></div><p>And the following is true if Emacs is run from termux on Android.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/is-termux (string-match-p (rx (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;com.termux&#34;</span> (<span style="color:#a6e22e">*</span> nonl)) (getenv <span style="color:#e6db74">&#34;HOME&#34;</span>)))
+</code></pre></div><p>Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setenv <span style="color:#e6db74">&#34;IS_EMACS&#34;</span> <span style="color:#e6db74">&#34;true&#34;</span>)
+</code></pre></div><p>Finally, I want to have a minimal Emacs config for debugging purposes. This has just straight.el, use-packages and evil.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">&lt;&lt;minimal&gt;&gt;
+</code></pre></div><p>To launch Emacs with this config, run</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">emacs -q -l ~/.emacs.d/init-minimal.el
 </code></pre></div><h3 id="performance">Performance</h3>
 <h4 id="garbage-collection">Garbage collection</h4>
 <p>Just setting <code>gc-cons-treshold</code> to a larger value.</p>
@@ -547,18 +575,11 @@
 				(unless (frame-focus-state)
 				  (<span style="color:#a6e22e">garbage-collect</span>))))
 	      (add-hook <span style="color:#e6db74">&#39;after-focus-change-function</span> <span style="color:#e6db74">&#39;garbage-collect</span>))))
-</code></pre></div><h4 id="misc">Misc</h4>
-<p>The following variable is true when my machine is not powerful enough for some resource-heavy packages.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/lowpower (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;azure&#34;</span>))
-</code></pre></div><p>The following is true if Emacs is meant to be used with TRAMP over slow ssh.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/slow-ssh (string= (getenv <span style="color:#e6db74">&#34;IS_TRAMP&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>))
-</code></pre></div><p>And the following is true if Emacs is run from termux on Android.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/is-termux (string-match-p (rx (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;com.termux&#34;</span> (<span style="color:#a6e22e">*</span> nonl)) (getenv <span style="color:#e6db74">&#34;HOME&#34;</span>)))
 </code></pre></div><h4 id="native-compilation">Native compilation</h4>
 <p>Set number of jobs to 1 on low-power machines</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(when my/lowpower
   (setq comp-async-jobs-number <span style="color:#ae81ff">1</span>))
-</code></pre></div><h3 id="anaconda-and-environment">Anaconda &amp; environment</h3>
+</code></pre></div><h3 id="anaconda">Anaconda</h3>
 <p><a href="https://www.anaconda.com/">Anaconda</a> is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js</p>
 <p>The following code uses the conda package to activate the base environment on startup if Emacs is launched outside the environment.</p>
 <p>Also, some strange things are happening if vterm is launched with conda activated from Emacs, so I advise <code>conda-env-activate</code> to set an auxililary environment variable.</p>
@@ -580,8 +601,6 @@
 	      (lambda (<span style="color:#66d9ef">&amp;rest</span> _) (setenv <span style="color:#e6db74">&#34;EMACS_CONDA_ENV&#34;</span> conda-env-current-name)))
   (unless (getenv <span style="color:#e6db74">&#34;CONDA_DEFAULT_ENV&#34;</span>)
     (conda-env-activate <span style="color:#e6db74">&#34;general&#34;</span>)))
-</code></pre></div><p>Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setenv <span style="color:#e6db74">&#34;IS_EMACS&#34;</span> <span style="color:#e6db74">&#34;true&#34;</span>)
 </code></pre></div><h3 id="custom-file-location">Custom file location</h3>
 <p>By default, custom writes stuff to <code>init.el</code>, which is somewhat annoying. The following makes a separate file <code>custom.el</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq custom-file (<span style="color:#a6e22e">concat</span> user-emacs-directory <span style="color:#e6db74">&#34;custom.el&#34;</span>))
@@ -595,6 +614,9 @@
 <p>By default emacs and its packages create a lot files in <code>.emacs.d</code> and in other places. <a href="https://github.com/emacscollective/no-littering">no-littering</a> is a collective effort to redirect all of this to two folders in <code>user-emacs-directory</code>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package no-littering
   :straight <span style="color:#66d9ef">t</span>)
+</code></pre></div><h3 id="prevent-emacs-from-closing">Prevent Emacs from closing</h3>
+<p>This adds a confirmation to avoid accidental Emacs closing.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq confirm-kill-emacs <span style="color:#e6db74">&#39;y-or-n-p</span>)
 </code></pre></div><h2 id="global-editing-configuration">Global editing configuration</h2>
 <h3 id="general-keybindings-stuff">General keybindings stuff</h3>
 <h4 id="general-dot-el">general.el</h4>
@@ -1284,7 +1306,7 @@
 </code></pre></div><p>A company frontend with nice icons.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package company-box
   :straight <span style="color:#66d9ef">t</span>
-  :if (not my/lowpower)
+  :if (and (display-graphic-p) (not my/lowpower))
   :after (company)
   :hook (company-mode <span style="color:#f92672">.</span> company-box-mode))
 </code></pre></div><h3 id="git-and-magit">Git &amp; Magit</h3>
@@ -1371,7 +1393,7 @@
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package wakatime-mode
   :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/wakatime-mode&#34;</span>)
-  :if (not my/is-termux)
+  :if (not (or my/is-termux my/remote-server))
   :config
   (setq wakatime-ignore-exit-codes <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">102</span>))
   (advice-add <span style="color:#e6db74">&#39;wakatime-init</span> :after (lambda () (setq wakatime-cli-path <span style="color:#e6db74">&#34;/home/pavel/bin/wakatime-cli&#34;</span>)))
@@ -1383,7 +1405,7 @@
 
 (use-package activity-watch-mode
   :straight <span style="color:#66d9ef">t</span>
-  :if (not my/is-termux)
+  :if (not (or my/is-termux my/remote-server))
   :config
   (global-activity-watch-mode))
 </code></pre></div><h2 id="ui">UI</h2>
@@ -1444,7 +1466,9 @@
   :config
   (setq doom-themes-enable-bold <span style="color:#66d9ef">t</span>
 	doom-themes-enable-italic <span style="color:#66d9ef">t</span>)
-  (load-theme <span style="color:#e6db74">&#39;doom-palenight</span> <span style="color:#66d9ef">t</span>)
+  (if my/remote-server
+      (load-theme <span style="color:#e6db74">&#39;doom-gruvbox</span> <span style="color:#66d9ef">t</span>)
+    (load-theme <span style="color:#e6db74">&#39;doom-palenight</span> <span style="color:#66d9ef">t</span>))
   (doom-themes-visual-bell-config)
   (setq doom-themes-treemacs-theme <span style="color:#e6db74">&#34;doom-colors&#34;</span>)
   (doom-themes-treemacs-config))
@@ -1640,13 +1664,13 @@
 </table>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package emojify
   :straight <span style="color:#66d9ef">t</span>
-  :if (not (or my/lowpower my/is-termux))
+  :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
   :hook (after-init <span style="color:#f92672">.</span> global-emojify-mode))
 </code></pre></div><h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package ligature
   :straight (:host github :repo <span style="color:#e6db74">&#34;mickeynp/ligature.el&#34;</span>)
-  :if (not my/is-termux)
+  :if (display-graphic-p)
   :config
   (ligature-set-ligatures
    <span style="color:#f92672">&#39;</span>(
@@ -1662,7 +1686,8 @@
      clojure-mode
      go-mode
      sh-mode
-     haskell-mode)
+     haskell-mode
+     web-mode)
    <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;--&#34;</span> <span style="color:#e6db74">&#34;---&#34;</span> <span style="color:#e6db74">&#34;==&#34;</span> <span style="color:#e6db74">&#34;===&#34;</span> <span style="color:#e6db74">&#34;!=&#34;</span> <span style="color:#e6db74">&#34;!==&#34;</span> <span style="color:#e6db74">&#34;=!=&#34;</span> <span style="color:#e6db74">&#34;=:=&#34;</span> <span style="color:#e6db74">&#34;=/=&#34;</span> <span style="color:#e6db74">&#34;&lt;=&#34;</span>
      <span style="color:#e6db74">&#34;&gt;=&#34;</span> <span style="color:#e6db74">&#34;&amp;&amp;&#34;</span> <span style="color:#e6db74">&#34;&amp;&amp;&amp;&#34;</span> <span style="color:#e6db74">&#34;&amp;=&#34;</span> <span style="color:#e6db74">&#34;++&#34;</span> <span style="color:#e6db74">&#34;+++&#34;</span> <span style="color:#e6db74">&#34;***&#34;</span> <span style="color:#e6db74">&#34;;;&#34;</span> <span style="color:#e6db74">&#34;!!&#34;</span> <span style="color:#e6db74">&#34;??&#34;</span>
      <span style="color:#e6db74">&#34;?:&#34;</span> <span style="color:#e6db74">&#34;?.&#34;</span> <span style="color:#e6db74">&#34;?=&#34;</span> <span style="color:#e6db74">&#34;&lt;:&#34;</span> <span style="color:#e6db74">&#34;:&lt;&#34;</span> <span style="color:#e6db74">&#34;:&gt;&#34;</span> <span style="color:#e6db74">&#34;&gt;:&#34;</span> <span style="color:#e6db74">&#34;&lt;&gt;&#34;</span> <span style="color:#e6db74">&#34;&lt;&lt;&lt;&#34;</span> <span style="color:#e6db74">&#34;&gt;&gt;&gt;&#34;</span>
@@ -1680,6 +1705,7 @@
   (global-ligature-mode <span style="color:#66d9ef">t</span>))
 </code></pre></div><h4 id="icons">Icons</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package all-the-icons
+  :if (display-graphic-p)
   :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h4 id="highlight-todo">Highlight todo</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package hl-todo
@@ -1689,7 +1715,7 @@
 <p>Highlight indent guides.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package highlight-indent-guides
   :straight <span style="color:#66d9ef">t</span>
-  :if (not my/lowpower)
+  :if (not (or my/lowpower my/remote-server))
   :hook (
 	 (prog-mode <span style="color:#f92672">.</span> highlight-indent-guides-mode)
 	 (vue-mode <span style="color:#f92672">.</span> highlight-indent-guides-mode)
@@ -1781,7 +1807,7 @@
 </table>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package all-the-icons-dired
   :straight <span style="color:#66d9ef">t</span>
-  :if (not (or my/lowpower my/slow-ssh))
+  :if (not (or my/lowpower my/slow-ssh (not (display-graphic-p))))
   :hook (dired-mode <span style="color:#f92672">.</span> (lambda ()
 			(unless (string-match-p <span style="color:#e6db74">&#34;/gnu/store&#34;</span> default-directory)
 			  (all-the-icons-dired-mode))))
@@ -1891,6 +1917,9 @@
       (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;\\(%s\\)\\|\\(%s\\)&#34;</span>
 	      vc-ignore-dir-regexp
 	      tramp-file-name-regexp))
+</code></pre></div><p>Set the default shell to <code>bin/bash</code> for TRAMP or on a remote server.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(when (or my/remote-server my/slow-ssh)
+  (setq explicit-shell-file-name <span style="color:#e6db74">&#34;/bin/bash&#34;</span>))
 </code></pre></div><p>Also, here is a hack to make TRAMP find <code>ls</code> on Guix:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(with-eval-after-load <span style="color:#e6db74">&#39;tramp</span>
   (setq tramp-remote-path
@@ -2002,6 +2031,7 @@
 	    (<span style="color:#a6e22e">kill-buffer</span> (<span style="color:#a6e22e">current-buffer</span>))
 	  (<span style="color:#a6e22e">select-window</span> vterm-window))
       (vterm-other-window <span style="color:#e6db74">&#34;vterm-subterminal&#34;</span>))))
+
 (unless my/slow-ssh
   (general-nmap <span style="color:#e6db74">&#34;`&#34;</span> <span style="color:#e6db74">&#39;my/toggle-vterm-subteminal</span>)
   (general-nmap <span style="color:#e6db74">&#34;~&#34;</span> <span style="color:#e6db74">&#39;vterm</span>))
@@ -2091,6 +2121,7 @@
 <p>Use the built-in org mode.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org
   :straight <span style="color:#66d9ef">t</span>
+  :if (not my/remote-server)
   :defer <span style="color:#66d9ef">t</span>
   :config
   (setq org-startup-indented <span style="color:#66d9ef">t</span>)
@@ -2349,7 +2380,7 @@
 </ul>
 <p>Used files</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-directory (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Documents/org-mode&#34;</span>))
-(setq org-agenda-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;inbox.org&#34;</span> <span style="color:#e6db74">&#34;projects.org&#34;</span> <span style="color:#e6db74">&#34;work.org&#34;</span>))
+(setq org-agenda-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;inbox.org&#34;</span> <span style="color:#e6db74">&#34;projects.org&#34;</span> <span style="color:#e6db74">&#34;work.org&#34;</span> <span style="color:#e6db74">&#34;sem-11.org&#34;</span> <span style="color:#e6db74">&#34;life.org&#34;</span>))
 <span style="color:#75715e">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
 </code></pre></div><p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(my-leader-def
@@ -2360,7 +2391,9 @@
 </code></pre></div><p>Refile targets</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-refile-targets
       <span style="color:#f92672">&#39;</span>((<span style="color:#e6db74">&#34;projects.org&#34;</span> :maxlevel <span style="color:#f92672">.</span> <span style="color:#ae81ff">2</span>)
-	(<span style="color:#e6db74">&#34;work.org&#34;</span> :maxlevel <span style="color:#f92672">.</span> <span style="color:#ae81ff">2</span>)))
+	(<span style="color:#e6db74">&#34;work.org&#34;</span> :maxlevel <span style="color:#f92672">.</span> <span style="color:#ae81ff">2</span>)
+	(<span style="color:#e6db74">&#34;sem-11.org&#34;</span> :maxlevel <span style="color:#f92672">.</span> <span style="color:#ae81ff">3</span>)
+	(<span style="color:#e6db74">&#34;life.org&#34;</span> :maxlevel <span style="color:#f92672">.</span> <span style="color:#ae81ff">2</span>)))
 (setq org-refile-use-outline-path <span style="color:#e6db74">&#39;file</span>)
 (setq org-outline-path-complete-in-steps <span style="color:#66d9ef">nil</span>)
 </code></pre></div><h4 id="capture-templates-and-various-settings">Capture templates &amp; various settings</h4>
@@ -2603,6 +2636,7 @@
 <p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a plugin for maintaining a journal in org mode. I want to have its entries separate from my knowledge base.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-journal
   :straight <span style="color:#66d9ef">t</span>
+  :if (not my/remote-server)
   :after org
   :config
   (setq org-journal-dir (<span style="color:#a6e22e">concat</span> org-directory <span style="color:#e6db74">&#34;/journal&#34;</span>))
@@ -2671,7 +2705,8 @@
 
 (use-package org-roam
   :straight (:host github :repo <span style="color:#e6db74">&#34;org-roam/org-roam&#34;</span>
-	     :files (:defaults <span style="color:#e6db74">&#34;extensions/*.el&#34;</span>))
+		   :files (:defaults <span style="color:#e6db74">&#34;extensions/*.el&#34;</span>))
+  :if (not my/remote-server)
   :after org
   :init
   (setq org-roam-directory (<span style="color:#a6e22e">concat</span> org-directory <span style="color:#e6db74">&#34;/roam&#34;</span>))
@@ -2744,6 +2779,7 @@ MimeType=x-scheme-handler/org-protocol
 <p>As of now, this package loads Helm on start. To avoid this, I have to exclude Helm from the <code>Package-requires</code> in the <a href=".emacs.d/straight/repos/org-ref/org-ref.el">org-ref.el</a> file. I haven&rsquo;t found a way to do this without modifying the package source yet.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-ref
   :straight (:files (:defaults (:exclude <span style="color:#e6db74">&#34;*helm*&#34;</span>)))
+  :if (not my/remote-server)
   :init
   (setq org-ref-completion-library <span style="color:#e6db74">&#39;org-ref-ivy-cite</span>)
   (setq bibtex-dialect <span style="color:#e6db74">&#39;biblatex</span>)
@@ -2964,6 +3000,7 @@ MimeType=x-scheme-handler/org-protocol
 
 (use-package org-present
   :straight (:host github :repo <span style="color:#e6db74">&#34;rlister/org-present&#34;</span>)
+  :if (not my/remote-server)
   :commands (org-present)
   :config
   (general-define-key
@@ -2982,8 +3019,7 @@ MimeType=x-scheme-handler/org-protocol
 	      (setq-local org-format-latex-options
 			  (<span style="color:#a6e22e">plist-put</span> org-format-latex-options
 				     :scale (<span style="color:#a6e22e">*</span> org-present-text-scale my/org-latex-scale <span style="color:#ae81ff">0.5</span>)))
-	      (org-latex-preview <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">16</span>))
-	      (tab-bar-mode <span style="color:#ae81ff">0</span>)))
+	      (org-latex-preview <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">16</span>))))
   (add-hook <span style="color:#e6db74">&#39;org-present-mode-quit-hook</span>
 	    (lambda ()
 	      (blink-cursor-mode <span style="color:#ae81ff">1</span>)
@@ -2994,9 +3030,10 @@ MimeType=x-scheme-handler/org-protocol
 	      (display-line-numbers-mode <span style="color:#ae81ff">1</span>)
 	      (hide-mode-line-mode <span style="color:#ae81ff">0</span>)
 	      (setq-local org-format-latex-options (<span style="color:#a6e22e">plist-put</span> org-format-latex-options :scale my/org-latex-scale))
-	      (org-latex-preview <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">64</span>))
-	      (tab-bar-mode <span style="color:#ae81ff">1</span>))))
-</code></pre></div><h3 id="toc">TOC</h3>
+	      (org-latex-preview <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">64</span>)))))
+</code></pre></div><h3 id="tools">Tools</h3>
+<p>Various small packages.</p>
+<h4 id="toc">TOC</h4>
 <p>Make a TOC inside the org file.</p>
 <p>References:</p>
 <ul>
@@ -3005,11 +3042,17 @@ MimeType=x-scheme-handler/org-protocol
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-make-toc
   :after (org)
+  :if (not my/remote-server)
   :commands
   (org-make-toc
    org-make-toc-insert
    org-make-toc-set
    org-make-toc-at-point)
+  :straight <span style="color:#66d9ef">t</span>)
+</code></pre></div><h4 id="screenshots">Screenshots</h4>
+<p>A nice package to make screenshots and insert them to the Org document.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-attach-screenshot
+  :commands (org-attach-screenshot)
   :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h3 id="system-configuration">System configuration</h3>
 <p>Functions used across my literate config files.</p>
@@ -3149,7 +3192,7 @@ MimeType=x-scheme-handler/org-protocol
 <h5 id="setup">Setup</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package lsp-mode
   :straight <span style="color:#66d9ef">t</span>
-  :if (not (or my/slow-ssh my/is-termux))
+  :if (not (or my/slow-ssh my/is-termux my/remote-server))
   :hook (
 	 (typescript-mode <span style="color:#f92672">.</span> lsp)
 	 (vue-mode <span style="color:#f92672">.</span> lsp)
@@ -3195,6 +3238,7 @@ MimeType=x-scheme-handler/org-protocol
 <span style="color:#75715e">;;   (add-hook &#39;lsp-after-open-hook #&#39;lsp-origami-try-enable))</span>
 
 (use-package lsp-treemacs
+  :after (lsp)
   :straight <span style="color:#66d9ef">t</span>
   :commands lsp-treemacs-errors-list)
 </code></pre></div><h5 id="keybindings">Keybindings</h5>
@@ -3250,6 +3294,7 @@ MimeType=x-scheme-handler/org-protocol
 
 (use-package tree-sitter
   :straight <span style="color:#66d9ef">t</span>
+  :if (not my/remote-server)
   :hook ((typescript-mode <span style="color:#f92672">.</span> my/tree-sitter-if-not-mmm)
 	 (js-mode <span style="color:#f92672">.</span> my/tree-sitter-if-not-mmm)
 	 (python-mode <span style="color:#f92672">.</span> tree-sitter-mode)
@@ -3346,8 +3391,9 @@ MimeType=x-scheme-handler/org-protocol
   :files (<span style="color:#e6db74">&#34;code-compass.el&#34;</span>)
   :branch <span style="color:#e6db74">&#34;main&#34;</span>
   ))
-</code></pre></div><h4 id="off--format-all"><span class="org-todo todo CHECK">CHECK</span> (OFF) Format-all</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package format-all
+</code></pre></div><h4 id="reformatter">Reformatter</h4>
+<p>A general-purpose package to run formattters on files. While the most popular formatters are already packaged for Emacs, those that aren&rsquo;t can be invoked with this package.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package reformatter
   :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h4 id="general-additional-config">General additional config</h4>
 <p>Make smartparens behave the way I like for C-like languages.</p>
@@ -3894,14 +3940,13 @@ MimeType=x-scheme-handler/org-protocol
 <ul>
 <li><a href="https://languagetool.org/">LanguageTool homepage</a></li>
 <li><a href="https://dev.languagetool.org/http-server">LanguageTool http server</a></li>
-<li><a href="https://github.com/mhayashi1120/Emacs-langtool">LanguageTool for Emacs repo</a></li>
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package langtool
   :straight <span style="color:#66d9ef">t</span>
   :commands (langtool-check)
   :config
-  (setq langtool-language-tool-server-jar <span style="color:#e6db74">&#34;/home/pavel/Programs/LanguageTool-5.1/languagetool-server.jar&#34;</span>)
+  (setq langtool-language-tool-server-jar <span style="color:#e6db74">&#34;/home/pavel/bin/LanguageTool-5.4/languagetool-server.jar&#34;</span>)
   (setq langtool-mother-tongue <span style="color:#e6db74">&#34;ru&#34;</span>)
   (setq langtool-default-language <span style="color:#e6db74">&#34;en-US&#34;</span>))
 
@@ -4251,6 +4296,13 @@ MimeType=x-scheme-handler/org-protocol
 (use-package lsp-haskell
   :straight <span style="color:#66d9ef">t</span>
   :after (lsp haskell-mode))
+</code></pre></div><h3 id="lua">Lua</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package lua-mode
+  :straight <span style="color:#66d9ef">t</span>
+  :mode <span style="color:#e6db74">&#34;\\.lua\\&#39;&#34;</span>
+  :hook (lua-mode <span style="color:#f92672">.</span> smartparens-mode))
+
+(my/set-smartparens-indent <span style="color:#e6db74">&#39;lua-mode</span>)
 </code></pre></div><h3 id="json">JSON</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package json-mode
   :straight <span style="color:#66d9ef">t</span>
@@ -4259,6 +4311,28 @@ MimeType=x-scheme-handler/org-protocol
   (add-hook <span style="color:#e6db74">&#39;json-mode</span> <span style="color:#a6e22e">#&#39;</span>smartparens-mode)
   (add-hook <span style="color:#e6db74">&#39;json-mode</span> <span style="color:#a6e22e">#&#39;</span>hs-minor-mode)
   (my/set-smartparens-indent <span style="color:#e6db74">&#39;json-mode</span>))
+</code></pre></div><h3 id="sql">SQL</h3>
+<p><a href="https://github.com/zeroturnaround/sql-formatter">sql-formatter</a> is a nice JavaScript package for pretty-printing SQL queries. It is not packaged for Emacs, so the easiest way to use it seems to be to define a custom formatter via <a href="https://github.com/purcell/emacs-reformatter">reformatter</a>.</p>
+<p>Also, I&rsquo;ve a simple function to switch dialects because I often alternate between them.</p>
+<p>So far I didn&rsquo;t find a nice SQL client for Emacs, but I occasionally run SQL queries in Org Mode, so this qute package is handy.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/sqlformatter-dialect-choice
+      <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;db2&#34;</span> <span style="color:#e6db74">&#34;mariadb&#34;</span> <span style="color:#e6db74">&#34;mysql&#34;</span> <span style="color:#e6db74">&#34;n1ql&#34;</span> <span style="color:#e6db74">&#34;plsql&#34;</span> <span style="color:#e6db74">&#34;postgresql&#34;</span> <span style="color:#e6db74">&#34;redshift&#34;</span> <span style="color:#e6db74">&#34;spark&#34;</span> <span style="color:#e6db74">&#34;sql&#34;</span> <span style="color:#e6db74">&#34;tsql&#34;</span>))
+
+(setq my/sqlformatter-dialect <span style="color:#e6db74">&#34;postgresql&#34;</span>)
+
+(defun my/sqlformatter-set-dialect ()
+  <span style="color:#e6db74">&#34;Set dialect for sql-formatter&#34;</span>
+  (interactive)
+  (setq my/sqlformatter-dialect
+	(<span style="color:#a6e22e">completing-read</span> <span style="color:#e6db74">&#34;Dialect: &#34;</span> my/sqlformatter-dialect-choice)))
+
+(reformatter-define sqlformat
+  :program (executable-find <span style="color:#e6db74">&#34;sql-formatter&#34;</span>)
+  :args <span style="color:#f92672">`</span>(<span style="color:#e6db74">&#34;-l&#34;</span> <span style="color:#f92672">,</span>my/sqlformatter-dialect))
+
+(my-leader-def
+  :keymaps <span style="color:#f92672">&#39;</span>(sql-mode-map)
+  <span style="color:#e6db74">&#34;rr&#34;</span> <span style="color:#a6e22e">#&#39;</span>sqlformat-buffer)
 </code></pre></div><h3 id="yaml">YAML</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package yaml-mode
   :straight <span style="color:#66d9ef">t</span>
@@ -4350,7 +4424,7 @@ MimeType=x-scheme-handler/org-protocol
 </code></pre></div><h3 id="internet-and-multimedia">Internet &amp; Multimedia</h3>
 <h4 id="notmuch">Notmuch</h4>
 <p>My notmuch config now resides in <a href="/configs/mail/">Mail.org</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(unless my/is-termux
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(unless (or my/is-termux my/remote-server)
   (load-file (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;mail.el&#34;</span> user-emacs-directory)))
 </code></pre></div><h4 id="elfeed">Elfeed</h4>
 <p><a href="https://github.com/skeeto/elfeed">elfeed</a> is an Emacs RSS client.</p>
@@ -4358,12 +4432,13 @@ MimeType=x-scheme-handler/org-protocol
 <p>Using my own fork until the modifications are merged into master.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package elfeed
   :straight (:repo <span style="color:#e6db74">&#34;SqrtMinusOne/elfeed&#34;</span> :host github)
+  :if (not my/remote-server)
   :commands (elfeed)
   :init
   (my-leader-def <span style="color:#e6db74">&#34;ae&#34;</span> <span style="color:#e6db74">&#39;elfeed</span>)
   :config
   (setq elfeed-db-directory <span style="color:#e6db74">&#34;~/.elfeed&#34;</span>)
-  (setq elfeed-enclosure-default-dir (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~&#34;</span>))
+  (setq elfeed-enclosure-default-dir (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Downloads&#34;</span>))
   (advice-add <span style="color:#a6e22e">#&#39;</span>elfeed-insert-html
 	      :around
 	      (lambda (fun <span style="color:#66d9ef">&amp;rest</span> r)
@@ -4449,6 +4524,7 @@ MimeType=x-scheme-handler/org-protocol
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package emms
   :straight <span style="color:#66d9ef">t</span>
+  :if (not my/remote-server)
   :commands (emms-smart-browse
 	     emms-browser
 	     emms-add-url
@@ -4477,11 +4553,11 @@ MimeType=x-scheme-handler/org-protocol
   <span style="color:#75715e">;; MPV setup</span>
   &lt;&lt;emms-mpv-setup&gt;&gt;
   <span style="color:#75715e">;; evil-lion and evil-commentary shadow some gX bindings</span>
-  (add-hook <span style="color:#e6db74">&#39;emms-browser-mode-hook</span>
-	    (lambda ()
-	      (evil-lion-mode <span style="color:#ae81ff">-1</span>)
-	      <span style="color:#75715e">;; (evil-commentary-mode -1)</span>
-	      ))
+  <span style="color:#75715e">;; (add-hook &#39;emms-browser-mode-hook</span>
+  <span style="color:#75715e">;; (lambda ()</span>
+  <span style="color:#75715e">;; (evil-lion-mode -1)</span>
+  <span style="color:#75715e">;; (evil-commentary-mode -1)</span>
+  <span style="color:#75715e">;; ))</span>
   <span style="color:#75715e">;; I have everything I need in polybar</span>
   (emms-mode-line-mode <span style="color:#ae81ff">-1</span>)
   (emms-playing-time-display-mode <span style="color:#ae81ff">-1</span>)
@@ -4521,7 +4597,7 @@ MimeType=x-scheme-handler/org-protocol
 </tbody>
 </table>
 <p><a href="https://mpv.io/">mpv</a> is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span>)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span> <span style="color:#66d9ef">t</span>)
 </code></pre></div><p>Also a custom regex. My demands for MPV include running <code>youtube-dl</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-set emms-player-mpv
 		 <span style="color:#e6db74">&#39;regex</span>
@@ -4549,7 +4625,7 @@ MimeType=x-scheme-handler/org-protocol
 (my/set-emms-mpd-youtube-quality (<span style="color:#a6e22e">car</span> my/youtube-dl-quality-list))
 </code></pre></div><p>Now <code>emms-add-url</code> should work on YouTube URLs just fine. Just keep in mind that it will only add the URL to the playlist, not play it right away.</p>
 <h5 id="cache-cleanup">Cache cleanup</h5>
-<p>All added URLs reside in the EMMS cache after being played. I don&rsquo;t want them to stay there for a long time, so here is a handy function to clean it.</p>
+<p>All the added URLs reside in the EMMS cache after being played. I don&rsquo;t want them to stay there for a long time, so here is a handy function to clean it.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/emms-cleanup-urls ()
   (interactive)
   (let ((keys-to-delete <span style="color:#f92672">&#39;</span>()))
@@ -4751,7 +4827,7 @@ tag2: value2&#39;
     (shell-command-to-string (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;curl -L %s --output %s&#34;</span> tldr-source-zip-url tldr-saved-zip-path))
     (when (<span style="color:#a6e22e">file-exists-p</span> <span style="color:#e6db74">&#34;/tmp/tldr&#34;</span>)
       (delete-directory <span style="color:#e6db74">&#34;/tmp/tldr&#34;</span> <span style="color:#66d9ef">t</span>))
-    (shell-command-to-string (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;unzip -d /tmp/tldr/ %s&#34;</span> tldr-saved-zip-path) <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">nil</span>)
+    (shell-command-to-string (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;unzip -d /tmp/tldr/ %s&#34;</span> tldr-saved-zip-path))
     (when (<span style="color:#a6e22e">file-exists-p</span> tldr-directory-path)
       (delete-directory tldr-directory-path <span style="color:#e6db74">&#39;recursive</span> <span style="color:#e6db74">&#39;no-trash</span>))
     (shell-command-to-string (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;mv %s %s&#34;</span> <span style="color:#e6db74">&#34;/tmp/tldr/tldr-main&#34;</span> tldr-directory-path))))
@@ -4783,6 +4859,7 @@ tag2: value2&#39;
 </code></pre></div><h3 id="utilities">Utilities</h3>
 <h4 id="pass">pass</h4>
 <p>I use <a href="https://www.passwordstore.org/">pass</a> as my password manager. Expectedly, there is Emacs frontend for it.</p>
+<p>Although I use <a href="https://github.com/carnager/rofi-pass">this rofi frontend</a> for actually inserting passwords.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package pass
   :straight <span style="color:#66d9ef">t</span>
   :commands (pass)
@@ -4892,6 +4969,7 @@ tag2: value2&#39;
 </table>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package screenshot
   :straight (:repo <span style="color:#e6db74">&#34;tecosaur/screenshot&#34;</span> :host github :files (<span style="color:#e6db74">&#34;screenshot.el&#34;</span>))
+  :if (display-graphic-p)
   :commands (screenshot)
   :init
   (my-leader-def <span style="color:#e6db74">&#34;S&#34;</span> <span style="color:#e6db74">&#39;screenshot</span>))
@@ -4948,14 +5026,14 @@ tag2: value2&#39;
   :if (and (or
 	    (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;indigo&#34;</span>)
 	    (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;eminence&#34;</span>))
-	   (not my/slow-ssh))
+	   (not my/slow-ssh)
+	   (not my/remote-server))
   :config
   (elcord-mode)
   (add-to-list <span style="color:#e6db74">&#39;elcord-boring-buffers-regexp-list</span>
 	       (rx bos (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;.org&#34;</span> eos))
   (add-to-list <span style="color:#e6db74">&#39;elcord-boring-buffers-regexp-list</span>
-	       (rx bos (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">14</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">*</span> not-newline) <span style="color:#e6db74">&#34;.org&#34;</span> eos))
-  )
+	       (rx bos (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">14</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">*</span> not-newline) <span style="color:#e6db74">&#34;.org&#34;</span> eos)))
 </code></pre></div><h4 id="snow">Snow</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package snow
   :straight (:repo <span style="color:#e6db74">&#34;alphapapa/snow.el&#34;</span> :host github)
