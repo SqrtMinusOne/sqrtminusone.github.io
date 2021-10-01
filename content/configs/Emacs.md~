@@ -19,15 +19,16 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [Measure startup speed](#measure-startup-speed)
     - [straight.el](#straight-dot-el)
     - [use-package](#use-package)
+    - [config variants & environment](#config-variants-and-environment)
     - [Performance](#performance)
         - [Garbage collection](#garbage-collection)
         - [Run garbage collection when Emacs is unfocused](#run-garbage-collection-when-emacs-is-unfocused)
-        - [Misc](#misc)
         - [Native compilation](#native-compilation)
-    - [Anaconda & environment](#anaconda-and-environment)
+    - [Anaconda](#anaconda)
     - [Custom file location](#custom-file-location)
     - [Private config](#private-config)
     - [No littering](#no-littering)
+    - [Prevent Emacs from closing](#prevent-emacs-from-closing)
 - [Global editing configuration](#global-editing-configuration)
     - [General keybindings stuff](#general-keybindings-stuff)
         - [general.el](#general-dot-el)
@@ -150,7 +151,9 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [Keybindings & stuff](#keybindings-and-stuff)
         - [Copy a link](#copy-a-link)
     - [Presentations](#presentations)
-    - [TOC](#toc)
+    - [Tools](#tools)
+        - [TOC](#toc)
+        - [Screenshots](#screenshots)
     - [System configuration](#system-configuration)
         - [Tables for Guix Dependencies](#tables-for-guix-dependencies)
         - [Noweb evaluations](#noweb-evaluations)
@@ -171,7 +174,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [<span class="org-todo done OFF">OFF</span> (OFF) Code Compass](#off--code-compass)
             - [Dependencies](#dependencies)
             - [Plugin](#plugin)
-        - [<span class="org-todo todo CHECK">CHECK</span> (OFF) Format-all](#off--format-all)
+        - [Reformatter](#reformatter)
         - [General additional config](#general-additional-config)
     - [Web development](#web-development)
         - [Emmet](#emmet)
@@ -225,7 +228,9 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [fish](#fish)
     - [sh](#sh)
     - [Haskell](#haskell)
+    - [Lua](#lua)
     - [JSON](#json)
+    - [SQL](#sql)
     - [YAML](#yaml)
     - [.env](#dot-env)
     - [CSV](#csv)
@@ -342,6 +347,56 @@ References:
 ```
 
 
+### config variants & environment {#config-variants-and-environment}
+
+The following variable is true when my machine is not powerful enough for some resource-heavy packages.
+
+```emacs-lisp
+(setq my/lowpower (string= (system-name) "azure"))
+```
+
+The following is true if Emacs is meant to be used with TRAMP over slow ssh.
+
+```emacs-lisp
+(setq my/slow-ssh
+      (or
+       (string= (getenv "IS_TRAMP") "true")
+       (string= (system-name) "dev-digital")))
+```
+
+The following is true is Emacs is ran on a remote server where I don't need stuff like my org workflow
+
+```emacs-lisp
+(setq my/remote-server
+      (or (string= (getenv "IS_REMOTE") "true")
+	  (string= (system-name) "dev-digital")))
+```
+
+And the following is true if Emacs is run from termux on Android.
+
+```emacs-lisp
+(setq my/is-termux (string-match-p (rx (* nonl) "com.termux" (* nonl)) (getenv "HOME")))
+```
+
+Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:
+
+```emacs-lisp
+(setenv "IS_EMACS" "true")
+```
+
+Finally, I want to have a minimal Emacs config for debugging purposes. This has just straight.el, use-packages and evil.
+
+```emacs-lisp
+<<minimal>>
+```
+
+To launch Emacs with this config, run
+
+```bash
+emacs -q -l ~/.emacs.d/init-minimal.el
+```
+
+
 ### Performance {#performance}
 
 
@@ -373,27 +428,6 @@ Some time has passed, and I still don't know if there is any quantifiable advant
 ```
 
 
-#### Misc {#misc}
-
-The following variable is true when my machine is not powerful enough for some resource-heavy packages.
-
-```emacs-lisp
-(setq my/lowpower (string= (system-name) "azure"))
-```
-
-The following is true if Emacs is meant to be used with TRAMP over slow ssh.
-
-```emacs-lisp
-(setq my/slow-ssh (string= (getenv "IS_TRAMP") "true"))
-```
-
-And the following is true if Emacs is run from termux on Android.
-
-```emacs-lisp
-(setq my/is-termux (string-match-p (rx (* nonl) "com.termux" (* nonl)) (getenv "HOME")))
-```
-
-
 #### Native compilation {#native-compilation}
 
 Set number of jobs to 1 on low-power machines
@@ -404,7 +438,7 @@ Set number of jobs to 1 on low-power machines
 ```
 
 
-### Anaconda & environment {#anaconda-and-environment}
+### Anaconda {#anaconda}
 
 [Anaconda](https://www.anaconda.com/) is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js
 
@@ -432,12 +466,6 @@ References:
 	      (lambda (&rest _) (setenv "EMACS_CONDA_ENV" conda-env-current-name)))
   (unless (getenv "CONDA_DEFAULT_ENV")
     (conda-env-activate "general")))
-```
-
-Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:
-
-```emacs-lisp
-(setenv "IS_EMACS" "true")
 ```
 
 
@@ -469,6 +497,15 @@ By default emacs and its packages create a lot files in `.emacs.d` and in other 
 ```emacs-lisp
 (use-package no-littering
   :straight t)
+```
+
+
+### Prevent Emacs from closing {#prevent-emacs-from-closing}
+
+This adds a confirmation to avoid accidental Emacs closing.
+
+```emacs-lisp
+(setq confirm-kill-emacs 'y-or-n-p)
 ```
 
 
@@ -1437,7 +1474,7 @@ A company frontend with nice icons.
 ```emacs-lisp
 (use-package company-box
   :straight t
-  :if (not my/lowpower)
+  :if (and (display-graphic-p) (not my/lowpower))
   :after (company)
   :hook (company-mode . company-box-mode))
 ```
@@ -1556,7 +1593,7 @@ Before I figure out how to package this for Guix:
 ```emacs-lisp
 (use-package wakatime-mode
   :straight (:host github :repo "SqrtMinusOne/wakatime-mode")
-  :if (not my/is-termux)
+  :if (not (or my/is-termux my/remote-server))
   :config
   (setq wakatime-ignore-exit-codes '(0 1 102))
   (advice-add 'wakatime-init :after (lambda () (setq wakatime-cli-path "/home/pavel/bin/wakatime-cli")))
@@ -1573,7 +1610,7 @@ Before I figure out how to package this for Guix:
 
 (use-package activity-watch-mode
   :straight t
-  :if (not my/is-termux)
+  :if (not (or my/is-termux my/remote-server))
   :config
   (global-activity-watch-mode))
 ```
@@ -1692,7 +1729,9 @@ My colorscheme of choice.
   :config
   (setq doom-themes-enable-bold t
 	doom-themes-enable-italic t)
-  (load-theme 'doom-palenight t)
+  (if my/remote-server
+      (load-theme 'doom-gruvbox t)
+    (load-theme 'doom-palenight t))
   (doom-themes-visual-bell-config)
   (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config))
@@ -1952,7 +1991,7 @@ References:
 ```emacs-lisp
 (use-package emojify
   :straight t
-  :if (not (or my/lowpower my/is-termux))
+  :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
   :hook (after-init . global-emojify-mode))
 ```
 
@@ -1964,7 +2003,7 @@ Ligature setup for the JetBrainsMono font.
 ```emacs-lisp
 (use-package ligature
   :straight (:host github :repo "mickeynp/ligature.el")
-  :if (not my/is-termux)
+  :if (display-graphic-p)
   :config
   (ligature-set-ligatures
    '(
@@ -1980,7 +2019,8 @@ Ligature setup for the JetBrainsMono font.
      clojure-mode
      go-mode
      sh-mode
-     haskell-mode)
+     haskell-mode
+     web-mode)
    '("--" "---" "==" "===" "!=" "!==" "=!=" "=:=" "=/=" "<="
      ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!" "??"
      "?:" "?." "?=" "<:" ":<" ":>" ">:" "<>" "<<<" ">>>"
@@ -2003,6 +2043,7 @@ Ligature setup for the JetBrainsMono font.
 
 ```emacs-lisp
 (use-package all-the-icons
+  :if (display-graphic-p)
   :straight t)
 ```
 
@@ -2023,7 +2064,7 @@ Highlight indent guides.
 ```emacs-lisp
 (use-package highlight-indent-guides
   :straight t
-  :if (not my/lowpower)
+  :if (not (or my/lowpower my/remote-server))
   :hook (
 	 (prog-mode . highlight-indent-guides-mode)
 	 (vue-mode . highlight-indent-guides-mode)
@@ -2136,7 +2177,7 @@ Display icons for files.
 ```emacs-lisp
 (use-package all-the-icons-dired
   :straight t
-  :if (not (or my/lowpower my/slow-ssh))
+  :if (not (or my/lowpower my/slow-ssh (not (display-graphic-p))))
   :hook (dired-mode . (lambda ()
 			(unless (string-match-p "/gnu/store" default-directory)
 			  (all-the-icons-dired-mode))))
@@ -2247,6 +2288,13 @@ Some other optimization settings:
       (format "\\(%s\\)\\|\\(%s\\)"
 	      vc-ignore-dir-regexp
 	      tramp-file-name-regexp))
+```
+
+Set the default shell to `bin/bash` for TRAMP or on a remote server.
+
+```emacs-lisp
+(when (or my/remote-server my/slow-ssh)
+  (setq explicit-shell-file-name "/bin/bash"))
 ```
 
 Also, here is a hack to make TRAMP find `ls` on Guix:
@@ -2390,6 +2438,7 @@ Open a terminal in the lower third of the frame with the `` ` `` key.
 	    (kill-buffer (current-buffer))
 	  (select-window vterm-window))
       (vterm-other-window "vterm-subterminal"))))
+
 (unless my/slow-ssh
   (general-nmap "`" 'my/toggle-vterm-subteminal)
   (general-nmap "~" 'vterm))
@@ -2509,6 +2558,7 @@ Use the built-in org mode.
 ```emacs-lisp
 (use-package org
   :straight t
+  :if (not my/remote-server)
   :defer t
   :config
   (setq org-startup-indented t)
@@ -2884,7 +2934,7 @@ Used files
 
 ```emacs-lisp
 (setq org-directory (expand-file-name "~/Documents/org-mode"))
-(setq org-agenda-files '("inbox.org" "projects.org" "work.org"))
+(setq org-agenda-files '("inbox.org" "projects.org" "work.org" "sem-11.org" "life.org"))
 ;; (setq org-default-notes-file (concat org-directory "/notes.org"))
 ```
 
@@ -2903,7 +2953,9 @@ Refile targets
 ```emacs-lisp
 (setq org-refile-targets
       '(("projects.org" :maxlevel . 2)
-	("work.org" :maxlevel . 2)))
+	("work.org" :maxlevel . 2)
+	("sem-11.org" :maxlevel . 3)
+	("life.org" :maxlevel . 2)))
 (setq org-refile-use-outline-path 'file)
 (setq org-outline-path-complete-in-steps nil)
 ```
@@ -3235,6 +3287,7 @@ A template looks like this:
 ```emacs-lisp
 (use-package org-journal
   :straight t
+  :if (not my/remote-server)
   :after org
   :config
   (setq org-journal-dir (concat org-directory "/journal"))
@@ -3305,7 +3358,8 @@ References:
 
 (use-package org-roam
   :straight (:host github :repo "org-roam/org-roam"
-	     :files (:defaults "extensions/*.el"))
+		   :files (:defaults "extensions/*.el"))
+  :if (not my/remote-server)
   :after org
   :init
   (setq org-roam-directory (concat org-directory "/roam"))
@@ -3392,6 +3446,7 @@ As of now, this package loads Helm on start. To avoid this, I have to exclude He
 ```emacs-lisp
 (use-package org-ref
   :straight (:files (:defaults (:exclude "*helm*")))
+  :if (not my/remote-server)
   :init
   (setq org-ref-completion-library 'org-ref-ivy-cite)
   (setq bibtex-dialect 'biblatex)
@@ -3698,6 +3753,7 @@ Doing presentations with [org-present](https://github.com/rlister/org-present).
 
 (use-package org-present
   :straight (:host github :repo "rlister/org-present")
+  :if (not my/remote-server)
   :commands (org-present)
   :config
   (general-define-key
@@ -3716,8 +3772,7 @@ Doing presentations with [org-present](https://github.com/rlister/org-present).
 	      (setq-local org-format-latex-options
 			  (plist-put org-format-latex-options
 				     :scale (* org-present-text-scale my/org-latex-scale 0.5)))
-	      (org-latex-preview '(16))
-	      (tab-bar-mode 0)))
+	      (org-latex-preview '(16))))
   (add-hook 'org-present-mode-quit-hook
 	    (lambda ()
 	      (blink-cursor-mode 1)
@@ -3728,12 +3783,16 @@ Doing presentations with [org-present](https://github.com/rlister/org-present).
 	      (display-line-numbers-mode 1)
 	      (hide-mode-line-mode 0)
 	      (setq-local org-format-latex-options (plist-put org-format-latex-options :scale my/org-latex-scale))
-	      (org-latex-preview '(64))
-	      (tab-bar-mode 1))))
+	      (org-latex-preview '(64)))))
 ```
 
 
-### TOC {#toc}
+### Tools {#tools}
+
+Various small packages.
+
+
+#### TOC {#toc}
 
 Make a TOC inside the org file.
 
@@ -3746,11 +3805,23 @@ References:
 ```emacs-lisp
 (use-package org-make-toc
   :after (org)
+  :if (not my/remote-server)
   :commands
   (org-make-toc
    org-make-toc-insert
    org-make-toc-set
    org-make-toc-at-point)
+  :straight t)
+```
+
+
+#### Screenshots {#screenshots}
+
+A nice package to make screenshots and insert them to the Org document.
+
+```emacs-lisp
+(use-package org-attach-screenshot
+  :commands (org-attach-screenshot)
   :straight t)
 ```
 
@@ -3947,7 +4018,7 @@ References:
 ```emacs-lisp
 (use-package lsp-mode
   :straight t
-  :if (not (or my/slow-ssh my/is-termux))
+  :if (not (or my/slow-ssh my/is-termux my/remote-server))
   :hook (
 	 (typescript-mode . lsp)
 	 (vue-mode . lsp)
@@ -4000,6 +4071,7 @@ Origami should've leveraged LSP folding, but it was too unstable at the moment I
 ;;   (add-hook 'lsp-after-open-hook #'lsp-origami-try-enable))
 
 (use-package lsp-treemacs
+  :after (lsp)
   :straight t
   :commands lsp-treemacs-errors-list)
 ```
@@ -4076,6 +4148,7 @@ References:
 
 (use-package tree-sitter
   :straight t
+  :if (not my/remote-server)
   :hook ((typescript-mode . my/tree-sitter-if-not-mmm)
 	 (js-mode . my/tree-sitter-if-not-mmm)
 	 (python-mode . tree-sitter-mode)
@@ -4204,10 +4277,12 @@ References:
 ```
 
 
-#### <span class="org-todo todo CHECK">CHECK</span> (OFF) Format-all {#off--format-all}
+#### Reformatter {#reformatter}
+
+A general-purpose package to run formattters on files. While the most popular formatters are already packaged for Emacs, those that aren't can be invoked with this package.
 
 ```emacs-lisp
-(use-package format-all
+(use-package reformatter
   :straight t)
 ```
 
@@ -4870,7 +4945,6 @@ References:
 
 -   [LanguageTool homepage](https://languagetool.org/)
 -   [LanguageTool http server](https://dev.languagetool.org/http-server)
--   [LanguageTool for Emacs repo](https://github.com/mhayashi1120/Emacs-langtool)
 
 <!--listend-->
 
@@ -4879,7 +4953,7 @@ References:
   :straight t
   :commands (langtool-check)
   :config
-  (setq langtool-language-tool-server-jar "/home/pavel/Programs/LanguageTool-5.1/languagetool-server.jar")
+  (setq langtool-language-tool-server-jar "/home/pavel/bin/LanguageTool-5.4/languagetool-server.jar")
   (setq langtool-mother-tongue "ru")
   (setq langtool-default-language "en-US"))
 
@@ -5358,6 +5432,18 @@ A function to start up [TensorBoard](https://www.tensorflow.org/tensorboard).
 ```
 
 
+### Lua {#lua}
+
+```emacs-lisp
+(use-package lua-mode
+  :straight t
+  :mode "\\.lua\\'"
+  :hook (lua-mode . smartparens-mode))
+
+(my/set-smartparens-indent 'lua-mode)
+```
+
+
 ### JSON {#json}
 
 ```emacs-lisp
@@ -5368,6 +5454,36 @@ A function to start up [TensorBoard](https://www.tensorflow.org/tensorboard).
   (add-hook 'json-mode #'smartparens-mode)
   (add-hook 'json-mode #'hs-minor-mode)
   (my/set-smartparens-indent 'json-mode))
+```
+
+
+### SQL {#sql}
+
+[sql-formatter](https://github.com/zeroturnaround/sql-formatter) is a nice JavaScript package for pretty-printing SQL queries. It is not packaged for Emacs, so the easiest way to use it seems to be to define a custom formatter via [reformatter](https://github.com/purcell/emacs-reformatter).
+
+Also, I've a simple function to switch dialects because I often alternate between them.
+
+So far I didn't find a nice SQL client for Emacs, but I occasionally run SQL queries in Org Mode, so this qute package is handy.
+
+```emacs-lisp
+(setq my/sqlformatter-dialect-choice
+      '("db2" "mariadb" "mysql" "n1ql" "plsql" "postgresql" "redshift" "spark" "sql" "tsql"))
+
+(setq my/sqlformatter-dialect "postgresql")
+
+(defun my/sqlformatter-set-dialect ()
+  "Set dialect for sql-formatter"
+  (interactive)
+  (setq my/sqlformatter-dialect
+	(completing-read "Dialect: " my/sqlformatter-dialect-choice)))
+
+(reformatter-define sqlformat
+  :program (executable-find "sql-formatter")
+  :args `("-l" ,my/sqlformatter-dialect))
+
+(my-leader-def
+  :keymaps '(sql-mode-map)
+  "rr" #'sqlformat-buffer)
 ```
 
 
@@ -5516,7 +5632,7 @@ Open a file managed by yadm.
 My notmuch config now resides in [Mail.org]({{< relref "Mail" >}}).
 
 ```emacs-lisp
-(unless my/is-termux
+(unless (or my/is-termux my/remote-server)
   (load-file (expand-file-name "mail.el" user-emacs-directory)))
 ```
 
@@ -5532,12 +5648,13 @@ Using my own fork until the modifications are merged into master.
 ```emacs-lisp
 (use-package elfeed
   :straight (:repo "SqrtMinusOne/elfeed" :host github)
+  :if (not my/remote-server)
   :commands (elfeed)
   :init
   (my-leader-def "ae" 'elfeed)
   :config
   (setq elfeed-db-directory "~/.elfeed")
-  (setq elfeed-enclosure-default-dir (expand-file-name "~"))
+  (setq elfeed-enclosure-default-dir (expand-file-name "~/Downloads"))
   (advice-add #'elfeed-insert-html
 	      :around
 	      (lambda (fun &rest r)
@@ -5655,6 +5772,7 @@ References:
 ```emacs-lisp
 (use-package emms
   :straight t
+  :if (not my/remote-server)
   :commands (emms-smart-browse
 	     emms-browser
 	     emms-add-url
@@ -5683,11 +5801,11 @@ References:
   ;; MPV setup
   <<emms-mpv-setup>>
   ;; evil-lion and evil-commentary shadow some gX bindings
-  (add-hook 'emms-browser-mode-hook
-	    (lambda ()
-	      (evil-lion-mode -1)
-	      ;; (evil-commentary-mode -1)
-	      ))
+  ;; (add-hook 'emms-browser-mode-hook
+  ;; (lambda ()
+  ;; (evil-lion-mode -1)
+  ;; (evil-commentary-mode -1)
+  ;; ))
   ;; I have everything I need in polybar
   (emms-mode-line-mode -1)
   (emms-playing-time-display-mode -1)
@@ -5742,7 +5860,7 @@ After all this is done, run `M-x emms-cache-set-from-mpd-all` to set cache from 
 [mpv](https://mpv.io/) is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.
 
 ```emacs-lisp
-(add-to-list 'emms-player-list 'emms-player-mpv)
+(add-to-list 'emms-player-list 'emms-player-mpv t)
 ```
 
 Also a custom regex. My demands for MPV include running `youtube-dl`, so there is a regex that matches youtube.com or some of the video formats.
@@ -5783,7 +5901,7 @@ Now `emms-add-url` should work on YouTube URLs just fine. Just keep in mind that
 
 ##### Cache cleanup {#cache-cleanup}
 
-All added URLs reside in the EMMS cache after being played. I don't want them to stay there for a long time, so here is a handy function to clean it.
+All the added URLs reside in the EMMS cache after being played. I don't want them to stay there for a long time, so here is a handy function to clean it.
 
 ```emacs-lisp
 (defun my/emms-cleanup-urls ()
@@ -6059,7 +6177,7 @@ References:
     (shell-command-to-string (format "curl -L %s --output %s" tldr-source-zip-url tldr-saved-zip-path))
     (when (file-exists-p "/tmp/tldr")
       (delete-directory "/tmp/tldr" t))
-    (shell-command-to-string (format "unzip -d /tmp/tldr/ %s" tldr-saved-zip-path) nil nil)
+    (shell-command-to-string (format "unzip -d /tmp/tldr/ %s" tldr-saved-zip-path))
     (when (file-exists-p tldr-directory-path)
       (delete-directory tldr-directory-path 'recursive 'no-trash))
     (shell-command-to-string (format "mv %s %s" "/tmp/tldr/tldr-main" tldr-directory-path))))
@@ -6109,6 +6227,8 @@ Finally, there is also an Emacs plugin for [devdocs.io](https://devdocs.io).
 #### pass {#pass}
 
 I use [pass](https://www.passwordstore.org/) as my password manager. Expectedly, there is Emacs frontend for it.
+
+Although I use [this rofi frontend](https://github.com/carnager/rofi-pass) for actually inserting passwords.
 
 ```emacs-lisp
 (use-package pass
@@ -6249,6 +6369,7 @@ Tecosaur's plugin to make beautiful code screenshots.
 ```emacs-lisp
 (use-package screenshot
   :straight (:repo "tecosaur/screenshot" :host github :files ("screenshot.el"))
+  :if (display-graphic-p)
   :commands (screenshot)
   :init
   (my-leader-def "S" 'screenshot))
@@ -6340,14 +6461,14 @@ In order for this to work in Guix, a service is necessary - [Discord rich presen
   :if (and (or
 	    (string= (system-name) "indigo")
 	    (string= (system-name) "eminence"))
-	   (not my/slow-ssh))
+	   (not my/slow-ssh)
+	   (not my/remote-server))
   :config
   (elcord-mode)
   (add-to-list 'elcord-boring-buffers-regexp-list
 	       (rx bos (+ num) "-" (+ num) "-" (+ num) ".org" eos))
   (add-to-list 'elcord-boring-buffers-regexp-list
-	       (rx bos (= 14 num) "-" (* not-newline) ".org" eos))
-  )
+	       (rx bos (= 14 num) "-" (* not-newline) ".org" eos)))
 ```
 
 

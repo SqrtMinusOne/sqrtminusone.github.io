@@ -68,6 +68,7 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
     - [Scripts](#scripts)
         - [Buku bookmarks](#buku-bookmarks)
         - [Man pages](#man-pages)
+        - [pass](#pass)
 - [Flameshot](#flameshot)
 - [dunst](#dunst)
 - [keynav](#keynav)
@@ -576,7 +577,7 @@ bindsym $mod+Shift+g mode "outer gaps"
 
 A more or less standard set of keybindings to move & resize floating windows.
 
-Just be careful to always make a way to return from these new modes, otherwise, you'd end up in a rather precarious position.
+Just be careful to always make a way to return from these new modes, otherwise you'd end up in a rather precarious situation.
 
 ```vim
 # resize window (you can also use the mouse for that)
@@ -665,6 +666,7 @@ Keybindings to launch [rofi](https://github.com/davatorium/rofi). For more detai
 ```vim
 bindsym $mod+d exec "rofi -modi 'drun,run' -show drun"
 bindsym $mod+b exec --no-startup-id rofi-buku-mine
+bindsym $mod+minus exec rofi-pass; mode default
 
 bindsym $mod+apostrophe mode "rofi"
 
@@ -672,7 +674,7 @@ mode "rofi" {
     bindsym d exec "rofi -modi 'drun,run' -show drun"
     bindsym m exec rofi-man; mode default
     bindsym b exec rofi-buku-mine; mode default
-    bindsym k exec rofi-keepassxc -d ~/MEGAsync/Passwords.kdbx; mode default
+    bindsym k exec rofi-pass; mode default
     bindsym Escape mode "default"
 }
 ```
@@ -936,7 +938,7 @@ declare -A BLOCKS=(
 )
 
 # Geolocation for some modules
-export LOC="TMN"
+export LOC="SPB"
 
 export IPSTACK_API_KEY=$(pass show My_Online/APIs/ipstack | head -n 1)
 
@@ -1713,6 +1715,23 @@ fi
 ```
 
 
+#### pass {#pass}
+
+| Guix dependency |
+|-----------------|
+| rofi-pass       |
+| xset            |
+
+A nice [pass frontend for Rofi](https://github.com/carnager/rofi-pass), which is even packaged for Guix.
+
+```bash
+USERNAME_field='username'
+EDITOR=vim
+default_autotype='username :tab pass'
+clip=both
+```
+
+
 ## Flameshot {#flameshot}
 
 | Guix dependency |
@@ -1813,7 +1832,7 @@ References:
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
 
-    # Shrink window if it's smaller than the width.  Will be ignored if
+    # Shrink window if its smaller than the width.  Will be ignored if
     # width is 0.
     shrink = no
 
@@ -2347,6 +2366,10 @@ This section generates manifests for various desktop software that I'm using.
 | dev      | openjdk         |
 | dev      | go              |
 | dev      | gcc-toolchain   |
+| dev      | lua             |
+| dev      | libfaketime     |
+| dev      | hugo-extended   |
+| dev      | make            |
 
 
 ### Manifests {#manifests}
@@ -2731,6 +2754,8 @@ Other desktop programs I use are listed below.
 | fontconfig             |                                           |
 | polkit-gnome           | Polkit authentication agent               |
 | anydesk                | Remote desktop software                   |
+| gnome-disk-utility     | Manage disks                              |
+| gparted                | Manage partitions                         |
 
 <a id="code-snippet--packages"></a>
 ```emacs-lisp

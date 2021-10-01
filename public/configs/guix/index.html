@@ -72,7 +72,6 @@
 <div></div>
 <div class="heading">Table of Contents</div>
 <ul>
-<li><a href="#contents">Contents</a></li>
 <li><a href="#profiles">Profiles</a>
 <ul>
 <li><a href="#activate-profiles">Activate profiles</a></li>
@@ -114,48 +113,6 @@
 </ul>
 </div>
 <!--endtoc-->
-<h2 id="contents">Contents</h2>
-<ul>
-<li><a href="#contents">Contents</a></li>
-<li><a href="#profiles">Profiles</a>
-<ul>
-<li><a href="#activate-profiles">Activate profiles</a></li>
-<li><a href="#update-profiles">Update profiles</a></li>
-</ul>
-</li>
-<li><a href="#channels">Channels</a></li>
-<li><a href="#systems">Systems</a>
-<ul>
-<li><a href="#base-configuration">Base configuration</a></li>
-<li><a href="#indigo">indigo</a></li>
-<li><a href="#eminence">eminence</a></li>
-<li><a href="#azure">azure</a></li>
-</ul>
-</li>
-<li><a href="#system-installation">System installation</a>
-<ul>
-<li><a href="#preparation">Preparation</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#after-installation">After installation</a></li>
-</ul>
-</li>
-<li><a href="#misc-software-and-notes">Misc software &amp; notes</a>
-<ul>
-<li><a href="#vpn">VPN</a>
-<ul>
-<li><a href="#vpn-start">vpn-start</a></li>
-<li><a href="#vpn-stop">vpn-stop</a></li>
-</ul>
-</li>
-<li><a href="#flatpak">flatpak</a></li>
-<li><a href="#conda">conda</a></li>
-<li><a href="#slack">Slack</a></li>
-<li><a href="#virt-manager">virt-manager</a></li>
-<li><a href="#wakatime-cli">wakatime-cli</a></li>
-<li><a href="#manifest">Manifest</a></li>
-</ul>
-</li>
-</ul>
 <h2 id="profiles">Profiles</h2>
 <p>A profile is a way to group Guix packages. Amongst its advantages, profiles can be defined by manifests, which in turn can be stored in VCS.</p>
 <p>References:</p>
@@ -518,14 +475,14 @@ profiles<span style="color:#f92672">=</span>$*
 <p>In my case, the provided ISO doesn&rsquo;t work because of the Libre kernel.</p>
 <p>Fortunately, David Wilson has made <a href="https://github.com/SystemCrafters/guix-installer">a repository</a> with a toolchain to make an ISO with the full kernel. In case it won&rsquo;t be an option, the <a href="https://gitlab.com/nonguix/nonguix">nonguix repo</a> also has instructions on how to do that.</p>
 <p>When an ISO is there, we have to write it on a USB stick. Run <code>sudo fdisk -l</code> to get a list of disks.</p>
-<p>The approach in the official instruction is to create a bootable USB with <code>dd</code>:</p>
+<p>The approach given in the official instruction is to create a bootable USB with <code>dd</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">sudo dd of=/dev/sdxX if=&lt;path-to-iso&gt; status=progress &amp;&amp; sync
 </code></pre></div><p>However, I couldn&rsquo;t make it work for some strange reason. Fortunately, <code>gnome-disk-utility</code> was able to produce a bootable USB.</p>
 <h3 id="installation">Installation</h3>
 <p>Going further, the official instructions for installation &amp; SystemCrafters wiki entry are pretty good, so it&rsquo;s not necessary to repeat them here.</p>
 <h3 id="after-installation">After installation</h3>
 <p>After the installation, the strategy is as follows.</p>
-<p>Set a password for the main user (pavel). Login with openbox to get a tolerable interface because the i3 default config is horrible.</p>
+<p>Set a password for the main user (pavel). Login with openbox to get a tolerable interface because i3&rsquo;s default config is horrible.</p>
 <p><a href="https://guix.gnu.org/en/manual/en/html%5Fnode/Keyboard-Layout-and-Networking-and-Partitioning.html#Keyboard-Layout-and-Networking-and-Partitioning">Connect to the internet</a>.</p>
 <p>Clone the dotfiles repo:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">mkdir Code
@@ -584,8 +541,8 @@ guix clone https://github.com/SqrtMinusOne/dotfiles.git
 </tr>
 </tbody>
 </table>
-<p>I&rsquo;m not sure how to properly spin up VPN on Guix, so here is what I&rsquo;m doing now, after some trial and error.</p>
-<p>I&rsquo;m currently using CyberGhost VPN. <code>~/.vpn</code> folder stores its OpenVPN config (<code>openvpn.ovpn</code>), modified as follows:</p>
+<p>I&rsquo;m not sure how to properly spin up VPN on Guix, so here is what ended I&rsquo;m doing after some trial and error.</p>
+<p>I&rsquo;m using CyberGhost VPN. <code>~/.vpn</code> folder stores its OpenVPN config (<code>openvpn.ovpn</code>), modified as follows:</p>
 <ul>
 <li>
 <p>paths to <code>ca</code>, <code>cert</code> and <code>key</code> are made absolute</p>
@@ -657,14 +614,14 @@ nmcli connection up <span style="color:#e6db74">&#34;</span>$CONN<span style="co
 <p><a href="https://docs.conda.io/en/latest/">conda</a> is a package manager, which I use for managing various versions of Python &amp; Node.js.</p>
 <p>It is packaged for GNU Guix, although the definition has its fair share of workarounds. It is almost surprising to see it work with all the C libraries and stuff. But there are still some problems.</p>
 <p>First, it&rsquo;s impossible to perform <code>conda init</code> to patch files like <code>.bashrc</code>, because the command is hell-bent on modifying <code>/gnu/store/</code>. So I do this manually, look for the <code>init_conda</code> procedures in <a href="/configs/console/">Console.org</a>.</p>
-<p>Second, base environment root is <code>/gnu/store</code>, so don&rsquo;t install anything there.</p>
-<p>Third, by default it tries to create envronments in <code>/gnu/store</code>. I think it&rsquo;s enough to create one environment like this to fix it:</p>
+<p>Second, the base environment has <code>/gnu/store/...</code> as a root, so don&rsquo;t install anything there (and don&rsquo;t run <code>conda</code> with superuser rights!).</p>
+<p>Third, by default it tries to create envronments in <code>/gnu/store</code>. It&rsquo;s enough to create one environment like this to fix it:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir -p ~/.conda/envs
 conda create -p ~/.conda/envs/test
 </code></pre></div><p>Fourth, you may need to unset <code>$PYTHONPATH</code> if you have any global packages installed, otherwise Python from anaconda will try to import them instead of the conda versions.</p>
 <p>Finally, I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
 <p>So here is a script to set up conda hooks:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Get writable conda envs with npm &amp; without</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Get writable conda envs with npm &amp; without it</span>
 readarray -t CONDA_ENVS_ALL <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#66d9ef">$(</span>conda env list --json | jq <span style="color:#e6db74">&#39;.envs[]&#39;</span><span style="color:#66d9ef">)</span>
 CONDA_ENVS_NPM<span style="color:#f92672">=()</span>
 CONDA_ENVS_NO_NPM<span style="color:#f92672">=()</span>

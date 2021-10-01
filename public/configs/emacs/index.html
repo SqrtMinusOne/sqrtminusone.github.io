@@ -216,6 +216,7 @@
 <li><a href="#configuration">Configuration</a></li>
 <li><a href="#subterminal">Subterminal</a></li>
 <li><a href="#dired-integration">Dired integration</a></li>
+<li><a href="#with-editor-integration">With-editor integration</a></li>
 </ul>
 </li>
 <li><a href="#eshell">Eshell</a></li>
@@ -381,10 +382,15 @@
 <li><a href="#emacs-lisp">Emacs Lisp</a>
 <ul>
 <li><a href="#package-lint">Package Lint</a></li>
-<li><a href="#general">General</a></li>
+<li><a href="#general-settings">General settings</a></li>
 </ul>
 </li>
-<li><a href="#common-lisp">Common lisp</a></li>
+<li><a href="#common-lisp">Common lisp</a>
+<ul>
+<li><a href="#slime">SLIME</a></li>
+<li><a href="#general-settings">General settings</a></li>
+</ul>
+</li>
 <li><a href="#clojure">Clojure</a></li>
 <li><a href="#hy">Hy</a></li>
 <li><a href="#scheme">Scheme</a></li>
@@ -777,7 +783,8 @@
      comint
      git-timemachine
      magit
-     prodigy)))
+     prodigy
+     slime)))
 </code></pre></div><h3 id="more-keybindings">More keybindings</h3>
 <p>The main keybindings setup is positioned after evil mode to take the latter into account.</p>
 <h4 id="escape-key">Escape key</h4>
@@ -877,6 +884,7 @@
   <span style="color:#e6db74">&#34;h&#34;</span> <span style="color:#e6db74">&#39;previous-buffer</span>
   <span style="color:#e6db74">&#34;k&#34;</span> <span style="color:#e6db74">&#39;kill-buffer</span>
   <span style="color:#e6db74">&#34;b&#34;</span> <span style="color:#e6db74">&#39;persp-ivy-switch-buffer</span>
+  <span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#e6db74">&#39;revert-buffer</span>
   <span style="color:#e6db74">&#34;u&#34;</span> <span style="color:#e6db74">&#39;ibuffer</span>)
 </code></pre></div><h4 id="xref">xref</h4>
 <p>Some keybindings for xref and go to definition.</p>
@@ -1371,7 +1379,9 @@
 (use-package yasnippet
   :straight <span style="color:#66d9ef">t</span>
   :config
-  (setq yas-snippet-dirs <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> (<span style="color:#a6e22e">expand-file-name</span> user-emacs-directory) <span style="color:#e6db74">&#34;snippets&#34;</span>)))
+  (setq yas-snippet-dirs
+	<span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> (<span style="color:#a6e22e">expand-file-name</span> user-emacs-directory) <span style="color:#e6db74">&#34;snippets&#34;</span>)
+	  yasnippet-snippets-dir))
   (setq yas-triggers-in-field <span style="color:#66d9ef">t</span>)
   (yas-global-mode <span style="color:#ae81ff">1</span>))
 
@@ -2061,6 +2071,14 @@
    :states <span style="color:#f92672">&#39;</span>(normal)
    <span style="color:#e6db74">&#34;gd&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/vterm-dired-other-window
    <span style="color:#e6db74">&#34;gD&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/vterm-dired-replace))
+</code></pre></div><h4 id="with-editor-integration">With-editor integration</h4>
+<p>A package used by Magit to use the current Emacs instance as the <code>$EDITOR</code>.</p>
+<p>That is, with the help of <a href="/configs/console/">this function</a>, I can just write <code>e &lt;filename&gt;</code>, edit the file, and then return to the same vterm buffer. No more running vim inside Emacs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package with-editor
+  :straight <span style="color:#66d9ef">t</span>
+  :after (vterm)
+  :config
+  (add-hook <span style="color:#e6db74">&#39;vterm-mode-hook</span> <span style="color:#e6db74">&#39;with-editor-export-editor</span>))
 </code></pre></div><h3 id="eshell">Eshell</h3>
 <p>A shell written in Emacs lisp. I don&rsquo;t use it as of now, but keep the config just in case.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/configure-eshell ()
@@ -2541,7 +2559,7 @@
 	  (todo <span style="color:#e6db74">&#34;DONE&#34;</span>)))
 	(<span style="color:#e6db74">&#34;Attended meetings&#34;</span> closed scheduled
 	 (and
-	  (tags <span style="color:#e6db74">&#34;meeting&#34;</span>)
+	  (tags-inherited <span style="color:#e6db74">&#34;meeting&#34;</span>)
 	  (todo <span style="color:#e6db74">&#34;PASSED&#34;</span>)))
 	(<span style="color:#e6db74">&#34;Done project tasks&#34;</span> closed deadline
 	 (and
@@ -3420,10 +3438,6 @@ MimeType=x-scheme-handler/org-protocol
 <tbody>
 <tr>
 <td>TODO</td>
-<td>Do not enable for every Svelte mode</td>
-</tr>
-<tr>
-<td>TODO</td>
 <td>make expand div[disabled] as <div disabled></div></td>
 </tr>
 </tbody>
@@ -3981,11 +3995,18 @@ MimeType=x-scheme-handler/org-protocol
   :after flycheck
   :config
   (flycheck-package-setup))
-</code></pre></div><h5 id="general">General</h5>
+</code></pre></div><h5 id="general-settings">General settings</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-hook <span style="color:#e6db74">&#39;emacs-lisp-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>aggressive-indent-mode)
 <span style="color:#75715e">;; (add-hook &#39;emacs-lisp-mode-hook #&#39;smartparens-strict-mode)</span>
 (add-hook <span style="color:#e6db74">&#39;emacs-lisp-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>lispy-mode)
 </code></pre></div><h4 id="common-lisp">Common lisp</h4>
+<h5 id="slime">SLIME</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package slime
+  :straight <span style="color:#66d9ef">t</span>
+  :config
+  (setq inferior-lisp-program <span style="color:#e6db74">&#34;sbcl&#34;</span>)
+  (add-hook <span style="color:#e6db74">&#39;slime-repl-mode</span> <span style="color:#e6db74">&#39;smartparens-mode</span>))
+</code></pre></div><h5 id="general-settings">General settings</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-hook <span style="color:#e6db74">&#39;lisp-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>aggressive-indent-mode)
 <span style="color:#75715e">;; (add-hook &#39;emacs-lisp-mode-hook #&#39;smartparens-strict-mode)</span>
 (add-hook <span style="color:#e6db74">&#39;lisp-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>lispy-mode)

@@ -598,6 +598,7 @@ Don't forget to install `JetBrainsMono Nerd Font`.
 |----------|-----------------------------|
 | system   | openvpn                     |
 | system   | openvpn-update-resolve-conf |
+| system   | vpnc                        |
 
 I'm not sure how to properly spin up VPN on Guix, so here is what I'm doing now, after some trial and error.
 
@@ -714,6 +715,8 @@ Third, by default it tries to create envronments in `/gnu/store`. I think it's e
 mkdir -p ~/.conda/envs
 conda create -p ~/.conda/envs/test
 ```
+
+Fourth, you may need to unset `$PYTHONPATH` if you have any global packages installed, otherwise Python from anaconda will try to import them instead of the conda versions.
 
 Finally, I also want to have an ability to use global npm. Some settings for that are located in [Console.org](Console). Here we want to unset `NPM_CONFIG_USERCONFIG` if there is npm available in the environment.
 

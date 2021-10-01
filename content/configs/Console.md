@@ -529,6 +529,17 @@ bind -M insert \eb backward-word
 ```
 
 
+### Functions {#functions}
+
+A small function to open the file with `$EDITOR`.
+
+```fish
+function e
+    eval $EDITOR $argv
+end
+```
+
+
 ## Nushell {#nushell}
 
 | Guix dependency |

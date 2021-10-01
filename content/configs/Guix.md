@@ -20,7 +20,6 @@ References:
 
 <div class="heading">Table of Contents</div>
 
-- [Contents](#contents)
 - [Profiles](#profiles)
     - [Activate profiles](#activate-profiles)
     - [Update profiles](#update-profiles)
@@ -47,34 +46,6 @@ References:
 
 </div>
 <!--endtoc-->
-
-
-## Contents {#contents}
-
--   [Contents](#contents)
--   [Profiles](#profiles)
-    -   [Activate profiles](#activate-profiles)
-    -   [Update profiles](#update-profiles)
--   [Channels](#channels)
--   [Systems](#systems)
-    -   [Base configuration](#base-configuration)
-    -   [indigo](#indigo)
-    -   [eminence](#eminence)
-    -   [azure](#azure)
--   [System installation](#system-installation)
-    -   [Preparation](#preparation)
-    -   [Installation](#installation)
-    -   [After installation](#after-installation)
--   [Misc software & notes](#misc-software-and-notes)
-    -   [VPN](#vpn)
-        -   [vpn-start](#vpn-start)
-        -   [vpn-stop](#vpn-stop)
-    -   [flatpak](#flatpak)
-    -   [conda](#conda)
-    -   [Slack](#slack)
-    -   [virt-manager](#virt-manager)
-    -   [wakatime-cli](#wakatime-cli)
-    -   [Manifest](#manifest)
 
 
 ## Profiles {#profiles}
@@ -535,7 +506,7 @@ Fortunately, David Wilson has made [a repository](https://github.com/SystemCraft
 
 When an ISO is there, we have to write it on a USB stick. Run `sudo fdisk -l` to get a list of disks.
 
-The approach in the official instruction is to create a bootable USB with `dd`:
+The approach given in the official instruction is to create a bootable USB with `dd`:
 
 ```text
 sudo dd of=/dev/sdxX if=<path-to-iso> status=progress && sync
@@ -553,7 +524,7 @@ Going further, the official instructions for installation & SystemCrafters wiki 
 
 After the installation, the strategy is as follows.
 
-Set a password for the main user (pavel). Login with openbox to get a tolerable interface because the i3 default config is horrible.
+Set a password for the main user (pavel). Login with openbox to get a tolerable interface because i3's default config is horrible.
 
 [Connect to the internet](https://guix.gnu.org/en/manual/en/html%5Fnode/Keyboard-Layout-and-Networking-and-Partitioning.html#Keyboard-Layout-and-Networking-and-Partitioning).
 
@@ -600,9 +571,9 @@ Don't forget to install `JetBrainsMono Nerd Font`.
 | system   | openvpn-update-resolve-conf |
 | system   | vpnc                        |
 
-I'm not sure how to properly spin up VPN on Guix, so here is what I'm doing now, after some trial and error.
+I'm not sure how to properly spin up VPN on Guix, so here is what ended I'm doing after some trial and error.
 
-I'm currently using CyberGhost VPN. `~/.vpn` folder stores its OpenVPN config (`openvpn.ovpn`), modified as follows:
+I'm using CyberGhost VPN. `~/.vpn` folder stores its OpenVPN config (`openvpn.ovpn`), modified as follows:
 
 -   paths to `ca`, `cert` and `key` are made absolute
 
@@ -707,9 +678,9 @@ It is packaged for GNU Guix, although the definition has its fair share of worka
 
 First, it's impossible to perform `conda init` to patch files like `.bashrc`, because the command is hell-bent on modifying `/gnu/store/`. So I do this manually, look for the `init_conda` procedures in [Console.org]({{< relref "Console" >}}).
 
-Second, base environment root is `/gnu/store`, so don't install anything there.
+Second, the base environment has `/gnu/store/...` as a root, so don't install anything there (and don't run `conda` with superuser rights!).
 
-Third, by default it tries to create envronments in `/gnu/store`. I think it's enough to create one environment like this to fix it:
+Third, by default it tries to create envronments in `/gnu/store`. It's enough to create one environment like this to fix it:
 
 ```sh
 mkdir -p ~/.conda/envs
@@ -723,7 +694,7 @@ Finally, I also want to have an ability to use global npm. Some settings for tha
 So here is a script to set up conda hooks:
 
 ```bash
-# Get writable conda envs with npm & without
+# Get writable conda envs with npm & without it
 readarray -t CONDA_ENVS_ALL <<< $(conda env list --json | jq '.envs[]')
 CONDA_ENVS_NPM=()
 CONDA_ENVS_NO_NPM=()
