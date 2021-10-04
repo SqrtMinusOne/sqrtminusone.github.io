@@ -1,0 +1,251 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: Getting a consistent set of keybindings between i3 and Emacs
+#+DATE: 2021-10-04
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: emacs
+#+HUGO_TAGS: i3wm
+
+* Intro
+I got a bit jealous of EXWM having a consistent set of keybindings to manage both Emacs windows and X windows, so I figured I could try to implement something like this with i3.
+
+Why not just use EXWM? One key reason is that to my taste (and perhaps on my hardware) EXWM didn't feel snappy enough. Also, I really like i3's tree-based layout structure; I feel like it fits my workflow much better than master/stack paradigm of [[https://xmonad.org/][XMonad]]​, for instance. Although to be clear, I haven't tried WMs other than these.
+
+One common point of criticism of i3 is that it is not extensible enough, especially compared to WMs which are configured in an actual programing language, like the mentioned XMonad, [[http://www.qtile.org/][Qtile]], [[https://awesomewm.org/][Awesome]], etc. But I think i3's extensibility is underappreciated.
+
+Indeed, i3 may not give as much freedom as the former three do, but it is still possible can execute arbitrary logic with =i3-msg= and interact with i3 in arbitrary way using its IPC.
+
+* Emacs integration
+What I'm trying to do is actually quite simple, so I'm somewhat surprised I didn't find anything similar on the Internet. But I didn't look too hard.
+
+The basic idea is to launch a normal i3 command with =i3-msg= in case the current window is not Emacs, otherwise pass that command to Emacs with =emacsclient=. In Emacs, execute the command if possible, otherwise pass the command back to i3.
+
+This may seem like a lot of overhead, but I didn't feel it even in the worst case (i3 -> Emacs -> i3), so at least in that regard the interaction feels seamless. The only concern is that this command flow is vunerable to Emacs getting stuck, but it is still much less of a problem than with EXWM.
+
+At any rate, we need a script to do the i3 -> Emacs part:
+#+BEGIN_SRC bash
+if [[ $(xdotool getactivewindow getwindowname) =~ ^emacs(:.*)?@.* ]]; then
+    command="(my/emacs-i3-integration \"$@\")"
+    emacsclient -e "$command"
+else
+    i3-msg $@
+fi
+#+END_SRC
+
+My Emacs window title is set to =emacs[:<projectile-project-name>]@<hostname>=, hence the regex. The script is saved to an executable called =emacs-i3-integration=.
+
+For this to work, we need to make sure that Emacs starts a server, so here is an expression to do just that:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook #'server-start)
+#+END_SRC
+
+The function =my/emacs-i3-integration=, which is an entrypoint for the i3 integration, will be defined a bit later.
+
+And here is a simple macro to do the Emacs -> i3 part:
+#+BEGIN_SRC emacs-lisp
+(defmacro i3-msg (&rest args)
+  `(start-process "emacs-i3-windmove" nil "i3-msg" ,@args))
+#+END_SRC
+
+* Handling i3 commands
+** =focus=
+Now we have to handle the required i3 commands. First, for the =focus= command I want to move to an Emacs window in the given direction if there is one, otherwise move to an X window in the same direction. Fortunately, i3 and =windmove= have the same names for directions, so the function is rather straightforward.
+
+One caveat here is that the minibuffer is always the bottom-most Emacs window, so it is necessary to check for that as well.
+#+BEGIN_SRC emacs-lisp
+(defun my/emacs-i3-windmove (dir)
+  (let ((other-window (windmove-find-other-window dir)))
+    (if (or (null other-window) (window-minibuffer-p other-window))
+        (i3-msg "focus" (symbol-name dir))
+      (windmove-do-window-select dir))))
+#+END_SRC
+
+The relevant section of the i3 config looks like this:
+#+BEGIN_SRC conf-space
+bindsym $mod+h exec emacs-i3-integration focus left
+bindsym $mod+j exec emacs-i3-integration focus down
+bindsym $mod+k exec emacs-i3-integration focus up
+bindsym $mod+l exec emacs-i3-integration focus right
+
+bindsym $mod+Left exec emacs-i3-integration focus left
+bindsym $mod+Down exec emacs-i3-integration focus down
+bindsym $mod+Up exec emacs-i3-integration focus up
+bindsym $mod+Right exec emacs-i3-integration focus right
+#+END_SRC
+** =move=
+For the =move= I want the following behavior:
+- if there is space in the required directon, move the Emacs window there;
+- if there is no space in the required direction, but space in two orthogonal directions, move the Emacs window so that there is no more space in the orthogonal directions;
+- otherwise, move an X window (Emacs frame).
+
+For the first part, =window-swap-states= with =windmove-find-other-window= do well enough.
+
+=evil-move-window= works well for the second part. By itself it doesn't behave quite like i3, for instance, =(evil-move-window 'right)= in a tree-column split would move the window from the far left side to the far right side (bypassing center). Hence the combination as described above.
+
+So here is a simple predicate which checks whether there is space in the given direction.
+#+BEGIN_SRC emacs-lisp
+(defun my/emacs-i3-direction-exists-p (dir)
+  (some (lambda (dir)
+          (let ((win (windmove-find-other-window dir)))
+            (and win (not (window-minibuffer-p win)))))
+        (pcase dir
+          ('width '(left right))
+          ('height '(up down)))))
+#+END_SRC
+
+And the implementation of the move command.
+#+BEGIN_SRC emacs-lisp
+(defun my/emacs-i3-move-window (dir)
+  (let ((other-window (windmove-find-other-window dir))
+        (other-direction (my/emacs-i3-direction-exists-p
+                          (pcase dir
+                            ('up 'width)
+                            ('down 'width)
+                            ('left 'height)
+                            ('right 'height)))))
+    (cond
+     ((and other-window (not (window-minibuffer-p other-window)))
+      (window-swap-states (selected-window) other-window))
+     (other-direction
+      (evil-move-window dir))
+     (t (i3-msg "move" (symbol-name dir))))))
+#+END_SRC
+
+The relevant section of the i3 config:
+#+BEGIN_SRC conf-space
+bindsym $mod+Shift+h exec emacs-i3-integration move left
+bindsym $mod+Shift+j exec emacs-i3-integration move down
+bindsym $mod+Shift+k exec emacs-i3-integration move up
+bindsym $mod+Shift+l exec emacs-i3-integration move right
+
+bindsym $mod+Shift+Left exec emacs-i3-integration move left
+bindsym $mod+Shift+Down exec emacs-i3-integration move down
+bindsym $mod+Shift+Up exec emacs-i3-integration move up
+bindsym $mod+Shift+Right exec emacs-i3-integration move right
+#+END_SRC
+
+** =resize= and balance windows
+Next on the line are =resize grow= and =resize shrink=. =evil-window-= functions do nicely for this task.
+
+This function also checks whether there is space to resize in the given direction with the help of the predicate defined above. The command is forwarded back to i3 if there is not.
+#+BEGIN_SRC emacs-lisp
+(defun my/emacs-i3-resize-window (dir kind value)
+  (if (or (one-window-p)
+          (not (my/emacs-i3-direction-exists-p dir)))
+      (i3-msg "resize" (symbol-name kind) (symbol-name dir)
+              (format "%s px or %s ppt" value value))
+    (setq value (/ value 2))
+    (pcase kind
+      ('shrink
+       (pcase dir
+         ('width
+          (evil-window-decrease-width value))
+         ('height
+          (evil-window-decrease-height value))))
+      ('grow
+       (pcase dir
+         ('width
+          (evil-window-increase-width value))
+         ('height
+          (evil-window-increase-height value)))))))
+#+END_SRC
+
+Here I'm following the default configuration of i3, which creates a "submode" to resize windows.
+#+BEGIN_SRC conf-space
+mode "resize" {
+
+    bindsym h exec emacs-i3-integration resize shrink width 10 px or 10 ppt
+    bindsym j exec emacs-i3-integration resize grow height 10 px or 10 ppt
+    bindsym k exec emacs-i3-integration resize shrink height 10 px or 10 ppt
+    bindsym l exec emacs-i3-integration resize grow width 10 px or 10 ppt
+
+    bindsym Shift+h exec emacs-i3-integration resize shrink width 100 px or 100 ppt
+    bindsym Shift+j exec emacs-i3-integration resize grow height 100 px or 100 ppt
+    bindsym Shift+k exec emacs-i3-integration resize shrink height 100 px or 100 ppt
+    bindsym Shift+l exec emacs-i3-integration resize grow width 100 px or 100 ppt
+
+    # same bindings, but for the arrow keys
+    bindsym Left  exec emacs-i3-integration resize shrink width 10 px or 10 ppt
+    bindsym Down  exec emacs-i3-integration resize grow height 10 px or 10 ppt
+    bindsym Up    exec emacs-i3-integration resize shrink height 10 px or 10 ppt
+    bindsym Right exec emacs-i3-integration resize grow width 10 px or 10 ppt
+
+    bindsym Shift+Left  exec emacs-i3-integration resize shrink width 100 px or 100 ppt
+    bindsym Shift+Down  exec emacs-i3-integration resize grow height 100 px or 100 ppt
+    bindsym Shift+Up    exec emacs-i3-integration resize shrink height 100 px or 100 ppt
+    bindsym Shift+Right exec emacs-i3-integration resize grow width 100 px or 100 ppt
+
+    bindsym equal exec i3-emacs-balance-windows
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+#+END_SRC
+
+One note here is that Emacs has a built-in function called =balance-windows=, but i3 doesn't. Fortunately, there is a Python package called [[https://github.com/atreyasha/i3-balance-workspace][i3-balance-workspace]], which performs a similar operation with i3's IPC. If you use Guix like I do, I've written a [[https://github.com/SqrtMinusOne/channel-q/blob/master/i3-balance-workspace.scm][package definition]].
+
+So here is a small wrapper which calls =i3_balance_workspace= and =M-x balance-windows= if the current window is Emacs.
+#+BEGIN_SRC bash
+if [[ $(xdotool getactivewindow getwindowname) =~ ^emacs(:.*)?@.* ]]; then
+    emacsclient -e "(balance-windows)" &
+fi
+i3_balance_workspace
+#+END_SRC
+
+** =layout toggle split=
+[[https://github.com/emacsorphanage/transpose-frame][transpose-frame]] is a package to "transpose" the current frame layout, which behaves somewhat similar to the =layout toggle split= command in i3, so I'll use it as well.
+#+BEGIN_SRC emacs-lisp
+(use-package transpose-frame
+  :straight t
+  :commands (transpose-frame))
+#+END_SRC
+
+The i3 config for this command:
+#+BEGIN_SRC conf-space
+bindsym $mod+e exec emacs-i3-integration layout toggle split
+#+END_SRC
+
+** The entrypoint
+Finally, the entrypoint for the Emacs integration. In addition to the commands defined above, it processes =split= and =kill= commands and passes every other command back to i3.
+#+BEGIN_SRC emacs-lisp
+(defun my/emacs-i3-integration (command)
+  (pcase command
+    ((rx bos "focus")
+     (my/emacs-i3-windmove
+      (intern (elt (split-string command) 1))))
+    ((rx bos "move")
+     (my/emacs-i3-move-window
+      (intern (elt (split-string command) 1))))
+    ((rx bos "resize")
+     (my/emacs-i3-resize-window
+       (intern (elt (split-string command) 2))
+       (intern (elt (split-string command) 1))
+       (string-to-number (elt (split-string command) 3))))
+    ("layout toggle split" (transpose-frame))
+    ("split h" (evil-window-split))
+    ("split v" (evil-window-vsplit))
+    ("kill" (evil-quit))
+    (- (i3-msg command))))
+#+END_SRC
+
+The rest of the relevant i3 config to do the splits:
+#+BEGIN_SRC conf-space
+bindsym $mod+s exec emacs-i3-integration split h
+bindsym $mod+v exec emacs-i3-integration split v
+#+END_SRC
+
+And to kill the window:
+#+BEGIN_SRC conf-space
+bindsym $mod+Shift+q exec emacs-i3-integration kill
+#+END_SRC
+
+** Switching i3 tabs
+As I use i3's tabbed layout quite extensively, occasionally I want to switch out of the Emacs tab with one button, and that's where my integration may interfere.
+
+As a workaround, I found a small Rust program called [[https://github.com/nikola-kocic/i3-switch-tabs][i3-switch-tabs]], which also communicates with i3 via its IPC to switch the top-level tab. I've written a [[https://github.com/SqrtMinusOne/channel-q/blob/master/i3-switch-tabs.scm][Guix package definition]] for that as well.
+
+#+BEGIN_SRC conf-space
+bindsym $mod+period exec i3-switch-tabs right
+bindsym $mod+comma exec i3-switch-tabs left
+#+END_SRC
