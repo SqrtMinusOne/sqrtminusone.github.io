@@ -107,6 +107,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [Configuration](#configuration)
         - [Subterminal](#subterminal)
         - [Dired integration](#dired-integration)
+        - [With-editor integration](#with-editor-integration)
     - [Eshell](#eshell)
 - [Org Mode](#org-mode)
     - [Installation & basic settings](#installation-and-basic-settings)
@@ -205,8 +206,10 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [Meta Lisp](#meta-lisp)
         - [Emacs Lisp](#emacs-lisp)
             - [Package Lint](#package-lint)
-            - [General](#general)
+            - [General settings](#general-settings)
         - [Common lisp](#common-lisp)
+            - [SLIME](#slime)
+            - [General settings](#general-settings)
         - [Clojure](#clojure)
         - [Hy](#hy)
         - [Scheme](#scheme)
@@ -734,7 +737,8 @@ I don't enable the entire package, just the modes I need.
      comint
      git-timemachine
      magit
-     prodigy)))
+     prodigy
+     slime)))
 ```
 
 
@@ -886,6 +890,7 @@ And winner-mode to keep the history of window states.
   "h" 'previous-buffer
   "k" 'kill-buffer
   "b" 'persp-ivy-switch-buffer
+  "r" 'revert-buffer
   "u" 'ibuffer)
 ```
 
@@ -1562,7 +1567,9 @@ References:
 (use-package yasnippet
   :straight t
   :config
-  (setq yas-snippet-dirs `(,(concat (expand-file-name user-emacs-directory) "snippets")))
+  (setq yas-snippet-dirs
+	`(,(concat (expand-file-name user-emacs-directory) "snippets")
+	  yasnippet-snippets-dir))
   (setq yas-triggers-in-field t)
   (yas-global-mode 1))
 
@@ -2486,6 +2493,21 @@ Keybindings:
 ```
 
 
+#### With-editor integration {#with-editor-integration}
+
+A package used by Magit to use the current Emacs instance as the `$EDITOR`.
+
+That is, with the help of [this function]({{< relref "Console" >}}), I can just write `e <filename>`, edit the file, and then return to the same vterm buffer. No more running vim inside Emacs.
+
+```emacs-lisp
+(use-package with-editor
+  :straight t
+  :after (vterm)
+  :config
+  (add-hook 'vterm-mode-hook 'with-editor-export-editor))
+```
+
+
 ### Eshell {#eshell}
 
 A shell written in Emacs lisp. I don't use it as of now, but keep the config just in case.
@@ -3162,7 +3184,7 @@ So, here is a list of queries results of which I want to see in the review templ
 	  (todo "DONE")))
 	("Attended meetings" closed scheduled
 	 (and
-	  (tags "meeting")
+	  (tags-inherited "meeting")
 	  (todo "PASSED")))
 	("Done project tasks" closed deadline
 	 (and
@@ -4319,7 +4341,6 @@ Configs for various web development technologies I'm using.
 
 | Type | Note                                              |
 |------|---------------------------------------------------|
-| TODO | Do not enable for every Svelte mode               |
 | TODO | make expand div[disabled] as <div disabled></div> |
 
 My bit of config here:
@@ -5008,7 +5029,7 @@ A package that checks for the metadata in Emacs Lisp packages.
 ```
 
 
-##### General {#general}
+##### General settings {#general-settings}
 
 ```emacs-lisp
 (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
@@ -5018,6 +5039,20 @@ A package that checks for the metadata in Emacs Lisp packages.
 
 
 #### Common lisp {#common-lisp}
+
+
+##### SLIME {#slime}
+
+```emacs-lisp
+(use-package slime
+  :straight t
+  :config
+  (setq inferior-lisp-program "sbcl")
+  (add-hook 'slime-repl-mode 'smartparens-mode))
+```
+
+
+##### General settings {#general-settings}
 
 ```emacs-lisp
 (add-hook 'lisp-mode-hook #'aggressive-indent-mode)
