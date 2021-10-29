@@ -69,6 +69,7 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
         - [Buku bookmarks](#buku-bookmarks)
         - [Man pages](#man-pages)
         - [pass](#pass)
+        - [emojis](#emojis)
 - [Flameshot](#flameshot)
 - [dunst](#dunst)
 - [keynav](#keynav)
@@ -1107,8 +1108,12 @@ if [[ -z $ip || $ip == *"timed out"* ]]; then
 fi
 ip_info=$(curl -s http://api.ipstack.com/${ip}?access_key=${API_KEY})
 # emoji=$(echo $ip_info | jq -r '.location.country_flag_emoji')
-code=$(echo $ip_info | jq -r '.country_code')
+code=$(echo $ip_info | jq -r '.country_code' 2> /dev/null)
 vpn=$(pgrep -a openvpn$ | head -n 1 | awk '{print $NF }' | cut -d '.' -f 1)
+
+if [[ -z $code ]]; then
+    code="??"
+fi
 
 if [ -n "$vpn" ]; then
     echo "%{u<<get-color(name="blue")>>}%{+u}  $code %{u-}"
@@ -1753,6 +1758,13 @@ clip=both
 ```
 
 
+#### emojis {#emojis}
+
+| Guix dependency |
+|-----------------|
+| rofi-emoji      |
+
+
 ## Flameshot {#flameshot}
 
 | Guix dependency |
@@ -2395,6 +2407,9 @@ This section generates manifests for various desktop software that I'm using.
 | dev      | hugo-extended   |
 | dev      | make            |
 | dev      | sbcl            |
+| dev      | git-lfs         |
+| dev      | mysql           |
+| dev      | gource          |
 
 
 ### Manifests {#manifests}

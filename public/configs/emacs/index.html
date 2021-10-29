@@ -73,7 +73,7 @@
 <li><a href="#measure-startup-speed">Measure startup speed</a></li>
 <li><a href="#straight-dot-el">straight.el</a></li>
 <li><a href="#use-package">use-package</a></li>
-<li><a href="#config-variants-and-environment">config variants &amp; environment</a></li>
+<li><a href="#config-variants-and-environment">Config variants &amp; environment</a></li>
 <li><a href="#performance">Performance</a>
 <ul>
 <li><a href="#garbage-collection">Garbage collection</a></li>
@@ -242,13 +242,15 @@
 <li><a href="#managing-jupyter-kernels">Managing Jupyter kernels</a></li>
 <li><a href="#do-not-wrap-the-output-in-emacs-jupyter">Do not wrap the output in emacs-jupyter</a></li>
 <li><a href="#wrap-source-code-output">Wrap source code output</a></li>
+<li><a href="#managing-a-literate-programming-project">Managing a literate programming project</a></li>
 </ul>
 </li>
 <li><a href="#productivity-and-knowledge-management">Productivity &amp; Knowledge management</a>
 <ul>
 <li><a href="#capture-templates-and-various-settings">Capture templates &amp; various settings</a></li>
-<li><a href="#custom-agendas">Custom agendas</a></li>
+<li><a href="#trello-sync">Trello sync</a></li>
 <li><a href="#org-ql">org-ql</a></li>
+<li><a href="#custom-agendas">Custom agendas</a></li>
 <li><a href="#review-workflow">Review workflow</a>
 <ul>
 <li><a href="#data-from-git-and-org-roam">Data from git &amp; org-roam</a></li>
@@ -266,6 +268,7 @@
 </li>
 <li><a href="#org-ref">org-ref</a></li>
 <li><a href="#org-roam-bibtex">org-roam-bibtex</a></li>
+<li><a href="#managing-tables">Managing tables</a></li>
 </ul>
 </li>
 <li><a href="#ui">UI</a>
@@ -288,6 +291,7 @@
 <li><a href="#keybindings-and-stuff">Keybindings &amp; stuff</a>
 <ul>
 <li><a href="#copy-a-link">Copy a link</a></li>
+<li><a href="#open-a-file-from-org-directory">Open a file from <code>org-directory</code></a></li>
 </ul>
 </li>
 <li><a href="#presentations">Presentations</a></li>
@@ -304,12 +308,6 @@
 <li><a href="#yadm-hook">yadm hook</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</a>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#config">Config</a></li>
 </ul>
 </li>
 <li><a href="#programming">Programming</a>
@@ -432,6 +430,7 @@
 <li><a href="#csv">CSV</a></li>
 <li><a href="#off--pdf"><span class="org-todo done OFF">OFF</span> (OFF) PDF</a></li>
 <li><a href="#docker">Docker</a></li>
+<li><a href="#crontab">crontab</a></li>
 </ul>
 </li>
 <li><a href="#apps-and-misc">Apps &amp; Misc</a>
@@ -449,6 +448,8 @@
 <li><a href="#elfeed">Elfeed</a>
 <ul>
 <li><a href="#some-additions">Some additions</a></li>
+<li><a href="#custom-faces">Custom faces</a></li>
+<li><a href="#elfeed-score">elfeed-score</a></li>
 <li><a href="#youtube-and-emms">YouTube &amp; EMMS</a></li>
 </ul>
 </li>
@@ -491,6 +492,12 @@
 <li><a href="#calendar">Calendar</a></li>
 </ul>
 </li>
+<li><a href="#off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</a>
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#config">Config</a></li>
+</ul>
+</li>
 <li><a href="#fun">Fun</a>
 <ul>
 <li><a href="#discord-integration">Discord integration</a></li>
@@ -514,8 +521,8 @@
 			     (<span style="color:#a6e22e">float-time</span>
 			      (<span style="color:#a6e22e">time-subtract</span> after-init-time before-init-time)))
 		     gcs-done)))
-
-<span style="color:#75715e">;; (setq use-package-verbose t)</span>
+</code></pre></div><p>Set the following to <code>t</code> to print debug information during the startup. This will include the order in which the packages are loaded and the loading time of individual packages.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="color:#75715e">;; (setq use-package-verbose t)</span>
 </code></pre></div><h3 id="straight-dot-el">straight.el</h3>
 <p>Straight.el is my Emacs package manager of choice. Its advantages &amp; disadvantages over other options are listed pretty thoroughly in the README file in the repo.</p>
 <p>The following is a straight.el bootstrap script.</p>
@@ -546,11 +553,11 @@
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(straight-use-package <span style="color:#e6db74">&#39;use-package</span>)
 (eval-when-compile (require <span style="color:#e6db74">&#39;use-package</span>))
- <span style="color:#75715e">;; (setq use-package-verbose t)</span>
-</code></pre></div><h3 id="config-variants-and-environment">config variants &amp; environment</h3>
+</code></pre></div><h3 id="config-variants-and-environment">Config variants &amp; environment</h3>
+<p>This section is about optionating the Emacs config.</p>
 <p>The following variable is true when my machine is not powerful enough for some resource-heavy packages.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/lowpower (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;azure&#34;</span>))
-</code></pre></div><p>The following is true if Emacs is meant to be used with TRAMP over slow ssh.</p>
+</code></pre></div><p>The following is true if Emacs is meant to be used with TRAMP over slow ssh. Take a look at the <a href="#tramp">TRAMP</a> section for more details.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/slow-ssh
       (or
        (string= (getenv <span style="color:#e6db74">&#34;IS_TRAMP&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>)
@@ -584,13 +591,13 @@
 				  (<span style="color:#a6e22e">garbage-collect</span>))))
 	      (add-hook <span style="color:#e6db74">&#39;after-focus-change-function</span> <span style="color:#e6db74">&#39;garbage-collect</span>))))
 </code></pre></div><h4 id="native-compilation">Native compilation</h4>
-<p>Set number of jobs to 1 on low-power machines</p>
+<p>Set the number of native compilation jobs to 1 on low-power machines.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(when my/lowpower
   (setq comp-async-jobs-number <span style="color:#ae81ff">1</span>))
 </code></pre></div><h3 id="anaconda">Anaconda</h3>
-<p><a href="https://www.anaconda.com/">Anaconda</a> is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js</p>
+<p><a href="https://www.anaconda.com/">Anaconda</a> is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js. Take a look at <a href="/configs/guix/">the corresponding entry</a> in the Guix config for details about using it on Guix.</p>
 <p>The following code uses the conda package to activate the base environment on startup if Emacs is launched outside the environment.</p>
-<p>Also, some strange things are happening if vterm is launched with conda activated from Emacs, so I advise <code>conda-env-activate</code> to set an auxililary environment variable.</p>
+<p>Also, some strange things are happening if vterm is launched with conda activated from Emacs, so I advise <code>conda-env-activate</code> to set an auxililary environment variable. This variable is used in the <a href="/configs/console/">shell config</a>.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://docs.anaconda.com/">Anaconda docs</a></li>
@@ -610,7 +617,7 @@
   (unless (getenv <span style="color:#e6db74">&#34;CONDA_DEFAULT_ENV&#34;</span>)
     (conda-env-activate <span style="color:#e6db74">&#34;general&#34;</span>)))
 </code></pre></div><h3 id="custom-file-location">Custom file location</h3>
-<p>By default, custom writes stuff to <code>init.el</code>, which is somewhat annoying. The following makes a separate file <code>custom.el</code></p>
+<p>By default, custom writes stuff to <code>init.el</code>, which is somewhat annoying. The following makes it write to a separate file <code>custom.el</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq custom-file (<span style="color:#a6e22e">concat</span> user-emacs-directory <span style="color:#e6db74">&#34;custom.el&#34;</span>))
 (<span style="color:#a6e22e">load</span> custom-file <span style="color:#e6db74">&#39;noerror</span>)
 </code></pre></div><h3 id="private-config">Private config</h3>
@@ -619,7 +626,7 @@
   (when (<span style="color:#a6e22e">file-exists-p</span> private-file)
     (load-file private-file)))
 </code></pre></div><h3 id="no-littering">No littering</h3>
-<p>By default emacs and its packages create a lot files in <code>.emacs.d</code> and in other places. <a href="https://github.com/emacscollective/no-littering">no-littering</a> is a collective effort to redirect all of this to two folders in <code>user-emacs-directory</code>.</p>
+<p>By default Mmacs and its packages create a lot files in <code>.emacs.d</code> and in other places. <a href="https://github.com/emacscollective/no-littering">no-littering</a> is a collective effort to redirect all of that to two folders in <code>user-emacs-directory</code>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package no-littering
   :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h3 id="prevent-emacs-from-closing">Prevent Emacs from closing</h3>
@@ -639,8 +646,7 @@
   :config
   (general-evil-setup))
 </code></pre></div><h4 id="which-key">which-key</h4>
-<p>A package that displays the available keybindings in a popup.</p>
-<p>Pretty useful, as Emacs seems to have more keybindings than I can remember at any given point.</p>
+<p>A package that displays the available keybindings in a popup. The package is pretty useful, as Emacs seems to have more keybindings than I can remember at any given point.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/justbur/emacs-which-key">which-key repo</a></li>
@@ -679,7 +685,7 @@
       (my/dump-bindings-recursive prefix)))
   (switch-to-buffer-other-window <span style="color:#e6db74">&#34;bindings&#34;</span>))
 </code></pre></div><h3 id="evil-mode">Evil mode</h3>
-<p>A whole ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.</p>
+<p>An entire ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.</p>
 <p>The only problem is that the package name makes it hard to google anything by just typing &ldquo;evil&rdquo;.</p>
 <p>References:</p>
 <ul>
@@ -694,15 +700,13 @@
   (setq evil-want-integration <span style="color:#66d9ef">t</span>)
   (setq evil-want-C-u-scroll <span style="color:#66d9ef">t</span>)
   (setq evil-want-keybinding <span style="color:#66d9ef">nil</span>)
-  :config
-  (evil-mode <span style="color:#ae81ff">1</span>)
   (setq evil-search-module <span style="color:#e6db74">&#39;evil-search</span>)
   (setq evil-split-window-below <span style="color:#66d9ef">t</span>)
   (setq evil-vsplit-window-right <span style="color:#66d9ef">t</span>)
+  :config
+  (evil-mode <span style="color:#ae81ff">1</span>)
   <span style="color:#75715e">;; (setq evil-respect-visual-line-mode t)</span>
-  (evil-set-undo-system <span style="color:#e6db74">&#39;undo-tree</span>)
-  <span style="color:#75715e">;; (add-to-list &#39;evil-emacs-state-modes &#39;dired-mode)</span>
-  )
+  (evil-set-undo-system <span style="color:#e6db74">&#39;undo-tree</span>))
 </code></pre></div><h4 id="addons">Addons</h4>
 <p><a href="https://github.com/emacs-evil/evil-surround">evil-surround</a> emulates one of my favorite vim plugins, surround.vim. Adds a lot of parentheses management options.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package evil-surround
@@ -710,7 +714,7 @@
   :after evil
   :config
   (global-evil-surround-mode <span style="color:#ae81ff">1</span>))
-</code></pre></div><p><a href="https://github.com/linktohack/evil-commentary">evil-commentary</a> emulates commentary.vim.</p>
+</code></pre></div><p><a href="https://github.com/linktohack/evil-commentary">evil-commentary</a> emulates commentary.vim. It gives actions for quick insertion and deletion of comments.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package evil-commentary
   :straight <span style="color:#66d9ef">t</span>
   :after evil
@@ -739,14 +743,13 @@
   (setq evil-lion-left-align-key (kbd <span style="color:#e6db74">&#34;g a&#34;</span>))
   (setq evil-lion-right-align-key (kbd <span style="color:#e6db74">&#34;g A&#34;</span>))
   (evil-lion-mode))
-</code></pre></div><p><a href="https://github.com/redguardtoo/evil-matchit">evil-matchit</a> makes &ldquo;%&rdquo; to match things like tags.</p>
+</code></pre></div><p><a href="https://github.com/redguardtoo/evil-matchit">evil-matchit</a> makes &ldquo;%&rdquo; to match things like tags. It doesn&rsquo;t work perfectly, so I occasionally turn it off.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package evil-matchit
   :straight <span style="color:#66d9ef">t</span>
   :config
   (global-evil-matchit-mode <span style="color:#ae81ff">1</span>))
 </code></pre></div><h4 id="evil-collection">evil-collection</h4>
-<p><a href="https://github.com/emacs-evil/evil-collection">evil-collection</a> is a package that provides evil bindings for a lot of different packages. One can see the whole list in the <a href="https://github.com/emacs-evil/evil-collection/tree/master/modes">modes</a> folder.</p>
-<p>I don&rsquo;t enable the entire package, just the modes I need.</p>
+<p><a href="https://github.com/emacs-evil/evil-collection">evil-collection</a> is a package that provides evil bindings for a lot of different packages. One can see the complete list in the <a href="https://github.com/emacs-evil/evil-collection/tree/master/modes">modes</a> folder.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package evil-collection
   :straight <span style="color:#66d9ef">t</span>
   :after evil
@@ -828,7 +831,7 @@
 
 (my-leader-def <span style="color:#e6db74">&#34;?&#34;</span> <span style="color:#e6db74">&#39;which-key-show-top-level</span>)
 (my-leader-def <span style="color:#e6db74">&#34;E&#34;</span> <span style="color:#e6db74">&#39;eval-expression</span>)
-</code></pre></div><p><code>general.el</code> has a nice integration with which-key, so I use this fact to show more descriptive annotations for certain groups of keybindings (the default one is <code>prefix</code>).</p>
+</code></pre></div><p><code>general.el</code> has a nice integration with which-key, so I use that to show more descriptive annotations for certain groups of keybindings (the default annotation is just <code>prefix</code>).</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(my-leader-def
   <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;apps&#34;</span>))
 </code></pre></div><h4 id="universal-argument">Universal argument</h4>
@@ -849,7 +852,7 @@
   <span style="color:#e6db74">&#34;e&#34;</span> <span style="color:#e6db74">&#39;profiler-stop</span>
   <span style="color:#e6db74">&#34;p&#34;</span> <span style="color:#e6db74">&#39;profiler-report</span>)
 </code></pre></div><h4 id="buffer-switching">Buffer switching</h4>
-<p>Some keybindings I used in vim to switch buffers and can&rsquo;t let go of.</p>
+<p>Some keybindings I used in vim to switch buffers and can&rsquo;t let go of. But I think I started to use these less since I made an attempt in <a href="#i3-integration">i3 integration</a>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(general-define-key
   :keymaps <span style="color:#e6db74">&#39;override</span>
   <span style="color:#e6db74">&#34;C-&lt;right&gt;&#34;</span> <span style="color:#e6db74">&#39;evil-window-right</span>
@@ -867,7 +870,8 @@
  :keymaps <span style="color:#e6db74">&#39;evil-window-map</span>
  <span style="color:#e6db74">&#34;x&#34;</span> <span style="color:#e6db74">&#39;kill-buffer-and-window</span>
  <span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#e6db74">&#39;kill-current-buffer</span>)
-</code></pre></div><p>And winner-mode to keep the history of window states.</p>
+</code></pre></div><p><code>winner-mode</code> to keep the history of window states.</p>
+<p>It doesn&rsquo;t play too well with perspective.el, that is it has a single history list for all of the perspectives. But it is still quite usable.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(winner-mode <span style="color:#ae81ff">1</span>)
 
 (general-define-key
@@ -900,7 +904,7 @@
 </code></pre></div><h4 id="folding">Folding</h4>
 <p>There are multiple ways to fold text in Emacs.</p>
 <p>The most versatile is the built-in <code>hs-minor-mode</code>, which seems to work out of the box for Lisps, C-like languages and Python. <code>outline-minor-mode</code> works for org-mode, LaTeX and the like. There is a 3rd-party solution <a href="https://github.com/elp-revive/origami.el">origami.el</a>, but I don&rsquo;t use it at the moment.</p>
-<p>Evil does a pretty good job of uniting these two in the set of vim-like keybindings. I was using <code>SPC</code> in vim, but as now this isn&rsquo;t an option, I set <code>TAB</code> to toggle folding.</p>
+<p>Evil does a pretty good job of abstracting the first two with a set of vim-like keybindings. I was using <code>SPC</code> in vim, but as now this isn&rsquo;t an option, I set <code>TAB</code> to toggle folding.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(general-nmap :keymaps <span style="color:#f92672">&#39;</span>(hs-minor-mode-map outline-minor-mode-map)
   <span style="color:#e6db74">&#34;ze&#34;</span> <span style="color:#e6db74">&#39;hs-hide-level</span>
   <span style="color:#e6db74">&#34;TAB&#34;</span> <span style="color:#e6db74">&#39;evil-toggle-fold</span>)
@@ -1044,7 +1048,7 @@
   :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h4 id="aggressive-indent">Aggressive Indent</h4>
 <p>A package to keep the code intended.</p>
-<p>Doesn&rsquo;t work too well with js ecosystem, because the LSP-based indentation is rather slow but nice for Lisps.</p>
+<p>Doesn&rsquo;t work too well with many ecosystems because the LSP-based indentation is rather slow, but nice for Lisps.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/Malabarba/aggressive-indent-mode">aggressive-indent-mode repo</a></li>
@@ -1781,6 +1785,7 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package emojify
   :straight <span style="color:#66d9ef">t</span>
   :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
+  :disabled
   :hook (after-init <span style="color:#f92672">.</span> global-emojify-mode))
 </code></pre></div><h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
@@ -1895,7 +1900,7 @@
   <span style="color:#e6db74">&#34;ad&#34;</span> <span style="color:#a6e22e">#&#39;</span>dired
   <span style="color:#e6db74">&#34;aD&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/dired-home)
 </code></pre></div><h3 id="addons">Addons</h3>
-<p>I used to use <a href="https://www.emacswiki.org/emacs/DiredPlus">dired+</a>, which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package</p>
+<p>I used to use <a href="https://www.emacswiki.org/emacs/DiredPlus">dired+</a>, which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package diredfl
   :straight <span style="color:#66d9ef">t</span>
   :after dired
@@ -2043,14 +2048,12 @@
 		<span style="color:#f92672">&#39;</span>(tramp-own-remote-path))))
 </code></pre></div><h3 id="bookmarks">Bookmarks</h3>
 <p>A simple bookmark list for Dired, mainly to use with TRAMP. I may look into a proper bookmarking system later.</p>
-<p>Bookmarks are listed in the <a href=".emacs.d/dired-bookmarks.el">dired-bookmarks.el</a> file, which looks like this:</p>
+<p>Bookmarks are listed in the <a href=".emacs.d/private.el">private.el</a> file, which has an expression like this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">(setq my/dired-bookmarks
       &#39;((&#34;sudo&#34; . &#34;/sudo::/&#34;)))
 </code></pre></div><p>The file itself is encrypted with yadm.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/dired-bookmark-open ()
   (interactive)
-  (unless (<span style="color:#a6e22e">boundp</span> <span style="color:#e6db74">&#39;my/dired-bookmarks</span>)
-    (<span style="color:#a6e22e">load</span> (<span style="color:#a6e22e">concat</span> user-emacs-directory <span style="color:#e6db74">&#34;dired-bookmarks&#34;</span>)))
   (let ((bookmarks
 	 (<span style="color:#a6e22e">mapcar</span>
 	  (lambda (el) (<span style="color:#a6e22e">cons</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%-30s %s&#34;</span> (<span style="color:#a6e22e">car</span> el) (<span style="color:#a6e22e">cdr</span> el)) (<span style="color:#a6e22e">cdr</span> el)))
@@ -2247,6 +2250,8 @@
   :straight <span style="color:#66d9ef">t</span>
   :if (not my/remote-server)
   :defer <span style="color:#66d9ef">t</span>
+  :init
+  (setq org-directory (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Documents/org-mode&#34;</span>))
   :config
   (setq org-startup-indented <span style="color:#66d9ef">t</span>)
   (setq org-return-follows-link <span style="color:#66d9ef">t</span>)
@@ -2493,6 +2498,16 @@
 #+end_src
 </code></pre></div><p>Example usage:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">:post out_wrap(name=&#34;fig:chart&#34;, caption=&#34;График&#34;, data=*this*)
+</code></pre></div><h4 id="managing-a-literate-programming-project">Managing a literate programming project</h4>
+<p>A few tricks to do literate programming.</p>
+<p>I prefer to put the org files to a separate directory (e.g. <code>org</code>). So I&rsquo;ve come up with the following solution to avoid manually prefixing the <code>:tangle</code> arguments.</p>
+<p>Set up the following argument with the path to the project root:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">#+PROPERTY: PRJ-DIR ..
+</code></pre></div><p>A function to do the prefixing:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-prj-dir (path)
+  (<span style="color:#a6e22e">expand-file-name</span> path (org-entry-get <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;PRJ-DIR&#34;</span> <span style="color:#66d9ef">t</span>)))
+</code></pre></div><p>Example usage is as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">:tangle (my/org-prj-dir &#34;sqrt_data/api/__init__.py&#34;)
 </code></pre></div><h3 id="productivity-and-knowledge-management">Productivity &amp; Knowledge management</h3>
 <p>My ongoing effort to get a productivity setup in Org.</p>
 <p>Some inspiration:</p>
@@ -2503,8 +2518,7 @@
 <li><a href="https://rgoswami.me/posts/org-note-workflow/">Rohit Goswami: An Orgmode Note Workflow</a></li>
 </ul>
 <p>Used files</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-directory (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Documents/org-mode&#34;</span>))
-(setq org-agenda-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;inbox.org&#34;</span> <span style="color:#e6db74">&#34;projects.org&#34;</span> <span style="color:#e6db74">&#34;work.org&#34;</span> <span style="color:#e6db74">&#34;sem-11.org&#34;</span> <span style="color:#e6db74">&#34;life.org&#34;</span>))
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-agenda-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;inbox.org&#34;</span> <span style="color:#e6db74">&#34;projects.org&#34;</span> <span style="color:#e6db74">&#34;work.org&#34;</span> <span style="color:#e6db74">&#34;sem-11.org&#34;</span> <span style="color:#e6db74">&#34;life.org&#34;</span>))
 <span style="color:#75715e">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
 </code></pre></div><p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(my-leader-def
@@ -2540,7 +2554,45 @@
 	     <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;Effort_ALL&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>))
 </code></pre></div><p>Log DONE time</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-log-done <span style="color:#e6db74">&#39;time</span>)
+</code></pre></div><h4 id="trello-sync">Trello sync</h4>
+<p>Some of the projects I&rsquo;m participating in are managed via Trello, so I use <a href="http://org-trello.github.io/">org-trello</a> to keep track of them. The package has a remarkably awkward keybindings setup, so my effort to call <code>my-leader-def</code> to set keybindings I like is no less awkward.</p>
+<p>Also, trello files are huge and have a lot of information and tasks which do not concern me, so I don&rsquo;t add them to <code>org-agenda-files</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-trello-files
+      (thread-last (<span style="color:#a6e22e">concat</span> org-directory <span style="color:#e6db74">&#34;/trello&#34;</span>)
+	(<span style="color:#a6e22e">directory-files</span>)
+	(seq-filter
+	 (lambda (f) (string-match-p (rx <span style="color:#e6db74">&#34;.org&#34;</span> eos) f)))
+	(<span style="color:#a6e22e">mapcar</span>
+	 (lambda (f) (<span style="color:#a6e22e">concat</span> org-directory <span style="color:#e6db74">&#34;/trello/&#34;</span> f)))))
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-trello
+  :straight (:build (:not native-compile))
+  :commands (org-trello-mode)
+  :init
+  (setq org-trello-current-prefix-keybinding <span style="color:#e6db74">&#34;C-c o&#34;</span>)
+  (setq org-trello-add-tags <span style="color:#66d9ef">nil</span>)
+
+  (add-hook <span style="color:#e6db74">&#39;org-mode-hook</span>
+	    (lambda ()
+	      (when (string-match-p (rx <span style="color:#e6db74">&#34;trello&#34;</span>) (or (<span style="color:#a6e22e">buffer-file-name</span>) <span style="color:#e6db74">&#34;&#34;</span>))
+		(org-trello-mode))))
+  :config
+  (<span style="color:#a6e22e">eval</span>
+   <span style="color:#f92672">`</span>(my-leader-def
+      :infix <span style="color:#e6db74">&#34;o t&#34;</span>
+      :keymaps <span style="color:#f92672">&#39;</span>(org-trello-mode-map)
+      <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;trello&#34;</span>)
+      <span style="color:#f92672">,@</span>(mapcan
+	 (lambda (b) (<span style="color:#a6e22e">list</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> b) (macroexp-quote (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> b))))
+	 org-trello-interactive-command-binding-couples))))
+</code></pre></div><h4 id="org-ql">org-ql</h4>
+<p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;m using it in my review workflow and for custom agenda views.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-ql
+  :straight (:fetcher github
+		      :repo <span style="color:#e6db74">&#34;alphapapa/org-ql&#34;</span>
+		      :files (:defaults (:exclude <span style="color:#e6db74">&#34;helm-org-ql.el&#34;</span>))))
 </code></pre></div><h4 id="custom-agendas">Custom agendas</h4>
+<p>Some custom agendas to fit my workflow.</p>
+<p>Despite the fact that I don&rsquo;t add <code>org-trello-files</code> to <code>org-agenda-files</code> I still want to see them in agenda, so I use <code>org-ql-block</code> from <code>org-ql</code>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-scheduled-get-time ()
   (let ((scheduled (org-get-scheduled-time (<span style="color:#a6e22e">point</span>))))
     (if scheduled
@@ -2553,6 +2605,13 @@
 	  (todo <span style="color:#e6db74">&#34;NEXT&#34;</span>
 		((org-agenda-prefix-format <span style="color:#e6db74">&#34;  %i %-12:c [%e] &#34;</span>)
 		 (org-agenda-overriding-header <span style="color:#e6db74">&#34;Next tasks&#34;</span>)))
+	  (org-ql-block
+	   <span style="color:#f92672">`</span>(and
+	     (regexp <span style="color:#f92672">,</span>(rx <span style="color:#e6db74">&#34;:orgtrello_users:&#34;</span> (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;sqrtminusone&#34;</span>))
+	     (todo)
+	     (deadline))
+	   ((org-agenda-files <span style="color:#e6db74">&#39;,org-trello-files</span>)
+	    (org-ql-block-header <span style="color:#e6db74">&#34;Trello assigned&#34;</span>)))
 	  (tags-todo <span style="color:#e6db74">&#34;inbox&#34;</span>
 		     ((org-agenda-overriding-header <span style="color:#e6db74">&#34;Inbox&#34;</span>)
 		      (org-agenda-prefix-format <span style="color:#e6db74">&#34; %i %-12:c&#34;</span>)
@@ -2564,12 +2623,6 @@
 	(<span style="color:#e6db74">&#34;tp&#34;</span> <span style="color:#e6db74">&#34;Personal tasks&#34;</span>
 	 ((tags-todo <span style="color:#e6db74">&#34;personal&#34;</span>
 		     ((org-agenda-prefix-format <span style="color:#e6db74">&#34;  %i %-12:c [%e] &#34;</span>)))))))
-</code></pre></div><h4 id="org-ql">org-ql</h4>
-<p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;m using it in my review workflow, perhaps later I&rsquo;ll find another usecases.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-ql
-  :straight (:fetcher github
-		      :repo <span style="color:#e6db74">&#34;alphapapa/org-ql&#34;</span>
-		      :files (:defaults (:exclude <span style="color:#e6db74">&#34;helm-org-ql.el&#34;</span>))))
 </code></pre></div><h4 id="review-workflow">Review workflow</h4>
 <p>My take on a review workflow. As a baseline, I want to have a template that lists the important changes since the last review and other basic information. I&rsquo;m doing reviews regularly, but the time intervals still may vary, hence this flexibility.</p>
 <h5 id="data-from-git-and-org-roam">Data from git &amp; org-roam</h5>
@@ -2933,6 +2986,21 @@ MimeType=x-scheme-handler/org-protocol
   :disabled
   :config
   (org-roam-bibtex-mode))
+</code></pre></div><h4 id="managing-tables">Managing tables</h4>
+<p>I use Org to manage some small tables which I want to process further. So here is a function that saves each table to a CSV file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/export-org-tables-to-csv ()
+  (interactive)
+  (org-table-map-tables
+   (lambda ()
+     (when-let
+	 (name
+	  (<span style="color:#a6e22e">plist-get</span> (cadr (org-element-at-point)) :name))
+       (org-table-export
+	(<span style="color:#a6e22e">concat</span>
+	 (<span style="color:#a6e22e">file-name-directory</span>
+	  (<span style="color:#a6e22e">buffer-file-name</span>))
+	 name <span style="color:#e6db74">&#34;.csv&#34;</span>)
+	<span style="color:#e6db74">&#34;orgtbl-to-csv&#34;</span>)))))
 </code></pre></div><h3 id="ui">UI</h3>
 <h4 id="off--instant-equations-preview"><span class="org-todo done OFF">OFF</span> (OFF) Instant equations preview</h4>
 <p>Instant math previews for org mode.</p>
@@ -2989,9 +3057,23 @@ MimeType=x-scheme-handler/org-protocol
 	  (<span style="color:#a6e22e">plist-put</span> (<span style="color:#a6e22e">cdr</span> item) :latex-header my/latex-preview-header)))
        org-preview-latex-process-alist))
 </code></pre></div><h4 id="better-headers">Better headers</h4>
+<p><a href="https://github.com/integral-dw/org-superstar-mode">org-superstar-mode</a> is package that makes Org heading lines look a bit prettier.</p>
+<p>Disabled it for now because of overlapping functionality with org-bars.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-superstar
   :straight <span style="color:#66d9ef">t</span>
+  :disabled
   :hook (org-mode <span style="color:#f92672">.</span> org-superstar-mode))
+</code></pre></div><p><a href="https://github.com/tonyaldon/org-bars">org-bars</a> highlights Org indentation with bars.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package org-bars
+  :straight (:repo <span style="color:#e6db74">&#34;tonyaldon/org-bars&#34;</span> :host github)
+  :if (display-graphic-p)
+  :hook (org-mode <span style="color:#f92672">.</span> org-bars-mode))
+</code></pre></div><p>Remove the elipsis at the end of folded headlines. The elipsis seems unnecesary with org-bars.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-no-ellipsis-in-headlines ()
+  (remove-from-invisibility-spec <span style="color:#f92672">&#39;</span>(outline <span style="color:#f92672">.</span> <span style="color:#66d9ef">t</span>))
+  (add-to-invisibility-spec <span style="color:#e6db74">&#39;outline</span>))
+
+(add-hook <span style="color:#e6db74">&#39;org-mode-hook</span> <span style="color:#a6e22e">#&#39;</span>my/org-no-ellipsis-in-headlines)
 </code></pre></div><h4 id="org-agenda-icons">Org Agenda Icons</h4>
 <p>Categories are broad labels to group agenda items.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(if (not my/lowpower)
@@ -3106,6 +3188,23 @@ MimeType=x-scheme-handler/org-protocol
 
 (general-nmap :keymaps <span style="color:#e6db74">&#39;org-mode-map</span>
     <span style="color:#e6db74">&#34;C-x C-l&#34;</span> <span style="color:#e6db74">&#39;my/org-link-copy</span>)
+</code></pre></div><h4 id="open-a-file-from-org-directory">Open a file from <code>org-directory</code></h4>
+<p>A function to open a file from <code>org-directory</code>, excluding a few directories like <code>roam</code> and <code>journal</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/org-file-open ()
+  (interactive)
+  (let* ((default-directory org-directory)
+	 (project-files
+	  (seq-filter
+	   (lambda (f)
+	     (and
+	      (string-match-p (rx (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;.org&#34;</span> eos) f)
+	      (not (string-match-p (rx (| <span style="color:#e6db74">&#34;journal&#34;</span> <span style="color:#e6db74">&#34;roam&#34;</span> <span style="color:#e6db74">&#34;review&#34;</span> <span style="color:#e6db74">&#34;archive&#34;</span>)) f))))
+	   (projectile-current-project-files))))
+    (find-file
+     (<span style="color:#a6e22e">concat</span> org-directory <span style="color:#e6db74">&#34;/&#34;</span> (<span style="color:#a6e22e">completing-read</span> <span style="color:#e6db74">&#34;Org file: &#34;</span> project-files)))))
+
+(my-leader-def
+  <span style="color:#e6db74">&#34;o o&#34;</span> <span style="color:#e6db74">&#39;my/org-file-open</span>)
 </code></pre></div><h3 id="presentations">Presentations</h3>
 <p>Doing presentations with <a href="https://github.com/rlister/org-present">org-present</a>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package hide-mode-line
@@ -3289,23 +3388,7 @@ MimeType=x-scheme-handler/org-protocol
 </code></pre></div><p>To launch from CLI, run:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">emacs -Q --batch -l run-tangle.el
 </code></pre></div><p>I have added this line to yadm&rsquo;s <code>post_alt</code> hook, so tangle is run after <code>yadm alt</code></p>
-<h2 id="off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</h2>
-<p><a href="https://github.com/manateelazycat/emacs-application-framework">Emacs Application Framework</a> provides a way to integrate PyQt applications with Emacs.</p>
-<p>I&rsquo;ve made it work, but don&rsquo;t find any uses cases for me at the moment</p>
-<h3 id="installation">Installation</h3>
-<p>Requirements: Node &gt;= 14</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install qtconsole markdown qrcode<span style="color:#f92672">[</span>pil<span style="color:#f92672">]</span> PyQt5 PyQtWebEngine
-</code></pre></div><h3 id="config">Config</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package eaf
-  :straight (:host github :repo <span style="color:#e6db74">&#34;manateelazycat/emacs-application-framework&#34;</span> :files (<span style="color:#e6db74">&#34;*&#34;</span>))
-  :init
-  (use-package epc :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  (use-package ctable :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  (use-package deferred :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  :config
-  (require <span style="color:#e6db74">&#39;eaf-evil</span>)
-  (setq eaf-evil-leader-key <span style="color:#e6db74">&#34;SPC&#34;</span>))
-</code></pre></div><h2 id="programming">Programming</h2>
+<h2 id="programming">Programming</h2>
 <h3 id="general-setup">General setup</h3>
 <h4 id="lsp">LSP</h4>
 <p>LSP-mode provides an IDE-like experience for Emacs - real-time diagnostic, code actions, intelligent autocompletion, etc.</p>
@@ -4455,7 +4538,7 @@ MimeType=x-scheme-handler/org-protocol
 
 (reformatter-define sqlformat
   :program (executable-find <span style="color:#e6db74">&#34;sql-formatter&#34;</span>)
-  :args <span style="color:#f92672">`</span>(<span style="color:#e6db74">&#34;-l&#34;</span> <span style="color:#f92672">,</span>my/sqlformatter-dialect))
+  :args <span style="color:#f92672">`</span>(<span style="color:#e6db74">&#34;-l&#34;</span> <span style="color:#f92672">,</span>my/sqlformatter-dialect, <span style="color:#e6db74">&#34;-u&#34;</span>))
 
 (my-leader-def
   :keymaps <span style="color:#f92672">&#39;</span>(sql-mode-map)
@@ -4492,6 +4575,9 @@ MimeType=x-scheme-handler/org-protocol
   :straight <span style="color:#66d9ef">t</span>
   :config
   (add-hook <span style="color:#e6db74">&#39;dockerfile-mode</span> <span style="color:#e6db74">&#39;smartparens-mode</span>))
+</code></pre></div><h3 id="crontab">crontab</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package crontab-mode
+  :straight <span style="color:#66d9ef">t</span>)
 </code></pre></div><h2 id="apps-and-misc">Apps &amp; Misc</h2>
 <h3 id="managing-dotfiles">Managing dotfiles</h3>
 <p>A bunch of functions for managing dotfiles with yadm.</p>
@@ -4586,7 +4672,7 @@ MimeType=x-scheme-handler/org-protocol
   :straight <span style="color:#66d9ef">t</span>
   :after (elfeed)
   :config
-  (setq rmh-elfeed-org-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;~/.emacs.d/elfeed.org&#34;</span>))
+  (setq rmh-elfeed-org-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;~/.emacs.d/private.org&#34;</span>))
   (elfeed-org))
 </code></pre></div><h5 id="some-additions">Some additions</h5>
 <p>Filter elfeed search buffer by the feed under the cursor.</p>
@@ -4610,6 +4696,67 @@ MimeType=x-scheme-handler/org-protocol
   (let ((link (elfeed-entry-link elfeed-show-entry)))
     (when link
       (eww link))))
+</code></pre></div><h5 id="custom-faces">Custom faces</h5>
+<p>Setting up custom faces for certain tags to make the feed look a bit nicer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defface elfeed-videos-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;red</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tag \&#34;videos\&#34;&#34;</span>)
+
+(defface elfeed-twitter-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;blue</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tah \&#34;twitter\&#34;&#34;</span>)
+
+(defface elfeed-emacs-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;magenta</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tah \&#34;emacs\&#34;&#34;</span>)
+
+(defface elfeed-music-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;green</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tah \&#34;music\&#34;&#34;</span>)
+
+(defface elfeed-podcasts-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tag \&#34;podcasts\&#34;&#34;</span>)
+
+(defface elfeed-blogs-entry
+  <span style="color:#f92672">`</span>((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;orange</span>)))
+  <span style="color:#e6db74">&#34;Face for the elfeed entries with tag \&#34;blogs\&#34;&#34;</span>)
+
+(with-eval-after-load <span style="color:#e6db74">&#39;elfeed</span>
+  (setq elfeed-search-face-alist
+	<span style="color:#f92672">&#39;</span>((twitter elfeed-twitter-entry)
+	  (podcasts elfeed-podcasts-entry)
+	  (music elfeed-music-entry)
+	  (videos elfeed-videos-entry)
+	  (emacs elfeed-emacs-entry)
+	  (blogs elfeed-blogs-entry)
+	  (unread elfeed-search-unread-title-face))))
+</code></pre></div><h5 id="elfeed-score">elfeed-score</h5>
+<p><a href="https://github.com/sp1ff/elfeed-score">elfeed-score</a> is a package that implements scoring for the elfeed entries. Entries are scored by a set of rules for tags/title/content/etc and sorted by that score.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/elfeed-toggle-score-sort ()
+  (interactive)
+  (setq elfeed-search-sort-function
+	(if elfeed-search-sort-function
+	    <span style="color:#66d9ef">nil</span>
+	  <span style="color:#a6e22e">#&#39;</span>elfeed-score-sort))
+  (<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;Sorting by score: %S&#34;</span> (if elfeed-search-sort-function <span style="color:#e6db74">&#34;ON&#34;</span> <span style="color:#e6db74">&#34;OFF&#34;</span>))
+  (elfeed-search-update--force))
+
+(use-package elfeed-score
+  :straight <span style="color:#66d9ef">t</span>
+  :after (elfeed)
+  :init
+  (setq elfeed-score-serde-score-file <span style="color:#e6db74">&#34;~/.emacs.d/elfeed.score&#34;</span>)
+  :config
+  (elfeed-score-enable)
+  (setq elfeed-search-print-entry-function <span style="color:#a6e22e">#&#39;</span>elfeed-score-print-entry)
+  (general-define-key
+   :states <span style="color:#f92672">&#39;</span>(normal)
+   :keymaps <span style="color:#f92672">&#39;</span>(elfeed-search-mode-map)
+   <span style="color:#e6db74">&#34;=&#34;</span> elfeed-score-map)
+  (general-define-key
+   :keymaps <span style="color:#f92672">&#39;</span>(elfeed-score-map)
+   <span style="color:#e6db74">&#34;=&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/elfeed-toggle-score-sort))
 </code></pre></div><h5 id="youtube-and-emms">YouTube &amp; EMMS</h5>
 <p>Previously this block was opening MPV with <code>start-process</code>, but now I&rsquo;ve managed to hook up MPV with EMMS. So there is the EMMS+elfeed &ldquo;integration&rdquo;.</p>
 <p>The following function converts URLs from Invidious and the like to YouTube.</p>
@@ -4719,20 +4866,23 @@ MimeType=x-scheme-handler/org-protocol
 <td>mpv</td>
 </tr>
 <tr>
-<td>youtube-dl</td>
+<td>yt-dlp</td>
 </tr>
 </tbody>
 </table>
-<p><a href="https://mpv.io/">mpv</a> is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.</p>
+<p><a href="https://mpv.io/">mpv</a> is a decent media player, which has found a place in this configuration because it integrates with <del>youtube-dl</del> yt-dlp.</p>
+<p>It looks like YouTube has started to throttle youtube-dl, and yt-dlp has a workaround for that particular case. Just don&rsquo;t forget to add the following like to the mpv config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">script-opts</span><span style="color:#f92672">=</span><span style="color:#e6db74">ytdl_hook-ytdl_path=yt-dlp</span>
+</code></pre></div><p>It seems a bit strange to keep the MPV config in this file, but I don&rsquo;t use the program outside Emacs.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span> <span style="color:#66d9ef">t</span>)
-</code></pre></div><p>Also a custom regex. My demands for MPV include running <code>youtube-dl</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
+</code></pre></div><p>Also a custom regex. My demands for MPV include running <code>yt-dlp</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-set emms-player-mpv
 		 <span style="color:#e6db74">&#39;regex</span>
 		 (rx (or (<span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;https://&#34;</span> (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;youtube.com&#34;</span> (<span style="color:#a6e22e">*</span> nonl))
 			 (<span style="color:#a6e22e">+</span> (<span style="color:#e6db74">? </span>(or <span style="color:#e6db74">&#34;https://&#34;</span> <span style="color:#e6db74">&#34;http://&#34;</span>))
 			    (<span style="color:#a6e22e">*</span> nonl)
 			    (regexp (<span style="color:#a6e22e">eval</span> (emms-player-simple-regexp
-					   <span style="color:#e6db74">&#34;mp4&#34;</span> <span style="color:#e6db74">&#34;mov&#34;</span> <span style="color:#e6db74">&#34;wmv&#34;</span> <span style="color:#e6db74">&#34;webm&#34;</span> <span style="color:#e6db74">&#34;flv&#34;</span> <span style="color:#e6db74">&#34;avi&#34;</span> <span style="color:#e6db74">&#34;mkv&#34;</span>)))))))
+			    <span style="color:#e6db74">&#34;mp4&#34;</span> <span style="color:#e6db74">&#34;mov&#34;</span> <span style="color:#e6db74">&#34;wmv&#34;</span> <span style="color:#e6db74">&#34;webm&#34;</span> <span style="color:#e6db74">&#34;flv&#34;</span> <span style="color:#e6db74">&#34;avi&#34;</span> <span style="color:#e6db74">&#34;mkv&#34;</span>)))))))
 </code></pre></div><p>By default MPV plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose the quality.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/youtube-dl-quality-list
       <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;bestvideo[height&lt;=720]+bestaudio/best[height&lt;=720]&#34;</span>
@@ -5173,6 +5323,22 @@ tag2: value2&#39;
 
 (setq calendar-latitude <span style="color:#ae81ff">59.9375</span>)
 (setq calendar-longitude <span style="color:#ae81ff">30.308611</span>)
+</code></pre></div><h3 id="off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</h3>
+<p><a href="https://github.com/manateelazycat/emacs-application-framework">Emacs Application Framework</a> provides a way to integrate PyQt applications with Emacs.</p>
+<p>I&rsquo;ve made it work, but don&rsquo;t find any uses cases for me at the moment</p>
+<h4 id="installation">Installation</h4>
+<p>Requirements: Node &gt;= 14</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install qtconsole markdown qrcode<span style="color:#f92672">[</span>pil<span style="color:#f92672">]</span> PyQt5 PyQtWebEngine
+</code></pre></div><h4 id="config">Config</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package eaf
+  :straight (:host github :repo <span style="color:#e6db74">&#34;manateelazycat/emacs-application-framework&#34;</span> :files (<span style="color:#e6db74">&#34;*&#34;</span>))
+  :init
+  (use-package epc :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
+  (use-package ctable :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
+  (use-package deferred :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
+  :config
+  (require <span style="color:#e6db74">&#39;eaf-evil</span>)
+  (setq eaf-evil-leader-key <span style="color:#e6db74">&#34;SPC&#34;</span>))
 </code></pre></div><h3 id="fun">Fun</h3>
 <h4 id="discord-integration">Discord integration</h4>
 <p>Integration with Discord. Shows which file is being edited in Emacs.</p>
@@ -5209,6 +5375,13 @@ tag2: value2&#39;
 	    :action (lambda (elem)
 		      (setq zone-programs (<span style="color:#a6e22e">vector</span> (<span style="color:#a6e22e">cdr</span> elem)))
 		      (zone))))
+</code></pre></div><p>Also, a function to copy a URL to the video under cursor.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/ytel-kill-url ()
+  (interactive)
+  (kill-new
+   (<span style="color:#a6e22e">concat</span>
+    <span style="color:#e6db74">&#34;https://www.youtube.com/watch?v=&#34;</span>
+    (ytel-video-id (ytel-get-current-video)))))
 </code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <table>
 <thead>

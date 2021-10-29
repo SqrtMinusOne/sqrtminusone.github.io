@@ -82,7 +82,7 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
 - [Zathura](#zathura)
 - [Various software](#various-software)
     - [Browsers](#browsers)
-    - [Office](#office)
+    - [Office & Multimedia](#office-and-multimedia)
     - [LaTeX](#latex)
     - [Dev](#dev)
     - [Manifests](#manifests)
@@ -302,47 +302,60 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 ### Managing windows {#managing-windows}
 
+| Guix dependency     |
+|---------------------|
+| rust-i3-switch-tabs |
+
 Some keybindings for managing windows.
+
+`emacs-i3-integration` is a script to pass some command to Emacs to get a consistent set of keybindings in both i3 and Emacs. Check out [the section in Emacs.org]({{< relref "Emacs" >}}) for details.
 
 Kill focused windows
 
 ```vim
-bindsym $mod+Shift+q kill
+bindsym $mod+Shift+q exec emacs-i3-integration kill
 ```
 
 Change focus
 
 ```vim
-bindsym $mod+h focus left
-bindsym $mod+j focus down
-bindsym $mod+k focus up
-bindsym $mod+l focus right
+bindsym $mod+h exec emacs-i3-integration focus left
+bindsym $mod+j exec emacs-i3-integration focus down
+bindsym $mod+k exec emacs-i3-integration focus up
+bindsym $mod+l exec emacs-i3-integration focus right
 
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+bindsym $mod+Left exec emacs-i3-integration focus left
+bindsym $mod+Down exec emacs-i3-integration focus down
+bindsym $mod+Up exec emacs-i3-integration focus up
+bindsym $mod+Right exec emacs-i3-integration focus right
 ```
 
 Move windows around
 
 ```vim
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move right
+bindsym $mod+Shift+h exec emacs-i3-integration move left
+bindsym $mod+Shift+j exec emacs-i3-integration move down
+bindsym $mod+Shift+k exec emacs-i3-integration move up
+bindsym $mod+Shift+l exec emacs-i3-integration move right
 
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Left exec emacs-i3-integration move left
+bindsym $mod+Shift+Down exec emacs-i3-integration move down
+bindsym $mod+Shift+Up exec emacs-i3-integration move up
+bindsym $mod+Shift+Right exec emacs-i3-integration move right
 ```
 
 Split windows
 
 ```vim
-bindsym $mod+s split h
-bindsym $mod+v split v
+bindsym $mod+s exec emacs-i3-integration split h
+bindsym $mod+v exec emacs-i3-integration split v
+```
+
+Switch tabs
+
+```vim
+bindsym $mod+period exec i3-switch-tabs right
+bindsym $mod+comma exec i3-switch-tabs left
 ```
 
 Enter fullscreen mode
@@ -350,6 +363,7 @@ Enter fullscreen mode
 ```vim
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
+bindsym $mod+c fullscreen toggle global
 ```
 
 Changing layout
@@ -357,7 +371,7 @@ Changing layout
 ```vim
 bindsym $mod+w layout stacking
 bindsym $mod+t layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+e exec emacs-i3-integration layout toggle split
 ```
 
 Toggle tiling/floating, switch between tiled and floating windows
@@ -428,10 +442,6 @@ bindsym $mod+Shift+7 move container to workspace $w7
 bindsym $mod+Shift+8 move container to workspace $w8
 bindsym $mod+Shift+9 move container to workspace $w9
 bindsym $mod+Shift+0 move container to workspace $w10
-
-# Cycle workspaces
-bindsym $mod+comma workspace prev
-bindsym $mod+period workspace next
 ```
 
 
@@ -575,35 +585,46 @@ bindsym $mod+Shift+g mode "outer gaps"
 
 ### Move & resize windows {#move-and-resize-windows}
 
-A more or less standard set of keybindings to move & resize floating windows.
+| Guix dependency             |
+|-----------------------------|
+| python-i3-balance-workspace |
 
-Just be careful to always make a way to return from these new modes, otherwise you'd end up in a rather precarious situation.
+A more or less standard set of keybindings to move & resize floating windows. Just be careful to always make a way to return from these new modes, otherwise you'd end up in a rather precarious situation.
+
+[i3-balance-workspace](https://github.com/atreyasha/i3-balance-workspace) is a small Python package to balance the i3 windows, but for the Emacs integration I also want this button to balance the Emacs windows, so here is a small script to do just that.
+
+```bash
+if [[ $(xdotool getactivewindow getwindowname) =~ ^emacs(:.*)?@.* ]]; then
+    emacsclient -e "(balance-windows)" &
+fi
+i3_balance_workspace
+```
 
 ```vim
-# resize window (you can also use the mouse for that)
 mode "resize" {
-    # These bindings trigger as soon as you enter the resize mode
 
-    bindsym h resize shrink width 10 px or 10 ppt
-    bindsym j resize grow height 10 px or 10 ppt
-    bindsym k resize shrink height 10 px or 10 ppt
-    bindsym l resize grow width 10 px or 10 ppt
+    bindsym h exec emacs-i3-integration resize shrink width 10 px or 10 ppt
+    bindsym j exec emacs-i3-integration resize grow height 10 px or 10 ppt
+    bindsym k exec emacs-i3-integration resize shrink height 10 px or 10 ppt
+    bindsym l exec emacs-i3-integration resize grow width 10 px or 10 ppt
 
-    bindsym Shift+h resize shrink width 100 px or 100 ppt
-    bindsym Shift+j resize grow height 100 px or 100 ppt
-    bindsym Shift+k resize shrink height 100 px or 100 ppt
-    bindsym Shift+l resize grow width 100 px or 100 ppt
+    bindsym Shift+h exec emacs-i3-integration resize shrink width 100 px or 100 ppt
+    bindsym Shift+j exec emacs-i3-integration resize grow height 100 px or 100 ppt
+    bindsym Shift+k exec emacs-i3-integration resize shrink height 100 px or 100 ppt
+    bindsym Shift+l exec emacs-i3-integration resize grow width 100 px or 100 ppt
 
     # same bindings, but for the arrow keys
-    bindsym Left resize shrink width 10 px or 10 ppt
-    bindsym Down resize grow height 10 px or 10 ppt
-    bindsym Up resize shrink height 10 px or 10 ppt
-    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Left  exec emacs-i3-integration resize shrink width 10 px or 10 ppt
+    bindsym Down  exec emacs-i3-integration resize grow height 10 px or 10 ppt
+    bindsym Up    exec emacs-i3-integration resize shrink height 10 px or 10 ppt
+    bindsym Right exec emacs-i3-integration resize grow width 10 px or 10 ppt
 
-    bindsym Shift+Left resize shrink width 100 px or 100 ppt
-    bindsym Shift+Down resize grow height 100 px or 100 ppt
-    bindsym Shift+Up resize shrink height 100 px or 100 ppt
-    bindsym Shift+Right resize grow width 100 px or 100 ppt
+    bindsym Shift+Left  exec emacs-i3-integration resize shrink width 100 px or 100 ppt
+    bindsym Shift+Down  exec emacs-i3-integration resize grow height 100 px or 100 ppt
+    bindsym Shift+Up    exec emacs-i3-integration resize shrink height 100 px or 100 ppt
+    bindsym Shift+Right exec emacs-i3-integration resize grow width 100 px or 100 ppt
+
+    bindsym equal exec i3-emacs-balance-windows
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -2333,13 +2354,16 @@ This section generates manifests for various desktop software that I'm using.
 | browsers | firefox            |
 
 
-### Office {#office}
+### Office & Multimedia {#office-and-multimedia}
 
 | Category | Guix dependency |
 |----------|-----------------|
 | office   | libreoffice     |
 | office   | gimp            |
 | office   | krita           |
+| office   | ffmpeg          |
+| office   | kdenlive        |
+| office   | inkscape        |
 
 
 ### LaTeX {#latex}
@@ -2370,6 +2394,7 @@ This section generates manifests for various desktop software that I'm using.
 | dev      | libfaketime     |
 | dev      | hugo-extended   |
 | dev      | make            |
+| dev      | sbcl            |
 
 
 ### Manifests {#manifests}
@@ -2756,6 +2781,7 @@ Other desktop programs I use are listed below.
 | anydesk                | Remote desktop software                   |
 | gnome-disk-utility     | Manage disks                              |
 | gparted                | Manage partitions                         |
+| xev                    | Test input                                |
 
 <a id="code-snippet--packages"></a>
 ```emacs-lisp

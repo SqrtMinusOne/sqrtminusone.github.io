@@ -150,6 +150,7 @@
 <li><a href="#buku-bookmarks">Buku bookmarks</a></li>
 <li><a href="#man-pages">Man pages</a></li>
 <li><a href="#pass">pass</a></li>
+<li><a href="#emojis">emojis</a></li>
 </ul>
 </li>
 </ul>
@@ -1106,8 +1107,12 @@ API_KEY<span style="color:#f92672">=</span>$IPSTACK_API_KEY
 <span style="color:#66d9ef">fi</span>
 ip_info<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s http://api.ipstack.com/<span style="color:#e6db74">${</span>ip<span style="color:#e6db74">}</span>?access_key<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>API_KEY<span style="color:#e6db74">}</span><span style="color:#66d9ef">)</span>
 <span style="color:#75715e"># emoji=$(echo $ip_info | jq -r &#39;.location.country_flag_emoji&#39;)</span>
-code<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $ip_info | jq -r <span style="color:#e6db74">&#39;.country_code&#39;</span><span style="color:#66d9ef">)</span>
+code<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $ip_info | jq -r <span style="color:#e6db74">&#39;.country_code&#39;</span> 2&gt; /dev/null<span style="color:#66d9ef">)</span>
 vpn<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>pgrep -a openvpn$ | head -n <span style="color:#ae81ff">1</span> | awk <span style="color:#e6db74">&#39;{print $NF }&#39;</span> | cut -d <span style="color:#e6db74">&#39;.&#39;</span> -f 1<span style="color:#66d9ef">)</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z $code <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+    code<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;??&#34;</span>
+<span style="color:#66d9ef">fi</span>
 
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -n <span style="color:#e6db74">&#34;</span>$vpn<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
     echo <span style="color:#e6db74">&#34;%{u&lt;&lt;get-color(name=&#34;</span>blue<span style="color:#e6db74">&#34;)&gt;&gt;}%{+u}  </span>$code<span style="color:#e6db74"> %{u-}&#34;</span>
@@ -1646,7 +1651,20 @@ $BUKU -f <span style="color:#ae81ff">4</span> -p | awk -F<span style="color:#e6d
 EDITOR<span style="color:#f92672">=</span>vim
 default_autotype<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;username :tab pass&#39;</span>
 clip<span style="color:#f92672">=</span>both
-</code></pre></div><h2 id="flameshot">Flameshot</h2>
+</code></pre></div><h4 id="emojis">emojis</h4>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rofi-emoji</td>
+</tr>
+</tbody>
+</table>
+<h2 id="flameshot">Flameshot</h2>
 <table>
 <thead>
 <tr>
@@ -2387,6 +2405,18 @@ clip<span style="color:#f92672">=</span>both
 <tr>
 <td>dev</td>
 <td>sbcl</td>
+</tr>
+<tr>
+<td>dev</td>
+<td>git-lfs</td>
+</tr>
+<tr>
+<td>dev</td>
+<td>mysql</td>
+</tr>
+<tr>
+<td>dev</td>
+<td>gource</td>
 </tr>
 </tbody>
 </table>
