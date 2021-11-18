@@ -99,8 +99,8 @@ fi
 Use Guix fontconfig. Necessary for nix apps
 
 ```sh
-if [ -d "$HOME/.guix-extra-profiles/desktop" ]; then
-    export FONTCONFIG_PATH="$HOME/.guix-extra-profiles/desktop/desktop/etc/fonts"
+if [ -d "$HOME/.guix-extra-profiles/desktop-misc" ]; then
+    export FONTCONFIG_PATH="$HOME/.guix-extra-profiles/desktop-misc/desktop-misc/etc/fonts"
 fi
 ```
 

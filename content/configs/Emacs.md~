@@ -19,7 +19,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [Measure startup speed](#measure-startup-speed)
     - [straight.el](#straight-dot-el)
     - [use-package](#use-package)
-    - [config variants & environment](#config-variants-and-environment)
+    - [Config variants & environment](#config-variants-and-environment)
     - [Performance](#performance)
         - [Garbage collection](#garbage-collection)
         - [Run garbage collection when Emacs is unfocused](#run-garbage-collection-when-emacs-is-unfocused)
@@ -124,10 +124,12 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [Managing Jupyter kernels](#managing-jupyter-kernels)
         - [Do not wrap the output in emacs-jupyter](#do-not-wrap-the-output-in-emacs-jupyter)
         - [Wrap source code output](#wrap-source-code-output)
+        - [Managing a literate programming project](#managing-a-literate-programming-project)
     - [Productivity & Knowledge management](#productivity-and-knowledge-management)
         - [Capture templates & various settings](#capture-templates-and-various-settings)
-        - [Custom agendas](#custom-agendas)
+        - [Trello sync](#trello-sync)
         - [org-ql](#org-ql)
+        - [Custom agendas](#custom-agendas)
         - [Review workflow](#review-workflow)
             - [Data from git & org-roam](#data-from-git-and-org-roam)
             - [Data from org-journal](#data-from-org-journal)
@@ -139,6 +141,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
             - [org-roam-protocol](#org-roam-protocol)
         - [org-ref](#org-ref)
         - [org-roam-bibtex](#org-roam-bibtex)
+        - [Managing tables](#managing-tables)
     - [UI](#ui)
         - [<span class="org-todo done OFF">OFF</span> (OFF) Instant equations preview](#off--instant-equations-preview)
         - [LaTeX fragments](#latex-fragments)
@@ -152,6 +155,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [LaTeX](#latex)
     - [Keybindings & stuff](#keybindings-and-stuff)
         - [Copy a link](#copy-a-link)
+        - [Open a file from `org-directory`](#open-a-file-from-org-directory)
     - [Presentations](#presentations)
     - [Tools](#tools)
         - [TOC](#toc)
@@ -160,9 +164,6 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [Tables for Guix Dependencies](#tables-for-guix-dependencies)
         - [Noweb evaluations](#noweb-evaluations)
         - [yadm hook](#yadm-hook)
-- [<span class="org-todo done OFF">OFF</span> (OFF) EAF](#off--eaf)
-    - [Installation](#installation)
-    - [Config](#config)
 - [Programming](#programming)
     - [General setup](#general-setup)
         - [LSP](#lsp)
@@ -240,6 +241,7 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [CSV](#csv)
     - [<span class="org-todo done OFF">OFF</span> (OFF) PDF](#off--pdf)
     - [Docker](#docker)
+    - [crontab](#crontab)
 - [Apps & Misc](#apps-and-misc)
     - [Managing dotfiles](#managing-dotfiles)
         - [Open Emacs config](#open-emacs-config)
@@ -249,6 +251,8 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [Notmuch](#notmuch)
         - [Elfeed](#elfeed)
             - [Some additions](#some-additions)
+            - [Custom faces](#custom-faces)
+            - [elfeed-score](#elfeed-score)
             - [YouTube & EMMS](#youtube-and-emms)
         - [EMMS](#emms)
             - [MPD](#mpd)
@@ -275,6 +279,9 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [Productivity](#productivity)
         - [Pomidor](#pomidor)
         - [Calendar](#calendar)
+    - [<span class="org-todo done OFF">OFF</span> (OFF) EAF](#off--eaf)
+        - [Installation](#installation)
+        - [Config](#config)
     - [Fun](#fun)
         - [Discord integration](#discord-integration)
         - [Snow](#snow)
@@ -300,7 +307,11 @@ A small function to print out the loading time and number of GCs during the load
 			     (float-time
 			      (time-subtract after-init-time before-init-time)))
 		     gcs-done)))
+```
 
+Set the following to `t` to print debug information during the startup. This will include the order in which the packages are loaded and the loading time of individual packages.
+
+```emacs-lisp
 ;; (setq use-package-verbose t)
 ```
 
@@ -348,11 +359,12 @@ References:
 ```emacs-lisp
 (straight-use-package 'use-package)
 (eval-when-compile (require 'use-package))
- ;; (setq use-package-verbose t)
 ```
 
 
-### config variants & environment {#config-variants-and-environment}
+### Config variants & environment {#config-variants-and-environment}
+
+This section is about optionating the Emacs config.
 
 The following variable is true when my machine is not powerful enough for some resource-heavy packages.
 
@@ -360,7 +372,7 @@ The following variable is true when my machine is not powerful enough for some r
 (setq my/lowpower (string= (system-name) "azure"))
 ```
 
-The following is true if Emacs is meant to be used with TRAMP over slow ssh.
+The following is true if Emacs is meant to be used with TRAMP over slow ssh. Take a look at the [TRAMP](#tramp) section for more details.
 
 ```emacs-lisp
 (setq my/slow-ssh
@@ -435,7 +447,7 @@ Some time has passed, and I still don't know if there is any quantifiable advant
 
 #### Native compilation {#native-compilation}
 
-Set number of jobs to 1 on low-power machines
+Set the number of native compilation jobs to 1 on low-power machines.
 
 ```emacs-lisp
 (when my/lowpower
@@ -445,11 +457,11 @@ Set number of jobs to 1 on low-power machines
 
 ### Anaconda {#anaconda}
 
-[Anaconda](https://www.anaconda.com/) is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js
+[Anaconda](https://www.anaconda.com/) is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js. Take a look at [the corresponding entry]({{< relref "Guix" >}}) in the Guix config for details about using it on Guix.
 
 The following code uses the conda package to activate the base environment on startup if Emacs is launched outside the environment.
 
-Also, some strange things are happening if vterm is launched with conda activated from Emacs, so I advise `conda-env-activate` to set an auxililary environment variable.
+Also, some strange things are happening if vterm is launched with conda activated from Emacs, so I advise `conda-env-activate` to set an auxililary environment variable. This variable is used in the [shell config]({{< relref "Console" >}}).
 
 References:
 
@@ -476,7 +488,7 @@ References:
 
 ### Custom file location {#custom-file-location}
 
-By default, custom writes stuff to `init.el`, which is somewhat annoying. The following makes a separate file `custom.el`
+By default, custom writes stuff to `init.el`, which is somewhat annoying. The following makes it write to a separate file `custom.el`
 
 ```emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
@@ -497,7 +509,7 @@ I have some variables which I don't commit to the repo, e.g. my current location
 
 ### No littering {#no-littering}
 
-By default emacs and its packages create a lot files in `.emacs.d` and in other places. [no-littering](https://github.com/emacscollective/no-littering) is a collective effort to redirect all of this to two folders in `user-emacs-directory`.
+By default Mmacs and its packages create a lot files in `.emacs.d` and in other places. [no-littering](https://github.com/emacscollective/no-littering) is a collective effort to redirect all of that to two folders in `user-emacs-directory`.
 
 ```emacs-lisp
 (use-package no-littering
@@ -540,9 +552,7 @@ References:
 
 #### which-key {#which-key}
 
-A package that displays the available keybindings in a popup.
-
-Pretty useful, as Emacs seems to have more keybindings than I can remember at any given point.
+A package that displays the available keybindings in a popup. The package is pretty useful, as Emacs seems to have more keybindings than I can remember at any given point.
 
 References:
 
@@ -594,7 +604,7 @@ A function to dump keybindings starting with a prefix to a buffer in tree-like f
 
 ### Evil mode {#evil-mode}
 
-A whole ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.
+An entire ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.
 
 The only problem is that the package name makes it hard to google anything by just typing "evil".
 
@@ -615,15 +625,13 @@ Basic evil configuration.
   (setq evil-want-integration t)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1)
   (setq evil-search-module 'evil-search)
   (setq evil-split-window-below t)
   (setq evil-vsplit-window-right t)
+  :config
+  (evil-mode 1)
   ;; (setq evil-respect-visual-line-mode t)
-  (evil-set-undo-system 'undo-tree)
-  ;; (add-to-list 'evil-emacs-state-modes 'dired-mode)
-  )
+  (evil-set-undo-system 'undo-tree))
 ```
 
 
@@ -639,7 +647,7 @@ Basic evil configuration.
   (global-evil-surround-mode 1))
 ```
 
-[evil-commentary](https://github.com/linktohack/evil-commentary) emulates commentary.vim.
+[evil-commentary](https://github.com/linktohack/evil-commentary) emulates commentary.vim. It gives actions for quick insertion and deletion of comments.
 
 ```emacs-lisp
 (use-package evil-commentary
@@ -684,7 +692,7 @@ Basic evil configuration.
   (evil-lion-mode))
 ```
 
-[evil-matchit](https://github.com/redguardtoo/evil-matchit) makes "%" to match things like tags.
+[evil-matchit](https://github.com/redguardtoo/evil-matchit) makes "%" to match things like tags. It doesn't work perfectly, so I occasionally turn it off.
 
 ```emacs-lisp
 (use-package evil-matchit
@@ -696,9 +704,7 @@ Basic evil configuration.
 
 #### evil-collection {#evil-collection}
 
-[evil-collection](https://github.com/emacs-evil/evil-collection) is a package that provides evil bindings for a lot of different packages. One can see the whole list in the [modes](https://github.com/emacs-evil/evil-collection/tree/master/modes) folder.
-
-I don't enable the entire package, just the modes I need.
+[evil-collection](https://github.com/emacs-evil/evil-collection) is a package that provides evil bindings for a lot of different packages. One can see the complete list in the [modes](https://github.com/emacs-evil/evil-collection/tree/master/modes) folder.
 
 ```emacs-lisp
 (use-package evil-collection
@@ -805,7 +811,7 @@ Using the `SPC` key as a leader key, like in Doom Emacs or Spacemacs.
 (my-leader-def "E" 'eval-expression)
 ```
 
-`general.el` has a nice integration with which-key, so I use this fact to show more descriptive annotations for certain groups of keybindings (the default one is `prefix`).
+`general.el` has a nice integration with which-key, so I use that to show more descriptive annotations for certain groups of keybindings (the default annotation is just `prefix`).
 
 ```emacs-lisp
 (my-leader-def
@@ -844,7 +850,7 @@ The built-in profiler is a magnificent tool to troubleshoot performance issues.
 
 #### Buffer switching {#buffer-switching}
 
-Some keybindings I used in vim to switch buffers and can't let go of.
+Some keybindings I used in vim to switch buffers and can't let go of. But I think I started to use these less since I made an attempt in [i3 integration](#i3-integration).
 
 ```emacs-lisp
 (general-define-key
@@ -866,7 +872,9 @@ Some keybindings I used in vim to switch buffers and can't let go of.
  "d" 'kill-current-buffer)
 ```
 
-And winner-mode to keep the history of window states.
+`winner-mode` to keep the history of window states.
+
+It doesn't play too well with perspective.el, that is it has a single history list for all of the perspectives. But it is still quite usable.
 
 ```emacs-lisp
 (winner-mode 1)
@@ -918,7 +926,7 @@ There are multiple ways to fold text in Emacs.
 
 The most versatile is the built-in `hs-minor-mode`, which seems to work out of the box for Lisps, C-like languages and Python. `outline-minor-mode` works for org-mode, LaTeX and the like. There is a 3rd-party solution [origami.el](https://github.com/elp-revive/origami.el), but I don't use it at the moment.
 
-Evil does a pretty good job of uniting these two in the set of vim-like keybindings. I was using `SPC` in vim, but as now this isn't an option, I set `TAB` to toggle folding.
+Evil does a pretty good job of abstracting the first two with a set of vim-like keybindings. I was using `SPC` in vim, but as now this isn't an option, I set `TAB` to toggle folding.
 
 ```emacs-lisp
 (general-nmap :keymaps '(hs-minor-mode-map outline-minor-mode-map)
@@ -1139,7 +1147,7 @@ References:
 
 A package to keep the code intended.
 
-Doesn't work too well with js ecosystem, because the LSP-based indentation is rather slow but nice for Lisps.
+Doesn't work too well with many ecosystems because the LSP-based indentation is rather slow, but nice for Lisps.
 
 References:
 
@@ -2156,6 +2164,7 @@ References:
 (use-package emojify
   :straight t
   :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
+  :disabled
   :hook (after-init . global-emojify-mode))
 ```
 
@@ -2313,7 +2322,7 @@ My config mostly follows ranger's and vifm's keybindings which I'm used to.
 
 ### Addons {#addons}
 
-I used to use [dired+](https://www.emacswiki.org/emacs/DiredPlus), which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package
+I used to use [dired+](https://www.emacswiki.org/emacs/DiredPlus), which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package.
 
 ```emacs-lisp
 (use-package diredfl
@@ -2475,7 +2484,7 @@ Also, here is a hack to make TRAMP find `ls` on Guix:
 
 A simple bookmark list for Dired, mainly to use with TRAMP. I may look into a proper bookmarking system later.
 
-Bookmarks are listed in the [dired-bookmarks.el](.emacs.d/dired-bookmarks.el) file, which looks like this:
+Bookmarks are listed in the [private.el](.emacs.d/private.el) file, which has an expression like this:
 
 ```text
 (setq my/dired-bookmarks
@@ -2487,8 +2496,6 @@ The file itself is encrypted with yadm.
 ```emacs-lisp
 (defun my/dired-bookmark-open ()
   (interactive)
-  (unless (boundp 'my/dired-bookmarks)
-    (load (concat user-emacs-directory "dired-bookmarks")))
   (let ((bookmarks
 	 (mapcar
 	  (lambda (el) (cons (format "%-30s %s" (car el) (cdr el)) (cdr el)))
@@ -2739,6 +2746,8 @@ Use the built-in org mode.
   :straight t
   :if (not my/remote-server)
   :defer t
+  :init
+  (setq org-directory (expand-file-name "~/Documents/org-mode"))
   :config
   (setq org-startup-indented t)
   (setq org-return-follows-link t)
@@ -3098,6 +3107,32 @@ Example usage:
 ```
 
 
+#### Managing a literate programming project {#managing-a-literate-programming-project}
+
+A few tricks to do literate programming.
+
+I prefer to put the org files to a separate directory (e.g. `org`). So I've come up with the following solution to avoid manually prefixing the `:tangle` arguments.
+
+Set up the following argument with the path to the project root:
+
+```text
+#+PROPERTY: PRJ-DIR ..
+```
+
+A function to do the prefixing:
+
+```emacs-lisp
+(defun my/org-prj-dir (path)
+  (expand-file-name path (org-entry-get nil "PRJ-DIR" t)))
+```
+
+Example usage is as follows:
+
+```text
+:tangle (my/org-prj-dir "sqrt_data/api/__init__.py")
+```
+
+
 ### Productivity & Knowledge management {#productivity-and-knowledge-management}
 
 My ongoing effort to get a productivity setup in Org.
@@ -3112,7 +3147,6 @@ Some inspiration:
 Used files
 
 ```emacs-lisp
-(setq org-directory (expand-file-name "~/Documents/org-mode"))
 (setq org-agenda-files '("inbox.org" "projects.org" "work.org" "sem-11.org" "life.org"))
 ;; (setq org-default-notes-file (concat org-directory "/notes.org"))
 ```
@@ -3174,7 +3208,63 @@ Log DONE time
 ```
 
 
+#### Trello sync {#trello-sync}
+
+Some of the projects I'm participating in are managed via Trello, so I use [org-trello](http://org-trello.github.io/) to keep track of them. The package has a remarkably awkward keybindings setup, so my effort to call `my-leader-def` to set keybindings I like is no less awkward.
+
+Also, trello files are huge and have a lot of information and tasks which do not concern me, so I don't add them to `org-agenda-files`.
+
+```emacs-lisp
+(setq org-trello-files
+      (thread-last (concat org-directory "/trello")
+	(directory-files)
+	(seq-filter
+	 (lambda (f) (string-match-p (rx ".org" eos) f)))
+	(mapcar
+	 (lambda (f) (concat org-directory "/trello/" f)))))
+```
+
+```emacs-lisp
+(use-package org-trello
+  :straight (:build (:not native-compile))
+  :commands (org-trello-mode)
+  :init
+  (setq org-trello-current-prefix-keybinding "C-c o")
+  (setq org-trello-add-tags nil)
+
+  (add-hook 'org-mode-hook
+	    (lambda ()
+	      (when (string-match-p (rx "trello") (or (buffer-file-name) ""))
+		(org-trello-mode))))
+  :config
+  (eval
+   `(my-leader-def
+      :infix "o t"
+      :keymaps '(org-trello-mode-map)
+      "" '(:which-key "trello")
+      ,@(mapcan
+	 (lambda (b) (list (nth 1 b) (macroexp-quote (nth 0 b))))
+	 org-trello-interactive-command-binding-couples))))
+```
+
+
+#### org-ql {#org-ql}
+
+[org-ql](https://github.com/alphapapa/org-ql) is a package to query the org files. I'm using it in my review workflow and for custom agenda views.
+
+```emacs-lisp
+(use-package org-ql
+  :straight (:fetcher github
+		      :repo "alphapapa/org-ql"
+		      :files (:defaults (:exclude "helm-org-ql.el"))))
+```
+
+
 #### Custom agendas {#custom-agendas}
+
+Some custom agendas to fit my workflow.
+
+Despite the fact that I don't add `org-trello-files` to `org-agenda-files` I still want to see them in agenda, so I use `org-ql-block` from `org-ql`.
 
 ```emacs-lisp
 (defun my/org-scheduled-get-time ()
@@ -3189,6 +3279,13 @@ Log DONE time
 	  (todo "NEXT"
 		((org-agenda-prefix-format "  %i %-12:c [%e] ")
 		 (org-agenda-overriding-header "Next tasks")))
+	  (org-ql-block
+	   `(and
+	     (regexp ,(rx ":orgtrello_users:" (* nonl) "sqrtminusone"))
+	     (todo)
+	     (deadline))
+	   ((org-agenda-files ',org-trello-files)
+	    (org-ql-block-header "Trello assigned")))
 	  (tags-todo "inbox"
 		     ((org-agenda-overriding-header "Inbox")
 		      (org-agenda-prefix-format " %i %-12:c")
@@ -3200,18 +3297,6 @@ Log DONE time
 	("tp" "Personal tasks"
 	 ((tags-todo "personal"
 		     ((org-agenda-prefix-format "  %i %-12:c [%e] ")))))))
-```
-
-
-#### org-ql {#org-ql}
-
-[org-ql](https://github.com/alphapapa/org-ql) is a package to query the org files. I'm using it in my review workflow, perhaps later I'll find another usecases.
-
-```emacs-lisp
-(use-package org-ql
-  :straight (:fetcher github
-		      :repo "alphapapa/org-ql"
-		      :files (:defaults (:exclude "helm-org-ql.el"))))
 ```
 
 
@@ -3665,6 +3750,27 @@ There are some problems with org roam v2, so I disabled it as of now. I will pro
 ```
 
 
+#### Managing tables {#managing-tables}
+
+I use Org to manage some small tables which I want to process further. So here is a function that saves each table to a CSV file.
+
+```emacs-lisp
+(defun my/export-org-tables-to-csv ()
+  (interactive)
+  (org-table-map-tables
+   (lambda ()
+     (when-let
+	 (name
+	  (plist-get (cadr (org-element-at-point)) :name))
+       (org-table-export
+	(concat
+	 (file-name-directory
+	  (buffer-file-name))
+	 name ".csv")
+	"orgtbl-to-csv")))))
+```
+
+
 ### UI {#ui}
 
 
@@ -3746,10 +3852,34 @@ Also, LaTeX fragments preview tends to break whenever the are custom `#+LATEX_HE
 
 #### Better headers {#better-headers}
 
+[org-superstar-mode](https://github.com/integral-dw/org-superstar-mode) is package that makes Org heading lines look a bit prettier.
+
+Disabled it for now because of overlapping functionality with org-bars.
+
 ```emacs-lisp
 (use-package org-superstar
   :straight t
+  :disabled
   :hook (org-mode . org-superstar-mode))
+```
+
+[org-bars](https://github.com/tonyaldon/org-bars) highlights Org indentation with bars.
+
+```emacs-lisp
+(use-package org-bars
+  :straight (:repo "tonyaldon/org-bars" :host github)
+  :if (display-graphic-p)
+  :hook (org-mode . org-bars-mode))
+```
+
+Remove the elipsis at the end of folded headlines. The elipsis seems unnecesary with org-bars.
+
+```emacs-lisp
+(defun my/org-no-ellipsis-in-headlines ()
+  (remove-from-invisibility-spec '(outline . t))
+  (add-to-invisibility-spec 'outline))
+
+(add-hook 'org-mode-hook #'my/org-no-ellipsis-in-headlines)
 ```
 
 
@@ -3908,6 +4038,29 @@ Add a custom LaTeX template without default packages. Packages are indented to b
 
 (general-nmap :keymaps 'org-mode-map
     "C-x C-l" 'my/org-link-copy)
+```
+
+
+#### Open a file from `org-directory` {#open-a-file-from-org-directory}
+
+A function to open a file from `org-directory`, excluding a few directories like `roam` and `journal`.
+
+```emacs-lisp
+(defun my/org-file-open ()
+  (interactive)
+  (let* ((default-directory org-directory)
+	 (project-files
+	  (seq-filter
+	   (lambda (f)
+	     (and
+	      (string-match-p (rx (* nonl) ".org" eos) f)
+	      (not (string-match-p (rx (| "journal" "roam" "review" "archive")) f))))
+	   (projectile-current-project-files))))
+    (find-file
+     (concat org-directory "/" (completing-read "Org file: " project-files)))))
+
+(my-leader-def
+  "o o" 'my/org-file-open)
 ```
 
 
@@ -4144,37 +4297,6 @@ emacs -Q --batch -l run-tangle.el
 ```
 
 I have added this line to yadm's `post_alt` hook, so tangle is run after `yadm alt`
-
-
-## <span class="org-todo done OFF">OFF</span> (OFF) EAF {#off--eaf}
-
-[Emacs Application Framework](https://github.com/manateelazycat/emacs-application-framework) provides a way to integrate PyQt applications with Emacs.
-
-I've made it work, but don't find any uses cases for me at the moment
-
-
-### Installation {#installation}
-
-Requirements: Node >= 14
-
-```bash
-pip install qtconsole markdown qrcode[pil] PyQt5 PyQtWebEngine
-```
-
-
-### Config {#config}
-
-```emacs-lisp
-(use-package eaf
-  :straight (:host github :repo "manateelazycat/emacs-application-framework" :files ("*"))
-  :init
-  (use-package epc :defer t :straight t)
-  (use-package ctable :defer t :straight t)
-  (use-package deferred :defer t :straight t)
-  :config
-  (require 'eaf-evil)
-  (setq eaf-evil-leader-key "SPC"))
-```
 
 
 ## Programming {#programming}
@@ -5671,7 +5793,7 @@ So far I didn't find a nice SQL client for Emacs, but I occasionally run SQL que
 
 (reformatter-define sqlformat
   :program (executable-find "sql-formatter")
-  :args `("-l" ,my/sqlformatter-dialect))
+  :args `("-l" ,my/sqlformatter-dialect, "-u"))
 
 (my-leader-def
   :keymaps '(sql-mode-map)
@@ -5735,6 +5857,14 @@ References:
   :straight t
   :config
   (add-hook 'dockerfile-mode 'smartparens-mode))
+```
+
+
+### crontab {#crontab}
+
+```emacs-lisp
+(use-package crontab-mode
+  :straight t)
 ```
 
 
@@ -5871,7 +6001,7 @@ Using my own fork until the modifications are merged into master.
   :straight t
   :after (elfeed)
   :config
-  (setq rmh-elfeed-org-files '("~/.emacs.d/elfeed.org"))
+  (setq rmh-elfeed-org-files '("~/.emacs.d/private.org"))
   (elfeed-org))
 ```
 
@@ -5905,6 +6035,79 @@ Open a URL with eww.
   (let ((link (elfeed-entry-link elfeed-show-entry)))
     (when link
       (eww link))))
+```
+
+
+##### Custom faces {#custom-faces}
+
+Setting up custom faces for certain tags to make the feed look a bit nicer.
+
+```emacs-lisp
+(defface elfeed-videos-entry
+  `((t :foreground ,(doom-color 'red)))
+  "Face for the elfeed entries with tag \"videos\"")
+
+(defface elfeed-twitter-entry
+  `((t :foreground ,(doom-color 'blue)))
+  "Face for the elfeed entries with tah \"twitter\"")
+
+(defface elfeed-emacs-entry
+  `((t :foreground ,(doom-color 'magenta)))
+  "Face for the elfeed entries with tah \"emacs\"")
+
+(defface elfeed-music-entry
+  `((t :foreground ,(doom-color 'green)))
+  "Face for the elfeed entries with tah \"music\"")
+
+(defface elfeed-podcasts-entry
+  `((t :foreground ,(doom-color 'yellow)))
+  "Face for the elfeed entries with tag \"podcasts\"")
+
+(defface elfeed-blogs-entry
+  `((t :foreground ,(doom-color 'orange)))
+  "Face for the elfeed entries with tag \"blogs\"")
+
+(with-eval-after-load 'elfeed
+  (setq elfeed-search-face-alist
+	'((twitter elfeed-twitter-entry)
+	  (podcasts elfeed-podcasts-entry)
+	  (music elfeed-music-entry)
+	  (videos elfeed-videos-entry)
+	  (emacs elfeed-emacs-entry)
+	  (blogs elfeed-blogs-entry)
+	  (unread elfeed-search-unread-title-face))))
+```
+
+
+##### elfeed-score {#elfeed-score}
+
+[elfeed-score](https://github.com/sp1ff/elfeed-score) is a package that implements scoring for the elfeed entries. Entries are scored by a set of rules for tags/title/content/etc and sorted by that score.
+
+```emacs-lisp
+(defun my/elfeed-toggle-score-sort ()
+  (interactive)
+  (setq elfeed-search-sort-function
+	(if elfeed-search-sort-function
+	    nil
+	  #'elfeed-score-sort))
+  (message "Sorting by score: %S" (if elfeed-search-sort-function "ON" "OFF"))
+  (elfeed-search-update--force))
+
+(use-package elfeed-score
+  :straight t
+  :after (elfeed)
+  :init
+  (setq elfeed-score-serde-score-file "~/.emacs.d/elfeed.score")
+  :config
+  (elfeed-score-enable)
+  (setq elfeed-search-print-entry-function #'elfeed-score-print-entry)
+  (general-define-key
+   :states '(normal)
+   :keymaps '(elfeed-search-mode-map)
+   "=" elfeed-score-map)
+  (general-define-key
+   :keymaps '(elfeed-score-map)
+   "=" #'my/elfeed-toggle-score-sort))
 ```
 
 
@@ -6047,15 +6250,23 @@ After all this is done, run `M-x emms-cache-set-from-mpd-all` to set cache from 
 | Guix dependency |
 |-----------------|
 | mpv             |
-| youtube-dl      |
+| yt-dlp          |
 
-[mpv](https://mpv.io/) is a decent media player, which has found a place in this configuration because it integrates with youtube-dl.
+[mpv](https://mpv.io/) is a decent media player, which has found a place in this configuration because it integrates with ~~youtube-dl~~ yt-dlp.
+
+It looks like YouTube has started to throttle youtube-dl, and yt-dlp has a workaround for that particular case. Just don't forget to add the following like to the mpv config:
+
+```ini
+script-opts=ytdl_hook-ytdl_path=yt-dlp
+```
+
+It seems a bit strange to keep the MPV config in this file, but I don't use the program outside Emacs.
 
 ```emacs-lisp
 (add-to-list 'emms-player-list 'emms-player-mpv t)
 ```
 
-Also a custom regex. My demands for MPV include running `youtube-dl`, so there is a regex that matches youtube.com or some of the video formats.
+Also a custom regex. My demands for MPV include running `yt-dlp`, so there is a regex that matches youtube.com or some of the video formats.
 
 ```emacs-lisp
 (emms-player-set emms-player-mpv
@@ -6064,7 +6275,7 @@ Also a custom regex. My demands for MPV include running `youtube-dl`, so there i
 			 (+ (? (or "https://" "http://"))
 			    (* nonl)
 			    (regexp (eval (emms-player-simple-regexp
-					   "mp4" "mov" "wmv" "webm" "flv" "avi" "mkv")))))))
+			    "mp4" "mov" "wmv" "webm" "flv" "avi" "mkv")))))))
 ```
 
 By default MPV plays the video in the best possible quality, which may be pretty high, even too high with limited bandwidth. So here is the logic to choose the quality.
@@ -6678,6 +6889,37 @@ Emacs' built-in calendar. Can even calculate sunrise and sunset times.
 ```
 
 
+### <span class="org-todo done OFF">OFF</span> (OFF) EAF {#off--eaf}
+
+[Emacs Application Framework](https://github.com/manateelazycat/emacs-application-framework) provides a way to integrate PyQt applications with Emacs.
+
+I've made it work, but don't find any uses cases for me at the moment
+
+
+#### Installation {#installation}
+
+Requirements: Node >= 14
+
+```bash
+pip install qtconsole markdown qrcode[pil] PyQt5 PyQtWebEngine
+```
+
+
+#### Config {#config}
+
+```emacs-lisp
+(use-package eaf
+  :straight (:host github :repo "manateelazycat/emacs-application-framework" :files ("*"))
+  :init
+  (use-package epc :defer t :straight t)
+  (use-package ctable :defer t :straight t)
+  (use-package deferred :defer t :straight t)
+  :config
+  (require 'eaf-evil)
+  (setq eaf-evil-leader-key "SPC"))
+```
+
+
 ### Fun {#fun}
 
 
@@ -6730,6 +6972,17 @@ In order for this to work in Guix, a service is necessary - [Discord rich presen
 	    :action (lambda (elem)
 		      (setq zone-programs (vector (cdr elem)))
 		      (zone))))
+```
+
+Also, a function to copy a URL to the video under cursor.
+
+```emacs-lisp
+(defun my/ytel-kill-url ()
+  (interactive)
+  (kill-new
+   (concat
+    "https://www.youtube.com/watch?v="
+    (ytel-video-id (ytel-get-current-video)))))
 ```
 
 

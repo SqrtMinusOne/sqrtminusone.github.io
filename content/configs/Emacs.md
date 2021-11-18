@@ -67,7 +67,6 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [ivy-rich](#ivy-rich)
         - [prescient](#prescient)
         - [Keybindings](#keybindings)
-    - [<span class="org-todo done OFF">OFF</span> (OFF) Helm](#off--helm)
     - [Treemacs](#treemacs)
         - [Helper functions](#helper-functions)
         - [Custom icons](#custom-icons)
@@ -92,7 +91,6 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [My title](#my-title)
     - [Modeline](#modeline)
     - [Font stuff](#font-stuff)
-        - [Emojis](#emojis)
         - [Ligatures](#ligatures)
         - [Icons](#icons)
         - [Highlight todo](#highlight-todo)
@@ -172,7 +170,12 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
             - [Keybindings](#keybindings)
         - [Flycheck](#flycheck)
         - [Tree Sitter](#tree-sitter)
-        - [<span class="org-todo done OFF">OFF</span> (OFF) DAP](#off--dap)
+        - [DAP](#dap)
+            - [Controls](#controls)
+            - [UI Fixes](#ui-fixes)
+            - [Helper functions](#helper-functions)
+            - [Improved stack frame switching](#improved-stack-frame-switching)
+            - [Debug templates](#debug-templates)
         - [<span class="org-todo done OFF">OFF</span> (OFF) TabNine](#off--tabnine)
         - [<span class="org-todo done OFF">OFF</span> (OFF) Code Compass](#off--code-compass)
             - [Dependencies](#dependencies)
@@ -277,11 +280,9 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
         - [proced](#proced)
         - [Guix](#guix)
     - [Productivity](#productivity)
-        - [Pomidor](#pomidor)
+        - [pomm](#pomm)
+        - [<span class="org-todo done OFF">OFF</span> (OFF) Pomidor](#off--pomidor)
         - [Calendar](#calendar)
-    - [<span class="org-todo done OFF">OFF</span> (OFF) EAF](#off--eaf)
-        - [Installation](#installation)
-        - [Config](#config)
     - [Fun](#fun)
         - [Discord integration](#discord-integration)
         - [Snow](#snow)
@@ -719,6 +720,7 @@ Basic evil configuration.
      pass
      calendar
      dired
+     ivy
      debug
      guix
      calc
@@ -805,7 +807,12 @@ Using the `SPC` key as a leader key, like in Doom Emacs or Spacemacs.
   :prefix "SPC"
   :states '(normal motion emacs))
 
-(general-def :states '(normal motion emacs) "SPC" nil)
+(general-def :states '(normal motion emacs)
+  "SPC" nil
+  "M-SPC" (general-key "SPC"))
+
+(general-def :states '(insert)
+  "M-SPC" (general-key "SPC" :state 'normal))
 
 (my-leader-def "?" 'which-key-show-top-level)
 (my-leader-def "E" 'eval-expression)
@@ -1028,7 +1035,7 @@ So here is a simple predicate which checks whether there is space in the given d
 
 ```emacs-lisp
 (defun my/emacs-i3-direction-exists-p (dir)
-  (some (lambda (dir)
+  (cl-some (lambda (dir)
 	  (let ((win (windmove-find-other-window dir)))
 	    (and win (not (window-minibuffer-p win)))))
 	(pcase dir
@@ -1388,6 +1395,10 @@ References:
 	       ;; ivy-resume
 	       ;; ivy--restore-session
 	       lsp-ivy-workspace-symbol
+	       dap-switch-stack-frame
+	       my/dap-switch-stack-frame
+	       dap-switch-session
+	       dap-switch-thread
 	       counsel-grep
 	       ;; counsel-find-file
 	       counsel-git-grep
@@ -1439,68 +1450,11 @@ References:
 ```
 
 
-### <span class="org-todo done OFF">OFF</span> (OFF) Helm {#off--helm}
-
-Config for the Helm incremental completion framework. I switched to Ivy some time ago, but keep the configuration just in case.
-
-```emacs-lisp
-(use-package helm
-  :init
-  (require 'helm-config)
-  (setq helm-split-window-in-side-p t)
-  (setq helm-move-to-line-cycle-in-source t)
-  :straight t
-  :config
-  (helm-mode 1)
-  (helm-autoresize-mode 1))
-
-(use-package helm-ag
-  :straight t)
-
-(use-package helm-rg
-  :straight t)
-
-(general-nmap
-  :keymaps 'helm-ag-mode-map
-  "RET" 'helm-ag-mode-jump
-  "M-RET" 'helm-ag-mode-jump-other-window)
-
-(general-nmap
-  :keymaps 'helm-occur-mode-map
-  "RET" 'helm-occur-mode-goto-line
-  "M-RET" 'helm-occur-mode-goto-line-ow)
-
-(general-define-key "M-x" 'helm-M-x)
-(my-leader-def
-  "fb" 'helm-buffers-list
-  "fs" 'helm-lsp-workspace-symbol
-  "fw" 'helm-lsp-global-workspace-symbol
-  "fc" 'helm-show-kill-ring
-  ;; "fa" 'helm-do-ag-project-root
-  "fm" 'helm-bookmarks
-  "ff" 'project-find-file
-  "fe" 'conda-env-activate)
-
-(my-leader-def "s" 'helm-occur)
-(my-leader-def "SPC" 'helm-resume)
-
-(general-define-key
-  :keymaps 'helm-map
-  "C-j" 'helm-next-line
-  "C-k" 'helm-previous-line)
-
-(general-define-key
-  :keymaps '(helm-find-files-map helm-locate-map)
-  "C-h" 'helm-find-files-up-one-level
-  "C-l" 'helm-execute-persistent-action)
-
-(general-imap
-  "C-y" 'helm-show-kill-ring)
-;; (general-nmap "C-p" 'project-find-file)
-```
-
-
 ### Treemacs {#treemacs}
+
+| Type | Note                                                   |
+|------|--------------------------------------------------------|
+| TODO | Enable modeline only for particular treemacs instances |
 
 [Treemacs](https://github.com/Alexander-Miller/treemacs) calls itself a tree layout file explorer, but looks more like a project and workspace management system.
 
@@ -2154,21 +2108,6 @@ References:
 ### Font stuff {#font-stuff}
 
 
-#### Emojis {#emojis}
-
-| Note | Type                                                      |
-|------|-----------------------------------------------------------|
-| TODO | Figure out how to display emojis without prettify symbols |
-
-```emacs-lisp
-(use-package emojify
-  :straight t
-  :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
-  :disabled
-  :hook (after-init . global-emojify-mode))
-```
-
-
 #### Ligatures {#ligatures}
 
 Ligature setup for the JetBrainsMono font.
@@ -2761,6 +2700,10 @@ Use the built-in org mode.
   (add-hook 'org-mode-hook
 	    (lambda ()
 	      (rainbow-delimiters-mode -1)))
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("sq" . "src sql"))
   <<org-crypt-setup>>
   (unless my/is-termux
     <<org-lang-setup>>)
@@ -3179,6 +3122,12 @@ Refile targets
 Settings for Org capture mode. The goal here is to have a non-disruptive process to capture various ideas.
 
 ```emacs-lisp
+(defun my/generate-inbox-note-name ()
+  (format
+   "%s/inbox-notes/%s.org"
+   org-directory
+   (format-time-string "%Y%m%d%H%M%S")))
+
 (setq org-capture-templates
       `(("i" "Inbox" entry  (file "inbox.org")
 	 ,(concat "* TODO %?\n"
@@ -3191,7 +3140,10 @@ Settings for Org capture mode. The goal here is to have a non-disruptive process
 	("f" "elfeed" entry (file "inbox.org")
 	 ,(concat "* TODO %:elfeed-entry-title\n"
 		  "/Entered on/ %U\n"
-		  "%a\n"))))
+		  "%a\n"))
+	("n" "note" entry (file my/generate-inbox-note-name)
+	 ,(concat "* %?\n"
+		  "/Entered on/ %U"))))
 ```
 
 Effort estimation
@@ -3640,7 +3592,7 @@ References:
 
 (my-leader-def
   :infix "or"
-  "r" '(:which-key "org-roam")
+  "" '(:which-key "org-roam")
   "i" 'org-roam-node-insert
   "r" 'org-roam-node-find
   "g" 'org-roam-graph
@@ -3729,8 +3681,9 @@ As of now, this package loads Helm on start. To avoid this, I have to exclude He
   (general-define-key
    :keymaps 'bibtex-mode-map
    "M-RET" 'org-ref-bibtex-hydra/body)
-  (add-to-list 'orhc-candidate-formats
-	       '("online" . "  |${=key=}| ${title} ${url}")))
+  ;; (add-to-list 'orhc-candidate-formats
+  ;;              '("online" . "  |${=key=}| ${title} ${url}"))
+  )
 ```
 
 
@@ -4322,6 +4275,7 @@ References:
   :if (not (or my/slow-ssh my/is-termux my/remote-server))
   :hook (
 	 (typescript-mode . lsp)
+	 (js-mode . lsp)
 	 (vue-mode . lsp)
 	 (go-mode . lsp)
 	 (svelte-mode . lsp)
@@ -4462,11 +4416,11 @@ References:
 ```
 
 
-#### <span class="org-todo done OFF">OFF</span> (OFF) DAP {#off--dap}
+#### DAP {#dap}
 
 An Emacs client for Debugger Adapter Protocol.
 
-I don't use it now, because there are debuggers I like more for the technologies I'm currently using.
+As of time of this writing, I mostly debug TypeScript, so the main competitor is Chrome Inspector for node.js.
 
 References:
 
@@ -4477,12 +4431,13 @@ References:
 ```emacs-lisp
 (use-package dap-mode
   :straight t
-  :defer t
+  :commands (dap-debug)
   :init
   (setq lsp-enable-dap-auto-configure nil)
   :config
 
   (setq dap-ui-variable-length 100)
+  (setq dap-auto-show-output nil)
   (require 'dap-node)
   (dap-node-setup)
 
@@ -4494,28 +4449,249 @@ References:
   (dap-mode 1)
   (dap-ui-mode 1)
   (dap-tooltip-mode 1)
-  (tooltip-mode 1)
-  (dap-ui-controls-mode 1))
+  (tooltip-mode 1))
+```
 
-(my-leader-def
-  :infix "d"
-  "d" 'dap-debug
-  "b" 'dap-breakpoint-toggle
-  "c" 'dap-breakpoint-condition
-  "wl" 'dap-ui-locals
-  "wb" 'dap-ui-breakpoints
-  "wr" 'dap-ui-repl
-  "ws" 'dap-ui-sessions
-  "we" 'dap-ui-expressions)
 
-(my-leader-def
-  :infix "d"
-  :keymaps 'dap-mode-map
-  "h" 'dap-hydra)
+##### Controls {#controls}
 
+I don't like some keybindings in the built-in hydra, and there seems to be no easy way to modify the existing hydra, so I create my own. I tried to use transient, but the transient buffer seems to conflict with special buffers of DAP, and hydra does not.
+
+Also, I want the hydra to toggle UI windows instead of just opening them, so here is macro that defines such functions:
+
+```emacs-lisp
+(with-eval-after-load 'dap-mode
+  (defmacro my/define-dap-ui-window-toggler (name)
+    `(defun ,(intern (concat "my/dap-ui-toggle-" name)) ()
+       ,(concat "Toggle DAP " name "buffer")
+       (interactive)
+       (if-let (window (get-buffer-window ,(intern (concat "dap-ui--" name "-buffer"))))
+	   (quit-window nil window)
+	 (,(intern (concat "dap-ui-" name))))))
+
+  (my/define-dap-ui-window-toggler "locals")
+  (my/define-dap-ui-window-toggler "expressions")
+  (my/define-dap-ui-window-toggler "sessions")
+  (my/define-dap-ui-window-toggler "breakpoints")
+  (my/define-dap-ui-window-toggler "repl"))
+```
+
+And here is the hydra:
+
+```emacs-lisp
+(defhydra my/dap-hydra (:color pink :hint nil :foreign-keys run)
+  "
+^Stepping^         ^UI^                     ^Switch^                   ^Breakpoints^         ^Debug^                     ^Expressions
+^^^^^^^^------------------------------------------------------------------------------------------------------------------------------------------
+_n_: Next          _uc_: Controls           _ss_: Session              _bb_: Toggle          _dd_: Debug                 _ee_: Eval
+_i_: Step in       _ue_: Expressions        _st_: Thread               _bd_: Delete          _dr_: Debug recent          _er_: Eval region
+_o_: Step out      _ul_: Locals             _sf_: Stack frame          _ba_: Add             _dl_: Debug last            _es_: Eval thing at point
+_c_: Continue      _ur_: REPL               _su_: Up stack frame       _bc_: Set condition   _de_: Edit debug template   _ea_: Add expression
+_r_: Restart frame _uo_: Output             _sd_: Down stack frame     _bh_: Set hit count   _Q_:  Disconnect            _ed_: Remove expression
+		 _us_: Sessions           _sF_: Stack frame filtered _bl_: Set log message                           _eu_: Refresh expressions
+		 _ub_: Breakpoints                                                                               "
+
+  ("n" dap-next)
+  ("i" dap-step-in)
+  ("o" dap-step-out)
+  ("c" dap-continue)
+  ("r" dap-restart-frame)
+  ("uc" dap-ui-controls-mode)
+  ("ue" my/dap-ui-toggle-expressions)
+  ("ul" my/dap-ui-toggle-locals)
+  ("ur" my/dap-ui-toggle-repl)
+  ("uo" dap-ui-go-to-output-buffer)
+  ("us" my/dap-ui-toggle-sessions)
+  ("ub" my/dap-ui-toggle-breakpoints)
+  ("ss" dap-switch-session)
+  ("st" dap-switch-thread)
+  ("sf" dap-switch-stack-frame)
+  ("sF" my/dap-switch-stack-frame)
+  ("su" dap-up-stack-frame)
+  ("sd" dap-down-stack-frame)
+  ("bb" dap-breakpoint-toggle)
+  ("ba" dap-breakpoint-add)
+  ("bd" dap-breakpoint-delete)
+  ("bc" dap-breakpoint-condition)
+  ("bh" dap-breakpoint-hit-condition)
+  ("bl" dap-breakpoint-log-message)
+  ("dd" dap-debug)
+  ("dr" dap-debug-recent)
+  ("dl" dap-debug-last)
+  ("de" dap-debug-edit-template)
+  ("ee" dap-eval)
+  ("ea" dap-ui-expressions-add)
+  ("er" dap-eval-region)
+  ("es" dap-eval-thing-at-point)
+  ("ed" dap-ui-expressions-remove)
+  ("eu" dap-ui-expressions-refresh)
+  ("q" nil "quit" :color blue)
+  ("Q" dap-disconnect :color red))
+
+(my-leader-def "d" #'my/dap-hydra/body)
+```
+
+
+##### UI Fixes {#ui-fixes}
+
+There are some problems with DAP UI in my setup.
+
+First, DAP uses Treemacs buffers quite extensively, and they hide the doom modeline for some reason, so I can't tell which buffer is active and can't see borders between buffers.
+
+Second, lines are truncated in some strange way, but calling `toggle-truncate-lines` seems to fix that.
+
+So I define a macro that creates a function that I can further use in an advice.
+
+```emacs-lisp
+(defvar my/dap-mode-buffer-fixed nil)
+
+(with-eval-after-load 'dap-mode
+  (defmacro my/define-dap-tree-buffer-fixer (buffer-var buffer-name)
+    `(defun ,(intern (concat "my/fix-dap-ui-" buffer-name "-buffer")) (&rest _)
+       (with-current-buffer ,buffer-var
+	 (unless my/dap-mode-buffer-fixed
+	   (toggle-truncate-lines 1)
+	   (doom-modeline-set-modeline 'info)
+	   (setq-local my/dap-mode-buffer-fixed t)))))
+
+  (my/define-dap-tree-buffer-fixer dap-ui--locals-buffer "locals")
+  (my/define-dap-tree-buffer-fixer dap-ui--expressions-buffer "expressions")
+  (my/define-dap-tree-buffer-fixer dap-ui--sessions-buffer "sessions")
+  (my/define-dap-tree-buffer-fixer dap-ui--breakpoints-buffer "breakpoints")
+
+  (advice-add 'dap-ui-locals :after #'my/fix-dap-ui-locals-buffer)
+  (advice-add 'dap-ui-expressions :after #'my/fix-dap-ui-expressions-buffer)
+  (advice-add 'dap-ui-sessions :after #'my/fix-dap-ui-sessions-buffer)
+  (advice-add 'dap-ui-breakpoints :after #'my/fix-dap-ui-breakpoints-buffer))
+```
+
+
+##### Helper functions {#helper-functions}
+
+Some helper functions that make debugging with DAP easier.
+
+DAP seems to mess with window parameters from time to time. This function clears "bad" window parameters.
+
+```emacs-lisp
+(defun my/clear-bad-window-parameters ()
+  "Clear window parameters that interrupt my workflow."
+  (interactive)
+  (let ((window (get-buffer-window (current-buffer))))
+    (set-window-parameter window 'no-delete-other-windows nil)))
+```
+
+A function to kill a value from a treemacs node.
+
+```emacs-lisp
 (defun my/dap-yank-value-at-point (node)
   (interactive (list (treemacs-node-at-point)))
   (kill-new (message (plist-get (button-get node :item) :value))))
+```
+
+A function to open a value from a treemacs node in a new buffer.
+
+```emacs-lisp
+(defun my/dap-display-value (node)
+  (interactive (list (treemacs-node-at-point)))
+  (let ((value (plist-get (button-get node :item) :value)))
+    (when value
+      (let ((buffer (generate-new-buffer "dap-value")))
+	(with-current-buffer buffer
+	  (insert value))
+	(select-window (display-buffer buffer))))))
+```
+
+
+##### Improved stack frame switching {#improved-stack-frame-switching}
+
+One significant improvement over Chrome Inspector for my particular stack is an ability to filter the stack frame list, for instance to see only frames that relate to my current project.
+
+So, here are functions that customize the filters:
+
+```emacs-lisp
+(with-eval-after-load 'dap-mode
+  (setq my/dap-stack-frame-filters
+	`(("node_modules,node:internal" . ,(rx (or "node_modules" "node:internal")))
+	  ("node_modules" . ,(rx (or "node_modules")))
+	  ("node:internal" . ,(rx (or "node:internal")))))
+
+  (setq my/dap-stack-frame-current-filter (cdar my/dap-stack-frame-filters))
+
+  (defun my/dap-stack-frame-filter-set ()
+    (interactive)
+    (setq my/dap-stack-frame-current-filter
+	  (cdr
+	   (assoc
+	    (completing-read "Filter: " my/dap-stack-frame-filters)
+	    my/dap-stack-frame-filters))))
+
+  (defun my/dap-stack-frame-filter (frame)
+    (when-let (path (dap--get-path-for-frame frame))
+      (not (string-match my/dap-stack-frame-current-filter path)))))
+```
+
+And here is a version of `dap-switch-stack-frame` that uses the said filter.
+
+```emacs-lisp
+(defun my/dap-switch-stack-frame ()
+  "Switch stackframe by selecting another stackframe stackframes from current thread."
+  (interactive)
+  (when (not (dap--cur-session))
+    (error "There is no active session"))
+
+  (-if-let (thread-id (dap--debug-session-thread-id (dap--cur-session)))
+      (-if-let (stack-frames
+		(gethash
+		 thread-id
+		 (dap--debug-session-thread-stack-frames (dap--cur-session))))
+	  (let* ((index 0)
+		 (stack-framces-filtered
+		  (-filter
+		   #'my/dap-stack-frame-filter
+		   stack-frames))
+		 (new-stack-frame
+		  (dap--completing-read
+		   "Select active frame: "
+		   stack-framces-filtered
+		   (-lambda ((frame &as &hash "name"))
+		     (if-let (frame-path (dap--get-path-for-frame frame))
+			 (format "%s: %s (in %s)"
+				 (cl-incf index) name frame-path)
+		       (format "%s: %s" (cl-incf index) name)))
+		   nil
+		   t)))
+	    (dap--go-to-stack-frame (dap--cur-session) new-stack-frame))
+	(->> (dap--cur-session)
+	     dap--debug-session-name
+	     (format "Current session %s is not stopped")
+	     error))
+    (error "No thread is currently active %s" (dap--debug-session-name (dap--cur-session)))))
+```
+
+
+##### Debug templates {#debug-templates}
+
+Some debug templates I frequently use.
+
+```emacs-lisp
+(with-eval-after-load 'dap-mode
+  (dap-register-debug-template
+   "Node::Nest.js"
+   (list :type "node"
+	 :request "attach"
+	 :name "Node::Attach"
+	 :port 9229
+	 :outFiles ["${workspaceFolder}/dist/**/*.js"]
+	 :sourceMaps t
+	 :program "${workspaceFolder}/src/app.ts"))
+  (dap-register-debug-template
+   "Node::Babel"
+   (list :type "node"
+	 :request "attach"
+	 :name "Node::Attach"
+	 :port 9229
+	 :program "${workspaceFolder}/dist/bin/www.js")))
+
 ```
 
 
@@ -6078,6 +6254,25 @@ Setting up custom faces for certain tags to make the feed look a bit nicer.
 	  (unread elfeed-search-unread-title-face))))
 ```
 
+Also a function to automatically adjust these colors with the Doom theme.
+
+```emacs-lisp
+(defun my/update-my-theme-elfeed (&rest _)
+  (custom-theme-set-faces
+   'my-theme
+   `(elfeed-videos-entry ((t :foreground ,(doom-color 'red))))
+   `(elfeed-twitter-entry ((t :foreground ,(doom-color 'blue))))
+   `(elfeed-emacs-entry ((t :foreground ,(doom-color 'magenta))))
+   `(elfeed-music-entry ((t :foreground ,(doom-color 'green))))
+   `(elfeed-podcasts-entry ((t :foreground ,(doom-color 'yellow))))
+   `(elfeed-blogs-entry ((t :foreground ,(doom-color 'orange)))))
+  (enable-theme 'my-theme))
+
+(advice-add 'load-theme :after #'my/update-my-theme-elfeed)
+(when (fboundp 'doom-color)
+  (my/update-my-theme-elfeed))
+```
+
 
 ##### elfeed-score {#elfeed-score}
 
@@ -6263,7 +6458,7 @@ script-opts=ytdl_hook-ytdl_path=yt-dlp
 It seems a bit strange to keep the MPV config in this file, but I don't use the program outside Emacs.
 
 ```emacs-lisp
-(add-to-list 'emms-player-list 'emms-player-mpv t)
+(add-to-list 'emms-player-list 'emms-player-mpv)
 ```
 
 Also a custom regex. My demands for MPV include running `yt-dlp`, so there is a regex that matches youtube.com or some of the video formats.
@@ -6753,7 +6948,7 @@ The actual service definitions are in the `~/.emacs.d/prodigy.org`, which tangle
   :straight t
   :commands (prodigy)
   :init
-  (my-leader-def "ap" 'prodigy)
+  (my-leader-def "aP" 'prodigy)
   :config
   (when (not (boundp 'my/docker-directories))
     (load (concat user-emacs-directory "prodigy-config")))
@@ -6811,7 +7006,7 @@ Tecosaur's plugin to make beautiful code screenshots.
 
 ```emacs-lisp
 (use-package screenshot
-  :straight (:repo "tecosaur/screenshot" :host github :files ("screenshot.el"))
+  :straight (:repo "tecosaur/screenshot" :host github :files ("screenshot.el") :commit "f8204e82dc0c1158c401735d36a143e6f6d24cf5")
   :if (display-graphic-p)
   :commands (screenshot)
   :init
@@ -6849,13 +7044,33 @@ An Emacs package to help managing GNU Guix.
 ### Productivity {#productivity}
 
 
-#### Pomidor {#pomidor}
+#### pomm {#pomm}
+
+My package for doing Pomodoro timer.
+
+```emacs-lisp
+(use-package pomm
+  :straight (:host github :repo "SqrtMinusOne/pomm.el" :files (:defaults "resources"))
+  ;; :straight (:local-repo "~/Code/Emacs/pomm" :files (:defaults "resources"))
+  :init
+  (my-leader-def "ap" #'pomm)
+  :config
+  (setq alert-default-style 'libnotify)
+  (add-hook 'pomm-on-tick-hook 'pomm-update-mode-line-string)
+  (add-hook 'pomm-on-status-changed-hook 'pomm-update-mode-line-string))
+```
+
+
+#### <span class="org-todo done OFF">OFF</span> (OFF) Pomidor {#off--pomidor}
 
 A simple pomodoro technique timer.
+
+Disabled it in favour of my own package.
 
 ```emacs-lisp
 (use-package pomidor
   :straight t
+  :disabled
   :commands (pomidor)
   :init
   (my-leader-def "aP" #'pomidor)
@@ -6889,37 +7104,6 @@ Emacs' built-in calendar. Can even calculate sunrise and sunset times.
 ```
 
 
-### <span class="org-todo done OFF">OFF</span> (OFF) EAF {#off--eaf}
-
-[Emacs Application Framework](https://github.com/manateelazycat/emacs-application-framework) provides a way to integrate PyQt applications with Emacs.
-
-I've made it work, but don't find any uses cases for me at the moment
-
-
-#### Installation {#installation}
-
-Requirements: Node >= 14
-
-```bash
-pip install qtconsole markdown qrcode[pil] PyQt5 PyQtWebEngine
-```
-
-
-#### Config {#config}
-
-```emacs-lisp
-(use-package eaf
-  :straight (:host github :repo "manateelazycat/emacs-application-framework" :files ("*"))
-  :init
-  (use-package epc :defer t :straight t)
-  (use-package ctable :defer t :straight t)
-  (use-package deferred :defer t :straight t)
-  :config
-  (require 'eaf-evil)
-  (setq eaf-evil-leader-key "SPC"))
-```
-
-
 ### Fun {#fun}
 
 
@@ -6928,6 +7112,28 @@ pip install qtconsole markdown qrcode[pil] PyQt5 PyQtWebEngine
 Integration with Discord. Shows which file is being edited in Emacs.
 
 In order for this to work in Guix, a service is necessary - [Discord rich presence]({{< relref "Desktop" >}}).
+
+Some functions to override the displayed message:
+
+```emacs-lisp
+(defun my/elcord-mask-buffer-name (name)
+  (cond
+   ((string-match-p (rx bos (? "CAPTURE-") (= 14 num) "-" (* not-newline) ".org" eos) name)
+    "<ORG-ROAM>")
+   ((string-match-p (rx bos (+ num) "-" (+ num) "-" (+ num) ".org" eos) name)
+    "<ORG-JOURNAL>")
+   ((string-match-p (rx bos "EXWM") name)
+    "<EXWM>")
+   (t name)))
+
+(defun my/elcord-buffer-details-format-functions ()
+  (format "Editing %s" (my/elcord-mask-buffer-name (buffer-name))))
+
+(defun my/elcord-update-presence-mask-advice (r)
+  (list (my/elcord-mask-buffer-name (nth 0 r)) (nth 1 r)))
+```
+
+And the package configuration:
 
 ```emacs-lisp
 (use-package elcord
@@ -6938,11 +7144,9 @@ In order for this to work in Guix, a service is necessary - [Discord rich presen
 	   (not my/slow-ssh)
 	   (not my/remote-server))
   :config
-  (elcord-mode)
-  (add-to-list 'elcord-boring-buffers-regexp-list
-	       (rx bos (+ num) "-" (+ num) "-" (+ num) ".org" eos))
-  (add-to-list 'elcord-boring-buffers-regexp-list
-	       (rx bos (= 14 num) "-" (* not-newline) ".org" eos)))
+  (setq elcord-buffer-details-format-function #'my/elcord-buffer-details-format-functions)
+  (advice-add 'elcord--try-update-presence :filter-args #'my/elcord-update-presence-mask-advice)
+  (elcord-mode))
 ```
 
 

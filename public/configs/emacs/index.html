@@ -148,7 +148,6 @@
 <li><a href="#keybindings">Keybindings</a></li>
 </ul>
 </li>
-<li><a href="#off--helm"><span class="org-todo done OFF">OFF</span> (OFF) Helm</a></li>
 <li><a href="#treemacs">Treemacs</a>
 <ul>
 <li><a href="#helper-functions">Helper functions</a></li>
@@ -192,7 +191,6 @@
 <li><a href="#modeline">Modeline</a></li>
 <li><a href="#font-stuff">Font stuff</a>
 <ul>
-<li><a href="#emojis">Emojis</a></li>
 <li><a href="#ligatures">Ligatures</a></li>
 <li><a href="#icons">Icons</a></li>
 <li><a href="#highlight-todo">Highlight todo</a></li>
@@ -323,7 +321,15 @@
 </li>
 <li><a href="#flycheck">Flycheck</a></li>
 <li><a href="#tree-sitter">Tree Sitter</a></li>
-<li><a href="#off--dap"><span class="org-todo done OFF">OFF</span> (OFF) DAP</a></li>
+<li><a href="#dap">DAP</a>
+<ul>
+<li><a href="#controls">Controls</a></li>
+<li><a href="#ui-fixes">UI Fixes</a></li>
+<li><a href="#helper-functions">Helper functions</a></li>
+<li><a href="#improved-stack-frame-switching">Improved stack frame switching</a></li>
+<li><a href="#debug-templates">Debug templates</a></li>
+</ul>
+</li>
 <li><a href="#off--tabnine"><span class="org-todo done OFF">OFF</span> (OFF) TabNine</a></li>
 <li><a href="#off--code-compass"><span class="org-todo done OFF">OFF</span> (OFF) Code Compass</a>
 <ul>
@@ -488,14 +494,9 @@
 </li>
 <li><a href="#productivity">Productivity</a>
 <ul>
-<li><a href="#pomidor">Pomidor</a></li>
+<li><a href="#pomm">pomm</a></li>
+<li><a href="#off--pomidor"><span class="org-todo done OFF">OFF</span> (OFF) Pomidor</a></li>
 <li><a href="#calendar">Calendar</a></li>
-</ul>
-</li>
-<li><a href="#off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</a>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#config">Config</a></li>
 </ul>
 </li>
 <li><a href="#fun">Fun</a>
@@ -762,6 +763,7 @@
      pass
      calendar
      dired
+     ivy
      debug
      guix
      calc
@@ -827,7 +829,12 @@
   :prefix <span style="color:#e6db74">&#34;SPC&#34;</span>
   :states <span style="color:#f92672">&#39;</span>(normal motion emacs))
 
-(general-def :states <span style="color:#f92672">&#39;</span>(normal motion emacs) <span style="color:#e6db74">&#34;SPC&#34;</span> <span style="color:#66d9ef">nil</span>)
+(general-def :states <span style="color:#f92672">&#39;</span>(normal motion emacs)
+  <span style="color:#e6db74">&#34;SPC&#34;</span> <span style="color:#66d9ef">nil</span>
+  <span style="color:#e6db74">&#34;M-SPC&#34;</span> (general-key <span style="color:#e6db74">&#34;SPC&#34;</span>))
+
+(general-def :states <span style="color:#f92672">&#39;</span>(<span style="color:#a6e22e">insert</span>)
+  <span style="color:#e6db74">&#34;M-SPC&#34;</span> (general-key <span style="color:#e6db74">&#34;SPC&#34;</span> :state <span style="color:#e6db74">&#39;normal</span>))
 
 (my-leader-def <span style="color:#e6db74">&#34;?&#34;</span> <span style="color:#e6db74">&#39;which-key-show-top-level</span>)
 (my-leader-def <span style="color:#e6db74">&#34;E&#34;</span> <span style="color:#e6db74">&#39;eval-expression</span>)
@@ -965,7 +972,7 @@
 <p><code>evil-move-window</code> works well for the second part. By itself it doesn&rsquo;t behave quite like i3, for instance, <code>(evil-move-window 'right)</code> in a three-column split would move the window from the far left side to the far right side (bypassing center). Hence the combination as described here.</p>
 <p>So here is a simple predicate which checks whether there is space in the given direction.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/emacs-i3-direction-exists-p (dir)
-  (some (lambda (dir)
+  (cl-some (lambda (dir)
 	  (let ((win (windmove-find-other-window dir)))
 	    (and win (not (<span style="color:#a6e22e">window-minibuffer-p</span> win)))))
 	(pcase dir
@@ -1215,6 +1222,10 @@
 	       <span style="color:#75715e">;; ivy-resume</span>
 	       <span style="color:#75715e">;; ivy--restore-session</span>
 	       lsp-ivy-workspace-symbol
+	       dap-switch-stack-frame
+	       my/dap-switch-stack-frame
+	       dap-switch-session
+	       dap-switch-thread
 	       counsel-grep
 	       <span style="color:#75715e">;; counsel-find-file</span>
 	       counsel-git-grep
@@ -1258,62 +1269,21 @@
  <span style="color:#e6db74">&#34;&lt;C-return&gt;&#34;</span> <span style="color:#e6db74">&#39;ivy-call</span>
  <span style="color:#e6db74">&#34;M-RET&#34;</span> <span style="color:#e6db74">&#39;ivy-immediate-done</span>
  [escape] <span style="color:#e6db74">&#39;minibuffer-keyboard-quit</span>)
-</code></pre></div><h3 id="off--helm"><span class="org-todo done OFF">OFF</span> (OFF) Helm</h3>
-<p>Config for the Helm incremental completion framework. I switched to Ivy some time ago, but keep the configuration just in case.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package helm
-  :init
-  (require <span style="color:#e6db74">&#39;helm-config</span>)
-  (setq helm-split-window-in-side-p <span style="color:#66d9ef">t</span>)
-  (setq helm-move-to-line-cycle-in-source <span style="color:#66d9ef">t</span>)
-  :straight <span style="color:#66d9ef">t</span>
-  :config
-  (helm-mode <span style="color:#ae81ff">1</span>)
-  (helm-autoresize-mode <span style="color:#ae81ff">1</span>))
-
-(use-package helm-ag
-  :straight <span style="color:#66d9ef">t</span>)
-
-(use-package helm-rg
-  :straight <span style="color:#66d9ef">t</span>)
-
-(general-nmap
-  :keymaps <span style="color:#e6db74">&#39;helm-ag-mode-map</span>
-  <span style="color:#e6db74">&#34;RET&#34;</span> <span style="color:#e6db74">&#39;helm-ag-mode-jump</span>
-  <span style="color:#e6db74">&#34;M-RET&#34;</span> <span style="color:#e6db74">&#39;helm-ag-mode-jump-other-window</span>)
-
-(general-nmap
-  :keymaps <span style="color:#e6db74">&#39;helm-occur-mode-map</span>
-  <span style="color:#e6db74">&#34;RET&#34;</span> <span style="color:#e6db74">&#39;helm-occur-mode-goto-line</span>
-  <span style="color:#e6db74">&#34;M-RET&#34;</span> <span style="color:#e6db74">&#39;helm-occur-mode-goto-line-ow</span>)
-
-(general-define-key <span style="color:#e6db74">&#34;M-x&#34;</span> <span style="color:#e6db74">&#39;helm-M-x</span>)
-(my-leader-def
-  <span style="color:#e6db74">&#34;fb&#34;</span> <span style="color:#e6db74">&#39;helm-buffers-list</span>
-  <span style="color:#e6db74">&#34;fs&#34;</span> <span style="color:#e6db74">&#39;helm-lsp-workspace-symbol</span>
-  <span style="color:#e6db74">&#34;fw&#34;</span> <span style="color:#e6db74">&#39;helm-lsp-global-workspace-symbol</span>
-  <span style="color:#e6db74">&#34;fc&#34;</span> <span style="color:#e6db74">&#39;helm-show-kill-ring</span>
-  <span style="color:#75715e">;; &#34;fa&#34; &#39;helm-do-ag-project-root</span>
-  <span style="color:#e6db74">&#34;fm&#34;</span> <span style="color:#e6db74">&#39;helm-bookmarks</span>
-  <span style="color:#e6db74">&#34;ff&#34;</span> <span style="color:#e6db74">&#39;project-find-file</span>
-  <span style="color:#e6db74">&#34;fe&#34;</span> <span style="color:#e6db74">&#39;conda-env-activate</span>)
-
-(my-leader-def <span style="color:#e6db74">&#34;s&#34;</span> <span style="color:#e6db74">&#39;helm-occur</span>)
-(my-leader-def <span style="color:#e6db74">&#34;SPC&#34;</span> <span style="color:#e6db74">&#39;helm-resume</span>)
-
-(general-define-key
-  :keymaps <span style="color:#e6db74">&#39;helm-map</span>
-  <span style="color:#e6db74">&#34;C-j&#34;</span> <span style="color:#e6db74">&#39;helm-next-line</span>
-  <span style="color:#e6db74">&#34;C-k&#34;</span> <span style="color:#e6db74">&#39;helm-previous-line</span>)
-
-(general-define-key
-  :keymaps <span style="color:#f92672">&#39;</span>(helm-find-files-map helm-locate-map)
-  <span style="color:#e6db74">&#34;C-h&#34;</span> <span style="color:#e6db74">&#39;helm-find-files-up-one-level</span>
-  <span style="color:#e6db74">&#34;C-l&#34;</span> <span style="color:#e6db74">&#39;helm-execute-persistent-action</span>)
-
-(general-imap
-  <span style="color:#e6db74">&#34;C-y&#34;</span> <span style="color:#e6db74">&#39;helm-show-kill-ring</span>)
-<span style="color:#75715e">;; (general-nmap &#34;C-p&#34; &#39;project-find-file)</span>
 </code></pre></div><h3 id="treemacs">Treemacs</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TODO</td>
+<td>Enable modeline only for particular treemacs instances</td>
+</tr>
+</tbody>
+</table>
 <p><a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> calls itself a tree layout file explorer, but looks more like a project and workspace management system.</p>
 <p>Integrates with evil, magit, projectile and perspective. The latter is particularly great - each perspective can have its own treemacs workspace!</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package treemacs
@@ -1767,27 +1737,7 @@
   (setq doom-modeline-minor-modes <span style="color:#66d9ef">nil</span>)
   (setq doom-modeline-buffer-state-icon <span style="color:#66d9ef">nil</span>))
 </code></pre></div><h3 id="font-stuff">Font stuff</h3>
-<h4 id="emojis">Emojis</h4>
-<table>
-<thead>
-<tr>
-<th>Note</th>
-<th>Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TODO</td>
-<td>Figure out how to display emojis without prettify symbols</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package emojify
-  :straight <span style="color:#66d9ef">t</span>
-  :if (and (display-graphic-p) (not (or my/lowpower my/is-termux)))
-  :disabled
-  :hook (after-init <span style="color:#f92672">.</span> global-emojify-mode))
-</code></pre></div><h4 id="ligatures">Ligatures</h4>
+<h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package ligature
   :straight (:host github :repo <span style="color:#e6db74">&#34;mickeynp/ligature.el&#34;</span>)
@@ -2265,6 +2215,10 @@
   (add-hook <span style="color:#e6db74">&#39;org-mode-hook</span>
 	    (lambda ()
 	      (rainbow-delimiters-mode <span style="color:#ae81ff">-1</span>)))
+  (require <span style="color:#e6db74">&#39;org-tempo</span>)
+  (add-to-list <span style="color:#e6db74">&#39;org-structure-template-alist</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;el&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;src emacs-lisp&#34;</span>))
+  (add-to-list <span style="color:#e6db74">&#39;org-structure-template-alist</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;py&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;src python&#34;</span>))
+  (add-to-list <span style="color:#e6db74">&#39;org-structure-template-alist</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;sq&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;src sql&#34;</span>))
   &lt;&lt;org-crypt-setup&gt;&gt;
   (unless my/is-termux
     &lt;&lt;org-lang-setup&gt;&gt;)
@@ -2536,7 +2490,13 @@
 (setq org-outline-path-complete-in-steps <span style="color:#66d9ef">nil</span>)
 </code></pre></div><h4 id="capture-templates-and-various-settings">Capture templates &amp; various settings</h4>
 <p>Settings for Org capture mode. The goal here is to have a non-disruptive process to capture various ideas.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-capture-templates
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/generate-inbox-note-name ()
+  (<span style="color:#a6e22e">format</span>
+   <span style="color:#e6db74">&#34;%s/inbox-notes/%s.org&#34;</span>
+   org-directory
+   (<span style="color:#a6e22e">format-time-string</span> <span style="color:#e6db74">&#34;%Y%m%d%H%M%S&#34;</span>)))
+
+(setq org-capture-templates
       <span style="color:#f92672">`</span>((<span style="color:#e6db74">&#34;i&#34;</span> <span style="color:#e6db74">&#34;Inbox&#34;</span> entry  (file <span style="color:#e6db74">&#34;inbox.org&#34;</span>)
 	 <span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;* TODO %?\n&#34;</span>
 		  <span style="color:#e6db74">&#34;/Entered on/ %U&#34;</span>))
@@ -2548,7 +2508,10 @@
 	(<span style="color:#e6db74">&#34;f&#34;</span> <span style="color:#e6db74">&#34;elfeed&#34;</span> entry (file <span style="color:#e6db74">&#34;inbox.org&#34;</span>)
 	 <span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;* TODO %:elfeed-entry-title\n&#34;</span>
 		  <span style="color:#e6db74">&#34;/Entered on/ %U\n&#34;</span>
-		  <span style="color:#e6db74">&#34;%a\n&#34;</span>))))
+		  <span style="color:#e6db74">&#34;%a\n&#34;</span>))
+	(<span style="color:#e6db74">&#34;n&#34;</span> <span style="color:#e6db74">&#34;note&#34;</span> entry (file my/generate-inbox-note-name)
+	 <span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;* %?\n&#34;</span>
+		  <span style="color:#e6db74">&#34;/Entered on/ %U&#34;</span>))))
 </code></pre></div><p>Effort estimation</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;org-global-properties</span>
 	     <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;Effort_ALL&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>))
@@ -2900,7 +2863,7 @@
 
 (my-leader-def
   :infix <span style="color:#e6db74">&#34;or&#34;</span>
-  <span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;org-roam&#34;</span>)
+  <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;org-roam&#34;</span>)
   <span style="color:#e6db74">&#34;i&#34;</span> <span style="color:#e6db74">&#39;org-roam-node-insert</span>
   <span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#e6db74">&#39;org-roam-node-find</span>
   <span style="color:#e6db74">&#34;g&#34;</span> <span style="color:#e6db74">&#39;org-roam-graph</span>
@@ -2975,8 +2938,9 @@ MimeType=x-scheme-handler/org-protocol
   (general-define-key
    :keymaps <span style="color:#e6db74">&#39;bibtex-mode-map</span>
    <span style="color:#e6db74">&#34;M-RET&#34;</span> <span style="color:#e6db74">&#39;org-ref-bibtex-hydra/body</span>)
-  (add-to-list <span style="color:#e6db74">&#39;orhc-candidate-formats</span>
-	       <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;online&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;  |${=key=}| ${title} ${url}&#34;</span>)))
+  <span style="color:#75715e">;; (add-to-list &#39;orhc-candidate-formats</span>
+  <span style="color:#75715e">;;              &#39;(&#34;online&#34; . &#34;  |${=key=}| ${title} ${url}&#34;))</span>
+  )
 </code></pre></div><h4 id="org-roam-bibtex">org-roam-bibtex</h4>
 <p>Integration with bibtex and org-ref.</p>
 <p>There are some problems with org roam v2, so I disabled it as of now. I will probably use another way of managing bibliography notes anyway.</p>
@@ -3402,6 +3366,7 @@ MimeType=x-scheme-handler/org-protocol
   :if (not (or my/slow-ssh my/is-termux my/remote-server))
   :hook (
 	 (typescript-mode <span style="color:#f92672">.</span> lsp)
+	 (js-mode <span style="color:#f92672">.</span> lsp)
 	 (vue-mode <span style="color:#f92672">.</span> lsp)
 	 (go-mode <span style="color:#f92672">.</span> lsp)
 	 (svelte-mode <span style="color:#f92672">.</span> lsp)
@@ -3511,9 +3476,9 @@ MimeType=x-scheme-handler/org-protocol
 (use-package tree-sitter-langs
   :straight <span style="color:#66d9ef">t</span>
   :after tree-sitter)
-</code></pre></div><h4 id="off--dap"><span class="org-todo done OFF">OFF</span> (OFF) DAP</h4>
+</code></pre></div><h4 id="dap">DAP</h4>
 <p>An Emacs client for Debugger Adapter Protocol.</p>
-<p>I don&rsquo;t use it now, because there are debuggers I like more for the technologies I&rsquo;m currently using.</p>
+<p>As of time of this writing, I mostly debug TypeScript, so the main competitor is Chrome Inspector for node.js.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://emacs-lsp.github.io/dap-mode/">dap-mode homepage</a></li>
@@ -3521,12 +3486,13 @@ MimeType=x-scheme-handler/org-protocol
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package dap-mode
   :straight <span style="color:#66d9ef">t</span>
-  :defer <span style="color:#66d9ef">t</span>
+  :commands (dap-debug)
   :init
   (setq lsp-enable-dap-auto-configure <span style="color:#66d9ef">nil</span>)
   :config
 
   (setq dap-ui-variable-length <span style="color:#ae81ff">100</span>)
+  (setq dap-auto-show-output <span style="color:#66d9ef">nil</span>)
   (require <span style="color:#e6db74">&#39;dap-node</span>)
   (dap-node-setup)
 
@@ -3538,28 +3504,197 @@ MimeType=x-scheme-handler/org-protocol
   (dap-mode <span style="color:#ae81ff">1</span>)
   (dap-ui-mode <span style="color:#ae81ff">1</span>)
   (dap-tooltip-mode <span style="color:#ae81ff">1</span>)
-  (tooltip-mode <span style="color:#ae81ff">1</span>)
-  (dap-ui-controls-mode <span style="color:#ae81ff">1</span>))
+  (tooltip-mode <span style="color:#ae81ff">1</span>))
+</code></pre></div><h5 id="controls">Controls</h5>
+<p>I don&rsquo;t like some keybindings in the built-in hydra, and there seems to be no easy way to modify the existing hydra, so I create my own. I tried to use transient, but the transient buffer seems to conflict with special buffers of DAP, and hydra does not.</p>
+<p>Also, I want the hydra to toggle UI windows instead of just opening them, so here is macro that defines such functions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(with-eval-after-load <span style="color:#e6db74">&#39;dap-mode</span>
+  (defmacro my/define-dap-ui-window-toggler (name)
+    <span style="color:#f92672">`</span>(defun <span style="color:#f92672">,</span>(<span style="color:#a6e22e">intern</span> (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;my/dap-ui-toggle-&#34;</span> name)) ()
+       <span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;Toggle DAP &#34;</span> name <span style="color:#e6db74">&#34;buffer&#34;</span>)
+       (interactive)
+       (if-let (window (<span style="color:#a6e22e">get-buffer-window</span> <span style="color:#f92672">,</span>(<span style="color:#a6e22e">intern</span> (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;dap-ui--&#34;</span> name <span style="color:#e6db74">&#34;-buffer&#34;</span>))))
+	   (quit-window <span style="color:#66d9ef">nil</span> window)
+	 (<span style="color:#f92672">,</span>(<span style="color:#a6e22e">intern</span> (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;dap-ui-&#34;</span> name))))))
 
-(my-leader-def
-  :infix <span style="color:#e6db74">&#34;d&#34;</span>
-  <span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#e6db74">&#39;dap-debug</span>
-  <span style="color:#e6db74">&#34;b&#34;</span> <span style="color:#e6db74">&#39;dap-breakpoint-toggle</span>
-  <span style="color:#e6db74">&#34;c&#34;</span> <span style="color:#e6db74">&#39;dap-breakpoint-condition</span>
-  <span style="color:#e6db74">&#34;wl&#34;</span> <span style="color:#e6db74">&#39;dap-ui-locals</span>
-  <span style="color:#e6db74">&#34;wb&#34;</span> <span style="color:#e6db74">&#39;dap-ui-breakpoints</span>
-  <span style="color:#e6db74">&#34;wr&#34;</span> <span style="color:#e6db74">&#39;dap-ui-repl</span>
-  <span style="color:#e6db74">&#34;ws&#34;</span> <span style="color:#e6db74">&#39;dap-ui-sessions</span>
-  <span style="color:#e6db74">&#34;we&#34;</span> <span style="color:#e6db74">&#39;dap-ui-expressions</span>)
+  (my/define-dap-ui-window-toggler <span style="color:#e6db74">&#34;locals&#34;</span>)
+  (my/define-dap-ui-window-toggler <span style="color:#e6db74">&#34;expressions&#34;</span>)
+  (my/define-dap-ui-window-toggler <span style="color:#e6db74">&#34;sessions&#34;</span>)
+  (my/define-dap-ui-window-toggler <span style="color:#e6db74">&#34;breakpoints&#34;</span>)
+  (my/define-dap-ui-window-toggler <span style="color:#e6db74">&#34;repl&#34;</span>))
+</code></pre></div><p>And here is the hydra:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defhydra my/dap-hydra (:color pink :hint <span style="color:#66d9ef">nil</span> :foreign-keys run)
+  <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">^Stepping^         ^UI^                     ^Switch^                   ^Breakpoints^         ^Debug^                     ^Expressions
+</span><span style="color:#e6db74">^^^^^^^^------------------------------------------------------------------------------------------------------------------------------------------
+</span><span style="color:#e6db74">_n_: Next          _uc_: Controls           _ss_: Session              _bb_: Toggle          _dd_: Debug                 _ee_: Eval
+</span><span style="color:#e6db74">_i_: Step in       _ue_: Expressions        _st_: Thread               _bd_: Delete          _dr_: Debug recent          _er_: Eval region
+</span><span style="color:#e6db74">_o_: Step out      _ul_: Locals             _sf_: Stack frame          _ba_: Add             _dl_: Debug last            _es_: Eval thing at point
+</span><span style="color:#e6db74">_c_: Continue      _ur_: REPL               _su_: Up stack frame       _bc_: Set condition   _de_: Edit debug template   _ea_: Add expression
+</span><span style="color:#e6db74">_r_: Restart frame _uo_: Output             _sd_: Down stack frame     _bh_: Set hit count   _Q_:  Disconnect            _ed_: Remove expression
+</span><span style="color:#e6db74">		 _us_: Sessions           _sF_: Stack frame filtered _bl_: Set log message                           _eu_: Refresh expressions
+</span><span style="color:#e6db74">		 _ub_: Breakpoints                                                                               &#34;</span>
 
-(my-leader-def
-  :infix <span style="color:#e6db74">&#34;d&#34;</span>
-  :keymaps <span style="color:#e6db74">&#39;dap-mode-map</span>
-  <span style="color:#e6db74">&#34;h&#34;</span> <span style="color:#e6db74">&#39;dap-hydra</span>)
+  (<span style="color:#e6db74">&#34;n&#34;</span> dap-next)
+  (<span style="color:#e6db74">&#34;i&#34;</span> dap-step-in)
+  (<span style="color:#e6db74">&#34;o&#34;</span> dap-step-out)
+  (<span style="color:#e6db74">&#34;c&#34;</span> dap-continue)
+  (<span style="color:#e6db74">&#34;r&#34;</span> dap-restart-frame)
+  (<span style="color:#e6db74">&#34;uc&#34;</span> dap-ui-controls-mode)
+  (<span style="color:#e6db74">&#34;ue&#34;</span> my/dap-ui-toggle-expressions)
+  (<span style="color:#e6db74">&#34;ul&#34;</span> my/dap-ui-toggle-locals)
+  (<span style="color:#e6db74">&#34;ur&#34;</span> my/dap-ui-toggle-repl)
+  (<span style="color:#e6db74">&#34;uo&#34;</span> dap-ui-go-to-output-buffer)
+  (<span style="color:#e6db74">&#34;us&#34;</span> my/dap-ui-toggle-sessions)
+  (<span style="color:#e6db74">&#34;ub&#34;</span> my/dap-ui-toggle-breakpoints)
+  (<span style="color:#e6db74">&#34;ss&#34;</span> dap-switch-session)
+  (<span style="color:#e6db74">&#34;st&#34;</span> dap-switch-thread)
+  (<span style="color:#e6db74">&#34;sf&#34;</span> dap-switch-stack-frame)
+  (<span style="color:#e6db74">&#34;sF&#34;</span> my/dap-switch-stack-frame)
+  (<span style="color:#e6db74">&#34;su&#34;</span> dap-up-stack-frame)
+  (<span style="color:#e6db74">&#34;sd&#34;</span> dap-down-stack-frame)
+  (<span style="color:#e6db74">&#34;bb&#34;</span> dap-breakpoint-toggle)
+  (<span style="color:#e6db74">&#34;ba&#34;</span> dap-breakpoint-add)
+  (<span style="color:#e6db74">&#34;bd&#34;</span> dap-breakpoint-delete)
+  (<span style="color:#e6db74">&#34;bc&#34;</span> dap-breakpoint-condition)
+  (<span style="color:#e6db74">&#34;bh&#34;</span> dap-breakpoint-hit-condition)
+  (<span style="color:#e6db74">&#34;bl&#34;</span> dap-breakpoint-log-message)
+  (<span style="color:#e6db74">&#34;dd&#34;</span> dap-debug)
+  (<span style="color:#e6db74">&#34;dr&#34;</span> dap-debug-recent)
+  (<span style="color:#e6db74">&#34;dl&#34;</span> dap-debug-last)
+  (<span style="color:#e6db74">&#34;de&#34;</span> dap-debug-edit-template)
+  (<span style="color:#e6db74">&#34;ee&#34;</span> dap-eval)
+  (<span style="color:#e6db74">&#34;ea&#34;</span> dap-ui-expressions-add)
+  (<span style="color:#e6db74">&#34;er&#34;</span> dap-eval-region)
+  (<span style="color:#e6db74">&#34;es&#34;</span> dap-eval-thing-at-point)
+  (<span style="color:#e6db74">&#34;ed&#34;</span> dap-ui-expressions-remove)
+  (<span style="color:#e6db74">&#34;eu&#34;</span> dap-ui-expressions-refresh)
+  (<span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;quit&#34;</span> :color blue)
+  (<span style="color:#e6db74">&#34;Q&#34;</span> dap-disconnect :color red))
 
-(defun my/dap-yank-value-at-point (node)
+(my-leader-def <span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/dap-hydra/body)
+</code></pre></div><h5 id="ui-fixes">UI Fixes</h5>
+<p>There are some problems with DAP UI in my setup.</p>
+<p>First, DAP uses Treemacs buffers quite extensively, and they hide the doom modeline for some reason, so I can&rsquo;t tell which buffer is active and can&rsquo;t see borders between buffers.</p>
+<p>Second, lines are truncated in some strange way, but calling <code>toggle-truncate-lines</code> seems to fix that.</p>
+<p>So I define a macro that creates a function that I can further use in an advice.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defvar my/dap-mode-buffer-fixed <span style="color:#66d9ef">nil</span>)
+
+(with-eval-after-load <span style="color:#e6db74">&#39;dap-mode</span>
+  (defmacro my/define-dap-tree-buffer-fixer (buffer-var <span style="color:#a6e22e">buffer-name</span>)
+    <span style="color:#f92672">`</span>(defun <span style="color:#f92672">,</span>(<span style="color:#a6e22e">intern</span> (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;my/fix-dap-ui-&#34;</span> <span style="color:#a6e22e">buffer-name</span> <span style="color:#e6db74">&#34;-buffer&#34;</span>)) (<span style="color:#66d9ef">&amp;rest</span> _)
+       (with-current-buffer <span style="color:#f92672">,</span>buffer-var
+	 (unless my/dap-mode-buffer-fixed
+	   (toggle-truncate-lines <span style="color:#ae81ff">1</span>)
+	   (doom-modeline-set-modeline <span style="color:#e6db74">&#39;info</span>)
+	   (setq-local my/dap-mode-buffer-fixed <span style="color:#66d9ef">t</span>)))))
+
+  (my/define-dap-tree-buffer-fixer dap-ui--locals-buffer <span style="color:#e6db74">&#34;locals&#34;</span>)
+  (my/define-dap-tree-buffer-fixer dap-ui--expressions-buffer <span style="color:#e6db74">&#34;expressions&#34;</span>)
+  (my/define-dap-tree-buffer-fixer dap-ui--sessions-buffer <span style="color:#e6db74">&#34;sessions&#34;</span>)
+  (my/define-dap-tree-buffer-fixer dap-ui--breakpoints-buffer <span style="color:#e6db74">&#34;breakpoints&#34;</span>)
+
+  (advice-add <span style="color:#e6db74">&#39;dap-ui-locals</span> :after <span style="color:#a6e22e">#&#39;</span>my/fix-dap-ui-locals-buffer)
+  (advice-add <span style="color:#e6db74">&#39;dap-ui-expressions</span> :after <span style="color:#a6e22e">#&#39;</span>my/fix-dap-ui-expressions-buffer)
+  (advice-add <span style="color:#e6db74">&#39;dap-ui-sessions</span> :after <span style="color:#a6e22e">#&#39;</span>my/fix-dap-ui-sessions-buffer)
+  (advice-add <span style="color:#e6db74">&#39;dap-ui-breakpoints</span> :after <span style="color:#a6e22e">#&#39;</span>my/fix-dap-ui-breakpoints-buffer))
+</code></pre></div><h5 id="helper-functions">Helper functions</h5>
+<p>Some helper functions that make debugging with DAP easier.</p>
+<p>DAP seems to mess with window parameters from time to time. This function clears &ldquo;bad&rdquo; window parameters.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/clear-bad-window-parameters ()
+  <span style="color:#e6db74">&#34;Clear window parameters that interrupt my workflow.&#34;</span>
+  (interactive)
+  (let ((window (<span style="color:#a6e22e">get-buffer-window</span> (<span style="color:#a6e22e">current-buffer</span>))))
+    (<span style="color:#a6e22e">set-window-parameter</span> window <span style="color:#e6db74">&#39;no-delete-other-windows</span> <span style="color:#66d9ef">nil</span>)))
+</code></pre></div><p>A function to kill a value from a treemacs node.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/dap-yank-value-at-point (node)
   (interactive (<span style="color:#a6e22e">list</span> (treemacs-node-at-point)))
   (kill-new (<span style="color:#a6e22e">message</span> (<span style="color:#a6e22e">plist-get</span> (button-get node :item) :value))))
+</code></pre></div><p>A function to open a value from a treemacs node in a new buffer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/dap-display-value (node)
+  (interactive (<span style="color:#a6e22e">list</span> (treemacs-node-at-point)))
+  (let ((value (<span style="color:#a6e22e">plist-get</span> (button-get node :item) :value)))
+    (when value
+      (let ((buffer (generate-new-buffer <span style="color:#e6db74">&#34;dap-value&#34;</span>)))
+	(with-current-buffer buffer
+	  (<span style="color:#a6e22e">insert</span> value))
+	(<span style="color:#a6e22e">select-window</span> (display-buffer buffer))))))
+</code></pre></div><h5 id="improved-stack-frame-switching">Improved stack frame switching</h5>
+<p>One significant improvement over Chrome Inspector for my particular stack is an ability to filter the stack frame list, for instance to see only frames that relate to my current project.</p>
+<p>So, here are functions that customize the filters:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(with-eval-after-load <span style="color:#e6db74">&#39;dap-mode</span>
+  (setq my/dap-stack-frame-filters
+	<span style="color:#f92672">`</span>((<span style="color:#e6db74">&#34;node_modules,node:internal&#34;</span> <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(rx (or <span style="color:#e6db74">&#34;node_modules&#34;</span> <span style="color:#e6db74">&#34;node:internal&#34;</span>)))
+	  (<span style="color:#e6db74">&#34;node_modules&#34;</span> <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(rx (or <span style="color:#e6db74">&#34;node_modules&#34;</span>)))
+	  (<span style="color:#e6db74">&#34;node:internal&#34;</span> <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(rx (or <span style="color:#e6db74">&#34;node:internal&#34;</span>)))))
+
+  (setq my/dap-stack-frame-current-filter (cdar my/dap-stack-frame-filters))
+
+  (defun my/dap-stack-frame-filter-set ()
+    (interactive)
+    (setq my/dap-stack-frame-current-filter
+	  (<span style="color:#a6e22e">cdr</span>
+	   (<span style="color:#a6e22e">assoc</span>
+	    (<span style="color:#a6e22e">completing-read</span> <span style="color:#e6db74">&#34;Filter: &#34;</span> my/dap-stack-frame-filters)
+	    my/dap-stack-frame-filters))))
+
+  (defun my/dap-stack-frame-filter (frame)
+    (when-let (path (dap--get-path-for-frame frame))
+      (not (<span style="color:#a6e22e">string-match</span> my/dap-stack-frame-current-filter path)))))
+</code></pre></div><p>And here is a version of <code>dap-switch-stack-frame</code> that uses the said filter.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/dap-switch-stack-frame ()
+  <span style="color:#e6db74">&#34;Switch stackframe by selecting another stackframe stackframes from current thread.&#34;</span>
+  (interactive)
+  (when (not (dap--cur-session))
+    (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;There is no active session&#34;</span>))
+
+  (-if-let (thread-id (dap--debug-session-thread-id (dap--cur-session)))
+      (-if-let (stack-frames
+		(<span style="color:#a6e22e">gethash</span>
+		 thread-id
+		 (dap--debug-session-thread-stack-frames (dap--cur-session))))
+	  (let* ((index <span style="color:#ae81ff">0</span>)
+		 (stack-framces-filtered
+		  (-filter
+		   <span style="color:#a6e22e">#&#39;</span>my/dap-stack-frame-filter
+		   stack-frames))
+		 (new-stack-frame
+		  (dap--completing-read
+		   <span style="color:#e6db74">&#34;Select active frame: &#34;</span>
+		   stack-framces-filtered
+		   (-lambda ((frame &amp;as &amp;hash <span style="color:#e6db74">&#34;name&#34;</span>))
+		     (if-let (frame-path (dap--get-path-for-frame frame))
+			 (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%s: %s (in %s)&#34;</span>
+				 (cl-incf index) name frame-path)
+		       (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%s: %s&#34;</span> (cl-incf index) name)))
+		   <span style="color:#66d9ef">nil</span>
+		   <span style="color:#66d9ef">t</span>)))
+	    (dap--go-to-stack-frame (dap--cur-session) new-stack-frame))
+	(-&gt;&gt; (dap--cur-session)
+	     dap--debug-session-name
+	     (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;Current session %s is not stopped&#34;</span>)
+	     <span style="color:#a6e22e">error</span>))
+    (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;No thread is currently active %s&#34;</span> (dap--debug-session-name (dap--cur-session)))))
+</code></pre></div><h5 id="debug-templates">Debug templates</h5>
+<p>Some debug templates I frequently use.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(with-eval-after-load <span style="color:#e6db74">&#39;dap-mode</span>
+  (dap-register-debug-template
+   <span style="color:#e6db74">&#34;Node::Nest.js&#34;</span>
+   (<span style="color:#a6e22e">list</span> :type <span style="color:#e6db74">&#34;node&#34;</span>
+	 :request <span style="color:#e6db74">&#34;attach&#34;</span>
+	 :name <span style="color:#e6db74">&#34;Node::Attach&#34;</span>
+	 :port <span style="color:#ae81ff">9229</span>
+	 :outFiles [<span style="color:#e6db74">&#34;${workspaceFolder}/dist/**/*.js&#34;</span>]
+	 :sourceMaps <span style="color:#66d9ef">t</span>
+	 :program <span style="color:#e6db74">&#34;${workspaceFolder}/src/app.ts&#34;</span>))
+  (dap-register-debug-template
+   <span style="color:#e6db74">&#34;Node::Babel&#34;</span>
+   (<span style="color:#a6e22e">list</span> :type <span style="color:#e6db74">&#34;node&#34;</span>
+	 :request <span style="color:#e6db74">&#34;attach&#34;</span>
+	 :name <span style="color:#e6db74">&#34;Node::Attach&#34;</span>
+	 :port <span style="color:#ae81ff">9229</span>
+	 :program <span style="color:#e6db74">&#34;${workspaceFolder}/dist/bin/www.js&#34;</span>)))
+
 </code></pre></div><h4 id="off--tabnine"><span class="org-todo done OFF">OFF</span> (OFF) TabNine</h4>
 <p>A ML-based autocompletion system.</p>
 <p>More often than not gives really good results, but is slow as hell &amp; consumes a lot of RAM. Also, LSP-provided completions were more useful in my experience.</p>
@@ -4731,6 +4866,21 @@ MimeType=x-scheme-handler/org-protocol
 	  (emacs elfeed-emacs-entry)
 	  (blogs elfeed-blogs-entry)
 	  (unread elfeed-search-unread-title-face))))
+</code></pre></div><p>Also a function to automatically adjust these colors with the Doom theme.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/update-my-theme-elfeed (<span style="color:#66d9ef">&amp;rest</span> _)
+  (custom-theme-set-faces
+   <span style="color:#e6db74">&#39;my-theme</span>
+   <span style="color:#f92672">`</span>(elfeed-videos-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;red</span>))))
+   <span style="color:#f92672">`</span>(elfeed-twitter-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;blue</span>))))
+   <span style="color:#f92672">`</span>(elfeed-emacs-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;magenta</span>))))
+   <span style="color:#f92672">`</span>(elfeed-music-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;green</span>))))
+   <span style="color:#f92672">`</span>(elfeed-podcasts-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>))))
+   <span style="color:#f92672">`</span>(elfeed-blogs-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;orange</span>)))))
+  (enable-theme <span style="color:#e6db74">&#39;my-theme</span>))
+
+(advice-add <span style="color:#e6db74">&#39;load-theme</span> :after <span style="color:#a6e22e">#&#39;</span>my/update-my-theme-elfeed)
+(when (<span style="color:#a6e22e">fboundp</span> <span style="color:#e6db74">&#39;doom-color</span>)
+  (my/update-my-theme-elfeed))
 </code></pre></div><h5 id="elfeed-score">elfeed-score</h5>
 <p><a href="https://github.com/sp1ff/elfeed-score">elfeed-score</a> is a package that implements scoring for the elfeed entries. Entries are scored by a set of rules for tags/title/content/etc and sorted by that score.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/elfeed-toggle-score-sort ()
@@ -4874,7 +5024,7 @@ MimeType=x-scheme-handler/org-protocol
 <p>It looks like YouTube has started to throttle youtube-dl, and yt-dlp has a workaround for that particular case. Just don&rsquo;t forget to add the following like to the mpv config:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">script-opts</span><span style="color:#f92672">=</span><span style="color:#e6db74">ytdl_hook-ytdl_path=yt-dlp</span>
 </code></pre></div><p>It seems a bit strange to keep the MPV config in this file, but I don&rsquo;t use the program outside Emacs.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span> <span style="color:#66d9ef">t</span>)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span>)
 </code></pre></div><p>Also a custom regex. My demands for MPV include running <code>yt-dlp</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(emms-player-set emms-player-mpv
 		 <span style="color:#e6db74">&#39;regex</span>
@@ -5218,7 +5368,7 @@ tag2: value2&#39;
   :straight <span style="color:#66d9ef">t</span>
   :commands (prodigy)
   :init
-  (my-leader-def <span style="color:#e6db74">&#34;ap&#34;</span> <span style="color:#e6db74">&#39;prodigy</span>)
+  (my-leader-def <span style="color:#e6db74">&#34;aP&#34;</span> <span style="color:#e6db74">&#39;prodigy</span>)
   :config
   (when (not (<span style="color:#a6e22e">boundp</span> <span style="color:#e6db74">&#39;my/docker-directories</span>))
     (<span style="color:#a6e22e">load</span> (<span style="color:#a6e22e">concat</span> user-emacs-directory <span style="color:#e6db74">&#34;prodigy-config&#34;</span>)))
@@ -5274,7 +5424,7 @@ tag2: value2&#39;
 </tbody>
 </table>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package screenshot
-  :straight (:repo <span style="color:#e6db74">&#34;tecosaur/screenshot&#34;</span> :host github :files (<span style="color:#e6db74">&#34;screenshot.el&#34;</span>))
+  :straight (:repo <span style="color:#e6db74">&#34;tecosaur/screenshot&#34;</span> :host github :files (<span style="color:#e6db74">&#34;screenshot.el&#34;</span>) :commit <span style="color:#e6db74">&#34;f8204e82dc0c1158c401735d36a143e6f6d24cf5&#34;</span>)
   :if (display-graphic-p)
   :commands (screenshot)
   :init
@@ -5295,10 +5445,23 @@ tag2: value2&#39;
   :init
   (my-leader-def <span style="color:#e6db74">&#34;ag&#34;</span> <span style="color:#e6db74">&#39;guix</span>))
 </code></pre></div><h3 id="productivity">Productivity</h3>
-<h4 id="pomidor">Pomidor</h4>
+<h4 id="pomm">pomm</h4>
+<p>My package for doing Pomodoro timer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package pomm
+  :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/pomm.el&#34;</span> :files (:defaults <span style="color:#e6db74">&#34;resources&#34;</span>))
+  <span style="color:#75715e">;; :straight (:local-repo &#34;~/Code/Emacs/pomm&#34; :files (:defaults &#34;resources&#34;))</span>
+  :init
+  (my-leader-def <span style="color:#e6db74">&#34;ap&#34;</span> <span style="color:#a6e22e">#&#39;</span>pomm)
+  :config
+  (setq alert-default-style <span style="color:#e6db74">&#39;libnotify</span>)
+  (add-hook <span style="color:#e6db74">&#39;pomm-on-tick-hook</span> <span style="color:#e6db74">&#39;pomm-update-mode-line-string</span>)
+  (add-hook <span style="color:#e6db74">&#39;pomm-on-status-changed-hook</span> <span style="color:#e6db74">&#39;pomm-update-mode-line-string</span>))
+</code></pre></div><h4 id="off--pomidor"><span class="org-todo done OFF">OFF</span> (OFF) Pomidor</h4>
 <p>A simple pomodoro technique timer.</p>
+<p>Disabled it in favour of my own package.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package pomidor
   :straight <span style="color:#66d9ef">t</span>
+  :disabled
   :commands (pomidor)
   :init
   (my-leader-def <span style="color:#e6db74">&#34;aP&#34;</span> <span style="color:#a6e22e">#&#39;</span>pomidor)
@@ -5323,26 +5486,27 @@ tag2: value2&#39;
 
 (setq calendar-latitude <span style="color:#ae81ff">59.9375</span>)
 (setq calendar-longitude <span style="color:#ae81ff">30.308611</span>)
-</code></pre></div><h3 id="off--eaf"><span class="org-todo done OFF">OFF</span> (OFF) EAF</h3>
-<p><a href="https://github.com/manateelazycat/emacs-application-framework">Emacs Application Framework</a> provides a way to integrate PyQt applications with Emacs.</p>
-<p>I&rsquo;ve made it work, but don&rsquo;t find any uses cases for me at the moment</p>
-<h4 id="installation">Installation</h4>
-<p>Requirements: Node &gt;= 14</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install qtconsole markdown qrcode<span style="color:#f92672">[</span>pil<span style="color:#f92672">]</span> PyQt5 PyQtWebEngine
-</code></pre></div><h4 id="config">Config</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package eaf
-  :straight (:host github :repo <span style="color:#e6db74">&#34;manateelazycat/emacs-application-framework&#34;</span> :files (<span style="color:#e6db74">&#34;*&#34;</span>))
-  :init
-  (use-package epc :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  (use-package ctable :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  (use-package deferred :defer <span style="color:#66d9ef">t</span> :straight <span style="color:#66d9ef">t</span>)
-  :config
-  (require <span style="color:#e6db74">&#39;eaf-evil</span>)
-  (setq eaf-evil-leader-key <span style="color:#e6db74">&#34;SPC&#34;</span>))
 </code></pre></div><h3 id="fun">Fun</h3>
 <h4 id="discord-integration">Discord integration</h4>
 <p>Integration with Discord. Shows which file is being edited in Emacs.</p>
 <p>In order for this to work in Guix, a service is necessary - <a href="/configs/desktop/">Discord rich presence</a>.</p>
+<p>Some functions to override the displayed message:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/elcord-mask-buffer-name (name)
+  (cond
+   ((string-match-p (rx bos (<span style="color:#e6db74">? </span><span style="color:#e6db74">&#34;CAPTURE-&#34;</span>) (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">14</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">*</span> not-newline) <span style="color:#e6db74">&#34;.org&#34;</span> eos) name)
+    <span style="color:#e6db74">&#34;&lt;ORG-ROAM&gt;&#34;</span>)
+   ((string-match-p (rx bos (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;.org&#34;</span> eos) name)
+    <span style="color:#e6db74">&#34;&lt;ORG-JOURNAL&gt;&#34;</span>)
+   ((string-match-p (rx bos <span style="color:#e6db74">&#34;EXWM&#34;</span>) name)
+    <span style="color:#e6db74">&#34;&lt;EXWM&gt;&#34;</span>)
+   (<span style="color:#66d9ef">t</span> name)))
+
+(defun my/elcord-buffer-details-format-functions ()
+  (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;Editing %s&#34;</span> (my/elcord-mask-buffer-name (<span style="color:#a6e22e">buffer-name</span>))))
+
+(defun my/elcord-update-presence-mask-advice (r)
+  (<span style="color:#a6e22e">list</span> (my/elcord-mask-buffer-name (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> r)) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> r)))
+</code></pre></div><p>And the package configuration:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package elcord
   :straight <span style="color:#66d9ef">t</span>
   :if (and (or
@@ -5351,11 +5515,9 @@ tag2: value2&#39;
 	   (not my/slow-ssh)
 	   (not my/remote-server))
   :config
-  (elcord-mode)
-  (add-to-list <span style="color:#e6db74">&#39;elcord-boring-buffers-regexp-list</span>
-	       (rx bos (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">+</span> num) <span style="color:#e6db74">&#34;.org&#34;</span> eos))
-  (add-to-list <span style="color:#e6db74">&#39;elcord-boring-buffers-regexp-list</span>
-	       (rx bos (<span style="color:#a6e22e">=</span> <span style="color:#ae81ff">14</span> num) <span style="color:#e6db74">&#34;-&#34;</span> (<span style="color:#a6e22e">*</span> not-newline) <span style="color:#e6db74">&#34;.org&#34;</span> eos)))
+  (setq elcord-buffer-details-format-function <span style="color:#a6e22e">#&#39;</span>my/elcord-buffer-details-format-functions)
+  (advice-add <span style="color:#e6db74">&#39;elcord--try-update-presence</span> :filter-args <span style="color:#a6e22e">#&#39;</span>my/elcord-update-presence-mask-advice)
+  (elcord-mode))
 </code></pre></div><h4 id="snow">Snow</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package snow
   :straight (:repo <span style="color:#e6db74">&#34;alphapapa/snow.el&#34;</span> :host github)

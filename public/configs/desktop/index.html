@@ -78,6 +78,25 @@
 <li><a href="#device-specific-settings">Device-specific settings</a></li>
 </ul>
 </li>
+<li><a href="#exwm">EXWM</a>
+<ul>
+<li><a href="#xsession">Xsession</a></li>
+<li><a href="#startup-apps">Startup apps</a></li>
+<li><a href="#moving-windows">Moving windows</a></li>
+<li><a href="#resizing-windows">Resizing windows</a></li>
+<li><a href="#app-shortcuts">App shortcuts</a></li>
+<li><a href="#move-workspace-to-another-monitor">Move workspace to another monitor</a></li>
+<li><a href="#switch-to-the-opposite-monitor">Switch to the opposite monitor</a></li>
+<li><a href="#switching-buffers">Switching buffers</a></li>
+<li><a href="#add-all-exwm-buffers-to-current-perspective">Add all EXWM buffers to current perspective</a></li>
+<li><a href="#revive-perspectives">Revive perspectives</a></li>
+<li><a href="#locking-up">Locking up</a></li>
+<li><a href="#keybindings">Keybindings</a></li>
+<li><a href="#pinentry">Pinentry</a></li>
+<li><a href="#modeline">Modeline</a></li>
+<li><a href="#exwm-config">EXWM config</a></li>
+</ul>
+</li>
 <li><a href="#i3wm">i3wm</a>
 <ul>
 <li><a href="#general-settings">General settings</a></li>
@@ -125,6 +144,7 @@
 <li><a href="#ipstack-vpn">ipstack-vpn</a></li>
 <li><a href="#weather">weather</a></li>
 <li><a href="#aw-afk">aw-afk</a></li>
+<li><a href="#pomm">pomm</a></li>
 <li><a href="#sun">sun</a></li>
 <li><a href="#sep">SEP</a></li>
 <li><a href="#tsep">TSEP</a></li>
@@ -149,8 +169,8 @@
 <ul>
 <li><a href="#buku-bookmarks">Buku bookmarks</a></li>
 <li><a href="#man-pages">Man pages</a></li>
+<li><a href="#emojis">Emojis</a></li>
 <li><a href="#pass">pass</a></li>
-<li><a href="#emojis">emojis</a></li>
 </ul>
 </li>
 </ul>
@@ -190,6 +210,7 @@
 <li><a href="#activitywatch">ActivityWatch</a></li>
 <li><a href="#pulseeffects">PulseEffects</a></li>
 <li><a href="#xsettingsd">xsettingsd</a></li>
+<li><a href="#nm-applet">nm-applet</a></li>
 <li><a href="#discord-rich-presence">Discord rich presence</a></li>
 <li><a href="#polkit-authentication-agent">Polkit Authentication agent</a></li>
 <li><a href="#xmodmap">Xmodmap</a></li>
@@ -398,6 +419,425 @@
 <span style="color:#66d9ef">elif</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$hostname<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;eminence&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
     xgamma -gamma 1.25
 <span style="color:#66d9ef">fi</span>
+</code></pre></div><h2 id="exwm">EXWM</h2>
+<p>Settings for <a href="https://github.com/ch11ng/exwm">Emacs X Window Manager</a>, a tiling WM implemented in Emacs Lisp.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://github.com/ch11ng/exwm/wiki">EXWM Wiki</a></li>
+<li><a href="https://github.com/daviwil/emacs-from-scratch/blob/master/Desktop.org">Emacs From Scratch config</a></li>
+</ul>
+<h3 id="xsession">Xsession</h3>
+<p>First things first, Emacs has to be launched as a window manager. On a more conventional system, I&rsquo;d create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix, it&rsquo;s a bit more complicated, because all such folders are not meant to be changed manually.</p>
+<p>However, GDM, the login manager that seems to default on Guix, launches <code>~/.xsession</code> on the startup if it&rsquo;s present, which is just fine for my purposes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># Source .profile</span>
+. ~/.profile
+
+<span style="color:#75715e"># Disable access control for the current user</span>
+xhost +SI:localuser:$USER
+
+<span style="color:#75715e"># Fix for Java applications</span>
+export _JAVA_AWT_WM_NONREPARENTING<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+
+<span style="color:#75715e"># Apply XResourses</span>
+xrdb -merge ~/.Xresources
+
+<span style="color:#75715e"># Turn off the system bell</span>
+xset -b
+
+<span style="color:#75715e"># Use i3lock as a screen locker</span>
+xss-lock -- i3lock &amp;
+
+<span style="color:#75715e"># Some apps that have to be launched only once.</span>
+picom &amp;
+<span style="color:#75715e"># nm-applet &amp;</span>
+dunst &amp;
+copyq &amp;
+
+<span style="color:#75715e"># Run the Emacs startup script as a session.</span>
+<span style="color:#75715e"># exec dbus-launch --exit-with-session ~/.emacs.d/run-exwm.sh</span>
+exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/desktop.el
+</code></pre></div><h3 id="startup-apps">Startup apps</h3>
+<p>Now that Emacs is launched, it is necessary to set up the EXWM-specific parts of config.</p>
+<p>I want to launch some apps from EXWM instead of the Xsession file for two purposes:</p>
+<ul>
+<li>the app may need to have the entire desktop environment set up</li>
+<li>or it may need to be restarted if Emacs is killed.</li>
+</ul>
+<p>As of now, these are polybar, feh and, shepherd:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-run-polybar ()
+  (<span style="color:#a6e22e">call-process</span> <span style="color:#e6db74">&#34;~/bin/polybar.sh&#34;</span>))
+
+(defun my/exwm-set-wallpaper ()
+  (call-process-shell-command <span style="color:#e6db74">&#34;feh --bg-fill ~/Pictures/wallpaper.jpg&#34;</span>))
+
+(defun my/exwm-run-shepherd ()
+  (when (string-empty-p (shell-command-to-string <span style="color:#e6db74">&#34;pgrep -u pavel shepherd&#34;</span>))
+    (<span style="color:#a6e22e">call-process</span> <span style="color:#e6db74">&#34;shepherd&#34;</span>)))
+</code></pre></div><h3 id="moving-windows">Moving windows</h3>
+<p>My functions for managing windows. I initially wrote these to mimic the i3 behavior for my Emacs + i3 integration, but I want to try to keep them for the EXWM config as well to make the transition less painful.</p>
+<p>A predicate which checks whether there is space in the given direction:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-direction-exists-p (dir)
+  (cl-some (lambda (dir)
+	  (let ((win (windmove-find-other-window dir)))
+	    (and win (not (<span style="color:#a6e22e">window-minibuffer-p</span> win)))))
+	(pcase dir
+	  (<span style="color:#e6db74">&#39;width</span> <span style="color:#f92672">&#39;</span>(left right))
+	  (<span style="color:#e6db74">&#39;height</span> <span style="color:#f92672">&#39;</span>(up down)))))
+</code></pre></div><p>And a function to move windows with the following behavior:</p>
+<ul>
+<li>if there is space in the required direction, move the Emacs window there;</li>
+<li>if there is no space in the required direction, but space in two orthogonal directions, move the Emacs window so that there is no more space in the orthogonal directions;</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-move-window (dir)
+  (let ((other-window (windmove-find-other-window dir))
+	(other-direction (my/exwm-direction-exists-p
+			  (pcase dir
+			    (<span style="color:#e6db74">&#39;up</span> <span style="color:#e6db74">&#39;width</span>)
+			    (<span style="color:#e6db74">&#39;down</span> <span style="color:#e6db74">&#39;width</span>)
+			    (<span style="color:#e6db74">&#39;left</span> <span style="color:#e6db74">&#39;height</span>)
+			    (<span style="color:#e6db74">&#39;right</span> <span style="color:#e6db74">&#39;height</span>)))))
+    (cond
+     ((and other-window (not (<span style="color:#a6e22e">window-minibuffer-p</span> other-window)))
+      (window-swap-states (<span style="color:#a6e22e">selected-window</span>) other-window))
+     (other-direction
+      (evil-move-window dir)))))
+</code></pre></div><h3 id="resizing-windows">Resizing windows</h3>
+<p>Something like this also goes for resizing windows. I&rsquo;m used to the i3 &ldquo;mode&rdquo; for this functionality, and this seems to be a sensible approach.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package transient
+  :straight <span style="color:#66d9ef">t</span>)
+
+(setq my/exwm-resize-value <span style="color:#ae81ff">5</span>)
+
+(defun my/exwm-resize-window (dir kind <span style="color:#66d9ef">&amp;optional</span> value)
+  (unless value
+    (setq value my/exwm-resize-value))
+  (pcase kind
+    (<span style="color:#e6db74">&#39;shrink</span>
+     (pcase dir
+       (<span style="color:#e6db74">&#39;width</span>
+	(evil-window-decrease-width value))
+       (<span style="color:#e6db74">&#39;height</span>
+	(evil-window-decrease-height value))))
+    (<span style="color:#e6db74">&#39;grow</span>
+     (pcase dir
+       (<span style="color:#e6db74">&#39;width</span>
+	(evil-window-increase-width value))
+       (<span style="color:#e6db74">&#39;height</span>
+	(evil-window-increase-height value))))))
+
+(defhydra my/exwm-resize-hydra (:color pink :hint <span style="color:#66d9ef">nil</span> :foreign-keys run)
+  <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">^Resize^
+</span><span style="color:#e6db74">_l_: Increase width   _h_: Decrease width   _j_: Increase height   _k_: Decrease height
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">_=_: Balance          &#34;</span>
+  (<span style="color:#e6db74">&#34;h&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;width</span> <span style="color:#e6db74">&#39;shrink</span>)))
+  (<span style="color:#e6db74">&#34;j&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;height</span> <span style="color:#e6db74">&#39;grow</span>)))
+  (<span style="color:#e6db74">&#34;k&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;height</span> <span style="color:#e6db74">&#39;shrink</span>)))
+  (<span style="color:#e6db74">&#34;l&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;width</span> <span style="color:#e6db74">&#39;grow</span>)))
+  (<span style="color:#e6db74">&#34;=&#34;</span> balance-windows)
+  (<span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;quit&#34;</span> :color blue))
+</code></pre></div><h3 id="app-shortcuts">App shortcuts</h3>
+<p>Also, a transient for shortcuts for the most frequent apps.</p>
+<p>I wanted to make the interactive lambda a macro, but this doesn&rsquo;t seem to work the way I expect, so the code has a bit of duplication.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/run-in-background (command)
+  (let ((command-parts (split-string command <span style="color:#e6db74">&#34;[ ]+&#34;</span>)))
+    (<span style="color:#a6e22e">apply</span> <span style="color:#a6e22e">#&#39;call-process</span> <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(<span style="color:#a6e22e">car</span> command-parts) <span style="color:#66d9ef">nil</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">,@</span>(<span style="color:#a6e22e">cdr</span> command-parts)))))
+
+(transient-define-prefix my/exwm-apps ()
+  [<span style="color:#e6db74">&#34;Apps&#34;</span>
+   (<span style="color:#e6db74">&#34;t&#34;</span> <span style="color:#e6db74">&#34;Termnial (Alacritty)&#34;</span> (lambda () (interactive) (my/run-in-background <span style="color:#e6db74">&#34;alacritty&#34;</span>)))
+   (<span style="color:#e6db74">&#34;b&#34;</span> <span style="color:#e6db74">&#34;Browser (Firefox)&#34;</span> (lambda () (interactive) (my/run-in-background <span style="color:#e6db74">&#34;firefox&#34;</span>)))
+   (<span style="color:#e6db74">&#34;v&#34;</span> <span style="color:#e6db74">&#34;VK&#34;</span> (lambda () (interactive) (my/run-in-background <span style="color:#e6db74">&#34;vk&#34;</span>)))
+   (<span style="color:#e6db74">&#34;s&#34;</span> <span style="color:#e6db74">&#34;Slack&#34;</span> (lambda () (interactive) (my/run-in-background <span style="color:#e6db74">&#34;slack-wrapper&#34;</span>)))
+   (<span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#e6db74">&#34;Discord&#34;</span> (lambda () (interactive) (my/run-in-background <span style="color:#e6db74">&#34;flatpak run com.discordapp.Discord&#34;</span>)))
+   (<span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#e6db74">&#34;Quit&#34;</span> transient-quit-one)])
+</code></pre></div><h3 id="move-workspace-to-another-monitor">Move workspace to another monitor</h3>
+<p>A function to move the current workspace to another monitor.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-workspace-switch-monitor ()
+  (interactive)
+  (if (<span style="color:#a6e22e">plist-get</span> exwm-randr-workspace-monitor-plist exwm-workspace-current-index)
+      (setq exwm-randr-workspace-monitor-plist
+	    (map-delete exwm-randr-workspace-monitor-plist exwm-workspace-current-index))
+    (setq exwm-randr-workspace-monitor-plist
+	  (<span style="color:#a6e22e">plist-put</span> exwm-randr-workspace-monitor-plist
+		     exwm-workspace-current-index
+		     my/exwm-another-monitor)))
+  (exwm-randr-refresh))
+</code></pre></div><h3 id="switch-to-the-opposite-monitor">Switch to the opposite monitor</h3>
+<p>Store the information about which workspace is available on which monitor.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/exwm-monitor-workspace <span style="color:#f92672">&#39;</span>())
+
+(defun my/exwm-get-current-monitor ()
+  (let* ((info (shell-command-to-string <span style="color:#e6db74">&#34;xdotool getmouselocation --shell | head -n 1&#34;</span>))
+	 (coord (<span style="color:#a6e22e">string-to-number</span> (<span style="color:#a6e22e">substring</span> info <span style="color:#ae81ff">2</span>))))
+    (if (<span style="color:#a6e22e">&gt;</span> coord <span style="color:#ae81ff">1920</span>) <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">0</span>)))
+
+(defun my/exwm-update-current-monitor ()
+  (setf (alist-get (my/exwm-get-current-monitor) my/exwm-monitor-workspace)
+	exwm-workspace-current-index))
+
+(add-hook <span style="color:#e6db74">&#39;exwm-workspace-switch-hook</span>
+	  <span style="color:#a6e22e">#&#39;</span>my/exwm-update-current-monitor)
+</code></pre></div><p>Switch to the opposite monitor.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-switch-to-other-monitor ()
+  (interactive)
+  (let* ((current (my/exwm-get-current-monitor))
+	 (other (seq-some
+		 (lambda (m)
+		   (and (not (<span style="color:#a6e22e">=</span> (<span style="color:#a6e22e">car</span> m) current)) (<span style="color:#a6e22e">cdr</span> m)))
+		 my/exwm-monitor-workspace)))
+    (exwm-workspace-switch other)))
+</code></pre></div><h3 id="switching-buffers">Switching buffers</h3>
+<p>A single perspective usually has only a handful of EXWM buffers, so here is a function to cycle them.</p>
+<p>Those buffers that are visible in another window are highlighted blue and skipped. The current buffer is highlighted yellow.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/cycle-persp-exwm-buffers (dir)
+  (let* ((current (<span style="color:#a6e22e">current-buffer</span>))
+	 (ignore-rx (persp--make-ignore-buffer-rx))
+	 (visible-buffers <span style="color:#f92672">&#39;</span>())
+	 (exwm-data
+	  (cl-loop for buf in (persp-current-buffers)
+		   for is-another <span style="color:#a6e22e">=</span> (and (<span style="color:#a6e22e">get-buffer-window</span> buf) (not (<span style="color:#a6e22e">eq</span> current buf)))
+		   if (and (<span style="color:#a6e22e">buffer-live-p</span> buf)
+			   (<span style="color:#a6e22e">eq</span> <span style="color:#e6db74">&#39;exwm-mode</span> (<span style="color:#a6e22e">buffer-local-value</span> <span style="color:#e6db74">&#39;major-mode</span> buf))
+			   (not (string-match-p ignore-rx (<span style="color:#a6e22e">buffer-name</span> buf))))
+		   collect buf into all-buffers
+		   and if (not is-another) collect buf into cycle-buffers
+		   finally (return (<span style="color:#a6e22e">list</span> all-buffers cycle-buffers))))
+	 (all-buffers (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> exwm-data))
+	 (cycle-buffers (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> exwm-data))
+	 (current-pos (or (cl-position current cycle-buffers) <span style="color:#ae81ff">-1</span>)))
+    (if (seq-empty-p cycle-buffers)
+	(<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;No EXWM buffers to cycle!&#34;</span>)
+      (let* ((next-pos (<span style="color:#a6e22e">%</span> (<span style="color:#a6e22e">+</span> current-pos (<span style="color:#a6e22e">length</span> cycle-buffers)
+			     (if (<span style="color:#a6e22e">eq</span> dir <span style="color:#e6db74">&#39;forward</span>) <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">-1</span>))
+			  (<span style="color:#a6e22e">length</span> cycle-buffers)))
+	     (next-buffer (<span style="color:#a6e22e">nth</span> next-pos cycle-buffers)))
+	(switch-to-buffer next-buffer)
+	(<span style="color:#a6e22e">message</span>
+	 <span style="color:#e6db74">&#34;%s&#34;</span>
+	 (<span style="color:#a6e22e">mapconcat</span>
+	  (lambda (buf)
+	    (let ((name (string-replace <span style="color:#e6db74">&#34;EXWM :: &#34;</span> <span style="color:#e6db74">&#34;&#34;</span> (<span style="color:#a6e22e">buffer-name</span> buf))))
+	      (cond
+	       ((<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">current-buffer</span>) buf)
+		(<span style="color:#a6e22e">concat</span>
+		 <span style="color:#e6db74">&#34;[&#34;</span>
+		 (<span style="color:#a6e22e">propertize</span> name <span style="color:#e6db74">&#39;face</span> <span style="color:#f92672">`</span>(foreground-color <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))
+		 <span style="color:#e6db74">&#34;]&#34;</span>))
+	       ((not (<span style="color:#a6e22e">member</span> buf cycle-buffers))
+		(<span style="color:#a6e22e">concat</span>
+		 <span style="color:#e6db74">&#34;[&#34;</span>
+		 (<span style="color:#a6e22e">propertize</span> name <span style="color:#e6db74">&#39;face</span> <span style="color:#f92672">`</span>(foreground-color <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;blue</span>)))
+		 <span style="color:#e6db74">&#34;]&#34;</span>))
+	       (<span style="color:#66d9ef">t</span> (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34; %s &#34;</span> name)))))
+	  all-buffers
+	  <span style="color:#e6db74">&#34; &#34;</span>))))))
+</code></pre></div><h3 id="add-all-exwm-buffers-to-current-perspective">Add all EXWM buffers to current perspective</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/add-exwm-buffers-to-current-perspective ()
+  (interactive)
+  (let ((ignore-rx (persp--make-ignore-buffer-rx)))
+    (cl-loop for buf in (<span style="color:#a6e22e">buffer-list</span>)
+	     if (and (<span style="color:#a6e22e">buffer-live-p</span> buf)
+		     (<span style="color:#a6e22e">eq</span> <span style="color:#e6db74">&#39;exwm-mode</span> (<span style="color:#a6e22e">buffer-local-value</span> <span style="color:#e6db74">&#39;major-mode</span> buf))
+		     (not (string-match-p ignore-rx (<span style="color:#a6e22e">buffer-name</span> buf))))
+	     do (persp-add-buffer (<span style="color:#a6e22e">buffer-name</span> buf)))))
+</code></pre></div><h3 id="revive-perspectives">Revive perspectives</h3>
+<p>Occasionally the current perspective gets screwed up after a popup. This function attempts to fix it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-revive-perspectives ()
+  <span style="color:#e6db74">&#34;Make perspectives in the current frame not killed.&#34;</span>
+  (interactive)
+  (let ((to-switch <span style="color:#66d9ef">nil</span>))
+    (<span style="color:#a6e22e">maphash</span>
+     (lambda (_ v)
+       (setf (persp-killed v) <span style="color:#66d9ef">nil</span>)
+       (unless to-switch
+	 (setq to-switch v)))
+     (<span style="color:#a6e22e">frame-parameter</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#39;persp--hash</span>))
+    (when to-switch
+      (persp-switch (persp-name to-switch)))))
+</code></pre></div><h3 id="locking-up">Locking up</h3>
+<p>Run i3lock.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-lock ()
+  (interactive)
+  (my/run-in-background <span style="color:#e6db74">&#34;i3lock -f -i /home/pavel/Pictures/lock-wallpaper.png&#34;</span>))
+</code></pre></div><h3 id="keybindings">Keybindings</h3>
+<p>Setting keybindings for EXWM. This actually has to be in the <code>:config</code> block of the <code>use-package</code> form, that is it has to be run after EXWM is loaded, so I use noweb to put this block in the correct place.</p>
+<p>First, some prefixes for keybindings that are always passed to EXWM instead of the X application in <code>line-mode</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq exwm-input-prefix-keys
+      <span style="color:#f92672">`</span>(<span style="color:#e6db74">?\C</span>-x
+	<span style="color:#e6db74">?\C</span>-w
+	<span style="color:#e6db74">?\M</span>-x
+	<span style="color:#e6db74">?\M</span>-u))
+</code></pre></div><p>Also other local keybindings, that are also available only in <code>line-mode</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defmacro my/app-command (command)
+  <span style="color:#f92672">`</span>(lambda () (interactive) (my/run-in-background <span style="color:#f92672">,</span>command)))
+
+(general-define-key
+ :keymaps <span style="color:#f92672">&#39;</span>(exwm-mode-map)
+ <span style="color:#e6db74">&#34;C-q&#34;</span> <span style="color:#e6db74">&#39;exwm-input-send-next-key</span>
+ <span style="color:#e6db74">&#34;&lt;print&gt;&#34;</span> (my/app-command <span style="color:#e6db74">&#34;flameshot gui&#34;</span>)
+ <span style="color:#e6db74">&#34;M-x&#34;</span> <span style="color:#e6db74">&#39;counsel-M-x</span>
+ <span style="color:#e6db74">&#34;M-SPC&#34;</span> (general-key <span style="color:#e6db74">&#34;SPC&#34;</span>))
+</code></pre></div><p>Simulation keys.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq exwm-input-simulation-keys <span style="color:#f92672">`</span>((<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;M-w&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;C-w&#34;</span>))
+				   (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;M-c&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;C-c&#34;</span>))))
+</code></pre></div><p>And keybindings that are available in both <code>char-mode</code> and <code>line-mode</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq exwm-input-global-keys
+      <span style="color:#f92672">`</span>(
+	<span style="color:#75715e">;; Reset to line-mode</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-R&#34;</span>) <span style="color:#f92672">.</span> exwm-reset)
+
+	<span style="color:#75715e">;; Switch windows</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;left&gt;&#34;</span>)<span style="color:#f92672">.</span> windmove-left)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;right&gt;&#34;</span>) <span style="color:#f92672">.</span> windmove-right)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;up&gt;&#34;</span>) <span style="color:#f92672">.</span> windmove-up)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;down&gt;&#34;</span>) <span style="color:#f92672">.</span> windmove-down)
+
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-h&#34;</span>)<span style="color:#f92672">.</span> windmove-left)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-l&#34;</span>) <span style="color:#f92672">.</span> windmove-right)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-k&#34;</span>) <span style="color:#f92672">.</span> windmove-up)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-j&#34;</span>) <span style="color:#f92672">.</span> windmove-down)
+
+	<span style="color:#75715e">;; Moving windows</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-H&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;left</span>)))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-L&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;right</span>)))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-K&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;up</span>)))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-J&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;down</span>)))
+
+	<span style="color:#75715e">;; Fullscreen</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-f&#34;</span>) <span style="color:#f92672">.</span> exwm-layout-toggle-fullscreen)
+
+	<span style="color:#75715e">;; Quit</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-Q&#34;</span>) <span style="color:#f92672">.</span> evil-quit)
+
+	<span style="color:#75715e">;; Split windows</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-s&#34;</span>) <span style="color:#f92672">.</span> evil-window-vsplit)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-v&#34;</span>) <span style="color:#f92672">.</span> evil-window-hsplit)
+
+	<span style="color:#75715e">;; Switch perspectives</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-,&#34;</span>) <span style="color:#f92672">.</span> persp-prev)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-.&#34;</span>) <span style="color:#f92672">.</span> persp-next)
+
+	<span style="color:#75715e">;; Switch buffers</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-e&#34;</span>) <span style="color:#f92672">.</span> persp-ivy-switch-buffer)
+
+	<span style="color:#75715e">;; Resize windows</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-r&#34;</span>) <span style="color:#f92672">.</span> my/exwm-resize-hydra/body)
+
+	<span style="color:#75715e">;; Apps &amp; stuff</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-p&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;rofi -modi drun,run -show drun&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-;&#34;</span>) <span style="color:#f92672">.</span> my/exwm-apps)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s--&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;rofi-pass&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-=&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;rofimoji&#34;</span>))
+
+	<span style="color:#75715e">;; Basic controls</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioRaiseVolume&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix increase 5 --max-volume 150&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioLowerVolume&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix decrease 5 --max-volume 150&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioMute&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix toggle&#34;</span>))
+
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioPlay&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;mpc toggle&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioPause&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;mpc pause&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;print&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;flameshot gui&#34;</span>))
+
+	<span style="color:#75715e">;; Switch workspace</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-q&#34;</span>) <span style="color:#f92672">.</span> my/exwm-switch-to-other-monitor)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-w&#34;</span>) <span style="color:#f92672">.</span> exwm-workspace-switch)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-W&#34;</span>) <span style="color:#f92672">.</span> exwm-workspace-move-window)
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;tab&gt;&#34;</span>) <span style="color:#f92672">.</span> my/exwm-workspace-switch-monitor)
+
+	<span style="color:#75715e">;; Cycle EXWM windows in the current perspective</span>
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-[&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/cycle-persp-exwm-buffers <span style="color:#e6db74">&#39;backward</span>)))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-]&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/cycle-persp-exwm-buffers <span style="color:#e6db74">&#39;forward</span>)))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-o&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;rofi -show window&#34;</span>))
+
+	<span style="color:#75715e">;; &#39;s-N&#39;: Switch to certain workspace with Super (Win) plus a number key (0 - 9)</span>
+	<span style="color:#f92672">,@</span>(<span style="color:#a6e22e">mapcar</span> (lambda (i)
+		    <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(kbd (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;s-%d&#34;</span> i)) <span style="color:#f92672">.</span>
+		      (lambda ()
+			(interactive)
+			(exwm-workspace-switch-create <span style="color:#f92672">,</span>i))))
+		  (number-sequence <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">9</span>))))
+</code></pre></div><h3 id="pinentry">Pinentry</h3>
+<p>The GUI pinentry doesn&rsquo;t work too well with EXWM because of issues with popup windows, so we will use the Emacs one.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package pinentry
+  :straight <span style="color:#66d9ef">t</span>
+  :after (exwm)
+  :config
+  (setenv <span style="color:#e6db74">&#34;GPG_AGENT_INFO&#34;</span> <span style="color:#66d9ef">nil</span>) <span style="color:#75715e">;; use emacs pinentry</span>
+  (setq auth-source-debug <span style="color:#66d9ef">t</span>)
+
+  (setq epg-gpg-program <span style="color:#e6db74">&#34;gpg2&#34;</span>) <span style="color:#75715e">;; not necessary</span>
+  (require <span style="color:#e6db74">&#39;epa-file</span>)
+  (epa-file-enable)
+  (setq epa-pinentry-mode <span style="color:#e6db74">&#39;loopback</span>)
+  (setq epg-pinentry-mode <span style="color:#e6db74">&#39;loopback</span>)
+  (pinentry-start)
+  (my/run-in-background <span style="color:#e6db74">&#34;gpgconf --reload gpg-agent&#34;</span>))
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vim" data-lang="vim"><span style="color:#a6e22e">default</span>-<span style="color:#a6e22e">cache</span>-<span style="color:#a6e22e">ttl</span> <span style="color:#ae81ff">3600</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">max</span>-<span style="color:#a6e22e">cache</span>-<span style="color:#a6e22e">ttl</span> <span style="color:#ae81ff">3600</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">allow</span>-<span style="color:#a6e22e">emacs</span>-<span style="color:#a6e22e">pinentry</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">allow</span>-<span style="color:#a6e22e">loopback</span>-<span style="color:#a6e22e">pinentry</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><h3 id="modeline">Modeline</h3>
+<p>Show current workspace in the modeline.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defvar my/exwm-mode-line-info <span style="color:#e6db74">&#34;&#34;</span>)
+
+(add-to-list <span style="color:#e6db74">&#39;mode-line-misc-info</span>
+	     <span style="color:#f92672">&#39;</span>(:eval my/exwm-mode-line-info))
+
+(defun my/exwm-mode-line-info-update ()
+  (setq my/exwm-mode-line-info
+	(<span style="color:#a6e22e">concat</span>
+	 <span style="color:#e6db74">&#34;[&#34;</span>
+	 (<span style="color:#a6e22e">propertize</span> (<span style="color:#a6e22e">funcall</span> exwm-workspace-index-map exwm-workspace-current-index)
+		     <span style="color:#e6db74">&#39;face</span>
+		     <span style="color:#f92672">`</span>(foreground-color <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))
+	 <span style="color:#e6db74">&#34;]&#34;</span>))
+  (<span style="color:#a6e22e">force-mode-line-update</span>))
+
+(add-hook <span style="color:#e6db74">&#39;exwm-workspace-switch-hook</span> <span style="color:#a6e22e">#&#39;</span>my/exwm-mode-line-info-update)
+</code></pre></div><h3 id="exwm-config">EXWM config</h3>
+<p>And the EXWM config itself.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-init ()
+  (exwm-workspace-switch <span style="color:#ae81ff">1</span>)
+
+  (my/exwm-run-polybar)
+  (my/exwm-set-wallpaper)
+  (my/exwm-run-shepherd)
+  <span style="color:#75715e">;; (with-eval-after-load &#39;perspective</span>
+  <span style="color:#75715e">;;   (my/exwm-setup-perspectives))</span>
+  )
+
+(defun my/exwm-update-class ()
+  (exwm-workspace-rename-buffer (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;EXWM :: %s&#34;</span> exwm-class-name)))
+
+(use-package exwm
+  :straight <span style="color:#66d9ef">t</span>
+  :config
+  (setq exwm-workspace-number <span style="color:#ae81ff">5</span>)
+  (add-hook <span style="color:#e6db74">&#39;exwm-init-hook</span> <span style="color:#a6e22e">#&#39;</span>my/exwm-init)
+  (add-hook <span style="color:#e6db74">&#39;exwm-update-class-hook</span> <span style="color:#a6e22e">#&#39;</span>my/exwm-update-class)
+
+  (require <span style="color:#e6db74">&#39;exwm-randr</span>)
+  (exwm-randr-enable)
+  (start-process-shell-command <span style="color:#e6db74">&#34;xrandr&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;~/bin/scripts/screen-layout&#34;</span>)
+  (when (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;indigo&#34;</span>)
+    (setq my/exwm-another-monitor <span style="color:#e6db74">&#34;DVI-D-0&#34;</span>)
+    (setq exwm-randr-workspace-monitor-plist <span style="color:#f92672">`</span>(<span style="color:#ae81ff">2</span> <span style="color:#f92672">,</span>my/exwm-another-monitor <span style="color:#ae81ff">3</span> <span style="color:#f92672">,</span>my/exwm-another-monitor)))
+
+  (setq exwm-workspace-warp-cursor <span style="color:#66d9ef">t</span>)
+  (setq mouse-autoselect-window <span style="color:#66d9ef">t</span>)
+  (setq focus-follows-mouse <span style="color:#66d9ef">t</span>)
+
+  &lt;&lt;exwm-monitor-config&gt;&gt;
+  &lt;&lt;exwm-keybindings&gt;&gt;
+  &lt;&lt;exwm-mode-line-config&gt;&gt;
+
+  (set-frame-parameter (<span style="color:#a6e22e">selected-frame</span>) <span style="color:#e6db74">&#39;alpha</span> <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">90</span> <span style="color:#f92672">.</span> <span style="color:#ae81ff">90</span>))
+  (add-to-list <span style="color:#e6db74">&#39;default-frame-alist</span> <span style="color:#f92672">&#39;</span>(alpha <span style="color:#f92672">.</span> (<span style="color:#ae81ff">90</span> <span style="color:#f92672">.</span> <span style="color:#ae81ff">90</span>)))
+
+  (exwm-enable))
 </code></pre></div><h2 id="i3wm">i3wm</h2>
 <table>
 <thead>
@@ -743,7 +1183,8 @@ i3_balance_workspace
 <p>Keybindings to launch <a href="https://github.com/davatorium/rofi">rofi</a>. For more detail, look the <a href="#rofi">Rofi</a> section.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vim" data-lang="vim"><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">d</span> <span style="color:#a6e22e">exec</span> <span style="color:#e6db74">&#34;rofi -modi &#39;drun,run&#39; -show drun&#34;</span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">b</span> <span style="color:#a6e22e">exec</span> --<span style="color:#a6e22e">no</span>-<span style="color:#a6e22e">startup</span>-<span style="color:#a6e22e">id</span> <span style="color:#a6e22e">rofi</span>-<span style="color:#a6e22e">buku</span>-<span style="color:#a6e22e">mine</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">minus</span> <span style="color:#a6e22e">exec</span> <span style="color:#a6e22e">rofi</span>-<span style="color:#a6e22e">pass</span>; <span style="color:#a6e22e">mode</span> <span style="color:#a6e22e">default</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">minus</span> <span style="color:#a6e22e">exec</span> <span style="color:#a6e22e">rofi</span>-<span style="color:#a6e22e">pass</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">equal</span> <span style="color:#a6e22e">exec</span> <span style="color:#a6e22e">rofimoji</span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bindsym</span> $<span style="color:#a6e22e">mod</span>+<span style="color:#a6e22e">apostrophe</span> <span style="color:#a6e22e">mode</span> <span style="color:#e6db74">&#34;rofi&#34;</span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010">
@@ -899,12 +1340,14 @@ setxkbmap -model pc105 -option <span style="color:#e6db74">&#39;grp:win_space_to
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-polybar</td>
 <td>polybar</td>
 <td>statusbar</td>
 </tr>
@@ -961,13 +1404,13 @@ declare -A BLOCKS<span style="color:#f92672">=(</span>
     <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP&#34;</span>
     <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP-1&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP&#34;</span>
     <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;DVI-D-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP&#34;</span>
-    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;HDMI-A-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP&#34;</span>
+    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;HDMI-A-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP pomm sun aw-afk date TSEP&#34;</span>
 <span style="color:#f92672">)</span>
 
 <span style="color:#75715e"># Geolocation for some modules</span>
 export LOC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SPB&#34;</span>
 
-export IPSTACK_API_KEY<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>pass show My_Online/APIs/ipstack | head -n 1<span style="color:#66d9ef">)</span>
+<span style="color:#75715e"># export IPSTACK_API_KEY=$(pass show My_Online/APIs/ipstack | head -n 1)</span>
 
 pkill polybar
 <span style="color:#66d9ef">for</span> m in <span style="color:#66d9ef">$(</span>xrandr --query | grep <span style="color:#e6db74">&#34; connected&#34;</span> | cut -d<span style="color:#e6db74">&#34; &#34;</span> -f1<span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
@@ -1078,20 +1521,24 @@ pkill polybar
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-polybar</td>
 <td>bind:utils</td>
 <td>Provides dig</td>
 </tr>
 <tr>
+<td>desktop-polybar</td>
 <td>curl</td>
 <td></td>
 </tr>
 <tr>
+<td>desktop-polybar</td>
 <td>jq</td>
 <td>util to work with JSONs</td>
 </tr>
@@ -1149,11 +1596,13 @@ bar_weather<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</s
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-polybar</td>
 <td>dateutils</td>
 </tr>
 </tbody>
@@ -1173,15 +1622,27 @@ res<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><
 <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
 <span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/aw_afk.sh</span>
 <span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">60</span>
+</code></pre></div><h4 id="pomm">pomm</h4>
+<p>Pomodoro module.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">if</span> ps -e | grep emacs &gt;&gt; /dev/null; <span style="color:#66d9ef">then</span>
+    emacsclient --eval <span style="color:#e6db74">&#34;(if (boundp &#39;pomm-current-mode-line-string) pomm-current-mode-line-string \&#34;\&#34;) &#34;</span> | xargs echo -e
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/pomm]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
+<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/pomm.sh</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green-lighter}</span>
 </code></pre></div><h4 id="sun">sun</h4>
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-polybar</td>
 <td>sunwait</td>
 </tr>
 </tbody>
@@ -1430,11 +1891,13 @@ time<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>sun
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-rofi</td>
 <td>rofi</td>
 </tr>
 </tbody>
@@ -1630,18 +2093,36 @@ $BUKU -f <span style="color:#ae81ff">4</span> -p | awk -F<span style="color:#e6d
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -z $SELECTED <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
     man -Tpdf $SELECTED | zathura -
 <span style="color:#66d9ef">fi</span>
-</code></pre></div><h4 id="pass">pass</h4>
+</code></pre></div><h4 id="emojis">Emojis</h4>
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-rofi</td>
+<td>python-rofimoji</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pass">pass</h4>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>desktop-rofi</td>
 <td>rofi-pass</td>
 </tr>
 <tr>
+<td>desktop-rofi</td>
 <td>xset</td>
 </tr>
 </tbody>
@@ -1651,20 +2132,7 @@ $BUKU -f <span style="color:#ae81ff">4</span> -p | awk -F<span style="color:#e6d
 EDITOR<span style="color:#f92672">=</span>vim
 default_autotype<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;username :tab pass&#39;</span>
 clip<span style="color:#f92672">=</span>both
-</code></pre></div><h4 id="emojis">emojis</h4>
-<table>
-<thead>
-<tr>
-<th>Guix dependency</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>rofi-emoji</td>
-</tr>
-</tbody>
-</table>
-<h2 id="flameshot">Flameshot</h2>
+</code></pre></div><h2 id="flameshot">Flameshot</h2>
 <table>
 <thead>
 <tr>
@@ -2226,20 +2694,25 @@ clip<span style="color:#f92672">=</span>both
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>office</td>
 <td>zathura</td>
 </tr>
 <tr>
+<td>office</td>
 <td>zathura-ps</td>
 </tr>
 <tr>
-<td>zathura-pdf-poppler</td>
+<td>office</td>
+<td>zathura-pdf-mupdf</td>
 </tr>
 <tr>
+<td>office</td>
 <td>zathura-djvu</td>
 </tr>
 </tbody>
@@ -2254,7 +2727,16 @@ clip<span style="color:#f92672">=</span>both
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> <span style="color:#a6e22e">recolor</span> <span style="color:#a6e22e">true</span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">map</span> &lt;<span style="color:#a6e22e">C</span>-<span style="color:#a6e22e">r</span>&gt; <span style="color:#a6e22e">set</span> <span style="color:#a6e22e">recolor</span> <span style="color:#a6e22e">false</span><span style="color:#960050;background-color:#1e0010">
 </span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">map</span> &lt;<span style="color:#a6e22e">C</span>-<span style="color:#a6e22e">R</span>&gt; <span style="color:#a6e22e">set</span> <span style="color:#a6e22e">recolor</span> <span style="color:#a6e22e">true</span><span style="color:#960050;background-color:#1e0010">
-</span></code></pre></div><h2 id="various-software">Various software</h2>
+</span></code></pre></div><p>For some reason zathura doesn&rsquo;t pick up the plugin directory, so I make a wrapper that sets the directory up:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">zathura -p ~/.guix-extra-profiles/office/office/lib/zathura $@
+</code></pre></div><pre><code class="language-conf-desktop" data-lang="conf-desktop">[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zathura
+Exec=/home/pavel/bin/zathura-wrapper %U
+</code></pre><p>Add the following like to the <code>mimeapps.list</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">application/pdf=zathura-wrapper.desktop
+</code></pre></div><h2 id="various-software">Various software</h2>
 <p>This section generates manifests for various desktop software that I&rsquo;m using.</p>
 <h3 id="browsers">Browsers</h3>
 <table>
@@ -2443,6 +2925,18 @@ clip<span style="color:#f92672">=</span>both
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#a6e22e">specifications-&gt;manifest</span>
  <span style="color:#f92672">&#39;</span>(
    &lt;&lt;packages(<span style="color:#e6db74">&#34;latex&#34;</span>)&gt;&gt;))
+</code></pre></div><p>Desktop Misc</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#a6e22e">specifications-&gt;manifest</span>
+ <span style="color:#f92672">&#39;</span>(
+   &lt;&lt;packages(<span style="color:#e6db74">&#34;desktop-misc&#34;</span>)&gt;&gt;))
+</code></pre></div><p>Desktop polybar</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#a6e22e">specifications-&gt;manifest</span>
+ <span style="color:#f92672">&#39;</span>(
+   &lt;&lt;packages(<span style="color:#e6db74">&#34;desktop-polybar&#34;</span>)&gt;&gt;))
+</code></pre></div><p>Desktop rofi</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#a6e22e">specifications-&gt;manifest</span>
+ <span style="color:#f92672">&#39;</span>(
+   &lt;&lt;packages(<span style="color:#e6db74">&#34;desktop-rofi&#34;</span>)&gt;&gt;))
 </code></pre></div><h3 id="flatpak">Flatpak</h3>
 <p>A lot of proprietary desktop applications can be installed most easily with flatpak &amp; flathub.</p>
 <table>
@@ -2642,6 +3136,13 @@ aw-watcher-afk
     <span style="color:#f92672">#</span>:respawn? <span style="color:#66d9ef">#t</span>
     <span style="color:#f92672">#</span>:start (<span style="color:#a6e22e">make-forkexec-constructor</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;xsettingsd&#34;</span>))
     <span style="color:#f92672">#</span>:stop (<span style="color:#a6e22e">make-kill-destructor</span>)))
+</code></pre></div><h3 id="nm-applet">nm-applet</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#66d9ef">define </span>nm-applet
+  (<span style="color:#a6e22e">make</span> &lt;service&gt;
+    <span style="color:#f92672">#</span>:provides <span style="color:#f92672">&#39;</span>(nm-applet)
+    <span style="color:#f92672">#</span>:respawn? <span style="color:#66d9ef">#t</span>
+    <span style="color:#f92672">#</span>:start (<span style="color:#a6e22e">make-forkexec-constructor</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;nm-applet&#34;</span>))
+    <span style="color:#f92672">#</span>:stop (<span style="color:#a6e22e">make-kill-destructor</span>)))
 </code></pre></div><h3 id="discord-rich-presence">Discord rich presence</h3>
 <p>References:</p>
 <ul>
@@ -2659,7 +3160,7 @@ aw-watcher-afk
   (<span style="color:#a6e22e">make</span> &lt;service&gt;
     <span style="color:#f92672">#</span>:provides <span style="color:#f92672">&#39;</span>(polkit-gnome)
     <span style="color:#f92672">#</span>:respawn? <span style="color:#66d9ef">#t</span>
-    <span style="color:#f92672">#</span>:start (<span style="color:#a6e22e">make-forkexec-constructor</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;/home/pavel/.guix-extra-profiles/desktop/desktop/libexec/polkit-gnome-authentication-agent-1&#34;</span>))
+    <span style="color:#f92672">#</span>:start (<span style="color:#a6e22e">make-forkexec-constructor</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;/home/pavel/.guix-extra-profiles/desktop-misc/desktop-misc/libexec/polkit-gnome-authentication-agent-1&#34;</span>))
     <span style="color:#f92672">#</span>:stop (<span style="color:#a6e22e">make-kill-destructor</span>)))
 </code></pre></div><h3 id="xmodmap">Xmodmap</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#66d9ef">define </span>xmodmap
@@ -2697,11 +3198,12 @@ aw-watcher-afk
  polkit-gnome
  vpn
  davmail
- xmodmap)
+ xmodmap
+ nm-applet)
 </code></pre></div><p>Daemonize shepherd</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(<span style="color:#a6e22e">action</span> <span style="color:#e6db74">&#39;shepherd</span> <span style="color:#e6db74">&#39;daemonize</span>)
 </code></pre></div><p>Run services</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(for-each start <span style="color:#f92672">&#39;</span>(mpd mpd-watcher mcron aw-server aw-watcher-afk aw-watcher-window pulseeffects xsettingsd discord-rich-presence polkit-gnome davmail xmodmap))
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scheme" data-lang="scheme">(for-each start <span style="color:#f92672">&#39;</span>(mpd mpd-watcher mcron aw-server aw-watcher-afk aw-watcher-window pulseeffects xsettingsd discord-rich-presence polkit-gnome davmail xmodmap nm-applet))
 </code></pre></div><h3 id="sync">Sync</h3>
 <table>
 <thead>
@@ -2720,92 +3222,109 @@ aw-watcher-afk
 <table>
 <thead>
 <tr>
+<th>Category</th>
 <th>Guix dependency</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>desktop-misc</td>
 <td>xprop</td>
 <td>Tool to display properties of X windows</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>arandr</td>
 <td>GUI to xrandr</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>light</td>
 <td>Control screen brightness</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>ponymix</td>
 <td>Control PulseAudio CLI</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>pavucontrol</td>
 <td>Control PulseAudio GUI</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>network-manager-applet</td>
 <td>Applet to manage network connections</td>
 </tr>
 <tr>
-<td>feh</td>
-<td>Image viewer. Used to set background</td>
-</tr>
-<tr>
-<td>copyq</td>
-<td>Clipboard manager</td>
-</tr>
-<tr>
+<td>desktop-misc</td>
 <td>xmodmap</td>
 <td>Program to modify keybindings on X server</td>
 </tr>
 <tr>
-<td>thunar</td>
-<td>My preferred GUI file manager</td>
-</tr>
-<tr>
-<td>keepassxc</td>
-<td>My preferred password manager</td>
-</tr>
-<tr>
-<td>telegram-desktop</td>
-<td>telegram client</td>
-</tr>
-<tr>
-<td>xdg-utils</td>
-<td>gives xdg-open and stuff</td>
-</tr>
-<tr>
-<td>gnome-font-viewer</td>
-<td>view fonts</td>
-</tr>
-<tr>
-<td>qbittorrent</td>
-<td>torrent client</td>
-</tr>
-<tr>
+<td>desktop-misc</td>
 <td>fontconfig</td>
 <td></td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>polkit-gnome</td>
 <td>Polkit authentication agent</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
+<td>feh</td>
+<td>Image viewer. Used to set background</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>copyq</td>
+<td>Clipboard manager</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>thunar</td>
+<td>My preferred GUI file manager</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>telegram-desktop</td>
+<td>telegram client</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>xdg-utils</td>
+<td>gives xdg-open and stuff</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>gnome-font-viewer</td>
+<td>view fonts</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>qbittorrent</td>
+<td>torrent client</td>
+</tr>
+<tr>
+<td>desktop-misc</td>
 <td>anydesk</td>
 <td>Remote desktop software</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>gnome-disk-utility</td>
 <td>Manage disks</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>gparted</td>
 <td>Manage partitions</td>
 </tr>
 <tr>
+<td>desktop-misc</td>
 <td>xev</td>
 <td>Test input</td>
 </tr>
