@@ -59,11 +59,8 @@
 <hr>
 <div id="content">
 <div class="container">
-    <blockquote>
-<p>One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn&rsquo;t today.</p>
-</blockquote>
-<p>My <a href="https://www.gnu.org/software/emacs/">Emacs</a> configuration.</p>
-<p>As with other files in the repo, parts prefixed with (OFF) are not used but kept for historic purposes.</p>
+    <p>#+begin_quote
+One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn'.</p>
 <div class="ox-hugo-toc toc">
 <div></div>
 <div class="heading">Table of Contents</div>
@@ -188,7 +185,15 @@
 <li><a href="#my-title">My title</a></li>
 </ul>
 </li>
-<li><a href="#modeline">Modeline</a></li>
+<li><a href="#doom-modeline">Doom Modeline</a></li>
+<li><a href="#off--spaceline"><span class="org-todo done OFF">OFF</span> (OFF) Spaceline</a>
+<ul>
+<li><a href="#perspectives">Perspectives</a></li>
+<li><a href="#exwm-workspace">EXWM workspace</a></li>
+<li><a href="#debug">Debug</a></li>
+<li><a href="#my-theme">My theme</a></li>
+</ul>
+</li>
 <li><a href="#font-stuff">Font stuff</a>
 <ul>
 <li><a href="#ligatures">Ligatures</a></li>
@@ -562,11 +567,13 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/slow-ssh
       (or
        (string= (getenv <span style="color:#e6db74">&#34;IS_TRAMP&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>)
-       (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)))
+       (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)
+       (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;violet&#34;</span>)))
 </code></pre></div><p>The following is true is Emacs is ran on a remote server where I don&rsquo;t need stuff like my org workflow</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/remote-server
       (or (string= (getenv <span style="color:#e6db74">&#34;IS_REMOTE&#34;</span>) <span style="color:#e6db74">&#34;true&#34;</span>)
-	  (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)))
+	  (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;dev-digital&#34;</span>)
+	  (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;violet&#34;</span>)))
 </code></pre></div><p>And the following is true if Emacs is run from termux on Android.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/is-termux (string-match-p (rx (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;com.termux&#34;</span> (<span style="color:#a6e22e">*</span> nonl)) (getenv <span style="color:#e6db74">&#34;HOME&#34;</span>)))
 </code></pre></div><p>Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:</p>
@@ -624,8 +631,8 @@
 </code></pre></div><h3 id="private-config">Private config</h3>
 <p>I have some variables which I don&rsquo;t commit to the repo, e.g. my current location. They are stored in <code>private.el</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(let ((private-file (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;private.el&#34;</span> user-emacs-directory)))
-  (when (<span style="color:#a6e22e">file-exists-p</span> private-file)
-    (load-file private-file)))
+
+    (load-file private-file))
 </code></pre></div><h3 id="no-littering">No littering</h3>
 <p>By default Mmacs and its packages create a lot files in <code>.emacs.d</code> and in other places. <a href="https://github.com/emacscollective/no-littering">no-littering</a> is a collective effort to redirect all of that to two folders in <code>user-emacs-directory</code>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package no-littering
@@ -1391,9 +1398,10 @@
   (setq company-show-numbers <span style="color:#66d9ef">t</span>))
 
 (general-imap <span style="color:#e6db74">&#34;C-SPC&#34;</span> <span style="color:#e6db74">&#39;company-complete</span>)
-</code></pre></div><p>A company frontend with nice icons.</p>
+</code></pre></div><p>A company frontend with nice icons. Disabled since the base company got icons support and since company-box has some issues with spaceline.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package company-box
   :straight <span style="color:#66d9ef">t</span>
+  :disabled
   :if (and (display-graphic-p) (not my/lowpower))
   :after (company)
   :hook (company-mode <span style="color:#f92672">.</span> company-box-mode))
@@ -1567,11 +1575,11 @@
 <p>A custom theme is necessary because if one calls <code>custom-set-faces</code> and <code>custom-set-variables</code> in code, whenever a variable is changed and saved in a customize buffer, data from all calls of these functions is saved as well.</p>
 <p>Also, a hook allows me to change doom-theme more or less at will, although I do that only to switch to a light theme once in a blue moon.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(unless my/is-termux
-  (deftheme my-theme)
+  (deftheme my-theme-1)
 
   (defun my/update-my-theme (<span style="color:#66d9ef">&amp;rest</span> _)
     (custom-theme-set-faces
-     <span style="color:#e6db74">&#39;my-theme</span>
+     <span style="color:#e6db74">&#39;my-theme-1</span>
      <span style="color:#f92672">`</span>(tab-bar-tab ((<span style="color:#66d9ef">t</span> (
 			:background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;bg</span>)
 			:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)
@@ -1588,12 +1596,24 @@
      <span style="color:#f92672">`</span>(epe-pipeline-time-face ((<span style="color:#66d9ef">t</span> (:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))))
      <span style="color:#f92672">`</span>(epe-pipeline-user-face ((<span style="color:#66d9ef">t</span> (:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;red</span>)))))
      <span style="color:#f92672">`</span>(elfeed-search-tag-face ((<span style="color:#66d9ef">t</span> (:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))))
-     <span style="color:#f92672">`</span>(notmuch-wash-cited-text ((<span style="color:#66d9ef">t</span> (:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>))))))
+     <span style="color:#f92672">`</span>(notmuch-wash-cited-text ((<span style="color:#66d9ef">t</span> (:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))))
+     <span style="color:#f92672">`</span>(spaceline-evil-emacs ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;bg</span>)
+				:foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;fg</span>))))
+     <span style="color:#f92672">`</span>(spaceline-evil-insert ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;green</span>)
+				 :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;base0</span>))))
+     <span style="color:#f92672">`</span>(spaceline-evil-motion ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;magenta</span>)
+				 :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;base0</span>))))
+     <span style="color:#f92672">`</span>(spaceline-evil-normal ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;blue</span>)
+				 :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;base0</span>))))
+     <span style="color:#f92672">`</span>(spaceline-evil-replace ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)
+				  :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;base0</span>))))
+     <span style="color:#f92672">`</span>(spaceline-evil-visual ((<span style="color:#66d9ef">t</span> :background <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;grey</span>)
+				 :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;base0</span>)))))
     (custom-theme-set-variables
-     <span style="color:#e6db74">&#39;my-theme</span>
+     <span style="color:#e6db74">&#39;my-theme-1</span>
      <span style="color:#f92672">`</span>(aweshell-invalid-command-color <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;red</span>))
      <span style="color:#f92672">`</span>(aweshell-valid-command-color <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;green</span>)))
-    (enable-theme <span style="color:#e6db74">&#39;my-theme</span>))
+    (enable-theme <span style="color:#e6db74">&#39;my-theme-1</span>))
 
   (advice-add <span style="color:#e6db74">&#39;load-theme</span> :after <span style="color:#a6e22e">#&#39;</span>my/update-my-theme)
   (when (<span style="color:#a6e22e">fboundp</span> <span style="color:#e6db74">&#39;doom-color</span>)
@@ -1720,8 +1740,9 @@
 	      (replace-regexp-in-string <span style="color:#e6db74">&#34;&lt;.*&gt;&#34;</span> <span style="color:#e6db74">&#34;&#34;</span> (tab-bar-tab-name-current-with-count))))))
 
 (setq tab-bar-tab-name-function <span style="color:#a6e22e">#&#39;</span>my/tab-bar-name-function)
-</code></pre></div><h3 id="modeline">Modeline</h3>
+</code></pre></div><h3 id="doom-modeline">Doom Modeline</h3>
 <p>A modeline from Doom Emacs.</p>
+<p>A big advantage of this package is that it just works out of the box and does not require much customization. For now I opted out of it in favour of spaceline because I want to have a more powerline-ish look.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/seagle0128/doom-modeline">Doom Modeline</a></li>
@@ -1729,13 +1750,106 @@
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package doom-modeline
   :straight <span style="color:#66d9ef">t</span>
+  <span style="color:#75715e">;; :if (not (display-graphic-p))</span>
   :init
   (setq doom-modeline-env-enable-python <span style="color:#66d9ef">nil</span>)
   (setq doom-modeline-env-enable-go <span style="color:#66d9ef">nil</span>)
+  (setq doom-modeline-buffer-encoding <span style="color:#e6db74">&#39;nondefault</span>)
+  (setq doom-modeline-hud <span style="color:#66d9ef">t</span>)
   :config
   (doom-modeline-mode <span style="color:#ae81ff">1</span>)
   (setq doom-modeline-minor-modes <span style="color:#66d9ef">nil</span>)
   (setq doom-modeline-buffer-state-icon <span style="color:#66d9ef">nil</span>))
+</code></pre></div><h3 id="off--spaceline"><span class="org-todo done OFF">OFF</span> (OFF) Spaceline</h3>
+<p>A modeline from Spacemacs. It provides a different look than Doom modeline, but also needs to be tuned more.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package spaceline
+  :straight <span style="color:#66d9ef">t</span>
+  :disabled
+  :config
+  &lt;&lt;spaceline-conf&gt;&gt;)
+</code></pre></div><h4 id="perspectives">Perspectives</h4>
+<p>Definining a bunch of custom powerline segments. First, a list of perspectives.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/format-perspective-list ()
+  (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;[%s]&#34;</span>
+	  (let ((curr (persp-current-name)))
+	    (<span style="color:#a6e22e">mapconcat</span>
+	     (lambda (name)
+	       (if (<span style="color:#a6e22e">string-equal</span> name curr)
+		   (<span style="color:#a6e22e">propertize</span>
+		    name
+		    <span style="color:#e6db74">&#39;face</span>
+		    <span style="color:#e6db74">&#39;persp-selected-face</span>)
+		 name))
+	     (persp-names)
+	     <span style="color:#e6db74">&#34;|&#34;</span>))))
+
+(defvar my/spaceline-persp-list <span style="color:#e6db74">&#34;&#34;</span>)
+
+(defun my/persp-update-advice (<span style="color:#66d9ef">&amp;rest</span> _)
+  (setq my/spaceline-persp-list (my/format-perspective-list)))
+
+(advice-add <span style="color:#a6e22e">#&#39;</span>persp-update-modestring :after <span style="color:#a6e22e">#&#39;</span>my/persp-update-advice)
+(add-hook <span style="color:#e6db74">&#39;buffer-list-update-hook</span> <span style="color:#a6e22e">#&#39;</span>my/persp-update-advice)
+(add-hook <span style="color:#e6db74">&#39;find-file-hook</span> <span style="color:#a6e22e">#&#39;</span>my/persp-update-advice)
+
+(spaceline-define-segment perspective
+  <span style="color:#e6db74">&#34;Perspective.el&#34;</span>
+  my/spaceline-persp-list)
+</code></pre></div><h4 id="exwm-workspace">EXWM workspace</h4>
+<p>Current EXWM workspace. The variable is being set in the EXWM config, the segment just displays it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defvar my/exwm-mode-line-info-no-props <span style="color:#e6db74">&#34;&#34;</span>)
+
+(spaceline-define-segment exwm
+  my/exwm-mode-line-info-no-props)
+</code></pre></div><h4 id="debug">Debug</h4>
+<p>Indicators for <code>debug-on-error</code> and <code>debug-on-quit</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(spaceline-define-segment debug-on-error
+  (when debug-on-error
+    (<span style="color:#a6e22e">propertize</span>
+     <span style="color:#e6db74">&#34;&#34;</span>
+     <span style="color:#e6db74">&#39;face</span> <span style="color:#e6db74">&#39;warning</span>
+     <span style="color:#e6db74">&#39;local-map</span> (let ((map (<span style="color:#a6e22e">make-sparse-keymap</span>)))
+		  (<span style="color:#a6e22e">define-key</span> map
+		    [mode-line mouse-1]
+		    <span style="color:#a6e22e">#&#39;</span>toggle-debug-on-error)
+		  map))))
+
+(spaceline-define-segment debug-on-quit
+  (when debug-on-quit
+    (<span style="color:#a6e22e">propertize</span>
+     <span style="color:#e6db74">&#34;&#34;</span>
+     <span style="color:#e6db74">&#39;face</span> <span style="color:#e6db74">&#39;error</span>
+     <span style="color:#e6db74">&#39;local-map</span> (let ((map (<span style="color:#a6e22e">make-sparse-keymap</span>)))
+		  (<span style="color:#a6e22e">define-key</span> map
+		    [mode-line mouse-1]
+		    <span style="color:#a6e22e">#&#39;</span>toggle-debug-on-quit)
+		  map))))
+</code></pre></div><h4 id="my-theme">My theme</h4>
+<p>And a custom spaceline config with segments I like.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(require <span style="color:#e6db74">&#39;spaceline-config</span>)
+
+(spaceline-compile
+  <span style="color:#e6db74">&#34;my&#34;</span>
+  <span style="color:#f92672">&#39;</span>((evil-state :priority <span style="color:#ae81ff">100</span> :face (spaceline-highlight-face-evil-state))
+    (buffer-modified :priority <span style="color:#ae81ff">50</span>)
+    (version-control :priority <span style="color:#ae81ff">25</span> :when active)
+    (buffer-id :priority <span style="color:#ae81ff">90</span>))
+  <span style="color:#f92672">&#39;</span>(<span style="color:#75715e">;; (global)</span>
+    (exwm :when active)
+    (perspective :when active)
+    (flycheck-error :when active)
+    (flycheck-warning :when active)
+    (debug-on-error :when active)
+    (debug-on-quit :when active)
+    (major-mode :when active :priority <span style="color:#ae81ff">90</span>)
+    (selection-info :priority <span style="color:#ae81ff">95</span>)
+    (line-column :when active  :priority <span style="color:#ae81ff">99</span>)
+    (hud :when active :priority <span style="color:#ae81ff">99</span>)))
+
+(spaceline-ml-my)
+
+(setq-default mode-line-format <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;%e&#34;</span> (:eval (spaceline-ml-my))))
+(setq mode-line-format <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;%e&#34;</span> (:eval (spaceline-ml-my))))
 </code></pre></div><h3 id="font-stuff">Font stuff</h3>
 <h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
@@ -2859,7 +2973,16 @@
 	<span style="color:#f92672">`</span>((<span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#e6db74">&#34;default&#34;</span> plain <span style="color:#e6db74">&#34;%?&#34;</span>
 	   :if-new (file+head <span style="color:#e6db74">&#34;%&lt;%Y%m%d%H%M%S&gt;-${slug}.org&#34;</span> <span style="color:#e6db74">&#34;#+title: ${title}\n&#34;</span>)
 	   :unnarrowed <span style="color:#66d9ef">t</span>)))
-  (require <span style="color:#e6db74">&#39;org-roam-protocol</span>))
+  (require <span style="color:#e6db74">&#39;org-roam-protocol</span>)
+  (general-define-key
+   :keymaps <span style="color:#e6db74">&#39;org-roam-mode-map</span>
+   :states <span style="color:#f92672">&#39;</span>(normal)
+   <span style="color:#e6db74">&#34;TAB&#34;</span> <span style="color:#a6e22e">#&#39;</span>magit-section-toggle
+   <span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#a6e22e">#&#39;</span>quit-window
+   <span style="color:#e6db74">&#34;k&#34;</span> <span style="color:#a6e22e">#&#39;</span>magit-section-backward
+   <span style="color:#e6db74">&#34;j&#34;</span> <span style="color:#a6e22e">#&#39;</span>magit-section-forward
+   <span style="color:#e6db74">&#34;gr&#34;</span> <span style="color:#a6e22e">#&#39;</span>revert-buffer
+   <span style="color:#e6db74">&#34;RET&#34;</span> <span style="color:#a6e22e">#&#39;</span>org-roam-buffer-visit-thing))
 
 (my-leader-def
   :infix <span style="color:#e6db74">&#34;or&#34;</span>
@@ -3378,6 +3501,8 @@ MimeType=x-scheme-handler/org-protocol
 	 <span style="color:#75715e">;; (csharp-mode . lsp)</span>
 	 )
   :commands lsp
+  :init
+  (setq lsp-keymap-prefix <span style="color:#66d9ef">nil</span>)
   :config
   (setq lsp-idle-delay <span style="color:#ae81ff">1</span>)
   (setq lsp-eslint-server-command <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;node&#34;</span> <span style="color:#e6db74">&#34;/home/pavel/.emacs.d/.cache/lsp/eslint/unzipped/extension/server/out/eslintServer.js&#34;</span> <span style="color:#e6db74">&#34;--stdio&#34;</span>))
@@ -4869,14 +4994,14 @@ MimeType=x-scheme-handler/org-protocol
 </code></pre></div><p>Also a function to automatically adjust these colors with the Doom theme.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/update-my-theme-elfeed (<span style="color:#66d9ef">&amp;rest</span> _)
   (custom-theme-set-faces
-   <span style="color:#e6db74">&#39;my-theme</span>
+   <span style="color:#e6db74">&#39;my-theme-1</span>
    <span style="color:#f92672">`</span>(elfeed-videos-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;red</span>))))
    <span style="color:#f92672">`</span>(elfeed-twitter-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;blue</span>))))
    <span style="color:#f92672">`</span>(elfeed-emacs-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;magenta</span>))))
    <span style="color:#f92672">`</span>(elfeed-music-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;green</span>))))
    <span style="color:#f92672">`</span>(elfeed-podcasts-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>))))
    <span style="color:#f92672">`</span>(elfeed-blogs-entry ((<span style="color:#66d9ef">t</span> :foreground <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;orange</span>)))))
-  (enable-theme <span style="color:#e6db74">&#39;my-theme</span>))
+  (enable-theme <span style="color:#e6db74">&#39;my-theme-1</span>))
 
 (advice-add <span style="color:#e6db74">&#39;load-theme</span> :after <span style="color:#a6e22e">#&#39;</span>my/update-my-theme-elfeed)
 (when (<span style="color:#a6e22e">fboundp</span> <span style="color:#e6db74">&#39;doom-color</span>)

@@ -132,32 +132,35 @@
 </li>
 <li><a href="#polybar">Polybar</a>
 <ul>
-<li><a href="#launching">Launching</a></li>
 <li><a href="#general-settings">General settings</a>
 <ul>
 <li><a href="#colors">Colors</a></li>
-<li><a href="#bar-config">Bar config</a></li>
+<li><a href="#glyphs">Glyphs</a></li>
+<li><a href="#modules">Modules</a></li>
+<li><a href="#global-bar-config">Global bar config</a></li>
+<li><a href="#launch-script">Launch script</a></li>
 </ul>
 </li>
-<li><a href="#modules">Modules</a>
+<li><a href="#individual-modules">Individual modules</a>
 <ul>
-<li><a href="#ipstack-vpn">ipstack-vpn</a></li>
-<li><a href="#weather">weather</a></li>
-<li><a href="#aw-afk">aw-afk</a></li>
-<li><a href="#pomm">pomm</a></li>
-<li><a href="#sun">sun</a></li>
-<li><a href="#sep">SEP</a></li>
-<li><a href="#tsep">TSEP</a></li>
-<li><a href="#i3">i3</a></li>
-<li><a href="#xkeyboard">xkeyboard</a></li>
-<li><a href="#mpd">mpd</a></li>
 <li><a href="#pulseaudio">pulseaudio</a></li>
+<li><a href="#mpd">mpd</a></li>
 <li><a href="#cpu">cpu</a></li>
 <li><a href="#ram-memory">ram-memory</a></li>
 <li><a href="#swap-memory">swap-memory</a></li>
 <li><a href="#network">network</a></li>
-<li><a href="#date">date</a></li>
+<li><a href="#ipstack-vpn">ipstack-vpn</a></li>
+<li><a href="#openvpn">openvpn</a></li>
+<li><a href="#xkeyboard">xkeyboard</a></li>
 <li><a href="#battery">battery</a></li>
+<li><a href="#weather">weather</a></li>
+<li><a href="#sun">sun</a></li>
+<li><a href="#aw-afk">aw-afk</a></li>
+<li><a href="#date">date</a></li>
+<li><a href="#pomm">pomm</a></li>
+<li><a href="#sep">SEP</a></li>
+<li><a href="#tsep">TSEP</a></li>
+<li><a href="#i3">i3</a></li>
 </ul>
 </li>
 </ul>
@@ -374,8 +377,16 @@
 <td>My preferred Icon theme</td>
 </tr>
 <tr>
+<td>gnome-themes-standard</td>
+<td></td>
+</tr>
+<tr>
 <td>xsettingsd</td>
 <td>X11 settings daemon</td>
+</tr>
+<tr>
+<td>gnome-themes-extra</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -427,8 +438,8 @@
 <li><a href="https://github.com/daviwil/emacs-from-scratch/blob/master/Desktop.org">Emacs From Scratch config</a></li>
 </ul>
 <h3 id="xsession">Xsession</h3>
-<p>First things first, Emacs has to be launched as a window manager. On a more conventional system, I&rsquo;d create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix, it&rsquo;s a bit more complicated, because all such folders are not meant to be changed manually.</p>
-<p>However, GDM, the login manager that seems to default on Guix, launches <code>~/.xsession</code> on the startup if it&rsquo;s present, which is just fine for my purposes.</p>
+<p>First things first, Emacs has to be launched as a window manager. On a more conventional system I&rsquo;d create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix it&rsquo;s a bit more complicated, because all such folders are not meant to be changed manually.</p>
+<p>However, GDM, the login manager that seems to be the default on Guix, launches <code>~/.xsession</code> on the startup if it&rsquo;s present, which is just fine for my purposes.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># Source .profile</span>
 . ~/.profile
 
@@ -504,10 +515,7 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
       (evil-move-window dir)))))
 </code></pre></div><h3 id="resizing-windows">Resizing windows</h3>
 <p>Something like this also goes for resizing windows. I&rsquo;m used to the i3 &ldquo;mode&rdquo; for this functionality, and this seems to be a sensible approach.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package transient
-  :straight <span style="color:#66d9ef">t</span>)
-
-(setq my/exwm-resize-value <span style="color:#ae81ff">5</span>)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/exwm-resize-value <span style="color:#ae81ff">5</span>)
 
 (defun my/exwm-resize-window (dir kind <span style="color:#66d9ef">&amp;optional</span> value)
   (unless value
@@ -541,7 +549,10 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
 </code></pre></div><h3 id="app-shortcuts">App shortcuts</h3>
 <p>Also, a transient for shortcuts for the most frequent apps.</p>
 <p>I wanted to make the interactive lambda a macro, but this doesn&rsquo;t seem to work the way I expect, so the code has a bit of duplication.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/run-in-background (command)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(use-package transient
+  :straight <span style="color:#66d9ef">t</span>)
+
+(defun my/run-in-background (command)
   (let ((command-parts (split-string command <span style="color:#e6db74">&#34;[ ]+&#34;</span>)))
     (<span style="color:#a6e22e">apply</span> <span style="color:#a6e22e">#&#39;call-process</span> <span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(<span style="color:#a6e22e">car</span> command-parts) <span style="color:#66d9ef">nil</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">,@</span>(<span style="color:#a6e22e">cdr</span> command-parts)))))
 
@@ -570,9 +581,8 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq my/exwm-monitor-workspace <span style="color:#f92672">&#39;</span>())
 
 (defun my/exwm-get-current-monitor ()
-  (let* ((info (shell-command-to-string <span style="color:#e6db74">&#34;xdotool getmouselocation --shell | head -n 1&#34;</span>))
-	 (coord (<span style="color:#a6e22e">string-to-number</span> (<span style="color:#a6e22e">substring</span> info <span style="color:#ae81ff">2</span>))))
-    (if (<span style="color:#a6e22e">&gt;</span> coord <span style="color:#ae81ff">1920</span>) <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">0</span>)))
+  (if (<span style="color:#a6e22e">plist-get</span> exwm-randr-workspace-monitor-plist exwm-workspace-current-index)
+      <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">0</span>))
 
 (defun my/exwm-update-current-monitor ()
   (setf (alist-get (my/exwm-get-current-monitor) my/exwm-monitor-workspace)
@@ -580,14 +590,16 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
 
 (add-hook <span style="color:#e6db74">&#39;exwm-workspace-switch-hook</span>
 	  <span style="color:#a6e22e">#&#39;</span>my/exwm-update-current-monitor)
-</code></pre></div><p>Switch to the opposite monitor.</p>
+</code></pre></div><p>Switch to the opposite monitor. For now, this works only for two monitors because I don&rsquo;t have more.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun my/exwm-switch-to-other-monitor ()
   (interactive)
   (let* ((current (my/exwm-get-current-monitor))
 	 (other (seq-some
 		 (lambda (m)
 		   (and (not (<span style="color:#a6e22e">=</span> (<span style="color:#a6e22e">car</span> m) current)) (<span style="color:#a6e22e">cdr</span> m)))
-		 my/exwm-monitor-workspace)))
+		 my/exwm-monitor-workspace))
+	 (focus-follows-mouse <span style="color:#66d9ef">nil</span>)
+	 (mouse-autoselect-window <span style="color:#66d9ef">nil</span>))
     (exwm-workspace-switch other)))
 </code></pre></div><h3 id="switching-buffers">Switching buffers</h3>
 <p>A single perspective usually has only a handful of EXWM buffers, so here is a function to cycle them.</p>
@@ -735,6 +747,8 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
 	<span style="color:#75715e">;; Basic controls</span>
 	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioRaiseVolume&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix increase 5 --max-volume 150&#34;</span>))
 	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioLowerVolume&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix decrease 5 --max-volume 150&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86MonBrightnessUp&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;light -A 5&#34;</span>))
+	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86MonBrightnessDown&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;light -U 5&#34;</span>))
 	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioMute&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;ponymix toggle&#34;</span>))
 
 	(<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;&lt;XF86AudioPlay&gt;&#34;</span>) <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(my/app-command <span style="color:#e6db74">&#34;mpc toggle&#34;</span>))
@@ -794,6 +808,7 @@ exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/deskto
 		     <span style="color:#e6db74">&#39;face</span>
 		     <span style="color:#f92672">`</span>(foreground-color <span style="color:#f92672">.</span> <span style="color:#f92672">,</span>(doom-color <span style="color:#e6db74">&#39;yellow</span>)))
 	 <span style="color:#e6db74">&#34;]&#34;</span>))
+  (setq my/exwm-mode-line-info-no-props (<span style="color:#a6e22e">funcall</span> exwm-workspace-index-map exwm-workspace-current-index))
   (<span style="color:#a6e22e">force-mode-line-update</span>))
 
 (add-hook <span style="color:#e6db74">&#39;exwm-workspace-switch-hook</span> <span style="color:#a6e22e">#&#39;</span>my/exwm-mode-line-info-update)
@@ -1360,7 +1375,362 @@ setxkbmap -model pc105 -option <span style="color:#e6db74">&#39;grp:win_space_to
 <ul>
 <li><a href="https://github.com/polybar/polybar/wiki">polybar docs</a></li>
 </ul>
-<h3 id="launching">Launching</h3>
+<h3 id="general-settings">General settings</h3>
+<h4 id="colors">Colors</h4>
+<p>First, let&rsquo;s use xrdb colors in polybar. To avoid code duplication, I generate them via noweb.</p>
+<p><a id="code-snippet--get-polybar-colors"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(<span style="color:#a6e22e">mapconcat</span>
+  (lambda (elem)
+    (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;%s = ${xrdb:%s}&#34;</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> elem) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> elem)))
+  (seq-filter
+   (lambda (elem) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> elem))
+   table)
+   <span style="color:#e6db74">&#34;\n&#34;</span>)
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[colors]</span>
+<span style="color:#a6e22e">&lt;&lt;get-polybar-colors()&gt;&gt;</span>
+
+<span style="color:#a6e22e">background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:background}</span>
+<span style="color:#75715e">; foreground = ${xrdb:foreground}</span>
+</code></pre></div><h4 id="glyphs">Glyphs</h4>
+<p>Also, let&rsquo;s try to use some glyphs. The <a href="https://github.com/adi1090x/polybar-themes">polybar-themes</a> repository can give some inspiration on what is possible, here I am replicating a powerline-ish look.</p>
+<p>Although polybar makes it a bit more awkward than it could&rsquo;ve been. The approach is to put a glyph between two blocks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">block1  block2
+</code></pre></div><p>And set the colors like that:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>block1</th>
+<th>glyph</th>
+<th>block 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>foreground</td>
+<td>F1</td>
+<td>B2</td>
+<td>F2</td>
+</tr>
+<tr>
+<td>background</td>
+<td>B1</td>
+<td>B1</td>
+<td>B2</td>
+</tr>
+</tbody>
+</table>
+<p>So, let&rsquo;s define the glyph symbols:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[glyph]</span>
+<span style="color:#a6e22e">gleft</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">gright</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+</code></pre></div><h4 id="modules">Modules</h4>
+<p>To make life a bit easier, I&rsquo;ll define a single source of truth for modules and their colors here.</p>
+<p>So, here is a table with all modules.</p>
+<p><a id="table--polybar-modules"></a></p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>Module</th>
+<th>Color</th>
+<th>Glyph</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>pulseaudio</td>
+<td>light-magenta</td>
+<td>+</td>
+</tr>
+<tr>
+<td>2</td>
+<td>mpd</td>
+<td>magenta</td>
+<td>+</td>
+</tr>
+<tr>
+<td>3</td>
+<td>cpu</td>
+<td>cyan</td>
+<td>+</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ram-memory</td>
+<td>light-green</td>
+<td>+</td>
+</tr>
+<tr>
+<td>5</td>
+<td>swap-memory</td>
+<td>green</td>
+<td>+</td>
+</tr>
+<tr>
+<td>6</td>
+<td>network</td>
+<td>light-red</td>
+<td>+</td>
+</tr>
+<tr>
+<td>7</td>
+<td>openvpn</td>
+<td>light-red</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>xkeyboard</td>
+<td>red</td>
+<td>+</td>
+</tr>
+<tr>
+<td>9</td>
+<td>battery</td>
+<td>green</td>
+<td>+</td>
+</tr>
+<tr>
+<td>10</td>
+<td>weather</td>
+<td>light-yellow</td>
+<td>+</td>
+</tr>
+<tr>
+<td>12</td>
+<td>sun</td>
+<td>yellow</td>
+<td>+</td>
+</tr>
+<tr>
+<td>13</td>
+<td>aw-afk</td>
+<td>light-blue</td>
+<td>+</td>
+</tr>
+<tr>
+<td>14</td>
+<td>date</td>
+<td>blue</td>
+<td>+</td>
+</tr>
+</tbody>
+</table>
+<p>Some functions to use colors in the individual modules:</p>
+<p><a id="code-snippet--get-polybar-bg"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(<span style="color:#a6e22e">format</span>
+ <span style="color:#e6db74">&#34;${colors.%s}&#34;</span>
+ (<span style="color:#a6e22e">nth</span>
+  <span style="color:#ae81ff">2</span>
+  (seq-find
+   (lambda (el) (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el) module))
+   table)))
+</code></pre></div><p><a id="code-snippet--get-polybar-fg"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="color:#e6db74">&#34;${colors.black}&#34;</span>
+</code></pre></div><p>Also, I want to exclude some modules from certain monitors and machines. For now this concerns just the battery module, so I exclude it from the monitors of my desktop PC. In future I may need to rework this to include hostname, but as long as all my machines have separate monitor names, it works fine.</p>
+<p><a id="table--polybar-modules-exclude"></a></p>
+<table>
+<thead>
+<tr>
+<th>Monitor</th>
+<th>Exclude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DVI-D-0</td>
+<td>battery</td>
+</tr>
+<tr>
+<td>HDMI-A-0</td>
+<td>battery</td>
+</tr>
+</tbody>
+</table>
+<p>Now, we need to generate a set of glyphs. The code below generates all the required glyhps so that every combination of neighoring colors in the bar had one.</p>
+<p><a id="table--polybar-extra-colors"></a></p>
+<table>
+<thead>
+<tr>
+<th>Color 1</th>
+<th>Color 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>background</td>
+<td>white</td>
+</tr>
+<tr>
+<td>background</td>
+<td>light-magenta</td>
+</tr>
+<tr>
+<td>blue</td>
+<td>background</td>
+</tr>
+</tbody>
+</table>
+<p><a id="code-snippet--polybar-generate-glyphs"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(let* ((monitors
+	(thread-last
+	  exclude-table
+	  (seq-map (lambda (el) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> el)))
+	  (seq-uniq)))
+       (exclude-combinations
+	(seq-map
+	 (lambda (monitor)
+	   (seq-map
+	    (lambda (el) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el))
+	    (seq-filter
+	     (lambda (el) (and (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> el) monitor)
+			       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el)))
+	     exclude-table)))
+	 <span style="color:#f92672">`</span>(<span style="color:#f92672">,@</span>monitors <span style="color:#e6db74">&#34;&#34;</span>)))
+       (module-glyph-combinations
+	(thread-last
+	  exclude-combinations
+	  (seq-map
+	   (lambda (exclude)
+	     (thread-last
+	       table
+	       (seq-filter
+		(lambda (<span style="color:#a6e22e">elt</span>)
+		  (not (or
+			(<span style="color:#a6e22e">member</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> <span style="color:#a6e22e">elt</span>) exclude)
+			(not (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">3</span> <span style="color:#a6e22e">elt</span>) <span style="color:#e6db74">&#34;+&#34;</span>))))))
+	       <span style="color:#75715e">;; (seq-map (lambda (elt) (nth 1 elt)))</span>
+	       )))
+	  (seq-uniq)))
+       (color-changes <span style="color:#66d9ef">nil</span>))
+  (dolist (e extra)
+    (add-to-list
+     <span style="color:#e6db74">&#39;color-changes</span>
+     (<span style="color:#a6e22e">concat</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> e) <span style="color:#e6db74">&#34;--&#34;</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> e))))
+  (dolist (comb module-glyph-combinations)
+    (dotimes (i (<span style="color:#a6e22e">1-</span> (<span style="color:#a6e22e">length</span> comb)))
+      (add-to-list
+       <span style="color:#e6db74">&#39;color-changes</span>
+       (<span style="color:#a6e22e">concat</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> (<span style="color:#a6e22e">nth</span> i comb))
+	       <span style="color:#e6db74">&#34;--&#34;</span>
+	       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> (<span style="color:#a6e22e">nth</span> (<span style="color:#a6e22e">1+</span> i) comb))))))
+  (<span style="color:#a6e22e">mapconcat</span>
+   (lambda (el)
+     (let ((colors (split-string el <span style="color:#e6db74">&#34;--&#34;</span>)))
+       (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">[module/glyph-%s--%s]
+</span><span style="color:#e6db74">type = custom/text
+</span><span style="color:#e6db74">content-background = ${colors.%s}
+</span><span style="color:#e6db74">content-foreground = ${colors.%s}
+</span><span style="color:#e6db74">content = ${glyph.gright}
+</span><span style="color:#e6db74">content-font = 5&#34;</span>
+	       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> colors)
+	       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> colors)
+	       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> colors)
+	       (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> colors))))
+   color-changes
+   <span style="color:#e6db74">&#34;\n&#34;</span>))
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">&lt;&lt;polybar-generate-glyphs()&gt;&gt;</span>
+</code></pre></div><p>And a set of modules interweaved with corresponding glyphs for each monitor:</p>
+<p><a id="code-snippet--polybar-generate-modules"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(let* ((exclude-modules
+	(thread-last
+	  exclude-table
+	  (seq-filter (lambda (el) (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">0</span> el) monitor)))
+	  (seq-map (lambda (el) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el)))))
+       (modules
+	(thread-last
+	  table
+	  (seq-filter (lambda (el) (not (<span style="color:#a6e22e">member</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el) exclude-modules))))))
+       (prev-color first-color)
+       (ret <span style="color:#66d9ef">nil</span>))
+  (<span style="color:#a6e22e">concat</span>
+   (<span style="color:#a6e22e">mapconcat</span>
+    (lambda (el)
+      (<span style="color:#a6e22e">apply</span>
+       <span style="color:#a6e22e">#&#39;concat</span>
+       (<span style="color:#a6e22e">list</span>
+	(when (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">3</span> el) <span style="color:#e6db74">&#34;+&#34;</span>)
+	  (setq ret (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;glyph-%s--%s &#34;</span> prev-color (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> el)))
+	  (setq prev-color (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">2</span> el))
+	  ret)
+	(<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">1</span> el))))
+    modules
+    <span style="color:#e6db74">&#34; &#34;</span>)
+   (unless (string-empty-p last-color) (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34; glyph-%s--%s &#34;</span> prev-color last-color))))
+</code></pre></div><h4 id="global-bar-config">Global bar config</h4>
+<p>Global bar configuration.</p>
+<p>Monitor config and base colors.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[bar/mybar]</span>
+<span style="color:#a6e22e">monitor</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:MONITOR:}</span>
+<span style="color:#a6e22e">width</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">100%</span>
+<span style="color:#a6e22e">height</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:HEIGHT:27}</span>
+<span style="color:#a6e22e">fixed-center</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">false</span>
+<span style="color:#a6e22e">bottom</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
+
+<span style="color:#a6e22e">background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.background}</span>
+<span style="color:#a6e22e">foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.black}</span>
+</code></pre></div><p>Some geometry settings. These are set this way to make glyphs look the way they should</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#75715e">; line-size = 3</span>
+<span style="color:#a6e22e">line-color</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">#f00</span>
+
+<span style="color:#a6e22e">padding</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+
+<span style="color:#a6e22e">module-margin-left</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">module-margin-right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">margin-bottom</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">margin-top</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+
+<span style="color:#75715e">; underline-size = 0</span>
+<span style="color:#a6e22e">border-size</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+
+<span style="color:#a6e22e">offset-x</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">offset-y</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">radius</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0.0</span>
+</code></pre></div><p>Fonts</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#75715e">; font-0 = ${env:FONT0:pango:monospace:size=10;1}</span>
+<span style="color:#75715e">; font-1 = ${env:FONT1:NotoEmoji:scale=10:antialias=false;0}</span>
+<span style="color:#75715e">; font-2 = ${env:FONT2:fontawesome:pixelsize=10;1}</span>
+<span style="color:#75715e">; font-3 = ${env:FONT3:JetBrains Mono Nerd Font:monospace:size=10;1}</span>
+
+<span style="color:#a6e22e">font-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">pango:monospace:size=13;2</span>
+<span style="color:#a6e22e">font-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">NotoEmoji:scale=10:antialias=false;1</span>
+<span style="color:#a6e22e">font-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">fontawesome:pixelsize=13;3</span>
+<span style="color:#a6e22e">font-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">JetBrains Mono Nerd Font:monospace:size=13;4</span>
+<span style="color:#a6e22e">font-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">JetBrains Mono Nerd Font:monospace:size=17;4</span>
+</code></pre></div><p>Modules. Because I sometimes set up different blocks on different monitors, they are set via environment variables.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#75715e">; modules-left = i3</span>
+<span style="color:#75715e">; modules-center = test</span>
+<span style="color:#a6e22e">modules-right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:RIGHT_BLOCKS}</span>
+
+<span style="color:#a6e22e">tray-position</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:TRAY:right}</span>
+<span style="color:#a6e22e">tray-padding</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">tray-maxsize</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">16</span>
+<span style="color:#a6e22e">tray-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.background}</span>
+
+<span style="color:#a6e22e">wm-restack</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3</span>
+<span style="color:#75715e">; override-redirect = true</span>
+
+<span style="color:#a6e22e">scroll-up</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3wm-wsnext</span>
+<span style="color:#a6e22e">scroll-down</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3wm-wsprev</span>
+
+<span style="color:#75715e">; cursor-click = pointer</span>
+<span style="color:#75715e">; cursor-scroll = ns-resize</span>
+</code></pre></div><p>Misc settings.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[settings]</span>
+<span style="color:#a6e22e">screenchange-reload</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
+<span style="color:#a6e22e">compositing-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">source</span>
+<span style="color:#a6e22e">compositing-foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">over</span>
+<span style="color:#a6e22e">compositing-overline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">over</span>
+<span style="color:#a6e22e">compositing-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">over</span>
+<span style="color:#a6e22e">compositing-border</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">over</span>
+
+<span style="color:#66d9ef">[global/wm]</span>
+<span style="color:#a6e22e">margin-top</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">margin-bottom</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+</code></pre></div><h4 id="launch-script">Launch script</h4>
 <p>The script below allows me to:</p>
 <ul>
 <li>have different blocks on my two different-sized monitors and my laptop;</li>
@@ -1401,10 +1771,10 @@ declare -A BAR_HEIGHT<span style="color:#f92672">=(</span>
     <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;HDMI-A-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;29&#34;</span>
 <span style="color:#f92672">)</span>
 declare -A BLOCKS<span style="color:#f92672">=(</span>
-    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP&#34;</span>
-    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP-1&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP&#34;</span>
-    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;DVI-D-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP&#34;</span>
-    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;HDMI-A-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP pomm sun aw-afk date TSEP&#34;</span>
+    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>eDP<span style="color:#e6db74">&#34;)&gt;&gt;&#34;</span>
+    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;eDP-1&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>eDP-1<span style="color:#e6db74">&#34;)&gt;&gt;&#34;</span>
+    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;DVI-D-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>DVI-D-0<span style="color:#e6db74">&#34;)&gt;&gt;&#34;</span>
+    <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;HDMI-A-0&#34;</span><span style="color:#f92672">]=</span><span style="color:#e6db74">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>HDMI-A-0<span style="color:#e6db74">&#34;)&gt;&gt;&#34;</span>
 <span style="color:#f92672">)</span>
 
 <span style="color:#75715e"># Geolocation for some modules</span>
@@ -1425,99 +1795,150 @@ pkill polybar
     <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$SCALE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
 	<span style="color:#66d9ef">continue</span>
     <span style="color:#66d9ef">fi</span>
-    export FONT0<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pango:monospace:size=</span>$SIZE<span style="color:#e6db74">;1&#34;</span>
-    export FONT1<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;NotoEmoji:scale=</span>$SCALE<span style="color:#e6db74">:antialias=false;1&#34;</span>
-    export FONT2<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fontawesome:pixelsize=</span>$SIZE<span style="color:#e6db74">;1&#34;</span>
-    export FONT3<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;JetBrains Mono Nerd Font:monospace:size=</span>$SIZE<span style="color:#e6db74">;1&#34;</span>
+    <span style="color:#75715e"># export FONT0=&#34;pango:monospace:size=$SIZE;1&#34;</span>
+    <span style="color:#75715e"># export FONT1=&#34;NotoEmoji:scale=$SCALE:antialias=false;1&#34;</span>
+    <span style="color:#75715e"># export FONT2=&#34;fontawesome:pixelsize=$SIZE;1&#34;</span>
+    <span style="color:#75715e"># export FONT3=&#34;JetBrains Mono Nerd Font:monospace:size=15;1&#34;</span>
     export HEIGHT<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>BAR_HEIGHT[$MONITOR]<span style="color:#e6db74">}</span>
     export RIGHT_BLOCKS<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>BLOCKS[$MONITOR]<span style="color:#e6db74">}</span>
     polybar mybar &amp;
 <span style="color:#66d9ef">done</span>
-</code></pre></div><h3 id="general-settings">General settings</h3>
-<h4 id="colors">Colors</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[colors]</span>
-<span style="color:#75715e">; Palenight colorscheme https://github.com/JonathanSpeek/palenight-iterm2</span>
-<span style="color:#a6e22e">black</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color0}</span>
-<span style="color:#a6e22e">red</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color1}</span>
-<span style="color:#a6e22e">green</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color2}</span>
-<span style="color:#a6e22e">yellow</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color3}</span>
-<span style="color:#a6e22e">blue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color4}</span>
-<span style="color:#a6e22e">magenta</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color5}</span>
-<span style="color:#a6e22e">cyan</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color6}</span>
-<span style="color:#a6e22e">white</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color7}</span>
-
-<span style="color:#a6e22e">black-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color8}</span>
-<span style="color:#a6e22e">red-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color9}</span>
-<span style="color:#a6e22e">green-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color10}</span>
-<span style="color:#a6e22e">yellow-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color11}</span>
-<span style="color:#a6e22e">blue-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color12}</span>
-<span style="color:#a6e22e">magenta-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color13}</span>
-<span style="color:#a6e22e">cyan-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color14}</span>
-<span style="color:#a6e22e">white-lighter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:color15}</span>
-
-<span style="color:#a6e22e">background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:background}</span>
-<span style="color:#a6e22e">foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${xrdb:foreground}</span>
-</code></pre></div><h4 id="bar-config">Bar config</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[bar/mybar]</span>
-<span style="color:#a6e22e">monitor</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:MONITOR:}</span>
-<span style="color:#a6e22e">width</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">100%</span>
-<span style="color:#a6e22e">height</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:HEIGHT:27}</span>
-<span style="color:#a6e22e">offset-x</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">offset-y</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">radius</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0.0</span>
-<span style="color:#a6e22e">fixed-center</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">false</span>
-<span style="color:#a6e22e">bottom</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
-
-<span style="color:#a6e22e">background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.background}</span>
-<span style="color:#a6e22e">foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.foreground}</span>
-
-<span style="color:#a6e22e">line-size</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">3</span>
-<span style="color:#a6e22e">line-color</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">#f00</span>
-
-<span style="color:#a6e22e">padding-left</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">padding-right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-
-<span style="color:#a6e22e">module-margin-left</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-<span style="color:#a6e22e">module-margin-right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-
-<span style="color:#a6e22e">font-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:FONT0:pango:monospace:size=10;1}</span>
-<span style="color:#a6e22e">font-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:FONT1:NotoEmoji:scale=10:antialias=false;0}</span>
-<span style="color:#a6e22e">font-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:FONT2:fontawesome:pixelsize=10;1}</span>
-<span style="color:#a6e22e">font-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:FONT3:JetBrains Mono Nerd Font:monospace:size=10;1}</span>
-
-<span style="color:#a6e22e">modules-left</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3</span>
-<span style="color:#75715e">; modules-center = test</span>
-<span style="color:#a6e22e">modules-right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:RIGHT_BLOCKS}</span>
-
-<span style="color:#a6e22e">tray-position</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:TRAY:right}</span>
-<span style="color:#a6e22e">tray-padding</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">tray-maxsize</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">16</span>
-<span style="color:#75715e">;tray-background = #0063ff</span>
-
-<span style="color:#a6e22e">wm-restack</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3</span>
-<span style="color:#75715e">; override-redirect = true</span>
-
-<span style="color:#a6e22e">scroll-up</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3wm-wsnext</span>
-<span style="color:#a6e22e">scroll-down</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">i3wm-wsprev</span>
-
-<span style="color:#75715e">; cursor-click = pointer</span>
-<span style="color:#75715e">; cursor-scroll = ns-resize</span>
-
-<span style="color:#66d9ef">[settings]</span>
-<span style="color:#a6e22e">screenchange-reload</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
-<span style="color:#75715e">;compositing-background = xor</span>
-<span style="color:#75715e">;compositing-background = screen</span>
-<span style="color:#75715e">;compositing-foreground = source</span>
-<span style="color:#75715e">;compositing-border = over</span>
-<span style="color:#75715e">;pseudo-transparency = false</span>
-
-<span style="color:#66d9ef">[global/wm]</span>
-<span style="color:#a6e22e">margin-top</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">margin-bottom</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-</code></pre></div><h3 id="modules">Modules</h3>
+</code></pre></div><h3 id="individual-modules">Individual modules</h3>
 <p>Some of the custom modules below use Org mode noweb to evaluate colors, because it&rsquo;s faster than querying <code>xrdb</code> at runtime. I wish I could reference polybar values there, but <a href="https://github.com/polybar/polybar/issues/615">it looks like this is impossible</a>.</p>
 <p>If you want to copy something, you can go to the <a href="bin/polybar/">bin/polybar</a> folder.</p>
-<h4 id="ipstack-vpn">ipstack-vpn</h4>
+<h4 id="pulseaudio">pulseaudio</h4>
+<p>PulseAudio status</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/pulseaudio]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/pulseaudio</span>
+<span style="color:#a6e22e">use-ui-max</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
+
+<span style="color:#a6e22e">bar-volume-width</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">7</span>
+<span style="color:#75715e">; bar-volume-foreground-0 = ${colors.white}</span>
+<span style="color:#75715e">; bar-volume-foreground-1 = ${colors.yellow}</span>
+<span style="color:#75715e">; bar-volume-foreground-2 = ${colors.yellow}</span>
+<span style="color:#75715e">; bar-volume-foreground-3 = ${colors.blue}</span>
+<span style="color:#75715e">; bar-volume-foreground-4 = ${colors.blue}</span>
+<span style="color:#75715e">; bar-volume-foreground-5 = ${colors.green}</span>
+<span style="color:#75715e">; bar-volume-foreground-6 = ${colors.green}</span>
+<span style="color:#a6e22e">bar-volume-gradient</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">false</span>
+<span style="color:#a6e22e">bar-volume-indicator</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">|</span>
+<span style="color:#a6e22e">bar-volume-indicator-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
+<span style="color:#a6e22e">bar-volume-fill</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">─</span>
+<span style="color:#a6e22e">bar-volume-fill-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
+<span style="color:#a6e22e">bar-volume-empty</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">─</span>
+<span style="color:#a6e22e">bar-volume-empty-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
+<span style="color:#75715e">; bar-volume-empty-foreground = ${colors.light-white}</span>
+
+<span style="color:#a6e22e">format-volume</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">♪ &lt;ramp-volume&gt; &lt;label-volume&gt;</span>
+<span style="color:#a6e22e">label-volume</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%%</span>
+
+<span style="color:#a6e22e">ramp-volume-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▁</span>
+<span style="color:#a6e22e">ramp-volume-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▂</span>
+<span style="color:#a6e22e">ramp-volume-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▃</span>
+<span style="color:#a6e22e">ramp-volume-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▄</span>
+<span style="color:#a6e22e">ramp-volume-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▅</span>
+<span style="color:#a6e22e">ramp-volume-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▆</span>
+<span style="color:#a6e22e">ramp-volume-6</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▇</span>
+<span style="color:#a6e22e">ramp-volume-7</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">█</span>
+
+<span style="color:#a6e22e">format-muted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">♪ &lt;label-muted&gt;</span>
+<span style="color:#a6e22e">label-muted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">MUTE</span>
+
+<span style="color:#a6e22e">format-volume-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;pulseaudio&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-muted-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;pulseaudio&#34;)&gt;&gt;</span>
+
+<span style="color:#75715e">; format-volume-underline = ${colors.white}</span>
+<span style="color:#75715e">; format-muted-underline = ${colors.light-black}</span>
+</code></pre></div><h4 id="mpd">mpd</h4>
+<p><a href="https://www.musicpd.org/">Music Player Daemon</a> status</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/mpd]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/mpd</span>
+
+<span style="color:#a6e22e">format-playing</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;toggle&gt; &lt;label-time&gt; &lt;label-song&gt;</span>
+<span style="color:#a6e22e">format-paused</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;toggle&gt; &lt;label-time&gt; &lt;label-song&gt;</span>
+<span style="color:#a6e22e">format-stopped</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34; &#34;</span>
+<span style="color:#a6e22e">label-song</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">[%album-artist%] %title%</span>
+<span style="color:#a6e22e">label-time</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%elapsed%/%total%</span>
+
+<span style="color:#a6e22e">label-song-maxlen</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">30</span>
+<span style="color:#a6e22e">label-song-ellipsis</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
+
+<span style="color:#75715e">; format-playing-underline = ${colors.yellow}</span>
+<span style="color:#75715e">; format-paused-underline = ${colors.yellow}</span>
+<span style="color:#75715e">; format-stopped-underline = ${colors.yellow}</span>
+
+<span style="color:#a6e22e">format-playing-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-paused-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-stopped-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
+
+<span style="color:#a6e22e">label-separator</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">separator-foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.red}</span>
+
+<span style="color:#a6e22e">icon-pause</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">icon-play</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">icon-stop</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">icon-prev</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#a6e22e">icon-next</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
+</code></pre></div><h4 id="cpu">cpu</h4>
+<p>CPU usage</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/cpu]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/cpu</span>
+<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34; &lt;label&gt;&#34;</span>
+<span style="color:#a6e22e">label</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%%</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;cpu&#34;)&gt;&gt;</span>
+</code></pre></div><h4 id="ram-memory">ram-memory</h4>
+<p>RAM usage</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/ram-memory]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/memory</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">10</span>
+
+<span style="color:#a6e22e">ramp-used-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▁</span>
+<span style="color:#a6e22e">ramp-used-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▂</span>
+<span style="color:#a6e22e">ramp-used-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▃</span>
+<span style="color:#a6e22e">ramp-used-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▄</span>
+<span style="color:#a6e22e">ramp-used-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▅</span>
+<span style="color:#a6e22e">ramp-used-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▆</span>
+<span style="color:#a6e22e">ramp-used-6</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▇</span>
+<span style="color:#a6e22e">ramp-used-7</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">█</span>
+
+<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"> &lt;label&gt;</span>
+<span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">%gb_used:.1f%</span>
+
+<span style="color:#75715e">; format-underline = ${colors.blue}</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;ram-memory&#34;)&gt;&gt;</span>
+</code></pre></div><h4 id="swap-memory">swap-memory</h4>
+<p>Swap usage</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/swap-memory]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/memory</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">10</span>
+
+<span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74"> %gb_swap_used:.1f%</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;swap-memory&#34;)&gt;&gt;</span>
+</code></pre></div><h4 id="network">network</h4>
+<p>Upload/download speed</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/network]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/network</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+
+<span style="color:#a6e22e">interface</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:WLAN_INTERFACE}</span>
+
+<span style="color:#75715e">; format-connected = [&lt;ramp-signal&gt;] &lt;label-connected&gt;</span>
+
+<span style="color:#a6e22e">label-connected</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">↓ %downspeed% ↑ %upspeed%</span>
+<span style="color:#a6e22e">label-disconnected</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">X</span>
+
+<span style="color:#75715e">; format-connected-underline = ${colors.green}</span>
+<span style="color:#75715e">; format-disconnected-underline = ${colors.red}</span>
+<span style="color:#a6e22e">format-connected-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;network&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-disconnected-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;network&#34;)&gt;&gt;</span>
+
+<span style="color:#a6e22e">ramp-signal-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+<span style="color:#a6e22e">ramp-signal-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#a6e22e">ramp-signal-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
+<span style="color:#a6e22e">ramp-signal-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">3</span>
+<span style="color:#a6e22e">ramp-signal-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">4</span>
+<span style="color:#a6e22e">ramp-signal-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">5</span>
+</code></pre></div><h4 id="ipstack-vpn">ipstack-vpn</h4>
 <table>
 <thead>
 <tr>
@@ -1570,6 +1991,49 @@ vpn<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>pgre
 <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
 <span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/ipstack-vpn.sh</span>
 <span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1200</span>
+</code></pre></div><h4 id="openvpn">openvpn</h4>
+<p>A module to check if openvpn is running.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">vpn<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>pgrep -a openvpn$ | head -n <span style="color:#ae81ff">1</span> | awk <span style="color:#e6db74">&#39;{print $NF }&#39;</span> | cut -d <span style="color:#e6db74">&#39;.&#39;</span> -f 1<span style="color:#66d9ef">)</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -n <span style="color:#e6db74">&#34;</span>$vpn<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    echo <span style="color:#e6db74">&#34;  &#34;</span>
+<span style="color:#66d9ef">else</span>
+    echo <span style="color:#e6db74">&#34;  &#34;</span>
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/openvpn]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
+<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/openvpn.sh</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;openvpn&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1200</span>
+</code></pre></div><h4 id="xkeyboard">xkeyboard</h4>
+<p>Current keyboard layout</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/xkeyboard]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/xkeyboard</span>
+<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;label-layout&gt;</span>
+
+<span style="color:#75715e">; format-underline = ${colors.magenta}</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;xkeyboard&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">label-layout</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%icon%</span>
+<span style="color:#a6e22e">layout-icon-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ru;RU</span>
+<span style="color:#a6e22e">layout-icon-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">us;US</span>
+</code></pre></div><h4 id="battery">battery</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/battery]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/battery</span>
+<span style="color:#a6e22e">battery</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">BAT0</span>
+<span style="color:#a6e22e">adapter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ADP0</span>
+
+<span style="color:#a6e22e">time-format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M</span>
+<span style="color:#a6e22e">format-discharging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;ramp-capacity&gt; &lt;label-discharging&gt;</span>
+<span style="color:#a6e22e">format-discharging-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-charging-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">format-full-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">label-discharging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%% %time%</span>
+<span style="color:#a6e22e">label-charging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"> %percentage%% %time%</span>
+
+<span style="color:#a6e22e">ramp-capacity-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">ramp-capacity-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">ramp-capacity-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">ramp-capacity-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
+<span style="color:#a6e22e">ramp-capacity-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
 </code></pre></div><h4 id="weather">weather</h4>
 <p>Gets current weather from <a href="http://wttr.in/">wttr.in</a></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bar_format<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BAR_FORMAT<span style="color:#66d9ef">:-</span><span style="color:#e6db74">&#34;%t&#34;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
@@ -1589,49 +2053,9 @@ bar_weather<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</s
 </code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/weather]</span>
 <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
 <span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/weather.sh</span>
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.red}</span>
+<span style="color:#75715e">; format-underline = ${colors.red}</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;weather&#34;)&gt;&gt;</span>
 <span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1200</span>
-</code></pre></div><h4 id="aw-afk">aw-afk</h4>
-<p>Prints out a current uptime and non-AFK time from <a href="https://github.com/ActivityWatch">ActivityWatch</a> server</p>
-<table>
-<thead>
-<tr>
-<th>Category</th>
-<th>Guix dependency</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>desktop-polybar</td>
-<td>dateutils</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">afk_event<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s -X GET <span style="color:#e6db74">&#34;http://localhost:5600/api/0/buckets/aw-watcher-afk_</span><span style="color:#66d9ef">$(</span>hostname<span style="color:#66d9ef">)</span><span style="color:#e6db74">/events?limit=1&#34;</span> -H <span style="color:#e6db74">&#34;accept: application/json&#34;</span><span style="color:#66d9ef">)</span>
-status<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>afk_event<span style="color:#e6db74">}</span> | jq -r <span style="color:#e6db74">&#39;.[0].data.status&#39;</span><span style="color:#66d9ef">)</span>
-afk_time<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>afk_event<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -r <span style="color:#e6db74">&#39;.[0].duration&#39;</span> | xargs -I !  date -u -d @! +<span style="color:#e6db74">&#34;%H:%M&#34;</span><span style="color:#66d9ef">)</span>
-
-uptime<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>uptime | awk <span style="color:#e6db74">&#39;{ print substr($3, 0, length($3) - 1) }&#39;</span> | xargs -I ! date -d ! +<span style="color:#e6db74">&#34;%H:%M&#34;</span><span style="color:#66d9ef">)</span>
-res<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>afk_time<span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span>uptime<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $status <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;afk&#39;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
-    echo <span style="color:#e6db74">&#34;%{u&lt;&lt;get-color(name=&#34;</span>red<span style="color:#e6db74">&#34;)&gt;&gt;}%{+u} [AFK] </span>$res<span style="color:#e6db74"> %{u-}&#34;</span>
-<span style="color:#66d9ef">else</span>
-    echo <span style="color:#e6db74">&#34;%{u&lt;&lt;get-color(name=&#34;</span>blue<span style="color:#e6db74">&#34;)&gt;&gt;}%{+u} </span>$res<span style="color:#e6db74"> %{u-}&#34;</span>
-<span style="color:#66d9ef">fi</span>
-</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/aw-afk]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
-<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/aw_afk.sh</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">60</span>
-</code></pre></div><h4 id="pomm">pomm</h4>
-<p>Pomodoro module.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">if</span> ps -e | grep emacs &gt;&gt; /dev/null; <span style="color:#66d9ef">then</span>
-    emacsclient --eval <span style="color:#e6db74">&#34;(if (boundp &#39;pomm-current-mode-line-string) pomm-current-mode-line-string \&#34;\&#34;) &#34;</span> | xargs echo -e
-<span style="color:#66d9ef">fi</span>
-</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/pomm]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
-<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/pomm.sh</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green-lighter}</span>
 </code></pre></div><h4 id="sun">sun</h4>
 <table>
 <thead>
@@ -1667,15 +2091,76 @@ time<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>sun
 
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">${</span>time<span style="color:#e6db74">}</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;DAY&#39;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
     sunset<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>sunwait list daylight set <span style="color:#e6db74">${</span>LAT<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>LON<span style="color:#e6db74">}</span><span style="color:#66d9ef">)</span>
-    echo <span style="color:#e6db74">&#34;%{u&lt;&lt;get-color(name=&#34;</span>yellow<span style="color:#e6db74">&#34;)&gt;&gt;}%{+u} </span>$sunset<span style="color:#e6db74"> %{u-}&#34;</span>
+    <span style="color:#75715e"># echo &#34;%{u&lt;&lt;get-color(name=&#34;yellow&#34;)&gt;&gt;}%{+u} $sunset %{u-}&#34;</span>
+    echo $sunset
 <span style="color:#66d9ef">else</span>
     sunrise<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>sunwait list daylight rise <span style="color:#e6db74">${</span>LAT<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>LON<span style="color:#e6db74">}</span><span style="color:#66d9ef">)</span>
-    echo <span style="color:#e6db74">&#34;%{u&lt;&lt;get-color(name=&#34;</span>red<span style="color:#e6db74">&#34;)&gt;&gt;}%{+u} </span>$sunrise<span style="color:#e6db74"> %{u-}&#34;</span>
+    <span style="color:#75715e"># echo &#34;%{u&lt;&lt;get-color(name=&#34;red&#34;)&gt;&gt;}%{+u} $sunrise %{u-}&#34;</span>
+    echo $sunrise
 <span style="color:#66d9ef">fi</span>
 </code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/sun]</span>
 <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
 <span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/sun.sh</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;sun&#34;)&gt;&gt;</span>
 <span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">60</span>
+</code></pre></div><h4 id="aw-afk">aw-afk</h4>
+<p>Prints out a current uptime and non-AFK time from <a href="https://github.com/ActivityWatch">ActivityWatch</a> server</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>desktop-polybar</td>
+<td>dateutils</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">afk_event<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s -X GET <span style="color:#e6db74">&#34;http://localhost:5600/api/0/buckets/aw-watcher-afk_</span><span style="color:#66d9ef">$(</span>hostname<span style="color:#66d9ef">)</span><span style="color:#e6db74">/events?limit=1&#34;</span> -H <span style="color:#e6db74">&#34;accept: application/json&#34;</span><span style="color:#66d9ef">)</span>
+status<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>afk_event<span style="color:#e6db74">}</span> | jq -r <span style="color:#e6db74">&#39;.[0].data.status&#39;</span><span style="color:#66d9ef">)</span>
+afk_time<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>afk_event<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -r <span style="color:#e6db74">&#39;.[0].duration&#39;</span> | xargs -I !  date -u -d @! +<span style="color:#e6db74">&#34;%H:%M&#34;</span><span style="color:#66d9ef">)</span>
+
+uptime<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>uptime | awk <span style="color:#e6db74">&#39;{ print substr($3, 0, length($3) - 1) }&#39;</span> | xargs -I ! date -d ! +<span style="color:#e6db74">&#34;%H:%M&#34;</span><span style="color:#66d9ef">)</span>
+res<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>afk_time<span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span>uptime<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $status <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;afk&#39;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+    <span style="color:#75715e"># echo &#34;%{u&lt;&lt;get-color(name=&#34;red&#34;)&gt;&gt;}%{+u} [AFK] $res %{u-}&#34;</span>
+    echo <span style="color:#e6db74">&#34;[AFK] </span>$res<span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">else</span>
+    <span style="color:#75715e"># echo &#34;%{u&lt;&lt;get-color(name=&#34;blue&#34;)&gt;&gt;}%{+u} $res %{u-}&#34;</span>
+    echo <span style="color:#e6db74">&#34;</span>$res<span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/aw-afk]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
+<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/aw_afk.sh</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">60</span>
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;aw-afk&#34;)&gt;&gt;</span>
+</code></pre></div><h4 id="date">date</h4>
+<p>Current date</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/date]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/date</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">5</span>
+
+<span style="color:#a6e22e">date</span> <span style="color:#f92672">=</span>
+<span style="color:#a6e22e">date-alt</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%Y-%m-%d&#34;</span>
+
+<span style="color:#a6e22e">time</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M</span>
+<span style="color:#a6e22e">time-alt</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M:%S</span>
+
+<span style="color:#a6e22e">format-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;get-polybar-bg(module=&#34;date&#34;)&gt;&gt;</span>
+<span style="color:#a6e22e">label</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%date% %time%&#34;</span>
+</code></pre></div><h4 id="pomm">pomm</h4>
+<p>Pomodoro module.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">if</span> ps -e | grep emacs &gt;&gt; /dev/null; <span style="color:#66d9ef">then</span>
+    emacsclient --eval <span style="color:#e6db74">&#34;(if (boundp &#39;pomm-current-mode-line-string) pomm-current-mode-line-string \&#34;\&#34;) &#34;</span> | xargs echo -e
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/pomm]</span>
+<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">custom/script</span>
+<span style="color:#a6e22e">exec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/home/pavel/bin/polybar/pomm.sh</span>
+<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.light-green}</span>
 </code></pre></div><h4 id="sep">SEP</h4>
 <p>A simple separator</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/SEP]</span>
@@ -1731,162 +2216,6 @@ time<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>sun
 <span style="color:#a6e22e">label-urgent-background</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.red}</span>
 <span style="color:#a6e22e">label-urgent-foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.black}</span>
 <span style="color:#a6e22e">label-urgent-padding</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-</code></pre></div><h4 id="xkeyboard">xkeyboard</h4>
-<p>Current keyboard layout</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/xkeyboard]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/xkeyboard</span>
-<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;label-layout&gt;</span>
-
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.magenta}</span>
-<span style="color:#a6e22e">label-layout</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%icon%</span>
-<span style="color:#a6e22e">layout-icon-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ru;RU</span>
-<span style="color:#a6e22e">layout-icon-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">us;US</span>
-</code></pre></div><h4 id="mpd">mpd</h4>
-<p><a href="https://www.musicpd.org/">Music Player Daemon</a> status</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/mpd]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/mpd</span>
-
-<span style="color:#a6e22e">format-playing</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;toggle&gt; &lt;label-time&gt; &lt;label-song&gt;</span>
-<span style="color:#a6e22e">format-paused</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;toggle&gt; &lt;label-time&gt; &lt;label-song&gt;</span>
-<span style="color:#a6e22e">format-stopped</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">label-song</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">[%album-artist%] %title%</span>
-<span style="color:#a6e22e">label-time</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%elapsed%/%total%</span>
-
-<span style="color:#a6e22e">label-song-maxlen</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">30</span>
-<span style="color:#a6e22e">label-song-ellipsis</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
-
-<span style="color:#a6e22e">format-playing-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-<span style="color:#a6e22e">format-paused-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-<span style="color:#a6e22e">format-stopped-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-
-<span style="color:#a6e22e">label-separator</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">separator-foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.red}</span>
-
-<span style="color:#a6e22e">icon-pause</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">icon-play</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">icon-stop</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">icon-prev</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-<span style="color:#a6e22e">icon-next</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
-</code></pre></div><h4 id="pulseaudio">pulseaudio</h4>
-<p>PulseAudio status</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/pulseaudio]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/pulseaudio</span>
-<span style="color:#a6e22e">use-ui-max</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">true</span>
-
-<span style="color:#a6e22e">bar-volume-width</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">7</span>
-<span style="color:#a6e22e">bar-volume-foreground-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.white}</span>
-<span style="color:#a6e22e">bar-volume-foreground-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-<span style="color:#a6e22e">bar-volume-foreground-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-<span style="color:#a6e22e">bar-volume-foreground-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.blue}</span>
-<span style="color:#a6e22e">bar-volume-foreground-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.blue}</span>
-<span style="color:#a6e22e">bar-volume-foreground-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green}</span>
-<span style="color:#a6e22e">bar-volume-foreground-6</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green}</span>
-<span style="color:#a6e22e">bar-volume-gradient</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">false</span>
-<span style="color:#a6e22e">bar-volume-indicator</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">|</span>
-<span style="color:#a6e22e">bar-volume-indicator-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
-<span style="color:#a6e22e">bar-volume-fill</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">─</span>
-<span style="color:#a6e22e">bar-volume-fill-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
-<span style="color:#a6e22e">bar-volume-empty</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">─</span>
-<span style="color:#a6e22e">bar-volume-empty-font</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
-<span style="color:#a6e22e">bar-volume-empty-foreground</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.white-lighter}</span>
-
-<span style="color:#a6e22e">format-volume</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">♪ &lt;bar-volume&gt; &lt;label-volume&gt;</span>
-<span style="color:#a6e22e">label-volume</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%%</span>
-
-<span style="color:#a6e22e">format-mute</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">♪ &lt;label-muted&gt;</span>
-<span style="color:#a6e22e">label-muted</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">MUTE</span>
-
-<span style="color:#a6e22e">format-volume-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.white}</span>
-<span style="color:#a6e22e">format-muted-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.black-lighter}</span>
-</code></pre></div><h4 id="cpu">cpu</h4>
-<p>CPU usage</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/cpu]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/cpu</span>
-<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">  &lt;label&gt;</span>
-<span style="color:#a6e22e">label</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%%</span>
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green-lighter}</span>
-</code></pre></div><h4 id="ram-memory">ram-memory</h4>
-<p>RAM usage</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/ram-memory]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/memory</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">10</span>
-
-<span style="color:#a6e22e">ramp-used-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▁</span>
-<span style="color:#a6e22e">ramp-used-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▂</span>
-<span style="color:#a6e22e">ramp-used-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▃</span>
-<span style="color:#a6e22e">ramp-used-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▄</span>
-<span style="color:#a6e22e">ramp-used-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▅</span>
-<span style="color:#a6e22e">ramp-used-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▆</span>
-<span style="color:#a6e22e">ramp-used-6</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">▇</span>
-<span style="color:#a6e22e">ramp-used-7</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">█</span>
-
-<span style="color:#a6e22e">format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"> &lt;label&gt;</span>
-<span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">%gb_used:.1f%</span>
-
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.blue}</span>
-</code></pre></div><h4 id="swap-memory">swap-memory</h4>
-<p>Swap usage</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/swap-memory]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/memory</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">10</span>
-
-<span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74"> %gb_swap_used:.1f%</span>
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-</code></pre></div><h4 id="network">network</h4>
-<p>Upload/download speed</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/network]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/network</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-
-<span style="color:#a6e22e">interface</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${env:WLAN_INTERFACE}</span>
-
-<span style="color:#75715e">; format-connected = [&lt;ramp-signal&gt;] &lt;label-connected&gt;</span>
-
-<span style="color:#a6e22e">label-connected</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">↓ %downspeed% ↑ %upspeed%</span>
-<span style="color:#a6e22e">label-disconnected</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">X</span>
-
-<span style="color:#a6e22e">format-connected-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green}</span>
-<span style="color:#a6e22e">format-disconnected-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.red}</span>
-
-<span style="color:#a6e22e">ramp-signal-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
-<span style="color:#a6e22e">ramp-signal-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
-<span style="color:#a6e22e">ramp-signal-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">2</span>
-<span style="color:#a6e22e">ramp-signal-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">3</span>
-<span style="color:#a6e22e">ramp-signal-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">4</span>
-<span style="color:#a6e22e">ramp-signal-5</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">5</span>
-</code></pre></div><h4 id="date">date</h4>
-<p>Current date</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/date]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/date</span>
-<span style="color:#a6e22e">interval</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">5</span>
-
-<span style="color:#a6e22e">date</span> <span style="color:#f92672">=</span>
-<span style="color:#a6e22e">date-alt</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%Y-%m-%d&#34;</span>
-
-<span style="color:#a6e22e">time</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M</span>
-<span style="color:#a6e22e">time-alt</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M:%S</span>
-
-<span style="color:#a6e22e">format-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.cyan}</span>
-<span style="color:#a6e22e">label</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%date% %time%&#34;</span>
-</code></pre></div><h4 id="battery">battery</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#66d9ef">[module/battery]</span>
-<span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">internal/battery</span>
-<span style="color:#a6e22e">battery</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">BAT0</span>
-<span style="color:#a6e22e">adapter</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">ADP0</span>
-
-<span style="color:#a6e22e">time-format</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%H:%M</span>
-<span style="color:#a6e22e">format-discharging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;ramp-capacity&gt; &lt;label-discharging&gt;</span>
-<span style="color:#a6e22e">format-discharging-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.cyan}</span>
-<span style="color:#a6e22e">format-charging-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.yellow}</span>
-<span style="color:#a6e22e">format-full-underline</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">${colors.green}</span>
-<span style="color:#a6e22e">label-discharging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">%percentage%% %time%</span>
-<span style="color:#a6e22e">label-charging</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"> %percentage%% %time%</span>
-
-<span style="color:#a6e22e">ramp-capacity-0</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">ramp-capacity-1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">ramp-capacity-2</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">ramp-capacity-3</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
-<span style="color:#a6e22e">ramp-capacity-4</span> <span style="color:#f92672">=</span> <span style="color:#e6db74"></span>
 </code></pre></div><h2 id="rofi">Rofi</h2>
 <table>
 <thead>

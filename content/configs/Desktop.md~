@@ -20,6 +20,22 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
         - [Fonts](#fonts)
     - [Themes](#themes)
     - [Device-specific settings](#device-specific-settings)
+- [EXWM](#exwm)
+    - [Xsession](#xsession)
+    - [Startup apps](#startup-apps)
+    - [Moving windows](#moving-windows)
+    - [Resizing windows](#resizing-windows)
+    - [App shortcuts](#app-shortcuts)
+    - [Move workspace to another monitor](#move-workspace-to-another-monitor)
+    - [Switch to the opposite monitor](#switch-to-the-opposite-monitor)
+    - [Switching buffers](#switching-buffers)
+    - [Add all EXWM buffers to current perspective](#add-all-exwm-buffers-to-current-perspective)
+    - [Revive perspectives](#revive-perspectives)
+    - [Locking up](#locking-up)
+    - [Keybindings](#keybindings)
+    - [Pinentry](#pinentry)
+    - [Modeline](#modeline)
+    - [EXWM config](#exwm-config)
 - [i3wm](#i3wm)
     - [General settings](#general-settings)
     - [Managing windows](#managing-windows)
@@ -50,6 +66,7 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
         - [ipstack-vpn](#ipstack-vpn)
         - [weather](#weather)
         - [aw-afk](#aw-afk)
+        - [pomm](#pomm)
         - [sun](#sun)
         - [SEP](#sep)
         - [TSEP](#tsep)
@@ -68,8 +85,8 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
     - [Scripts](#scripts)
         - [Buku bookmarks](#buku-bookmarks)
         - [Man pages](#man-pages)
+        - [Emojis](#emojis)
         - [pass](#pass)
-        - [emojis](#emojis)
 - [Flameshot](#flameshot)
 - [dunst](#dunst)
 - [keynav](#keynav)
@@ -95,6 +112,7 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
     - [ActivityWatch](#activitywatch)
     - [PulseEffects](#pulseeffects)
     - [xsettingsd](#xsettingsd)
+    - [nm-applet](#nm-applet)
     - [Discord rich presence](#discord-rich-presence)
     - [Polkit Authentication agent](#polkit-authentication-agent)
     - [Xmodmap](#xmodmap)
@@ -248,6 +266,546 @@ if [ "$hostname" = "indigo" ]; then
 elif [ "$hostname" = "eminence" ]; then
     xgamma -gamma 1.25
 fi
+```
+
+
+## EXWM {#exwm}
+
+Settings for [Emacs X Window Manager](https://github.com/ch11ng/exwm), a tiling WM implemented in Emacs Lisp.
+
+References:
+
+-   [EXWM Wiki](https://github.com/ch11ng/exwm/wiki)
+-   [Emacs From Scratch config](https://github.com/daviwil/emacs-from-scratch/blob/master/Desktop.org)
+
+
+### Xsession {#xsession}
+
+First things first, Emacs has to be launched as a window manager. On a more conventional system, I'd create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix, it's a bit more complicated, because all such folders are not meant to be changed manually.
+
+However, GDM, the login manager that seems to default on Guix, launches `~/.xsession` on the startup if it's present, which is just fine for my purposes.
+
+```sh
+# Source .profile
+. ~/.profile
+
+# Disable access control for the current user
+xhost +SI:localuser:$USER
+
+# Fix for Java applications
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# Apply XResourses
+xrdb -merge ~/.Xresources
+
+# Turn off the system bell
+xset -b
+
+# Use i3lock as a screen locker
+xss-lock -- i3lock &
+
+# Some apps that have to be launched only once.
+picom &
+# nm-applet &
+dunst &
+copyq &
+
+# Run the Emacs startup script as a session.
+# exec dbus-launch --exit-with-session ~/.emacs.d/run-exwm.sh
+exec dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/desktop.el
+```
+
+
+### Startup apps {#startup-apps}
+
+Now that Emacs is launched, it is necessary to set up the EXWM-specific parts of config.
+
+I want to launch some apps from EXWM instead of the Xsession file for two purposes:
+
+-   the app may need to have the entire desktop environment set up
+-   or it may need to be restarted if Emacs is killed.
+
+As of now, these are polybar, feh and, shepherd:
+
+```emacs-lisp
+(defun my/exwm-run-polybar ()
+  (call-process "~/bin/polybar.sh"))
+
+(defun my/exwm-set-wallpaper ()
+  (call-process-shell-command "feh --bg-fill ~/Pictures/wallpaper.jpg"))
+
+(defun my/exwm-run-shepherd ()
+  (when (string-empty-p (shell-command-to-string "pgrep -u pavel shepherd"))
+    (call-process "shepherd")))
+```
+
+
+### Moving windows {#moving-windows}
+
+My functions for managing windows. I initially wrote these to mimic the i3 behavior for my Emacs + i3 integration, but I want to try to keep them for the EXWM config as well to make the transition less painful.
+
+A predicate which checks whether there is space in the given direction:
+
+```emacs-lisp
+(defun my/exwm-direction-exists-p (dir)
+  (cl-some (lambda (dir)
+	  (let ((win (windmove-find-other-window dir)))
+	    (and win (not (window-minibuffer-p win)))))
+	(pcase dir
+	  ('width '(left right))
+	  ('height '(up down)))))
+```
+
+And a function to move windows with the following behavior:
+
+-   if there is space in the required direction, move the Emacs window there;
+-   if there is no space in the required direction, but space in two orthogonal directions, move the Emacs window so that there is no more space in the orthogonal directions;
+
+<!--listend-->
+
+```emacs-lisp
+(defun my/exwm-move-window (dir)
+  (let ((other-window (windmove-find-other-window dir))
+	(other-direction (my/exwm-direction-exists-p
+			  (pcase dir
+			    ('up 'width)
+			    ('down 'width)
+			    ('left 'height)
+			    ('right 'height)))))
+    (cond
+     ((and other-window (not (window-minibuffer-p other-window)))
+      (window-swap-states (selected-window) other-window))
+     (other-direction
+      (evil-move-window dir)))))
+```
+
+
+### Resizing windows {#resizing-windows}
+
+Something like this also goes for resizing windows. I'm used to the i3 "mode" for this functionality, and this seems to be a sensible approach.
+
+```emacs-lisp
+(use-package transient
+  :straight t)
+
+(setq my/exwm-resize-value 5)
+
+(defun my/exwm-resize-window (dir kind &optional value)
+  (unless value
+    (setq value my/exwm-resize-value))
+  (pcase kind
+    ('shrink
+     (pcase dir
+       ('width
+	(evil-window-decrease-width value))
+       ('height
+	(evil-window-decrease-height value))))
+    ('grow
+     (pcase dir
+       ('width
+	(evil-window-increase-width value))
+       ('height
+	(evil-window-increase-height value))))))
+
+(defhydra my/exwm-resize-hydra (:color pink :hint nil :foreign-keys run)
+  "
+^Resize^
+_l_: Increase width   _h_: Decrease width   _j_: Increase height   _k_: Decrease height
+
+_=_: Balance          "
+  ("h" (lambda () (interactive) (my/exwm-resize-window 'width 'shrink)))
+  ("j" (lambda () (interactive) (my/exwm-resize-window 'height 'grow)))
+  ("k" (lambda () (interactive) (my/exwm-resize-window 'height 'shrink)))
+  ("l" (lambda () (interactive) (my/exwm-resize-window 'width 'grow)))
+  ("=" balance-windows)
+  ("q" nil "quit" :color blue))
+```
+
+
+### App shortcuts {#app-shortcuts}
+
+Also, a transient for shortcuts for the most frequent apps.
+
+I wanted to make the interactive lambda a macro, but this doesn't seem to work the way I expect, so the code has a bit of duplication.
+
+```emacs-lisp
+(defun my/run-in-background (command)
+  (let ((command-parts (split-string command "[ ]+")))
+    (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
+
+(transient-define-prefix my/exwm-apps ()
+  ["Apps"
+   ("t" "Termnial (Alacritty)" (lambda () (interactive) (my/run-in-background "alacritty")))
+   ("b" "Browser (Firefox)" (lambda () (interactive) (my/run-in-background "firefox")))
+   ("v" "VK" (lambda () (interactive) (my/run-in-background "vk")))
+   ("s" "Slack" (lambda () (interactive) (my/run-in-background "slack-wrapper")))
+   ("d" "Discord" (lambda () (interactive) (my/run-in-background "flatpak run com.discordapp.Discord")))
+   ("q" "Quit" transient-quit-one)])
+```
+
+
+### Move workspace to another monitor {#move-workspace-to-another-monitor}
+
+A function to move the current workspace to another monitor.
+
+```emacs-lisp
+(defun my/exwm-workspace-switch-monitor ()
+  (interactive)
+  (if (plist-get exwm-randr-workspace-monitor-plist exwm-workspace-current-index)
+      (setq exwm-randr-workspace-monitor-plist
+	    (map-delete exwm-randr-workspace-monitor-plist exwm-workspace-current-index))
+    (setq exwm-randr-workspace-monitor-plist
+	  (plist-put exwm-randr-workspace-monitor-plist
+		     exwm-workspace-current-index
+		     my/exwm-another-monitor)))
+  (exwm-randr-refresh))
+```
+
+
+### Switch to the opposite monitor {#switch-to-the-opposite-monitor}
+
+Store the information about which workspace is available on which monitor.
+
+```emacs-lisp
+(setq my/exwm-monitor-workspace '())
+
+(defun my/exwm-get-current-monitor ()
+  (let* ((info (shell-command-to-string "xdotool getmouselocation --shell | head -n 1"))
+	 (coord (string-to-number (substring info 2))))
+    (if (> coord 1920) 1 0)))
+
+(defun my/exwm-update-current-monitor ()
+  (setf (alist-get (my/exwm-get-current-monitor) my/exwm-monitor-workspace)
+	exwm-workspace-current-index))
+
+(add-hook 'exwm-workspace-switch-hook
+	  #'my/exwm-update-current-monitor)
+```
+
+Switch to the opposite monitor.
+
+```emacs-lisp
+(defun my/exwm-switch-to-other-monitor ()
+  (interactive)
+  (let* ((current (my/exwm-get-current-monitor))
+	 (other (seq-some
+		 (lambda (m)
+		   (and (not (= (car m) current)) (cdr m)))
+		 my/exwm-monitor-workspace)))
+    (exwm-workspace-switch other)))
+```
+
+
+### Switching buffers {#switching-buffers}
+
+A single perspective usually has only a handful of EXWM buffers, so here is a function to cycle them.
+
+Those buffers that are visible in another window are highlighted blue and skipped. The current buffer is highlighted yellow.
+
+```emacs-lisp
+(defun my/cycle-persp-exwm-buffers (dir)
+  (let* ((current (current-buffer))
+	 (ignore-rx (persp--make-ignore-buffer-rx))
+	 (visible-buffers '())
+	 (exwm-data
+	  (cl-loop for buf in (persp-current-buffers)
+		   for is-another = (and (get-buffer-window buf) (not (eq current buf)))
+		   if (and (buffer-live-p buf)
+			   (eq 'exwm-mode (buffer-local-value 'major-mode buf))
+			   (not (string-match-p ignore-rx (buffer-name buf))))
+		   collect buf into all-buffers
+		   and if (not is-another) collect buf into cycle-buffers
+		   finally (return (list all-buffers cycle-buffers))))
+	 (all-buffers (nth 0 exwm-data))
+	 (cycle-buffers (nth 1 exwm-data))
+	 (current-pos (or (cl-position current cycle-buffers) -1)))
+    (if (seq-empty-p cycle-buffers)
+	(message "No EXWM buffers to cycle!")
+      (let* ((next-pos (% (+ current-pos (length cycle-buffers)
+			     (if (eq dir 'forward) 1 -1))
+			  (length cycle-buffers)))
+	     (next-buffer (nth next-pos cycle-buffers)))
+	(switch-to-buffer next-buffer)
+	(message
+	 "%s"
+	 (mapconcat
+	  (lambda (buf)
+	    (let ((name (string-replace "EXWM :: " "" (buffer-name buf))))
+	      (cond
+	       ((eq (current-buffer) buf)
+		(concat
+		 "["
+		 (propertize name 'face `(foreground-color . ,(doom-color 'yellow)))
+		 "]"))
+	       ((not (member buf cycle-buffers))
+		(concat
+		 "["
+		 (propertize name 'face `(foreground-color . ,(doom-color 'blue)))
+		 "]"))
+	       (t (format " %s " name)))))
+	  all-buffers
+	  " "))))))
+```
+
+
+### Add all EXWM buffers to current perspective {#add-all-exwm-buffers-to-current-perspective}
+
+```emacs-lisp
+(defun my/add-exwm-buffers-to-current-perspective ()
+  (interactive)
+  (let ((ignore-rx (persp--make-ignore-buffer-rx)))
+    (cl-loop for buf in (buffer-list)
+	     if (and (buffer-live-p buf)
+		     (eq 'exwm-mode (buffer-local-value 'major-mode buf))
+		     (not (string-match-p ignore-rx (buffer-name buf))))
+	     do (persp-add-buffer (buffer-name buf)))))
+```
+
+
+### Revive perspectives {#revive-perspectives}
+
+Occasionally the current perspective gets screwed up after a popup. This function attempts to fix it.
+
+```emacs-lisp
+(defun my/exwm-revive-perspectives ()
+  "Make perspectives in the current frame not killed."
+  (interactive)
+  (let ((to-switch nil))
+    (maphash
+     (lambda (_ v)
+       (setf (persp-killed v) nil)
+       (unless to-switch
+	 (setq to-switch v)))
+     (frame-parameter nil 'persp--hash))
+    (when to-switch
+      (persp-switch (persp-name to-switch)))))
+```
+
+
+### Locking up {#locking-up}
+
+Run i3lock.
+
+```emacs-lisp
+(defun my/exwm-lock ()
+  (interactive)
+  (my/run-in-background "i3lock -f -i /home/pavel/Pictures/lock-wallpaper.png"))
+```
+
+
+### Keybindings {#keybindings}
+
+Setting keybindings for EXWM. This actually has to be in the `:config` block of the `use-package` form, that is it has to be run after EXWM is loaded, so I use noweb to put this block in the correct place.
+
+First, some prefixes for keybindings that are always passed to EXWM instead of the X application in `line-mode`:
+
+```emacs-lisp
+(setq exwm-input-prefix-keys
+      `(?\C-x
+	?\C-w
+	?\M-x
+	?\M-u))
+```
+
+Also other local keybindings, that are also available only in `line-mode`:
+
+```emacs-lisp
+(defmacro my/app-command (command)
+  `(lambda () (interactive) (my/run-in-background ,command)))
+
+(general-define-key
+ :keymaps '(exwm-mode-map)
+ "C-q" 'exwm-input-send-next-key
+ "<print>" (my/app-command "flameshot gui")
+ "M-x" 'counsel-M-x
+ "M-SPC" (general-key "SPC"))
+```
+
+Simulation keys.
+
+```emacs-lisp
+(setq exwm-input-simulation-keys `((,(kbd "M-w") . ,(kbd "C-w"))
+				   (,(kbd "M-c") . ,(kbd "C-c"))))
+```
+
+And keybindings that are available in both `char-mode` and `line-mode`:
+
+```emacs-lisp
+(setq exwm-input-global-keys
+      `(
+	;; Reset to line-mode
+	(,(kbd "s-R") . exwm-reset)
+
+	;; Switch windows
+	(,(kbd "s-<left>"). windmove-left)
+	(,(kbd "s-<right>") . windmove-right)
+	(,(kbd "s-<up>") . windmove-up)
+	(,(kbd "s-<down>") . windmove-down)
+
+	(,(kbd "s-h"). windmove-left)
+	(,(kbd "s-l") . windmove-right)
+	(,(kbd "s-k") . windmove-up)
+	(,(kbd "s-j") . windmove-down)
+
+	;; Moving windows
+	(,(kbd "s-H") . (lambda () (interactive) (my/exwm-move-window 'left)))
+	(,(kbd "s-L") . (lambda () (interactive) (my/exwm-move-window 'right)))
+	(,(kbd "s-K") . (lambda () (interactive) (my/exwm-move-window 'up)))
+	(,(kbd "s-J") . (lambda () (interactive) (my/exwm-move-window 'down)))
+
+	;; Fullscreen
+	(,(kbd "s-f") . exwm-layout-toggle-fullscreen)
+
+	;; Quit
+	(,(kbd "s-Q") . evil-quit)
+
+	;; Split windows
+	(,(kbd "s-s") . evil-window-vsplit)
+	(,(kbd "s-v") . evil-window-hsplit)
+
+	;; Switch perspectives
+	(,(kbd "s-,") . persp-prev)
+	(,(kbd "s-.") . persp-next)
+
+	;; Switch buffers
+	(,(kbd "s-e") . persp-ivy-switch-buffer)
+
+	;; Resize windows
+	(,(kbd "s-r") . my/exwm-resize-hydra/body)
+
+	;; Apps & stuff
+	(,(kbd "s-p") . ,(my/app-command "rofi -modi drun,run -show drun"))
+	(,(kbd "s-;") . my/exwm-apps)
+	(,(kbd "s--") . ,(my/app-command "rofi-pass"))
+	(,(kbd "s-=") . ,(my/app-command "rofimoji"))
+
+	;; Basic controls
+	(,(kbd "<XF86AudioRaiseVolume>") . ,(my/app-command "ponymix increase 5 --max-volume 150"))
+	(,(kbd "<XF86AudioLowerVolume>") . ,(my/app-command "ponymix decrease 5 --max-volume 150"))
+	(,(kbd "<XF86AudioMute>") . ,(my/app-command "ponymix toggle"))
+
+	(,(kbd "<XF86AudioPlay>") . ,(my/app-command "mpc toggle"))
+	(,(kbd "<XF86AudioPause>") . ,(my/app-command "mpc pause"))
+	(,(kbd "<print>") . ,(my/app-command "flameshot gui"))
+
+	;; Switch workspace
+	(,(kbd "s-q") . my/exwm-switch-to-other-monitor)
+	(,(kbd "s-w") . exwm-workspace-switch)
+	(,(kbd "s-W") . exwm-workspace-move-window)
+	(,(kbd "s-<tab>") . my/exwm-workspace-switch-monitor)
+
+	;; Cycle EXWM windows in the current perspective
+	(,(kbd "s-[") . (lambda () (interactive) (my/cycle-persp-exwm-buffers 'backward)))
+	(,(kbd "s-]") . (lambda () (interactive) (my/cycle-persp-exwm-buffers 'forward)))
+	(,(kbd "s-o") . ,(my/app-command "rofi -show window"))
+
+	;; 's-N': Switch to certain workspace with Super (Win) plus a number key (0 - 9)
+	,@(mapcar (lambda (i)
+		    `(,(kbd (format "s-%d" i)) .
+		      (lambda ()
+			(interactive)
+			(exwm-workspace-switch-create ,i))))
+		  (number-sequence 0 9))))
+```
+
+
+### Pinentry {#pinentry}
+
+The GUI pinentry doesn't work too well with EXWM because of issues with popup windows, so we will use the Emacs one.
+
+```emacs-lisp
+(use-package pinentry
+  :straight t
+  :after (exwm)
+  :config
+  (setenv "GPG_AGENT_INFO" nil) ;; use emacs pinentry
+  (setq auth-source-debug t)
+
+  (setq epg-gpg-program "gpg2") ;; not necessary
+  (require 'epa-file)
+  (epa-file-enable)
+  (setq epa-pinentry-mode 'loopback)
+  (setq epg-pinentry-mode 'loopback)
+  (pinentry-start)
+  (my/run-in-background "gpgconf --reload gpg-agent"))
+```
+
+```vim
+default-cache-ttl 3600
+max-cache-ttl 3600
+allow-emacs-pinentry
+allow-loopback-pinentry
+```
+
+
+### Modeline {#modeline}
+
+Show current workspace in the modeline.
+
+```emacs-lisp
+(defvar my/exwm-mode-line-info "")
+
+(add-to-list 'mode-line-misc-info
+	     '(:eval my/exwm-mode-line-info))
+
+(defun my/exwm-mode-line-info-update ()
+  (setq my/exwm-mode-line-info
+	(concat
+	 "["
+	 (propertize (funcall exwm-workspace-index-map exwm-workspace-current-index)
+		     'face
+		     `(foreground-color . ,(doom-color 'yellow)))
+	 "]"))
+  (force-mode-line-update))
+
+(add-hook 'exwm-workspace-switch-hook #'my/exwm-mode-line-info-update)
+```
+
+
+### EXWM config {#exwm-config}
+
+And the EXWM config itself.
+
+```emacs-lisp
+(defun my/exwm-init ()
+  (exwm-workspace-switch 1)
+
+  (my/exwm-run-polybar)
+  (my/exwm-set-wallpaper)
+  (my/exwm-run-shepherd)
+  ;; (with-eval-after-load 'perspective
+  ;;   (my/exwm-setup-perspectives))
+  )
+
+(defun my/exwm-update-class ()
+  (exwm-workspace-rename-buffer (format "EXWM :: %s" exwm-class-name)))
+
+(use-package exwm
+  :straight t
+  :config
+  (setq exwm-workspace-number 5)
+  (add-hook 'exwm-init-hook #'my/exwm-init)
+  (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
+
+  (require 'exwm-randr)
+  (exwm-randr-enable)
+  (start-process-shell-command "xrandr" nil "~/bin/scripts/screen-layout")
+  (when (string= (system-name) "indigo")
+    (setq my/exwm-another-monitor "DVI-D-0")
+    (setq exwm-randr-workspace-monitor-plist `(2 ,my/exwm-another-monitor 3 ,my/exwm-another-monitor)))
+
+  (setq exwm-workspace-warp-cursor t)
+  (setq mouse-autoselect-window t)
+  (setq focus-follows-mouse t)
+
+  <<exwm-monitor-config>>
+  <<exwm-keybindings>>
+  <<exwm-mode-line-config>>
+
+  (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+  (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+
+  (exwm-enable))
 ```
 
 
@@ -688,7 +1246,8 @@ Keybindings to launch [rofi](https://github.com/davatorium/rofi). For more detai
 ```vim
 bindsym $mod+d exec "rofi -modi 'drun,run' -show drun"
 bindsym $mod+b exec --no-startup-id rofi-buku-mine
-bindsym $mod+minus exec rofi-pass; mode default
+bindsym $mod+minus exec rofi-pass
+bindsym $mod+equal exec rofimoji
 
 bindsym $mod+apostrophe mode "rofi"
 
@@ -894,9 +1453,9 @@ exec "xmodmap ~/.Xmodmap"
 
 ## Polybar {#polybar}
 
-| Guix dependency | Description |
-|-----------------|-------------|
-| polybar         | statusbar   |
+| Category        | Guix dependency | Description |
+|-----------------|-----------------|-------------|
+| desktop-polybar | polybar         | statusbar   |
 
 [Polybar](https://github.com/polybar/polybar) is a nice-looking, WM-agnostic statusbar program.
 
@@ -956,13 +1515,13 @@ declare -A BLOCKS=(
     ["eDP"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP"
     ["eDP-1"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP"
     ["DVI-D-0"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP"
-    ["HDMI-A-0"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP"
+    ["HDMI-A-0"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP pomm sun aw-afk date TSEP"
 )
 
 # Geolocation for some modules
 export LOC="SPB"
 
-export IPSTACK_API_KEY=$(pass show My_Online/APIs/ipstack | head -n 1)
+# export IPSTACK_API_KEY=$(pass show My_Online/APIs/ipstack | head -n 1)
 
 pkill polybar
 for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
@@ -1090,11 +1649,11 @@ If you want to copy something, you can go to the [bin/polybar](bin/polybar/) fol
 
 #### ipstack-vpn {#ipstack-vpn}
 
-| Guix dependency | Description             |
-|-----------------|-------------------------|
-| bind:utils      | Provides dig            |
-| curl            |                         |
-| jq              | util to work with JSONs |
+| Category        | Guix dependency | Description             |
+|-----------------|-----------------|-------------------------|
+| desktop-polybar | bind:utils      | Provides dig            |
+| desktop-polybar | curl            |                         |
+| desktop-polybar | jq              | util to work with JSONs |
 
 A module to get a country of the current IP and openvpn status. Uses [ipstack](https://ipstack.com/) API.
 
@@ -1164,9 +1723,9 @@ interval = 1200
 
 Prints out a current uptime and non-AFK time from [ActivityWatch](https://github.com/ActivityWatch) server
 
-| Guix dependency |
-|-----------------|
-| dateutils       |
+| Category        | Guix dependency |
+|-----------------|-----------------|
+| desktop-polybar | dateutils       |
 
 ```bash
 afk_event=$(curl -s -X GET "http://localhost:5600/api/0/buckets/aw-watcher-afk_$(hostname)/events?limit=1" -H "accept: application/json")
@@ -1190,11 +1749,30 @@ interval = 60
 ```
 
 
+#### pomm {#pomm}
+
+Pomodoro module.
+
+```bash
+if ps -e | grep emacs >> /dev/null; then
+    emacsclient --eval "(if (boundp 'pomm-current-mode-line-string) pomm-current-mode-line-string \"\") " | xargs echo -e
+fi
+```
+
+```ini
+[module/pomm]
+type = custom/script
+exec = /home/pavel/bin/polybar/pomm.sh
+interval = 1
+format-underline = ${colors.green-lighter}
+```
+
+
 #### sun {#sun}
 
-| Guix dependency |
-|-----------------|
-| sunwait         |
+| Category        | Guix dependency |
+|-----------------|-----------------|
+| desktop-polybar | sunwait         |
 
 Prints out the time of sunrise/sunset. Uses [sunwait](https://github.com/risacher/sunwait)
 
@@ -1520,9 +2098,9 @@ ramp-capacity-4 = 
 
 ## Rofi {#rofi}
 
-| Guix dependency |
-|-----------------|
-| rofi            |
+| Category     | Guix dependency |
+|--------------|-----------------|
+| desktop-rofi | rofi            |
 
 [rofi](https://github.com/davatorium/rofi) is another dynamic menu generator. It can act as dmenu replacement but offers a superset of dmenu's features.
 
@@ -1741,12 +2319,19 @@ fi
 ```
 
 
+#### Emojis {#emojis}
+
+| Category     | Guix dependency |
+|--------------|-----------------|
+| desktop-rofi | python-rofimoji |
+
+
 #### pass {#pass}
 
-| Guix dependency |
-|-----------------|
-| rofi-pass       |
-| xset            |
+| Category     | Guix dependency |
+|--------------|-----------------|
+| desktop-rofi | rofi-pass       |
+| desktop-rofi | xset            |
 
 A nice [pass frontend for Rofi](https://github.com/carnager/rofi-pass), which is even packaged for Guix.
 
@@ -1756,13 +2341,6 @@ EDITOR=vim
 default_autotype='username :tab pass'
 clip=both
 ```
-
-
-#### emojis {#emojis}
-
-| Guix dependency |
-|-----------------|
-| rofi-emoji      |
 
 
 ## Flameshot {#flameshot}
@@ -2331,12 +2909,12 @@ wintypes:
 
 ## Zathura {#zathura}
 
-| Guix dependency     |
-|---------------------|
-| zathura             |
-| zathura-ps          |
-| zathura-pdf-poppler |
-| zathura-djvu        |
+| Category | Guix dependency   |
+|----------|-------------------|
+| office   | zathura           |
+| office   | zathura-ps        |
+| office   | zathura-pdf-mupdf |
+| office   | zathura-djvu      |
 
 [Zathura](https://pwmt.org/projects/zathura/) is a pdf viewer with vim-like keybindings. One of my favorite features is an ability to invert the document colors.
 
@@ -2350,6 +2928,26 @@ set recolor-lightcolor <<get-color(name="black", quote=1)>>
 set recolor true
 map <C-r> set recolor false
 map <C-R> set recolor true
+```
+
+For some reason zathura doesn't pick up the plugin directory, so I make a wrapper that sets the directory up:
+
+```bash
+zathura -p ~/.guix-extra-profiles/office/office/lib/zathura $@
+```
+
+```conf-desktop
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zathura
+Exec=/home/pavel/bin/zathura-wrapper %U
+```
+
+Add the following like to the `mimeapps.list`
+
+```text
+application/pdf=zathura-wrapper.desktop
 ```
 
 
@@ -2457,6 +3055,30 @@ LaTeX
 (specifications->manifest
  '(
    <<packages("latex")>>))
+```
+
+Desktop Misc
+
+```scheme
+(specifications->manifest
+ '(
+   <<packages("desktop-misc")>>))
+```
+
+Desktop polybar
+
+```scheme
+(specifications->manifest
+ '(
+   <<packages("desktop-polybar")>>))
+```
+
+Desktop rofi
+
+```scheme
+(specifications->manifest
+ '(
+   <<packages("desktop-rofi")>>))
 ```
 
 
@@ -2661,6 +3283,18 @@ aw-watcher-window
 ```
 
 
+### nm-applet {#nm-applet}
+
+```scheme
+(define nm-applet
+  (make <service>
+    #:provides '(nm-applet)
+    #:respawn? #t
+    #:start (make-forkexec-constructor '("nm-applet"))
+    #:stop (make-kill-destructor)))
+```
+
+
 ### Discord rich presence {#discord-rich-presence}
 
 References:
@@ -2687,7 +3321,7 @@ Launch an authentication agent. Necessary for stuff like `pkexec`. I suspect I'm
   (make <service>
     #:provides '(polkit-gnome)
     #:respawn? #t
-    #:start (make-forkexec-constructor '("/home/pavel/.guix-extra-profiles/desktop/desktop/libexec/polkit-gnome-authentication-agent-1"))
+    #:start (make-forkexec-constructor '("/home/pavel/.guix-extra-profiles/desktop-misc/desktop-misc/libexec/polkit-gnome-authentication-agent-1"))
     #:stop (make-kill-destructor)))
 ```
 
@@ -2747,7 +3381,8 @@ Register services
  polkit-gnome
  vpn
  davmail
- xmodmap)
+ xmodmap
+ nm-applet)
 ```
 
 Daemonize shepherd
@@ -2759,7 +3394,7 @@ Daemonize shepherd
 Run services
 
 ```scheme
-(for-each start '(mpd mpd-watcher mcron aw-server aw-watcher-afk aw-watcher-window pulseeffects xsettingsd discord-rich-presence polkit-gnome davmail xmodmap))
+(for-each start '(mpd mpd-watcher mcron aw-server aw-watcher-afk aw-watcher-window pulseeffects xsettingsd discord-rich-presence polkit-gnome davmail xmodmap nm-applet))
 ```
 
 
@@ -2774,29 +3409,28 @@ Run services
 
 Other desktop programs I use are listed below.
 
-| Guix dependency        | Description                               |
-|------------------------|-------------------------------------------|
-| xprop                  | Tool to display properties of X windows   |
-| arandr                 | GUI to xrandr                             |
-| light                  | Control screen brightness                 |
-| ponymix                | Control PulseAudio CLI                    |
-| pavucontrol            | Control PulseAudio GUI                    |
-| network-manager-applet | Applet to manage network connections      |
-| feh                    | Image viewer. Used to set background      |
-| copyq                  | Clipboard manager                         |
-| xmodmap                | Program to modify keybindings on X server |
-| thunar                 | My preferred GUI file manager             |
-| keepassxc              | My preferred password manager             |
-| telegram-desktop       | telegram client                           |
-| xdg-utils              | gives xdg-open and stuff                  |
-| gnome-font-viewer      | view fonts                                |
-| qbittorrent            | torrent client                            |
-| fontconfig             |                                           |
-| polkit-gnome           | Polkit authentication agent               |
-| anydesk                | Remote desktop software                   |
-| gnome-disk-utility     | Manage disks                              |
-| gparted                | Manage partitions                         |
-| xev                    | Test input                                |
+| Category     | Guix dependency        | Description                               |
+|--------------|------------------------|-------------------------------------------|
+| desktop-misc | xprop                  | Tool to display properties of X windows   |
+| desktop-misc | arandr                 | GUI to xrandr                             |
+| desktop-misc | light                  | Control screen brightness                 |
+| desktop-misc | ponymix                | Control PulseAudio CLI                    |
+| desktop-misc | pavucontrol            | Control PulseAudio GUI                    |
+| desktop-misc | network-manager-applet | Applet to manage network connections      |
+| desktop-misc | xmodmap                | Program to modify keybindings on X server |
+| desktop-misc | fontconfig             |                                           |
+| desktop-misc | polkit-gnome           | Polkit authentication agent               |
+| desktop-misc | feh                    | Image viewer. Used to set background      |
+| desktop-misc | copyq                  | Clipboard manager                         |
+| desktop-misc | thunar                 | My preferred GUI file manager             |
+| desktop-misc | telegram-desktop       | telegram client                           |
+| desktop-misc | xdg-utils              | gives xdg-open and stuff                  |
+| desktop-misc | gnome-font-viewer      | view fonts                                |
+| desktop-misc | qbittorrent            | torrent client                            |
+| desktop-misc | anydesk                | Remote desktop software                   |
+| desktop-misc | gnome-disk-utility     | Manage disks                              |
+| desktop-misc | gparted                | Manage partitions                         |
+| desktop-misc | xev                    | Test input                                |
 
 <a id="code-snippet--packages"></a>
 ```emacs-lisp
