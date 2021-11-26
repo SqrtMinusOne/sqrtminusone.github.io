@@ -19,7 +19,12 @@ def create_app():
     @app.route('/', methods=['POST'])
     @auth.login_required
     def deploy():
-        subprocess.run(['git', 'fetch', 'origin'])
-        subprocess.run(['git', 'checkout', 'origin/gh-pages'])
+        subprocess.run(
+            ['git', 'fetch', 'origin'], cwd=os.environ.get('CWD', None)
+        )
+        subprocess.run(
+            ['git', 'checkout', 'origin/gh-pages'],
+            cwd=os.environ.get('CWD', None)
+        )
 
     return app
