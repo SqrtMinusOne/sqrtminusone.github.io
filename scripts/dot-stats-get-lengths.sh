@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ROOT=$(git rev-parse --show-toplevel)
 DOTFILES_REPO=$(git rev-parse --show-toplevel)/repos/dotfiles
-DATA_ROOT=$(git rev-parse --show-toplevel)/_data
+DATA_ROOT=$(git rev-parse --show-toplevel)/__data
 
 echo $ROOT
 echo $DOTFILES_REPO

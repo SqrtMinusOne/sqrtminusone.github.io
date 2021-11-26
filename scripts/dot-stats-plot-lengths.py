@@ -14,7 +14,7 @@ root_process = subprocess.run(
     ['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE
 )
 ROOT = root_process.stdout.decode('utf-8')[:-1]
-DATA_ROOT = os.path.join(ROOT, '_data')
+DATA_ROOT = os.path.join(ROOT, '__data')
 PICS_ROOT = os.path.join(ROOT, 'static', 'stats')
 
 plt.style.use(os.path.join(ROOT, 'scripts', 'palenight.mplstyle'))
