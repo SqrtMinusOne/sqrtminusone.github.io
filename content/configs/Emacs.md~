@@ -4,11 +4,8 @@ author = ["Pavel"]
 draft = false
 +++
 
-> One day we won't hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn't today.
-
-My [Emacs](https://www.gnu.org/software/emacs/) configuration.
-
-As with other files in the repo, parts prefixed with (OFF) are not used but kept for historic purposes.
+\#+begin\_quote
+One day we won't hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn'.
 
 <div class="ox-hugo-toc toc">
 <div></div>
@@ -89,7 +86,12 @@ As with other files in the repo, parts prefixed with (OFF) are not used but kept
     - [<span class="org-todo done OFF">OFF</span> (OFF) Tab bar](#off--tab-bar)
         - [Setup](#setup)
         - [My title](#my-title)
-    - [Modeline](#modeline)
+    - [Doom Modeline](#doom-modeline)
+    - [<span class="org-todo done OFF">OFF</span> (OFF) Spaceline](#off--spaceline)
+        - [Perspectives](#perspectives)
+        - [EXWM workspace](#exwm-workspace)
+        - [Debug](#debug)
+        - [My theme](#my-theme)
     - [Font stuff](#font-stuff)
         - [Ligatures](#ligatures)
         - [Icons](#icons)
@@ -379,7 +381,8 @@ The following is true if Emacs is meant to be used with TRAMP over slow ssh. Tak
 (setq my/slow-ssh
       (or
        (string= (getenv "IS_TRAMP") "true")
-       (string= (system-name) "dev-digital")))
+       (string= (system-name) "dev-digital")
+       (string= (system-name) "violet")))
 ```
 
 The following is true is Emacs is ran on a remote server where I don't need stuff like my org workflow
@@ -387,7 +390,8 @@ The following is true is Emacs is ran on a remote server where I don't need stuf
 ```emacs-lisp
 (setq my/remote-server
       (or (string= (getenv "IS_REMOTE") "true")
-	  (string= (system-name) "dev-digital")))
+	  (string= (system-name) "dev-digital")
+	  (string= (system-name) "violet")))
 ```
 
 And the following is true if Emacs is run from termux on Android.
@@ -503,8 +507,8 @@ I have some variables which I don't commit to the repo, e.g. my current location
 
 ```emacs-lisp
 (let ((private-file (expand-file-name "private.el" user-emacs-directory)))
-  (when (file-exists-p private-file)
-    (load-file private-file)))
+
+    (load-file private-file))
 ```
 
 
@@ -1593,11 +1597,12 @@ References:
 (general-imap "C-SPC" 'company-complete)
 ```
 
-A company frontend with nice icons.
+A company frontend with nice icons. Disabled since the base company got icons support and since company-box has some issues with spaceline.
 
 ```emacs-lisp
 (use-package company-box
   :straight t
+  :disabled
   :if (and (display-graphic-p) (not my/lowpower))
   :after (company)
   :hook (company-mode . company-box-mode))
@@ -1874,11 +1879,11 @@ Also, a hook allows me to change doom-theme more or less at will, although I do 
 
 ```emacs-lisp
 (unless my/is-termux
-  (deftheme my-theme)
+  (deftheme my-theme-1)
 
   (defun my/update-my-theme (&rest _)
     (custom-theme-set-faces
-     'my-theme
+     'my-theme-1
      `(tab-bar-tab ((t (
 			:background ,(doom-color 'bg)
 			:foreground ,(doom-color 'yellow)
@@ -1895,12 +1900,24 @@ Also, a hook allows me to change doom-theme more or less at will, although I do 
      `(epe-pipeline-time-face ((t (:foreground ,(doom-color 'yellow)))))
      `(epe-pipeline-user-face ((t (:foreground ,(doom-color 'red)))))
      `(elfeed-search-tag-face ((t (:foreground ,(doom-color 'yellow)))))
-     `(notmuch-wash-cited-text ((t (:foreground ,(doom-color 'yellow))))))
+     `(notmuch-wash-cited-text ((t (:foreground ,(doom-color 'yellow)))))
+     `(spaceline-evil-emacs ((t :background ,(doom-color 'bg)
+				:foreground ,(doom-color 'fg))))
+     `(spaceline-evil-insert ((t :background ,(doom-color 'green)
+				 :foreground ,(doom-color 'base0))))
+     `(spaceline-evil-motion ((t :background ,(doom-color 'magenta)
+				 :foreground ,(doom-color 'base0))))
+     `(spaceline-evil-normal ((t :background ,(doom-color 'blue)
+				 :foreground ,(doom-color 'base0))))
+     `(spaceline-evil-replace ((t :background ,(doom-color 'yellow)
+				  :foreground ,(doom-color 'base0))))
+     `(spaceline-evil-visual ((t :background ,(doom-color 'grey)
+				 :foreground ,(doom-color 'base0)))))
     (custom-theme-set-variables
-     'my-theme
+     'my-theme-1
      `(aweshell-invalid-command-color ,(doom-color 'red))
      `(aweshell-valid-command-color ,(doom-color 'green)))
-    (enable-theme 'my-theme))
+    (enable-theme 'my-theme-1))
 
   (advice-add 'load-theme :after #'my/update-my-theme)
   (when (fboundp 'doom-color)
@@ -2082,9 +2099,11 @@ Prepend tab name with the shortened projectile project title
 ```
 
 
-### Modeline {#modeline}
+### Doom Modeline {#doom-modeline}
 
 A modeline from Doom Emacs.
+
+A big advantage of this package is that it just works out of the box and does not require much customization. For now I opted out of it in favour of spaceline because I want to have a more powerline-ish look.
 
 References:
 
@@ -2095,13 +2114,136 @@ References:
 ```emacs-lisp
 (use-package doom-modeline
   :straight t
+  ;; :if (not (display-graphic-p))
   :init
   (setq doom-modeline-env-enable-python nil)
   (setq doom-modeline-env-enable-go nil)
+  (setq doom-modeline-buffer-encoding 'nondefault)
+  (setq doom-modeline-hud t)
   :config
   (doom-modeline-mode 1)
   (setq doom-modeline-minor-modes nil)
   (setq doom-modeline-buffer-state-icon nil))
+```
+
+
+### <span class="org-todo done OFF">OFF</span> (OFF) Spaceline {#off--spaceline}
+
+A modeline from Spacemacs. It provides a different look than Doom modeline, but also needs to be tuned more.
+
+```emacs-lisp
+(use-package spaceline
+  :straight t
+  :disabled
+  :config
+  <<spaceline-conf>>)
+```
+
+
+#### Perspectives {#perspectives}
+
+Definining a bunch of custom powerline segments. First, a list of perspectives.
+
+```emacs-lisp
+(defun my/format-perspective-list ()
+  (format "[%s]"
+	  (let ((curr (persp-current-name)))
+	    (mapconcat
+	     (lambda (name)
+	       (if (string-equal name curr)
+		   (propertize
+		    name
+		    'face
+		    'persp-selected-face)
+		 name))
+	     (persp-names)
+	     "|"))))
+
+(defvar my/spaceline-persp-list "")
+
+(defun my/persp-update-advice (&rest _)
+  (setq my/spaceline-persp-list (my/format-perspective-list)))
+
+(advice-add #'persp-update-modestring :after #'my/persp-update-advice)
+(add-hook 'buffer-list-update-hook #'my/persp-update-advice)
+(add-hook 'find-file-hook #'my/persp-update-advice)
+
+(spaceline-define-segment perspective
+  "Perspective.el"
+  my/spaceline-persp-list)
+```
+
+
+#### EXWM workspace {#exwm-workspace}
+
+Current EXWM workspace. The variable is being set in the EXWM config, the segment just displays it.
+
+```emacs-lisp
+(defvar my/exwm-mode-line-info-no-props "")
+
+(spaceline-define-segment exwm
+  my/exwm-mode-line-info-no-props)
+```
+
+
+#### Debug {#debug}
+
+Indicators for `debug-on-error` and `debug-on-quit`.
+
+```emacs-lisp
+(spaceline-define-segment debug-on-error
+  (when debug-on-error
+    (propertize
+     ""
+     'face 'warning
+     'local-map (let ((map (make-sparse-keymap)))
+		  (define-key map
+		    [mode-line mouse-1]
+		    #'toggle-debug-on-error)
+		  map))))
+
+(spaceline-define-segment debug-on-quit
+  (when debug-on-quit
+    (propertize
+     ""
+     'face 'error
+     'local-map (let ((map (make-sparse-keymap)))
+		  (define-key map
+		    [mode-line mouse-1]
+		    #'toggle-debug-on-quit)
+		  map))))
+```
+
+
+#### My theme {#my-theme}
+
+And a custom spaceline config with segments I like.
+
+```emacs-lisp
+(require 'spaceline-config)
+
+(spaceline-compile
+  "my"
+  '((evil-state :priority 100 :face (spaceline-highlight-face-evil-state))
+    (buffer-modified :priority 50)
+    (version-control :priority 25 :when active)
+    (buffer-id :priority 90))
+  '(;; (global)
+    (exwm :when active)
+    (perspective :when active)
+    (flycheck-error :when active)
+    (flycheck-warning :when active)
+    (debug-on-error :when active)
+    (debug-on-quit :when active)
+    (major-mode :when active :priority 90)
+    (selection-info :priority 95)
+    (line-column :when active  :priority 99)
+    (hud :when active :priority 99)))
+
+(spaceline-ml-my)
+
+(setq-default mode-line-format '("%e" (:eval (spaceline-ml-my))))
+(setq mode-line-format '("%e" (:eval (spaceline-ml-my))))
 ```
 
 
@@ -3588,7 +3730,16 @@ References:
 	`(("d" "default" plain "%?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)))
-  (require 'org-roam-protocol))
+  (require 'org-roam-protocol)
+  (general-define-key
+   :keymaps 'org-roam-mode-map
+   :states '(normal)
+   "TAB" #'magit-section-toggle
+   "q" #'quit-window
+   "k" #'magit-section-backward
+   "j" #'magit-section-forward
+   "gr" #'revert-buffer
+   "RET" #'org-roam-buffer-visit-thing))
 
 (my-leader-def
   :infix "or"
@@ -4287,6 +4438,8 @@ References:
 	 ;; (csharp-mode . lsp)
 	 )
   :commands lsp
+  :init
+  (setq lsp-keymap-prefix nil)
   :config
   (setq lsp-idle-delay 1)
   (setq lsp-eslint-server-command '("node" "/home/pavel/.emacs.d/.cache/lsp/eslint/unzipped/extension/server/out/eslintServer.js" "--stdio"))
@@ -6259,14 +6412,14 @@ Also a function to automatically adjust these colors with the Doom theme.
 ```emacs-lisp
 (defun my/update-my-theme-elfeed (&rest _)
   (custom-theme-set-faces
-   'my-theme
+   'my-theme-1
    `(elfeed-videos-entry ((t :foreground ,(doom-color 'red))))
    `(elfeed-twitter-entry ((t :foreground ,(doom-color 'blue))))
    `(elfeed-emacs-entry ((t :foreground ,(doom-color 'magenta))))
    `(elfeed-music-entry ((t :foreground ,(doom-color 'green))))
    `(elfeed-podcasts-entry ((t :foreground ,(doom-color 'yellow))))
    `(elfeed-blogs-entry ((t :foreground ,(doom-color 'orange)))))
-  (enable-theme 'my-theme))
+  (enable-theme 'my-theme-1))
 
 (advice-add 'load-theme :after #'my/update-my-theme-elfeed)
 (when (fboundp 'doom-color)

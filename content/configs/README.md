@@ -79,11 +79,11 @@ If you are viewing the file in Emacs, eval the following to show the pictures wi
 
 ### History {#history}
 
-{{< figure src="/ox-hugo/all.png" >}}
+{{< figure src="./dot-stats/img/all.png" >}}
 
-{{< figure src="/ox-hugo/emacs-vim.png" >}}
+{{< figure src="./dot-stats/img/emacs-vim.png" >}}
 
-{{< figure src="/ox-hugo/literate-config.png" >}}
+{{< figure src="./dot-stats/img/literate-config.png" >}}
 
 
 ## Misc {#misc}

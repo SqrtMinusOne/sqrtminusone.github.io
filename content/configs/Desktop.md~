@@ -58,28 +58,31 @@ Parts prefixed with (OFF) are not used, but kept for historic purposes. For some
     - [Keyboard Layout](#keyboard-layout)
     - [Autostart](#autostart)
 - [Polybar](#polybar)
-    - [Launching](#launching)
     - [General settings](#general-settings)
         - [Colors](#colors)
-        - [Bar config](#bar-config)
-    - [Modules](#modules)
-        - [ipstack-vpn](#ipstack-vpn)
-        - [weather](#weather)
-        - [aw-afk](#aw-afk)
-        - [pomm](#pomm)
-        - [sun](#sun)
-        - [SEP](#sep)
-        - [TSEP](#tsep)
-        - [i3](#i3)
-        - [xkeyboard](#xkeyboard)
-        - [mpd](#mpd)
+        - [Glyphs](#glyphs)
+        - [Modules](#modules)
+        - [Global bar config](#global-bar-config)
+        - [Launch script](#launch-script)
+    - [Individual modules](#individual-modules)
         - [pulseaudio](#pulseaudio)
+        - [mpd](#mpd)
         - [cpu](#cpu)
         - [ram-memory](#ram-memory)
         - [swap-memory](#swap-memory)
         - [network](#network)
-        - [date](#date)
+        - [ipstack-vpn](#ipstack-vpn)
+        - [openvpn](#openvpn)
+        - [xkeyboard](#xkeyboard)
         - [battery](#battery)
+        - [weather](#weather)
+        - [sun](#sun)
+        - [aw-afk](#aw-afk)
+        - [date](#date)
+        - [pomm](#pomm)
+        - [SEP](#sep)
+        - [TSEP](#tsep)
+        - [i3](#i3)
 - [Rofi](#rofi)
     - [Theme](#theme)
     - [Scripts](#scripts)
@@ -228,11 +231,13 @@ Xft.dpi: <<get-dpi()>>
 
 A few programs I use to customize the apperance are listed below.
 
-| Guix dependency    | Description             |
-|--------------------|-------------------------|
-| matcha-theme       | My preferred GTK theme  |
-| papirus-icon-theme | My preferred Icon theme |
-| xsettingsd         | X11 settings daemon     |
+| Guix dependency       | Description             |
+|-----------------------|-------------------------|
+| matcha-theme          | My preferred GTK theme  |
+| papirus-icon-theme    | My preferred Icon theme |
+| gnome-themes-standard |                         |
+| xsettingsd            | X11 settings daemon     |
+| gnome-themes-extra    |                         |
 
 [xsettingsd](https://github.com/derat/xsettingsd) is a lightweight daemon which configures X11 applications. It is launched with shepherd in the [Services](#services) section.
 
@@ -281,9 +286,9 @@ References:
 
 ### Xsession {#xsession}
 
-First things first, Emacs has to be launched as a window manager. On a more conventional system, I'd create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix, it's a bit more complicated, because all such folders are not meant to be changed manually.
+First things first, Emacs has to be launched as a window manager. On a more conventional system I'd create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix it's a bit more complicated, because all such folders are not meant to be changed manually.
 
-However, GDM, the login manager that seems to default on Guix, launches `~/.xsession` on the startup if it's present, which is just fine for my purposes.
+However, GDM, the login manager that seems to be the default on Guix, launches `~/.xsession` on the startup if it's present, which is just fine for my purposes.
 
 ```sh
 # Source .profile
@@ -385,9 +390,6 @@ And a function to move windows with the following behavior:
 Something like this also goes for resizing windows. I'm used to the i3 "mode" for this functionality, and this seems to be a sensible approach.
 
 ```emacs-lisp
-(use-package transient
-  :straight t)
-
 (setq my/exwm-resize-value 5)
 
 (defun my/exwm-resize-window (dir kind &optional value)
@@ -429,6 +431,9 @@ Also, a transient for shortcuts for the most frequent apps.
 I wanted to make the interactive lambda a macro, but this doesn't seem to work the way I expect, so the code has a bit of duplication.
 
 ```emacs-lisp
+(use-package transient
+  :straight t)
+
 (defun my/run-in-background (command)
   (let ((command-parts (split-string command "[ ]+")))
     (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
@@ -470,9 +475,8 @@ Store the information about which workspace is available on which monitor.
 (setq my/exwm-monitor-workspace '())
 
 (defun my/exwm-get-current-monitor ()
-  (let* ((info (shell-command-to-string "xdotool getmouselocation --shell | head -n 1"))
-	 (coord (string-to-number (substring info 2))))
-    (if (> coord 1920) 1 0)))
+  (if (plist-get exwm-randr-workspace-monitor-plist exwm-workspace-current-index)
+      1 0))
 
 (defun my/exwm-update-current-monitor ()
   (setf (alist-get (my/exwm-get-current-monitor) my/exwm-monitor-workspace)
@@ -482,7 +486,7 @@ Store the information about which workspace is available on which monitor.
 	  #'my/exwm-update-current-monitor)
 ```
 
-Switch to the opposite monitor.
+Switch to the opposite monitor. For now, this works only for two monitors because I don't have more.
 
 ```emacs-lisp
 (defun my/exwm-switch-to-other-monitor ()
@@ -491,7 +495,9 @@ Switch to the opposite monitor.
 	 (other (seq-some
 		 (lambda (m)
 		   (and (not (= (car m) current)) (cdr m)))
-		 my/exwm-monitor-workspace)))
+		 my/exwm-monitor-workspace))
+	 (focus-follows-mouse nil)
+	 (mouse-autoselect-window nil))
     (exwm-workspace-switch other)))
 ```
 
@@ -682,6 +688,8 @@ And keybindings that are available in both `char-mode` and `line-mode`:
 	;; Basic controls
 	(,(kbd "<XF86AudioRaiseVolume>") . ,(my/app-command "ponymix increase 5 --max-volume 150"))
 	(,(kbd "<XF86AudioLowerVolume>") . ,(my/app-command "ponymix decrease 5 --max-volume 150"))
+	(,(kbd "<XF86MonBrightnessUp>") . ,(my/app-command "light -A 5"))
+	(,(kbd "<XF86MonBrightnessDown>") . ,(my/app-command "light -U 5"))
 	(,(kbd "<XF86AudioMute>") . ,(my/app-command "ponymix toggle"))
 
 	(,(kbd "<XF86AudioPlay>") . ,(my/app-command "mpc toggle"))
@@ -756,6 +764,7 @@ Show current workspace in the modeline.
 		     'face
 		     `(foreground-color . ,(doom-color 'yellow)))
 	 "]"))
+  (setq my/exwm-mode-line-info-no-props (funcall exwm-workspace-index-map exwm-workspace-current-index))
   (force-mode-line-update))
 
 (add-hook 'exwm-workspace-switch-hook #'my/exwm-mode-line-info-update)
@@ -1468,7 +1477,312 @@ References:
 -   [polybar docs](https://github.com/polybar/polybar/wiki)
 
 
-### Launching {#launching}
+### General settings {#general-settings}
+
+
+#### Colors {#colors}
+
+First, let's use xrdb colors in polybar. To avoid code duplication, I generate them via noweb.
+
+<a id="code-snippet--get-polybar-colors"></a>
+```emacs-lisp
+(mapconcat
+  (lambda (elem)
+    (format "%s = ${xrdb:%s}" (nth 0 elem) (nth 1 elem)))
+  (seq-filter
+   (lambda (elem) (nth 1 elem))
+   table)
+   "\n")
+```
+
+```ini
+[colors]
+<<get-polybar-colors()>>
+
+background = ${xrdb:background}
+; foreground = ${xrdb:foreground}
+```
+
+
+#### Glyphs {#glyphs}
+
+Also, let's try to use some glyphs. The [polybar-themes](https://github.com/adi1090x/polybar-themes) repository can give some inspiration on what is possible, here I am replicating a powerline-ish look.
+
+Although polybar makes it a bit more awkward than it could've been. The approach is to put a glyph between two blocks like this:
+
+```text
+block1  block2
+```
+
+And set the colors like that:
+
+|            | block1 | glyph | block 2 |
+|------------|--------|-------|---------|
+| foreground | F1     | B2    | F2      |
+| background | B1     | B1    | B2      |
+
+So, let's define the glyph symbols:
+
+```ini
+[glyph]
+gleft = 
+gright = 
+```
+
+
+#### Modules {#modules}
+
+To make life a bit easier, I'll define a single source of truth for modules and their colors here.
+
+So, here is a table with all modules.
+
+<a id="table--polybar-modules"></a>
+
+| Index | Module      | Color         | Glyph |
+|-------|-------------|---------------|-------|
+| 1     | pulseaudio  | light-magenta | +     |
+| 2     | mpd         | magenta       | +     |
+| 3     | cpu         | cyan          | +     |
+| 4     | ram-memory  | light-green   | +     |
+| 5     | swap-memory | green         | +     |
+| 6     | network     | light-red     | +     |
+| 7     | openvpn     | light-red     |       |
+| 8     | xkeyboard   | red           | +     |
+| 9     | battery     | green         | +     |
+| 10    | weather     | light-yellow  | +     |
+| 12    | sun         | yellow        | +     |
+| 13    | aw-afk      | light-blue    | +     |
+| 14    | date        | blue          | +     |
+
+Some functions to use colors in the individual modules:
+
+<a id="code-snippet--get-polybar-bg"></a>
+```emacs-lisp
+(format
+ "${colors.%s}"
+ (nth
+  2
+  (seq-find
+   (lambda (el) (string-equal (nth 1 el) module))
+   table)))
+```
+
+<a id="code-snippet--get-polybar-fg"></a>
+```emacs-lisp
+"${colors.black}"
+```
+
+Also, I want to exclude some modules from certain monitors and machines. For now this concerns just the battery module, so I exclude it from the monitors of my desktop PC. In future I may need to rework this to include hostname, but as long as all my machines have separate monitor names, it works fine.
+
+<a id="table--polybar-modules-exclude"></a>
+
+| Monitor  | Exclude |
+|----------|---------|
+| DVI-D-0  | battery |
+| HDMI-A-0 | battery |
+
+Now, we need to generate a set of glyphs. The code below generates all the required glyhps so that every combination of neighoring colors in the bar had one.
+
+<a id="table--polybar-extra-colors"></a>
+
+| Color 1    | Color 2       |
+|------------|---------------|
+| background | white         |
+| background | light-magenta |
+| blue       | background    |
+
+<a id="code-snippet--polybar-generate-glyphs"></a>
+```emacs-lisp
+(let* ((monitors
+	(thread-last
+	  exclude-table
+	  (seq-map (lambda (el) (nth 0 el)))
+	  (seq-uniq)))
+       (exclude-combinations
+	(seq-map
+	 (lambda (monitor)
+	   (seq-map
+	    (lambda (el) (nth 1 el))
+	    (seq-filter
+	     (lambda (el) (and (string-equal (nth 0 el) monitor)
+			       (nth 1 el)))
+	     exclude-table)))
+	 `(,@monitors "")))
+       (module-glyph-combinations
+	(thread-last
+	  exclude-combinations
+	  (seq-map
+	   (lambda (exclude)
+	     (thread-last
+	       table
+	       (seq-filter
+		(lambda (elt)
+		  (not (or
+			(member (nth 1 elt) exclude)
+			(not (string-equal (nth 3 elt) "+"))))))
+	       ;; (seq-map (lambda (elt) (nth 1 elt)))
+	       )))
+	  (seq-uniq)))
+       (color-changes nil))
+  (dolist (e extra)
+    (add-to-list
+     'color-changes
+     (concat (nth 0 e) "--" (nth 1 e))))
+  (dolist (comb module-glyph-combinations)
+    (dotimes (i (1- (length comb)))
+      (add-to-list
+       'color-changes
+       (concat (nth 2 (nth i comb))
+	       "--"
+	       (nth 2 (nth (1+ i) comb))))))
+  (mapconcat
+   (lambda (el)
+     (let ((colors (split-string el "--")))
+       (format "
+[module/glyph-%s--%s]
+type = custom/text
+content-background = ${colors.%s}
+content-foreground = ${colors.%s}
+content = ${glyph.gright}
+content-font = 5"
+	       (nth 0 colors)
+	       (nth 1 colors)
+	       (nth 0 colors)
+	       (nth 1 colors))))
+   color-changes
+   "\n"))
+```
+
+```ini
+<<polybar-generate-glyphs()>>
+```
+
+And a set of modules interweaved with corresponding glyphs for each monitor:
+
+<a id="code-snippet--polybar-generate-modules"></a>
+```emacs-lisp
+(let* ((exclude-modules
+	(thread-last
+	  exclude-table
+	  (seq-filter (lambda (el) (string-equal (nth 0 el) monitor)))
+	  (seq-map (lambda (el) (nth 1 el)))))
+       (modules
+	(thread-last
+	  table
+	  (seq-filter (lambda (el) (not (member (nth 1 el) exclude-modules))))))
+       (prev-color first-color)
+       (ret nil))
+  (concat
+   (mapconcat
+    (lambda (el)
+      (apply
+       #'concat
+       (list
+	(when (string-equal (nth 3 el) "+")
+	  (setq ret (format "glyph-%s--%s " prev-color (nth 2 el)))
+	  (setq prev-color (nth 2 el))
+	  ret)
+	(nth 1 el))))
+    modules
+    " ")
+   (unless (string-empty-p last-color) (format " glyph-%s--%s " prev-color last-color))))
+```
+
+
+#### Global bar config {#global-bar-config}
+
+Global bar configuration.
+
+Monitor config and base colors.
+
+```ini
+[bar/mybar]
+monitor = ${env:MONITOR:}
+width = 100%
+height = ${env:HEIGHT:27}
+fixed-center = false
+bottom=true
+
+background = ${colors.background}
+foreground = ${colors.black}
+```
+
+Some geometry settings. These are set this way to make glyphs look the way they should
+
+```ini
+; line-size = 3
+line-color = #f00
+
+padding = 0
+
+module-margin-left = 0
+module-margin-right = 0
+margin-bottom = 0
+margin-top = 0
+
+; underline-size = 0
+border-size = 0
+
+offset-x = 0
+offset-y = 0
+radius = 0.0
+```
+
+Fonts
+
+```ini
+; font-0 = ${env:FONT0:pango:monospace:size=10;1}
+; font-1 = ${env:FONT1:NotoEmoji:scale=10:antialias=false;0}
+; font-2 = ${env:FONT2:fontawesome:pixelsize=10;1}
+; font-3 = ${env:FONT3:JetBrains Mono Nerd Font:monospace:size=10;1}
+
+font-0 = pango:monospace:size=13;2
+font-1 = NotoEmoji:scale=10:antialias=false;1
+font-2 = fontawesome:pixelsize=13;3
+font-3 = JetBrains Mono Nerd Font:monospace:size=13;4
+font-4 = JetBrains Mono Nerd Font:monospace:size=17;4
+```
+
+Modules. Because I sometimes set up different blocks on different monitors, they are set via environment variables.
+
+```ini
+; modules-left = i3
+; modules-center = test
+modules-right = ${env:RIGHT_BLOCKS}
+
+tray-position = ${env:TRAY:right}
+tray-padding = 0
+tray-maxsize = 16
+tray-background = ${colors.background}
+
+wm-restack = i3
+; override-redirect = true
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+; cursor-click = pointer
+; cursor-scroll = ns-resize
+```
+
+Misc settings.
+
+```ini
+[settings]
+screenchange-reload = true
+compositing-background = source
+compositing-foreground = over
+compositing-overline = over
+compositing-underline = over
+compositing-border = over
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+```
+
+
+#### Launch script {#launch-script}
 
 The script below allows me to:
 
@@ -1512,10 +1826,10 @@ declare -A BAR_HEIGHT=(
     ["HDMI-A-0"]="29"
 )
 declare -A BLOCKS=(
-    ["eDP"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP"
-    ["eDP-1"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP battery SEP sun aw-afk date TSEP"
-    ["DVI-D-0"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP sun aw-afk date TSEP"
-    ["HDMI-A-0"]="pulseaudio mpd SEP cpu ram-memory swap-memory SEP network ipstack-vpn SEP xkeyboard SEP weather SEP pomm sun aw-afk date TSEP"
+    ["eDP"]="<<polybar-generate-modules(monitor="eDP")>>"
+    ["eDP-1"]="<<polybar-generate-modules(monitor="eDP-1")>>"
+    ["DVI-D-0"]="<<polybar-generate-modules(monitor="DVI-D-0")>>"
+    ["HDMI-A-0"]="<<polybar-generate-modules(monitor="HDMI-A-0")>>"
 )
 
 # Geolocation for some modules
@@ -1536,10 +1850,10 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
     if [[ -z "$SCALE" ]]; then
 	continue
     fi
-    export FONT0="pango:monospace:size=$SIZE;1"
-    export FONT1="NotoEmoji:scale=$SCALE:antialias=false;1"
-    export FONT2="fontawesome:pixelsize=$SIZE;1"
-    export FONT3="JetBrains Mono Nerd Font:monospace:size=$SIZE;1"
+    # export FONT0="pango:monospace:size=$SIZE;1"
+    # export FONT1="NotoEmoji:scale=$SCALE:antialias=false;1"
+    # export FONT2="fontawesome:pixelsize=$SIZE;1"
+    # export FONT3="JetBrains Mono Nerd Font:monospace:size=15;1"
     export HEIGHT=${BAR_HEIGHT[$MONITOR]}
     export RIGHT_BLOCKS=${BLOCKS[$MONITOR]}
     polybar mybar &
@@ -1547,104 +1861,179 @@ done
 ```
 
 
-### General settings {#general-settings}
-
-
-#### Colors {#colors}
-
-```ini
-[colors]
-; Palenight colorscheme https://github.com/JonathanSpeek/palenight-iterm2
-black = ${xrdb:color0}
-red = ${xrdb:color1}
-green = ${xrdb:color2}
-yellow = ${xrdb:color3}
-blue = ${xrdb:color4}
-magenta = ${xrdb:color5}
-cyan = ${xrdb:color6}
-white = ${xrdb:color7}
-
-black-lighter = ${xrdb:color8}
-red-lighter = ${xrdb:color9}
-green-lighter = ${xrdb:color10}
-yellow-lighter = ${xrdb:color11}
-blue-lighter = ${xrdb:color12}
-magenta-lighter = ${xrdb:color13}
-cyan-lighter = ${xrdb:color14}
-white-lighter = ${xrdb:color15}
-
-background = ${xrdb:background}
-foreground = ${xrdb:foreground}
-```
-
-
-#### Bar config {#bar-config}
-
-```ini
-[bar/mybar]
-monitor = ${env:MONITOR:}
-width = 100%
-height = ${env:HEIGHT:27}
-offset-x = 0
-offset-y = 0
-radius = 0.0
-fixed-center = false
-bottom=true
-
-background = ${colors.background}
-foreground = ${colors.foreground}
-
-line-size = 3
-line-color = #f00
-
-padding-left = 0
-padding-right = 0
-
-module-margin-left = 1
-module-margin-right = 1
-
-font-0 = ${env:FONT0:pango:monospace:size=10;1}
-font-1 = ${env:FONT1:NotoEmoji:scale=10:antialias=false;0}
-font-2 = ${env:FONT2:fontawesome:pixelsize=10;1}
-font-3 = ${env:FONT3:JetBrains Mono Nerd Font:monospace:size=10;1}
-
-modules-left = i3
-; modules-center = test
-modules-right = ${env:RIGHT_BLOCKS}
-
-tray-position = ${env:TRAY:right}
-tray-padding = 0
-tray-maxsize = 16
-;tray-background = #0063ff
-
-wm-restack = i3
-; override-redirect = true
-
-scroll-up = i3wm-wsnext
-scroll-down = i3wm-wsprev
-
-; cursor-click = pointer
-; cursor-scroll = ns-resize
-
-[settings]
-screenchange-reload = true
-;compositing-background = xor
-;compositing-background = screen
-;compositing-foreground = source
-;compositing-border = over
-;pseudo-transparency = false
-
-[global/wm]
-margin-top = 0
-margin-bottom = 0
-```
-
-
-### Modules {#modules}
+### Individual modules {#individual-modules}
 
 Some of the custom modules below use Org mode noweb to evaluate colors, because it's faster than querying `xrdb` at runtime. I wish I could reference polybar values there, but [it looks like this is impossible](https://github.com/polybar/polybar/issues/615).
 
 If you want to copy something, you can go to the [bin/polybar](bin/polybar/) folder.
+
+
+#### pulseaudio {#pulseaudio}
+
+PulseAudio status
+
+```ini
+[module/pulseaudio]
+type = internal/pulseaudio
+use-ui-max = true
+
+bar-volume-width = 7
+; bar-volume-foreground-0 = ${colors.white}
+; bar-volume-foreground-1 = ${colors.yellow}
+; bar-volume-foreground-2 = ${colors.yellow}
+; bar-volume-foreground-3 = ${colors.blue}
+; bar-volume-foreground-4 = ${colors.blue}
+; bar-volume-foreground-5 = ${colors.green}
+; bar-volume-foreground-6 = ${colors.green}
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-fill = ─
+bar-volume-fill-font = 2
+bar-volume-empty = ─
+bar-volume-empty-font = 2
+; bar-volume-empty-foreground = ${colors.light-white}
+
+format-volume = ♪ <ramp-volume> <label-volume>
+label-volume = %percentage%%
+
+ramp-volume-0 = ▁
+ramp-volume-1 = ▂
+ramp-volume-2 = ▃
+ramp-volume-3 = ▄
+ramp-volume-4 = ▅
+ramp-volume-5 = ▆
+ramp-volume-6 = ▇
+ramp-volume-7 = █
+
+format-muted = ♪ <label-muted>
+label-muted = MUTE
+
+format-volume-background = <<get-polybar-bg(module="pulseaudio")>>
+format-muted-background = <<get-polybar-bg(module="pulseaudio")>>
+
+; format-volume-underline = ${colors.white}
+; format-muted-underline = ${colors.light-black}
+```
+
+
+#### mpd {#mpd}
+
+[Music Player Daemon](https://www.musicpd.org/) status
+
+```ini
+[module/mpd]
+type = internal/mpd
+
+format-playing = <toggle> <label-time> <label-song>
+format-paused = <toggle> <label-time> <label-song>
+format-stopped = " "
+label-song = [%album-artist%] %title%
+label-time = %elapsed%/%total%
+
+label-song-maxlen = 30
+label-song-ellipsis = true
+
+; format-playing-underline = ${colors.yellow}
+; format-paused-underline = ${colors.yellow}
+; format-stopped-underline = ${colors.yellow}
+
+format-playing-background = <<get-polybar-bg(module="mpd")>>
+format-paused-background = <<get-polybar-bg(module="mpd")>>
+format-stopped-background = <<get-polybar-bg(module="mpd")>>
+
+label-separator = 0
+separator-foreground = ${colors.red}
+
+icon-pause = 
+icon-play = 
+icon-stop = 
+icon-prev = 1
+icon-next = 2
+```
+
+
+#### cpu {#cpu}
+
+CPU usage
+
+```ini
+[module/cpu]
+type = internal/cpu
+format = " <label>"
+label = %percentage%%
+format-background = <<get-polybar-bg(module="cpu")>>
+```
+
+
+#### ram-memory {#ram-memory}
+
+RAM usage
+
+```ini
+[module/ram-memory]
+type = internal/memory
+interval = 10
+
+ramp-used-0 = ▁
+ramp-used-1 = ▂
+ramp-used-2 = ▃
+ramp-used-3 = ▄
+ramp-used-4 = ▅
+ramp-used-5 = ▆
+ramp-used-6 = ▇
+ramp-used-7 = █
+
+format =  <label>
+label=%gb_used:.1f%
+
+; format-underline = ${colors.blue}
+format-background = <<get-polybar-bg(module="ram-memory")>>
+```
+
+
+#### swap-memory {#swap-memory}
+
+Swap usage
+
+```ini
+[module/swap-memory]
+type = internal/memory
+interval = 10
+
+label= %gb_swap_used:.1f%
+format-background = <<get-polybar-bg(module="swap-memory")>>
+```
+
+
+#### network {#network}
+
+Upload/download speed
+
+```ini
+[module/network]
+type = internal/network
+interval = 1
+
+interface = ${env:WLAN_INTERFACE}
+
+; format-connected = [<ramp-signal>] <label-connected>
+
+label-connected = ↓ %downspeed% ↑ %upspeed%
+label-disconnected = X
+
+; format-connected-underline = ${colors.green}
+; format-disconnected-underline = ${colors.red}
+format-connected-background = <<get-polybar-bg(module="network")>>
+format-disconnected-background = <<get-polybar-bg(module="network")>>
+
+ramp-signal-0 = 0
+ramp-signal-1 = 1
+ramp-signal-2 = 2
+ramp-signal-3 = 3
+ramp-signal-4 = 4
+ramp-signal-5 = 5
+```
 
 
 #### ipstack-vpn {#ipstack-vpn}
@@ -1689,6 +2078,69 @@ interval = 1200
 ```
 
 
+#### openvpn {#openvpn}
+
+A module to check if openvpn is running.
+
+```bash
+vpn=$(pgrep -a openvpn$ | head -n 1 | awk '{print $NF }' | cut -d '.' -f 1)
+if [ -n "$vpn" ]; then
+    echo "  "
+else
+    echo "  "
+fi
+```
+
+```ini
+[module/openvpn]
+type = custom/script
+exec = /home/pavel/bin/polybar/openvpn.sh
+format-background = <<get-polybar-bg(module="openvpn")>>
+interval = 1200
+```
+
+
+#### xkeyboard {#xkeyboard}
+
+Current keyboard layout
+
+```ini
+[module/xkeyboard]
+type = internal/xkeyboard
+format = <label-layout>
+
+; format-underline = ${colors.magenta}
+format-background = <<get-polybar-bg(module="xkeyboard")>>
+label-layout = %icon%
+layout-icon-0 = ru;RU
+layout-icon-1 = us;US
+```
+
+
+#### battery {#battery}
+
+```ini
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = ADP0
+
+time-format = %H:%M
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-background = <<get-polybar-bg(module="battery")>>
+format-charging-background = <<get-polybar-bg(module="battery")>>
+format-full-background = <<get-polybar-bg(module="battery")>>
+label-discharging = %percentage%% %time%
+label-charging =  %percentage%% %time%
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+```
+
+
 #### weather {#weather}
 
 Gets current weather from [wttr.in](http://wttr.in/)
@@ -1714,57 +2166,9 @@ fi
 [module/weather]
 type = custom/script
 exec = /home/pavel/bin/polybar/weather.sh
-format-underline = ${colors.red}
+; format-underline = ${colors.red}
+format-background = <<get-polybar-bg(module="weather")>>
 interval = 1200
-```
-
-
-#### aw-afk {#aw-afk}
-
-Prints out a current uptime and non-AFK time from [ActivityWatch](https://github.com/ActivityWatch) server
-
-| Category        | Guix dependency |
-|-----------------|-----------------|
-| desktop-polybar | dateutils       |
-
-```bash
-afk_event=$(curl -s -X GET "http://localhost:5600/api/0/buckets/aw-watcher-afk_$(hostname)/events?limit=1" -H "accept: application/json")
-status=$(echo ${afk_event} | jq -r '.[0].data.status')
-afk_time=$(echo "${afk_event}" | jq -r '.[0].duration' | xargs -I !  date -u -d @! +"%H:%M")
-
-uptime=$(uptime | awk '{ print substr($3, 0, length($3) - 1) }' | xargs -I ! date -d ! +"%H:%M")
-res="${afk_time} / ${uptime}"
-if [[ $status == 'afk' ]]; then
-    echo "%{u<<get-color(name="red")>>}%{+u} [AFK] $res %{u-}"
-else
-    echo "%{u<<get-color(name="blue")>>}%{+u} $res %{u-}"
-fi
-```
-
-```ini
-[module/aw-afk]
-type = custom/script
-exec = /home/pavel/bin/polybar/aw_afk.sh
-interval = 60
-```
-
-
-#### pomm {#pomm}
-
-Pomodoro module.
-
-```bash
-if ps -e | grep emacs >> /dev/null; then
-    emacsclient --eval "(if (boundp 'pomm-current-mode-line-string) pomm-current-mode-line-string \"\") " | xargs echo -e
-fi
-```
-
-```ini
-[module/pomm]
-type = custom/script
-exec = /home/pavel/bin/polybar/pomm.sh
-interval = 1
-format-underline = ${colors.green-lighter}
 ```
 
 
@@ -1796,10 +2200,12 @@ time=$(sunwait poll daylight rise ${LAT} $LON)
 
 if [[ ${time} == 'DAY' ]]; then
     sunset=$(sunwait list daylight set ${LAT} ${LON})
-    echo "%{u<<get-color(name="yellow")>>}%{+u} $sunset %{u-}"
+    # echo "%{u<<get-color(name="yellow")>>}%{+u} $sunset %{u-}"
+    echo $sunset
 else
     sunrise=$(sunwait list daylight rise ${LAT} ${LON})
-    echo "%{u<<get-color(name="red")>>}%{+u} $sunrise %{u-}"
+    # echo "%{u<<get-color(name="red")>>}%{+u} $sunrise %{u-}"
+    echo $sunrise
 fi
 ```
 
@@ -1807,7 +2213,80 @@ fi
 [module/sun]
 type = custom/script
 exec = /home/pavel/bin/polybar/sun.sh
+format-background = <<get-polybar-bg(module="sun")>>
 interval = 60
+```
+
+
+#### aw-afk {#aw-afk}
+
+Prints out a current uptime and non-AFK time from [ActivityWatch](https://github.com/ActivityWatch) server
+
+| Category        | Guix dependency |
+|-----------------|-----------------|
+| desktop-polybar | dateutils       |
+
+```bash
+afk_event=$(curl -s -X GET "http://localhost:5600/api/0/buckets/aw-watcher-afk_$(hostname)/events?limit=1" -H "accept: application/json")
+status=$(echo ${afk_event} | jq -r '.[0].data.status')
+afk_time=$(echo "${afk_event}" | jq -r '.[0].duration' | xargs -I !  date -u -d @! +"%H:%M")
+
+uptime=$(uptime | awk '{ print substr($3, 0, length($3) - 1) }' | xargs -I ! date -d ! +"%H:%M")
+res="${afk_time} / ${uptime}"
+if [[ $status == 'afk' ]]; then
+    # echo "%{u<<get-color(name="red")>>}%{+u} [AFK] $res %{u-}"
+    echo "[AFK] $res"
+else
+    # echo "%{u<<get-color(name="blue")>>}%{+u} $res %{u-}"
+    echo "$res"
+fi
+```
+
+```ini
+[module/aw-afk]
+type = custom/script
+exec = /home/pavel/bin/polybar/aw_afk.sh
+interval = 60
+format-background = <<get-polybar-bg(module="aw-afk")>>
+```
+
+
+#### date {#date}
+
+Current date
+
+```ini
+[module/date]
+type = internal/date
+interval = 5
+
+date =
+date-alt = "%Y-%m-%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-background = <<get-polybar-bg(module="date")>>
+label = "%date% %time%"
+```
+
+
+#### pomm {#pomm}
+
+Pomodoro module.
+
+```bash
+if ps -e | grep emacs >> /dev/null; then
+    emacsclient --eval "(if (boundp 'pomm-current-mode-line-string) pomm-current-mode-line-string \"\") " | xargs echo -e
+fi
+```
+
+```ini
+[module/pomm]
+type = custom/script
+exec = /home/pavel/bin/polybar/pomm.sh
+interval = 1
+format-underline = ${colors.light-green}
 ```
 
 
@@ -1884,215 +2363,6 @@ label-urgent = %
 label-urgent-background = ${colors.red}
 label-urgent-foreground = ${colors.black}
 label-urgent-padding = 1
-```
-
-
-#### xkeyboard {#xkeyboard}
-
-Current keyboard layout
-
-```ini
-[module/xkeyboard]
-type = internal/xkeyboard
-format = <label-layout>
-
-format-underline = ${colors.magenta}
-label-layout = %icon%
-layout-icon-0 = ru;RU
-layout-icon-1 = us;US
-```
-
-
-#### mpd {#mpd}
-
-[Music Player Daemon](https://www.musicpd.org/) status
-
-```ini
-[module/mpd]
-type = internal/mpd
-
-format-playing = <toggle> <label-time> <label-song>
-format-paused = <toggle> <label-time> <label-song>
-format-stopped = 
-label-song = [%album-artist%] %title%
-label-time = %elapsed%/%total%
-
-label-song-maxlen = 30
-label-song-ellipsis = true
-
-format-playing-underline = ${colors.yellow}
-format-paused-underline = ${colors.yellow}
-format-stopped-underline = ${colors.yellow}
-
-label-separator = 0
-separator-foreground = ${colors.red}
-
-icon-pause = 
-icon-play = 
-icon-stop = 
-icon-prev = 1
-icon-next = 2
-```
-
-
-#### pulseaudio {#pulseaudio}
-
-PulseAudio status
-
-```ini
-[module/pulseaudio]
-type = internal/pulseaudio
-use-ui-max = true
-
-bar-volume-width = 7
-bar-volume-foreground-0 = ${colors.white}
-bar-volume-foreground-1 = ${colors.yellow}
-bar-volume-foreground-2 = ${colors.yellow}
-bar-volume-foreground-3 = ${colors.blue}
-bar-volume-foreground-4 = ${colors.blue}
-bar-volume-foreground-5 = ${colors.green}
-bar-volume-foreground-6 = ${colors.green}
-bar-volume-gradient = false
-bar-volume-indicator = |
-bar-volume-indicator-font = 2
-bar-volume-fill = ─
-bar-volume-fill-font = 2
-bar-volume-empty = ─
-bar-volume-empty-font = 2
-bar-volume-empty-foreground = ${colors.white-lighter}
-
-format-volume = ♪ <bar-volume> <label-volume>
-label-volume = %percentage%%
-
-format-mute = ♪ <label-muted>
-label-muted = MUTE
-
-format-volume-underline = ${colors.white}
-format-muted-underline = ${colors.black-lighter}
-```
-
-
-#### cpu {#cpu}
-
-CPU usage
-
-```ini
-[module/cpu]
-type = internal/cpu
-format =   <label>
-label = %percentage%%
-format-underline = ${colors.green-lighter}
-```
-
-
-#### ram-memory {#ram-memory}
-
-RAM usage
-
-```ini
-[module/ram-memory]
-type = internal/memory
-interval = 10
-
-ramp-used-0 = ▁
-ramp-used-1 = ▂
-ramp-used-2 = ▃
-ramp-used-3 = ▄
-ramp-used-4 = ▅
-ramp-used-5 = ▆
-ramp-used-6 = ▇
-ramp-used-7 = █
-
-format =  <label>
-label=%gb_used:.1f%
-
-format-underline = ${colors.blue}
-```
-
-
-#### swap-memory {#swap-memory}
-
-Swap usage
-
-```ini
-[module/swap-memory]
-type = internal/memory
-interval = 10
-
-label= %gb_swap_used:.1f%
-format-underline = ${colors.yellow}
-```
-
-
-#### network {#network}
-
-Upload/download speed
-
-```ini
-[module/network]
-type = internal/network
-interval = 1
-
-interface = ${env:WLAN_INTERFACE}
-
-; format-connected = [<ramp-signal>] <label-connected>
-
-label-connected = ↓ %downspeed% ↑ %upspeed%
-label-disconnected = X
-
-format-connected-underline = ${colors.green}
-format-disconnected-underline = ${colors.red}
-
-ramp-signal-0 = 0
-ramp-signal-1 = 1
-ramp-signal-2 = 2
-ramp-signal-3 = 3
-ramp-signal-4 = 4
-ramp-signal-5 = 5
-```
-
-
-#### date {#date}
-
-Current date
-
-```ini
-[module/date]
-type = internal/date
-interval = 5
-
-date =
-date-alt = "%Y-%m-%d"
-
-time = %H:%M
-time-alt = %H:%M:%S
-
-format-underline = ${colors.cyan}
-label = "%date% %time%"
-```
-
-
-#### battery {#battery}
-
-```ini
-[module/battery]
-type = internal/battery
-battery = BAT0
-adapter = ADP0
-
-time-format = %H:%M
-format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-underline = ${colors.cyan}
-format-charging-underline = ${colors.yellow}
-format-full-underline = ${colors.green}
-label-discharging = %percentage%% %time%
-label-charging =  %percentage%% %time%
-
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-3 = 
-ramp-capacity-4 = 
 ```
 
 

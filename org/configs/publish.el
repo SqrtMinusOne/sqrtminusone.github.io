@@ -1,4 +1,5 @@
 (require 'package)
+(require 'vc)
 
 (setq package-user-dir (expand-file-name "./.packages"))
 
@@ -28,7 +29,7 @@
 (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org)
 
 (setq org-hugo-section "configs")
-(setq org-hugo-base-dir "../../")
+(setq org-hugo-base-dir (vc-find-root default-directory ".git"))
 
 ;; (setq org-hugo-export-with-toc 6)
 
@@ -39,10 +40,15 @@
                         "Mail.org"
                         "Guix.org"))
 
-(dolist (file my/config-files)
-  (copy-file (expand-file-name (format "~/%s" file)) file 'overwrite))
 
-(copy-directory (expand-file-name "~/dot-stats/img") "dot-stats/img" t t)
+(dolist (file my/config-files)
+  (copy-file (expand-file-name
+              (format "%s/repos/dotfiles/%s"
+                      (vc-find-root default-directory ".git")
+                      file))
+             file 'overwrite))
+
+;; (copy-directory (expand-file-name "~/dot-stats/img") "dot-stats/img" t t)
 
 (dolist (file my/config-files)
   (with-temp-buffer
