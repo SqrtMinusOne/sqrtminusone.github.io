@@ -1,5 +1,7 @@
 (require 'package)
 (require 'vc)
+(require 'files)
+(cd (concat (vc-find-root default-directory ".git") "org/configs"))
 
 (setq package-user-dir (expand-file-name "./.packages"))
 
