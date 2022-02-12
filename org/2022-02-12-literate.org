@@ -1,0 +1,575 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: A few cases of literate configuration
+#+DATE: 2022-02-12
+#+HUGO_TAGS: emacs
+#+HUGO_TAGS: org-mode
+#+HUGO_DRAFT: false
+
+A post that arose from the discussion of literate configuration on the [[https://systemcrafters.net/][System Crafters]] Discord.
+
+I am using the [[https://leanpub.com/lit-config][literate configuration]] strategy (based on [[https://orgmode.org/][Emacs' Org Mode]]) to manage most of my configuration files. A piece of such a configuration can be as simple as an Org file, which is tangled to one or many plain-text configuration files, but it can be more.
+
+In my opinion, a literate configuration can be more straightforward and concise than a "normal" one, thanks to Org Mode's capabilities of [[https://orgmode.org/manual/Working-with-Source-Code.html][working with source code]]. So here I present a few examples from my configuration where I think this is the case:
+- Managing system colors
+- Managing manifests for Guix profiles
+- Configuring modules in polybar
+
+I hope you find something interesting here!
+
+* Colors
+Let's start with system colors.
+
+My favorite color theme is Palenight ([[https://github.com/JonathanSpeek/palenight-iterm2][color codes]]), and I want to have one source of truth for these colors. Except for Emacs itself, which has [[https://github.com/doomemacs/themes#theme-list][doom-palenight]] (and in which I occasionally switch to =doom-one-light=, e.g. when reading a long text), it can be done rather nicely with Org Mode.
+
+First, let's define a table with all the color codes:
+#+begin_example
+#+tblname: colors
+| color         | key     | value   |
+|---------------+---------+---------|
+| black         | color0  | #292d3e |
+| red           | color1  | #f07178 |
+| green         | color2  | #c3e88d |
+| yellow        | color3  | #ffcb6b |
+| blue          | color4  | #82aaff |
+| magenta       | color5  | #c792ea |
+| cyan          | color6  | #89ddff |
+| white         | color7  | #d0d0d0 |
+| light-black   | color8  | #434758 |
+| light-red     | color9  | #ff8b92 |
+| light-green   | color10 | #ddffa7 |
+| light-yellow  | color11 | #ffe585 |
+| light-blue    | color12 | #9cc4ff |
+| light-magenta | color13 | #e1acff |
+| light-cyan    | color14 | #a3f7ff |
+| light-white   | color15 | #ffffff |
+| color-fg      |         | #000000 |
+#+end_example
+
+Contents of this table can then be [[https://orgmode.org/manual/Environment-of-a-Code-Block.html][accessed from a code block]]. Let's define one to return the color code based on its name:
+#+begin_example
+#+NAME: get-color
+#+begin_src emacs-lisp :var table=colors name="black" quote=0
+(let ((color (seq-some (lambda (e) (and (string= name (car e)) (nth 2 e))) table)))
+  (if (> quote 0)
+      (concat "\"" color "\"")
+    color))
+#+end_src
+#+end_example
+
+Evaluating this block of code should return color code, corresponding to "black".
+
+And the best part is that the results of evaluation of one code block can be included to others with [[https://orgmode.org/manual/Noweb-Reference-Syntax.html][noweb]]. For instance, here's my [[https://pwmt.org/projects/zathura/][zathura]] config:
+#+begin_example
+#+begin_src conf-space :noweb yes :tangle .config/zathura/zathurarc
+set abort-clear-search false
+set guioptions cs
+set selection-clipboard clipboard
+set recolor true
+map <C-r> set recolor false
+map <C-R> set recolor true
+
+set recolor-lightcolor <<get-color(name="black", quote=1)>>
+
+set completion-bg <<get-color(name="black", quote=1)>>
+set completion-fg <<get-color(name="white", quote=1)>>
+set completion-group-bg <<get-color(name="light-black", quote=1)>>
+set completion-group-fg <<get-color(name="white", quote=1)>>
+set completion-highlight-bg <<get-color(name="magenta", quote=1)>>
+set completion-highlight-fg <<get-color(name="black", quote=1)>>
+
+set inputbar-bg <<get-color(name="black", quote=1)>>
+set inputbar-fg <<get-color(name="light-magenta", quote=1)>>
+set statusbar-bg <<get-color(name="black", quote=1)>>
+set statusbar-fg <<get-color(name="light-magenta", quote=1)>>
+
+set notification-error-bg <<get-color(name="red", quote=1)>>
+set notification-error-fg <<get-color(name="color-fg", quote=1)>>
+set notification-warning-bg <<get-color(name="yellow", quote=1)>>
+set notification-warning-fg <<get-color(name="color-fg", quote=1)>>
+#+end_src
+#+end_example
+
+Running =M-x org-babel-expand-src-block= (=C-c C-v v=) on this code block will open the code buffer with noweb expressions expanded, for instance the line with =set recolor-lightcolor= will look like:
+#+begin_example
+set recolor-lightcolor "#292d3e"
+#+end_example
+
+=M-x org-babel-tangle= (=C-c C-v t=) will also produce =zathurarc= with the colors set (given that there's =:noweb yes= somewhere in the code block configuration).
+
+One note is that by default running these commands will require the user to confirm evaluation of each code block. To avoid that, you can set =org-confirm-babel-evaluate= to =nil=, for example:
+#+begin_src emacs-lisp
+(setq my/org-config-files
+      '("/home/pavel/Emacs.org"
+        "/home/pavel/Desktop.org"
+        "/home/pavel/Console.org"
+        "/home/pavel/Guix.org"
+        "/home/pavel/Mail.org"))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (when (member (buffer-file-name) my/org-config-files)
+              (setq-local org-confirm-babel-evaluate nil))))
+#+end_src
+
+And, to close the loop on colors, let's generate =.Xresources= from that table:
+#+begin_example
+#+NAME: get-xresources
+#+begin_src emacs-lisp :var table=colors
+(mapconcat
+ (lambda (elem)
+   (concat "*" (nth 1 elem) ": " (nth 2 elem)))
+ (seq-filter
+  (lambda (elem) (and (nth 1 elem)
+                      (not (string-empty-p (nth 1 elem)))))
+  table)
+ "\n")
+#+end_src
+
+#+begin_src conf-xdefaults :noweb yes :tangle ~/.Xresources
+<<get-xresources()>>
+
+*background: <<get-color(name="black")>>
+*foreground: <<get-color(name="white")>>
+#+end_src
+#+end_example
+
+So, whenever a program is capable of reading =.Xresources=, it will get colors from there, otherwise, it will get colors from noweb expressions in the literate config. Thus, in both cases, the color is set in a single Org Mode table.
+* Guix dependencies
+Another case I want to cover is [[https://guix.gnu.org/en/cookbook/en/html_node/Advanced-package-management.html#Advanced-package-management][using profiles in GNU Guix]].
+
+A "profile" in Guix is a way to group package installations. For instance, I have a "music" profile that has software like [[https://www.musicpd.org/][MPD]], [[https://github.com/ncmpcpp/ncmpcpp][ncmpcpp]] that I'm still occasionally using because of its tag editor, etc. Corresponding to that profile, there's a manifest named =music.scm= that looks like this:
+#+begin_src scheme
+(specifications->manifest
+ '(
+   "flac"
+   "cuetools"
+   "shntool"
+   "mpd-mpc"
+   "mpd-watcher"
+   "picard"
+   "ncmpcpp"
+   "mpd"))
+#+end_src
+
+I could generate this file with =org-babel= as any other, but that is often not so convenient. For example, I have a [[https://github.com/polybar/polybar][polybar]] module that uses [[https://github.com/risacher/sunwait][sunwait]] to show sunset and sunrise times, and ideally, I want to declare =sunwait= to be in the "desktop-polybar" profile in the same section that has the polybar module definition and the bash script.
+
+So here's an approach I came up with. The relevant section of the config looks like this:
+#+begin_example
+,*** sun
+| Category        | Guix dependency |
+|-----------------+-----------------|
+| desktop-polybar | sunwait         |
+
+Prints out the time of sunrise/sunset. Uses [[https://github.com/risacher/sunwait][sunwait]]
+
+,#+begin_src bash :tangle ./bin/polybar/sun.sh :noweb yes
+...script...
+,#+end_src
+
+,#+begin_src conf-windows :noweb yes
+...polybar module definition...
+,#+end_src
+#+end_example
+
+=sunwait= is declared in an Org table that looks like that:
+| Category        | Guix dependency |
+|-----------------+-----------------|
+| desktop-polybar | sunwait         |
+
+Such tables are spread through my =Desktop.org=, for instance, here is another one for a polybar module that depends on dateutils:
+| Category        | Guix dependency |
+|-----------------+-----------------|
+| desktop-polybar | dateutils       |
+
+Thus I made a function that extracts packages from all such tables from the current Org buffer. The rules are as follows:
+- If a column name matches =[G|g]uix.*dep=, its contents are added to the result.
+- If =CATEGORY= is passed, a column with name =[C|c]ategory= is used to filter results. That way, one Org file can be used to produce multiple manifests.
+- If =CATEGORY= is not passed, entries with the non-empty category are filtered out
+- If there is a =[D|d]isabled= column, entries that have a non-empty value in this column are filtered out.
+
+And here is the implementation:
+#+begin_src emacs-lisp :noweb-ref guix-tables
+(defun my/extract-guix-dependencies (&optional category)
+  (let ((dependencies '()))
+    (org-table-map-tables
+     (lambda ()
+       (let* ((table
+               (seq-filter
+                (lambda (q) (not (eq q 'hline)))
+                (org-table-to-lisp)))
+              (dep-name-index
+               (cl-position
+                nil
+                (mapcar #'substring-no-properties (nth 0 table))
+                :test (lambda (_ elem)
+                        (string-match-p "[G|g]uix.*dep" elem))))
+              (category-name-index
+               (cl-position
+                nil
+                (mapcar #'substring-no-properties (nth 0 table))
+                :test (lambda (_ elem)
+                        (string-match-p ".*[C|c]ategory.*" elem))))
+              (disabled-name-index
+               (cl-position
+                nil
+                (mapcar #'substring-no-properties (nth 0 table))
+                :test (lambda (_ elem)
+                        (string-match-p ".*[D|d]isabled.*" elem)))))
+         (when dep-name-index
+           (dolist (elem (cdr table))
+             (when
+                 (and
+                  ;; Category
+                  (or
+                   ;; Category is not set and not present in the table
+                   (and
+                    (or (not category) (string-empty-p category))
+                    (not category-name-index))
+                   ;; Category is set and present in the table
+                   (and
+                    category-name-index
+                    (not (string-empty-p category))
+                    (string-match-p category (nth category-name-index elem))))
+                  ;; Not disabled
+                  (or
+                   (not disabled-name-index)
+                   (string-empty-p (nth disabled-name-index elem))))
+               (add-to-list
+                'dependencies
+                (substring-no-properties (nth dep-name-index elem)))))))))
+    dependencies))
+#+end_src
+
+Let's execute this function in the current buffer:
+#+begin_src emacs-lisp :results code :exports both :eval never-export
+(my/extract-guix-dependencies "desktop-polybar")
+#+end_src
+
+#+RESULTS:
+#+begin_src emacs-lisp
+("dateutils" "sunwait")
+#+end_src
+
+As expected, it found both =dateutils= and =sunwait=. To make it work in the configuration, it is necessary to format the list so that Scheme could read it:
+#+begin_src emacs-lisp :noweb-ref guix-tables
+(defun my/format-guix-dependencies (&optional category)
+  (mapconcat
+   (lambda (e) (concat "\"" e "\""))
+   (my/extract-guix-dependencies category)
+   "\n"))
+#+end_src
+
+And we need an Org snippet such as this:
+#+begin_example
+#+NAME: packages
+#+begin_src emacs-lisp :tangle no :var category=""
+(my/format-guix-dependencies category)
+#+end_src
+#+end_example
+
+Now, creating a manifest for the =desktop-polybar= profile is as simple as:
+#+begin_example
+#+begin_src scheme :tangle ~/.config/guix/manifests/desktop-polybar.scm :noweb yes
+(specifications->manifest
+ '(
+   <<packages("desktop-polybar")>>))
+#+end_src
+#+end_example
+
+There's a newline symbol between "(" and =<<packages("desktop-polybar")>>= because whenever a noweb expression expands into multiple lines, for each new line noweb duplicates contents between the start of the line and the start of the expression.
+
+One reason this is so is to support languages where indentation is a part of the syntax, for instance, Python:
+#+begin_src python
+class TestClass:
+    <<class-contents>>
+#+end_src
+So every line of =<<class-contents>>= will be indented appropriately. In our case though, it is a minor inconvenience to be aware of.
+* Polybar
+Now, the most +crazy+ advanced case I've come up with so far.
+
+Basically, here is how my [[https://github.com/polybar/polybar][polybar]] currently looks:
+[[./images/literate--polybar.png]]
+
+It has:
+- colors from the general color theme;
+- powerline-ish decorations between modules.
+
+** Colors
+The "colors" part is straightforward enough. Polybar can use =Xresources=, so we just need to generate the appropriate bindings of Xresources to the polybar variables:
+
+#+begin_example
+#+NAME: get-polybar-colors
+#+begin_src emacs-lisp :var table=colors :tangle no
+(mapconcat
+ (lambda (elem)
+   (format "%s = ${xrdb:%s}" (nth 0 elem) (nth 1 elem)))
+ (seq-filter
+  (lambda (elem) (when-let (name (nth 1 elem))
+                   (not (string-empty-p name))))
+  table)
+ "\n")
+#+end_src
+
+#+begin_src conf-windows :noweb yes
+[colors]
+<<get-polybar-colors()>>
+
+background = ${xrdb:background}
+#+end_src
+#+end_example
+
+** Module decorations
+As for the module decorations though, I find it ironic that with all this fancy rendering around I have to resort to Unicode glyphs.
+
+Anyhow, the approach is to put a glyph between two blocks like this:
+#+begin_example
+block1  block2
+#+end_example
+
+And set the foreground and background colors like that:
+|            | block1 | glyph | block2  |
+|------------+--------+-------+---------|
+| foreground | F1     | B2    | F2      |
+| background | B1     | B1    | B2      |
+
+So, that's a start. First, let's define the glyph symbols in the polybar config:
+#+begin_src ini
+[glyph]
+gleft = 
+gright = 
+#+end_src
+
+*** Defining modules
+As we want to interweave polybar modules with these glyphs in the right order and with the right colors, it is reasonable to define a single source of truth:
+#+begin_example
+#+NAME: polybar_modules
+| Index | Module      | Color         | Glyph |
+|-------+-------------+---------------+-------|
+|     1 | pulseaudio  | light-magenta | +     |
+|     2 | mpd         | magenta       | +     |
+|     9 | battery     | light-cyan    | +     |
+|     3 | cpu         | cyan          | +     |
+|     4 | ram-memory  | light-green   | +     |
+|     5 | swap-memory | green         | +     |
+|     6 | network     | light-red     | +     |
+|     7 | openvpn     | light-red     |       |
+|     8 | xkeyboard   | red           | +     |
+|    10 | weather     | light-yellow  | +     |
+|    12 | sun         | yellow        | +     |
+|    13 | aw-afk      | light-blue    | +     |
+|    14 | date        | blue          | +     |
+#+end_example
+
+Also excluding some modules from certain monitors, which for now is about excluding =battery= from the monitors of my desktop PC:
+#+begin_example
+#+NAME: polybar_modules_exclude
+| Monitor  | Exclude |
+|----------+---------|
+| DVI-D-0  | battery |
+| HDMI-A-0 | battery |
+#+end_example
+
+*** Generating glyphs
+To generate the required set of glyphs, we need a glyph for every possible combination of adjacent colors that can occur in polybar.
+
+Most of these combinations can be inferred from the =polybar_modules= table, the rest are defined in another table:
+#+begin_example
+#+NAME: polybar_extra_colors
+| Color 1    | Color 2       |
+|------------+---------------|
+| background | white         |
+| background | light-magenta |
+| blue       | background    |
+#+end_example
+
+There's a definition of the source block with the required variables:
+#+begin_example
+#+NAME: polybar-generate-glyphs
+#+begin_src emacs-lisp :var table=polybar_modules exclude-table=polybar_modules_exclude extra=polybar_extra_colors
+...source...
+#+end_src
+#+end_example
+
+And there is the source block itself (because I want to have some syntax highlighting for this one in the post):
+#+begin_src emacs-lisp
+(let* ((monitors
+        (thread-last
+          exclude-table
+          (seq-map (lambda (el) (nth 0 el)))
+          (seq-uniq)))
+       (exclude-combinations
+        (seq-map
+         (lambda (monitor)
+           (seq-map
+            (lambda (el) (nth 1 el))
+            (seq-filter
+             (lambda (el) (and (string-equal (nth 0 el) monitor)
+                               (nth 1 el)))
+             exclude-table)))
+         `(,@monitors "")))
+       (module-glyph-combinations
+        (thread-last
+          exclude-combinations
+          (seq-map
+           (lambda (exclude)
+             (thread-last
+               table
+               (seq-filter
+                (lambda (elt)
+                  (not (or
+                        (member (nth 1 elt) exclude)
+                        (not (string-equal (nth 3 elt) "+")))))))))
+          (seq-uniq)))
+       (color-changes nil))
+  (dolist (e extra)
+    (add-to-list
+     'color-changes
+     (concat (nth 0 e) "--" (nth 1 e))))
+  (dolist (comb module-glyph-combinations)
+    (dotimes (i (1- (length comb)))
+      (add-to-list
+       'color-changes
+       (concat (nth 2 (nth i comb))
+               "--"
+               (nth 2 (nth (1+ i) comb))))))
+  (mapconcat
+   (lambda (el)
+     (let ((colors (split-string el "--")))
+       (format "
+[module/glyph-%s--%s]
+type = custom/text
+content-background = ${colors.%s}
+content-foreground = ${colors.%s}
+content = ${glyph.gright}
+content-font = 5"
+               (nth 0 colors)
+               (nth 1 colors)
+               (nth 0 colors)
+               (nth 1 colors))))
+   color-changes
+   "\n"))
+#+end_src
+
+Here's a rough outline of how the code works:
+- =monitors= is a list of unique monitors in =exclude-table=
+- =exclude-combilnations= is a list of lists of module names to be excluded for each monitor
+- =module-glyphs-combinations= is a list of lists of actual modules for each monitor
+- =color-changes= is a list of unique adjacent colors across modules in all monitors
+
+Finally, =color-changes= is used to generate glyph modules that look like this:
+#+begin_src ini
+[module/glyph-light-cyan--cyan]
+type = custom/text
+content-background = ${colors.light-cyan}
+content-foreground = ${colors.cyan}
+content = ${glyph.gright}
+content-font = 5
+#+end_src
+
+As of now, 15 of such modules is generated.
+
+And including this in the polybar config itself:
+#+begin_example
+#+begin_src conf-windows :noweb yes
+<<polybar-generate-glyphs()>>
+#+end_src
+#+end_example
+
+*** Individual modules
+Another thing we need to do is to set the color of modules in accordance with the =polybar_modules= table. The background can be determined from the =Color= column with the following code block:
+#+begin_example
+#+NAME: get-polybar-bg
+#+begin_src emacs-lisp :var table=polybar_modules module="pulseaudio"
+(format
+ "${colors.%s}"
+ (nth
+  2
+  (seq-find
+   (lambda (el) (string-equal (nth 1 el) module))
+   table)))
+#+end_src
+#+end_example
+
+And that block is meant to be invoked in each module definition, e.g. for the =cpu= module:
+#+begin_example
+#+begin_src conf-windows :noweb yes
+[module/cpu]
+type = internal/cpu
+format = " <label>"
+label = %percentage%%
+format-background = <<get-polybar-bg(module="cpu")>>
+#+end_src
+#+end_example
+
+*** Global polybar configuration
+To configure polybar itself, we first need to generate a set of modules for each monitor.
+
+Here is the source block definition:
+#+begin_example
+#+NAME: polybar-generate-modules
+#+begin_src emacs-lisp :var table=polybar_modules exclude-table=polybar_modules_exclude monitor="DVI-D-0" first-color="background" last-color="background"
+...
+#+end_src
+#+end_example
+
+The parameters here, excluding the two required tables, are:
+- =monitor= - the current monitor on which to filter out the blocks by the =polybar_modules_exclude= table,
+- =first-color= - the first color of the first glyph,
+- =last-color= - the second color of the last glyph.
+
+And here is the source:
+#+begin_src emacs-lisp
+(let* ((exclude-modules
+        (thread-last
+          exclude-table
+          (seq-filter (lambda (el) (string-equal (nth 0 el) monitor)))
+          (seq-map (lambda (el) (nth 1 el)))))
+       (modules
+        (thread-last
+          table
+          (seq-filter (lambda (el) (not (member (nth 1 el) exclude-modules))))))
+       (prev-color first-color)
+       (ret nil))
+  (concat
+   (mapconcat
+    (lambda (el)
+      (apply
+       #'concat
+       (list
+        (when (string-equal (nth 3 el) "+")
+          (setq ret (format "glyph-%s--%s " prev-color (nth 2 el)))
+          (setq prev-color (nth 2 el))
+          ret)
+        (nth 1 el))))
+    modules
+    " ")
+   (unless (string-empty-p last-color) (format " glyph-%s--%s " prev-color last-color))))
+#+end_src
+
+Here's how it evaluates on my current monitor:
+#+begin_example
+glyph-background--light-magenta pulseaudio glyph-light-magenta--magenta mpd glyph-magenta--cyan cpu glyph-cyan--light-green ram-memory glyph-light-green--green swap-memory glyph-green--light-red network openvpn glyph-light-red--red xkeyboard glyph-red--light-yellow weather glyph-light-yellow--yellow sun glyph-yellow--light-blue aw-afk glyph-light-blue--blue date glyph-blue--background
+#+end_example
+
+The polybar config doesn't support conditional statements, but it does support environment variables, so we can pass the parameters from something like a bash script. Here's an excerpt from mine:
+#+begin_src bash
+...
+declare -A BLOCKS=(
+    ["eDP"]="<<polybar-generate-modules(monitor="eDP")>>"
+    ["eDP-1"]="<<polybar-generate-modules(monitor="eDP-1")>>"
+    ["DVI-D-0"]="<<polybar-generate-modules(monitor="DVI-D-0")>>"
+    ["HDMI-A-0"]="<<polybar-generate-modules(monitor="HDMI-A-0")>>"
+)
+...
+pkill polybar
+for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+    ...
+    export RIGHT_BLOCKS=${BLOCKS[$MONITOR]}
+    polybar mybar &
+done
+#+end_src
+
+(The full script has a lot of stuff that is not relevant to this post, but you can [[https://github.com/SqrtMinusOne/dotfiles/blob/master/Desktop.org#launch-script-1][check here]] if you are interested.)
+
+So, in the case of polybar, literate configuration allows for implementing a sort of logic that wouldn't be available with the base configuration (also a promise of projects like Guix Home, by the way). Maintaining this configuration, e.g. changing the order of modules, is much easier this way than it would be if everything was hardcoded in the polybar config itself.
