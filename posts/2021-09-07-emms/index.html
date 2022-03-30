@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>My EMMS and elfeed setup</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<div class="container">
+    <h2 id="intro">Intro</h2>
+<figure><img src="/ox-hugo/emms-screenshot.png"/>
+</figure>
+
+<p>This is the current state of my quest to live in Emacs, at least in part of reading RSS and music.</p>
+<p>Even before I lost my mind about customizing obscure keyboard-driven software, I tried Inoreader, self-hosted FreshRSS, and then newsboat from the RSS side and ncmpcpp+MPD from the audio player side. At some point, I got curious about whether I can do the same in Emacs.</p>
+<p>The respective emacs packages, elfeed and EMMS, proved somewhat tricky to set up, i.e. I had to figure out the source code in both cases. I even submitted a small patch to EMMS to make it parse my MPD library correctly.</p>
+<p>But in the end, only extensive customization capacities of Emacs enabled me to make a setup where these parts nicely come together and do more or less exactly what I want. However, this means there are a lot of degrees of freedom involved, so I’ll try to cover the important parts and link to the original sources wherever possible.</p>
+<p>I’d call it “workflow”, but the “work” part does not quite catch the point here.</p>
+<h2 id="mpd">MPD</h2>
+<p>So, we have to start somewhere.</p>
+<p><a href="https://www.musicpd.org/">MPD</a> is a server for playing music, although it is usually hosted on the local machine, i.e. the one on which you intend to listen to music. There is <a href="https://www.musicpd.org/clients/">bunch of clients</a> available (take a look at <a href="https://github.com/ncmpcpp/ncmpcpp">ncmpcpp</a> is you like terminal-based apps), but here our point of interest is its integration with EMMS.</p>
+<p>While EMMS is capable of playing music without it, MPD has the advantage of being independent of Emacs. That means it won&rsquo;t close if Emacs crashes and it can be controlled more easily with other means.</p>
+<p>MPD configuration is a pretty easy process. First, install MPD and <a href="https://www.musicpd.org/clients/mpc/">mpc</a> (a minimal MPD CLI client) from your distribution&rsquo;s package repository. After doing that, you&rsquo;d have to create a config file at the location <code>~/.config/mpd/mpd.conf</code>. Mine looks something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">music_directory</span>     <span style="color:#e6db74">&#34;~/Music&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">playlist_directory</span>  <span style="color:#e6db74">&#34;~/.mpd/playlists&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">db_file</span>             <span style="color:#e6db74">&#34;~/.mpd/database&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">log_file</span>            <span style="color:#e6db74">&#34;~/.mpd/log&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">pid_file</span>            <span style="color:#e6db74">&#34;~/.mpd/pid&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">state_file</span>          <span style="color:#e6db74">&#34;~/.mpd/state&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">sticker_file</span>        <span style="color:#e6db74">&#34;~/.mpd/sticker.sql&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">audio_output</span> {<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#a6e22e">type</span>    <span style="color:#e6db74">&#34;pulse&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>  <span style="color:#a6e22e">name</span>    <span style="color:#e6db74">&#34;My Pulse Output&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>}<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Here <code>music_directory</code> is, well, a directory in which MPD will look for music files. Take a look at <a href="https://linux.die.net/man/5/mpd.conf">man mpd.conf</a> and <a href="https://github.com/MusicPlayerDaemon/MPD/blob/master/doc/mpdconf.example">the default config example</a> for more information.</p>
+<p>Because MPD is a daemon, it has to be started in order to work. The easiest way is to add <code>mpd</code> to your init system, e.g. with GNU Shepherd:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#66d9ef">define </span>mpd
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">make</span> &lt;service&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">#</span>:provides <span style="color:#f92672">&#39;</span>(mpd)
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">#</span>:respawn? <span style="color:#66d9ef">#t</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">#</span>:start (<span style="color:#a6e22e">make-forkexec-constructor</span> <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;mpd&#34;</span> <span style="color:#e6db74">&#34;--no-daemon&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">#</span>:stop (<span style="color:#a6e22e">make-kill-destructor</span>)))
+</span></span></code></pre></div><p>You can also launch <code>mpd</code> manually, as it will daemonize itself by default. To check if MPD is working, run <code>mpc status</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mpc status
+</span></span></code></pre></div><p>Take a look at <a href="https://mpd.readthedocs.io/en/stable/user.html#configuration">the official documentation</a> for more information on this subject.</p>
+<h3 id="music-directory">Music directory</h3>
+<p>The next question after we&rsquo;ve set up MPD is how to organize the music directory.</p>
+<p>MPD itself is not too concerned about the structure of your <code>music_directory</code>, because it uses audio tags to classify the files. However, if you want to have album covers in EMMS, you need to have one folder per one album. Otherwise and in other respects, the structure can be arbitrary.</p>
+<p>So we need to tag the audio files. My favorite audio-tagging software is <a href="https://picard.musicbrainz.org/">MusicBrainz Picard</a>, which can set tags automatically even if the file has no metadata at all, and move the file automatically according to the configuration. The aforementioned ncmpcpp also has a decent tag editor; finally, there is a simple <a href="https://mutagen.readthedocs.io/en/latest/man/mid3v2.html">mutagen-based CLI tool</a>.</p>
+<h2 id="emms">EMMS</h2>
+<p><a href="https://www.gnu.org/software/emms/">EMMS</a> is the Emacs Multimedia System, a package that can get play stuff from various sources using various players. It is a part of Emacs, which means you can use the built-in version, but the git version has a few useful patches, so I advise using the latter.</p>
+<p>Install it however you usually install packages in Emacs; I use use-package + straight:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package emms
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>)
+</span></span></code></pre></div><h3 id="setup-and-mpd-integration">Setup &amp; MPD integration</h3>
+<p>Now we have to configure EMMS. The following expressions have to be executed after EMMS is loaded, which means we can add them to the <code>:config</code> section of the <code>use-package</code> expression above.</p>
+<p>First, EMMS exposes a handy function that loads all the stable EMMS features. You can take a look at its source and pick the features you need or load everything like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(require <span style="color:#e6db74">&#39;emms-setup</span>)
+</span></span><span style="display:flex;"><span>(emms-all)
+</span></span></code></pre></div><p>Then we need to set up a directory for EMMS files and the required parameters for <code>emms-player-mpd</code>. Note that <code>emms-player-mpd-music-directory</code> should be set to the same value as <code>music_directory</code> in <code>mpd.conf</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq emms-source-file-default-directory (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Music/&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(setq emms-player-mpd-server-name <span style="color:#e6db74">&#34;localhost&#34;</span>)
+</span></span><span style="display:flex;"><span>(setq emms-player-mpd-server-port <span style="color:#e6db74">&#34;6600&#34;</span>)
+</span></span><span style="display:flex;"><span>(setq emms-player-mpd-music-directory <span style="color:#e6db74">&#34;~/Music&#34;</span>)
+</span></span></code></pre></div><p>Add the required functions to EMMS lists:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(add-to-list <span style="color:#e6db74">&#39;emms-info-functions</span> <span style="color:#e6db74">&#39;emms-info-mpd</span>)
+</span></span><span style="display:flex;"><span>(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpd</span>)
+</span></span></code></pre></div><p>Now we can connect EMMS to MPD. For some reason, executing this function stops the MPD playback, but it is not a big issue because it has to be executed only once.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(emms-player-mpd-connect)
+</span></span></code></pre></div><p>The last thing we may want is to link EMMS playlist clearing to MPD playlist clearing. I&rsquo;m not sure how this interacts with MPD&rsquo;s own playlists because I don&rsquo;t use them, so you may need to watch out here if you do.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(add-hook <span style="color:#e6db74">&#39;emms-playlist-cleared-hook</span> <span style="color:#e6db74">&#39;emms-player-mpd-clear</span>)
+</span></span></code></pre></div><h3 id="usage">Usage</h3>
+<p>One rough edge of EMMS &amp; MPD integration is that EMMS and MPD have separate libraries and playlists.</p>
+<p>So, first we have to populate the MPD library with <code>M-x emms-player-mpd-update-all</code>. This operation is executed asynchronously by MPD and may take a few minutes for the first run. The subsequent runs are much faster. You can do the same by invoking <code>mpc update</code> from the command line.</p>
+<p>Second, we have to populate the EMMS library (cache) from the MPD library. To do that, run <code>M-x emms-cache-set-all-from-mpd</code>. If something went wrong with the EMMS cache, you always can clean it with <code>M-x emms-cache-reset</code>.</p>
+<p>After this is done, we can finally play music! To do that, run <code>M-x emms-browser</code>. The left window should have the EMMS browser buffer with the loaded library, the right one should contain (as for now empty) playlist.</p>
+<p>In the browser we can use the following commands to add elements to the playlist:</p>
+<ul>
+<li><code>M-x emms-browser-toggle-subitems</code> (<code>&lt;tab&gt;</code> in evil, <code>SPC</code> in vanilla) to open/close the element under cursor</li>
+<li><code>M-x emms-browser-add-tracks</code> (<code>RET</code> in both styles) to add the element under the cursor to the playlist</li>
+</ul>
+<p>Now, we have a few tracks in the EMMS playlist, but they are not in the MPD playlist yet.</p>
+<p>In the EMMS playlist buffer, <code>M-x emms-playlist-mode-play-smart</code> (<code>RET</code>) will sync the playlists and start playing the song under the cursor. Also, use</p>
+<ul>
+<li><code>M-x emms-playlist-mode-kill-track</code> (<code>D</code>) to remove the element under cursor</li>
+<li><code>M-x emms-playlist-clear</code> (<code>C</code>) to clear the playlist. With the hook from the previous section this should also clear the MPD playlist.</li>
+</ul>
+<p>Take a look at the <a href="https://www.gnu.org/software/emms/manual/">EMMS manual</a> for more information, including sections about <a href="https://www.gnu.org/software/emms/manual/#Interactive-Playlists">playlist</a> and <a href="https://www.gnu.org/software/emms/manual/#The-Browser">browser.</a></p>
+<h3 id="fetching-lyrics">Fetching lyrics</h3>
+<p>One feature of ncmpcpp I was missing here is fetching lyrics, so I&rsquo;ve written a small package to do just that.</p>
+<p>Debugging the package turned out to be quite funny because apparently, there is no way around parsing HTML with this task. So I&rsquo;ve chosen genius.com as the source, but the site turned out to provide different versions of itself (with different DOMs!) to different users.</p>
+<p>At any rate, I&rsquo;ve processed the cases I found, and it seems to be working, at least for me. To use the package, <a href="https://genius.com/api-clients/new">get the API key</a> from Genius and install it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package lyrics-fetcher
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :after (emms)
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (setq lyrics-fetcher-genius-access-token
+</span></span><span style="display:flex;"><span>        (password-store-get <span style="color:#e6db74">&#34;My_Online/APIs/genius.com&#34;</span>)))
+</span></span></code></pre></div><p>To fetch lyrics for the current playing EMMS song, run <code>M-x lyrics-fetcher-show-lyrics</code>. Or run <code>M-x lyrics-fetcher-emms-browser-show-at-point</code> to fetch data for the current point in the EMMS browser. See <a href="https://github.com/SqrtMinusOne/lyrics-fetcher.el">the package homepage</a> for more information.</p>
+<h3 id="album-covers">Album covers</h3>
+<p>I&rsquo;ve mentioned above that EMMS supports displaying album covers.</p>
+<p>For this to work, it is necessary to have one album per one folder. By default the cover image should be saved to images named <code>cover_small</code> (100x100 recommended), <code>cover_medium</code> (200x200 recommended) and <code>cover_large</code>. The small version is to be displayed in the EMMS browser, the medium one in the playlist.</p>
+<p>It&rsquo;s not required for images to be exactly of these sizes, but they definitely should be of one size across different albums to look nice in the interface.</p>
+<p>You can resize images with ImageMagick with commands like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>convert cover.jpg -resize 100x100^ -gravity Center -extent 100x100 cover_small.jpg
+</span></span><span style="display:flex;"><span>convert cover.jpg -resize 200x200^ -gravity Center -extent 200x200 cover_medium.jpg
+</span></span></code></pre></div><p><code>lyrics-fetcher</code> can (try to) do this automatically by downloading the cover from genius.com with <code>M-x lyrics-fetcher-emms-browser-fetch-covers-at-point</code> in EMMS browser.</p>
+<h2 id="mpv-and-youtube">MPV and YouTube</h2>
+<p><a href="https://mpv.io/">MPV</a> is an extensible media player, which integrates with <a href="https://github.com/ytdl-org/youtube-dl">youtube-dl</a> and is controllable by EMMS, thus quite fitting for this setup.</p>
+<h3 id="mpv-and-youtube-dl">MPV and youtube-dl</h3>
+<p>First, install both <code>mpv</code> and <code>youtube-dl</code> from your distribution&rsquo;s package repository.</p>
+<p>Then we can add another player to the list:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(add-to-list <span style="color:#e6db74">&#39;emms-player-list</span> <span style="color:#e6db74">&#39;emms-player-mpv</span> <span style="color:#66d9ef">t</span>)
+</span></span></code></pre></div><p>EMMS determines which player to use by a regexp. <code>emms-player-mpd</code> sets the default regexp from MPD&rsquo;s diagnostic output so that regex opens basically everything, including videos, HTTPS links, etc. That is fine if MPD is the only player in EMMS, but as we want to use MPV as well, we need to override the regexes.</p>
+<p>MPD regexp can look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(emms-player-set emms-player-mpd
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#39;regex</span>
+</span></span><span style="display:flex;"><span>                 (emms-player-simple-regexp
+</span></span><span style="display:flex;"><span>                  <span style="color:#e6db74">&#34;m3u&#34;</span> <span style="color:#e6db74">&#34;ogg&#34;</span> <span style="color:#e6db74">&#34;flac&#34;</span> <span style="color:#e6db74">&#34;mp3&#34;</span> <span style="color:#e6db74">&#34;wav&#34;</span> <span style="color:#e6db74">&#34;mod&#34;</span> <span style="color:#e6db74">&#34;au&#34;</span> <span style="color:#e6db74">&#34;aiff&#34;</span>))
+</span></span></code></pre></div><p>And a regexp for MPV to open videos and youtube URLs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(emms-player-set emms-player-mpv
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#39;regex</span>
+</span></span><span style="display:flex;"><span>                 (rx (or (<span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;https://&#34;</span> (<span style="color:#a6e22e">*</span> nonl) <span style="color:#e6db74">&#34;youtube.com&#34;</span> (<span style="color:#a6e22e">*</span> nonl))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#a6e22e">+</span> (<span style="color:#e6db74">? </span>(or <span style="color:#e6db74">&#34;https://&#34;</span> <span style="color:#e6db74">&#34;http://&#34;</span>))
+</span></span><span style="display:flex;"><span>                            (<span style="color:#a6e22e">*</span> nonl)
+</span></span><span style="display:flex;"><span>                            (regexp (<span style="color:#a6e22e">eval</span> (emms-player-simple-regexp
+</span></span><span style="display:flex;"><span>                                           <span style="color:#e6db74">&#34;mp4&#34;</span> <span style="color:#e6db74">&#34;mov&#34;</span> <span style="color:#e6db74">&#34;wmv&#34;</span> <span style="color:#e6db74">&#34;webm&#34;</span> <span style="color:#e6db74">&#34;flv&#34;</span> <span style="color:#e6db74">&#34;avi&#34;</span> <span style="color:#e6db74">&#34;mkv&#34;</span>)))))))
+</span></span></code></pre></div><p>Then, by default youtube-dl plays the video in the best possible quality, which may be pretty high. To have some control over it, we can modify the <code>--ytdl-format</code> key in the <code>emms-player-mpv-parameters</code> variable. I&rsquo;ve come up with the following solution:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/youtube-dl-quality-list
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;bestvideo[height&lt;=720]+bestaudio/best[height&lt;=720]&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;bestvideo[height&lt;=480]+bestaudio/best[height&lt;=480]&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;bestvideo[height&lt;=1080]+bestaudio/best[height&lt;=1080]&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(setq my/default-emms-player-mpv-parameters
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;--quiet&#34;</span> <span style="color:#e6db74">&#34;--really-quiet&#34;</span> <span style="color:#e6db74">&#34;--no-audio-display&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/set-emms-mpd-youtube-quality (quality)
+</span></span><span style="display:flex;"><span>  (interactive <span style="color:#e6db74">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (unless quality
+</span></span><span style="display:flex;"><span>    (setq quality (<span style="color:#a6e22e">completing-read</span> <span style="color:#e6db74">&#34;Quality: &#34;</span> my/youtube-dl-quality-list <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">t</span>)))
+</span></span><span style="display:flex;"><span>  (setq emms-player-mpv-parameters
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">`</span>(<span style="color:#f92672">,@</span>my/default-emms-player-mpv-parameters <span style="color:#f92672">,</span>(<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;--ytdl-format=%s&#34;</span> quality))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(my/set-emms-mpd-youtube-quality (<span style="color:#a6e22e">car</span> my/youtube-dl-quality-list))
+</span></span></code></pre></div><p>Run <code>M-x my/set-emms-mpd-youtube-quality</code> to pick the required quality. Take a look at <a href="https://github.com/ytdl-org/youtube-dl/blob/master/README.md#format-selection">youtube-dl docs</a> for more information about the format selection.</p>
+<p>Now <code>M-x emms-add-url</code> should work on YouTube URLs just fine. Just keep in mind that it will only add the URL to the playlist, not play it right away.</p>
+<h3 id="cleanup-emms-cache">Cleanup EMMS cache</h3>
+<p>All the added URLs stay in the EMMS cache after being played. We probably don&rsquo;t want them to remain there, so here is a function to remove URLs from the EMMS cache.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/emms-cleanup-urls ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (let ((keys-to-delete <span style="color:#f92672">&#39;</span>()))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">maphash</span> (lambda (key value)
+</span></span><span style="display:flex;"><span>               (when (<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#39;type</span> value)) <span style="color:#e6db74">&#39;url</span>)
+</span></span><span style="display:flex;"><span>                 (add-to-list <span style="color:#e6db74">&#39;keys-to-delete</span> key)))
+</span></span><span style="display:flex;"><span>             emms-cache-db)
+</span></span><span style="display:flex;"><span>    (dolist (key keys-to-delete)
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">remhash</span> key emms-cache-db)))
+</span></span><span style="display:flex;"><span>  (setq emms-cache-dirty <span style="color:#66d9ef">t</span>))
+</span></span></code></pre></div><h2 id="youtube-rss">YouTube RSS</h2>
+<h3 id="where-to-get-urls">Where to get URLs?</h3>
+<p>So, we are able to watch YouTube videos by URLs, but where to get URLs from? A natural solution is to use <a href="https://github.com/skeeto/elfeed">elfeed</a> and RSS feeds.</p>
+<p>I&rsquo;ve tried a bunch of options to get feeds for YouTube channels. The first one is <a href="https://api.invidious.io/">Invidious</a>, a FOSS YouTube frontend. The problem here is that various instances I tried weren&rsquo;t particularly stable (at least when I was using them) and hosting the thing by myself would be overkill. And switching instances is causing duplicate entries in the Elfeed DB.</p>
+<p>The second option is to use YouTube&rsquo;s own RSS. The feed URL looks like <code>https://www.youtube.com/feeds/videos.xml?channel_id=&lt;CHANNEL_ID&gt;=</code>. <a href="https://stackoverflow.com/questions/14366648/how-can-i-get-a-channel-id-from-youtube">Here are</a> a couple of options of figuring out <code>CHANNEL_ID</code> in case it&rsquo;s not easily available. The problem with YouTube RSS is that it uses fields that are not supported by elfeed, so the feed entry lacks a preview and description.</p>
+<p>As my workaround, I&rsquo;ve written a small <a href="https://github.com/SqrtMinusOne/yt-rss">web-server</a> which converts an RSS feed from YouTube to an elfeed-compatible Atom feed. It doesn&rsquo;t do much, so you can just download the thing and launch it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/SqrtMinusOne/yt-rss.git
+</span></span><span style="display:flex;"><span>cd ./yt-rss
+</span></span><span style="display:flex;"><span>pip install -r requirements.txt
+</span></span><span style="display:flex;"><span>gunicorn main:app
+</span></span></code></pre></div><p>A feed for a particular channel will be available at</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>http://localhost:8000/&lt;channel_id&gt;?token=&lt;token&gt;
+</span></span></code></pre></div><p>where <code>&lt;token&gt;</code> is set in <code>.env</code> file to the default value of <code>12345</code>.</p>
+<h3 id="elfeed">Elfeed</h3>
+<p><a href="https://github.com/skeeto/elfeed">Elfeed</a> is an Emacs Atom &amp; RSS reader. It&rsquo;s a pretty popular package with lots of information written over the years, so I&rsquo;ll cover just my particular setup.</p>
+<p>My elfeed config, sans keybindings, looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package elfeed
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :commands (elfeed)
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (setq elfeed-db-directory <span style="color:#e6db74">&#34;~/.elfeed&#34;</span>)
+</span></span><span style="display:flex;"><span>  (setq elfeed-enclosure-default-dir (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Downloads&#34;</span>))
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>elfeed-insert-html
+</span></span><span style="display:flex;"><span>              :around
+</span></span><span style="display:flex;"><span>              (lambda (fun <span style="color:#66d9ef">&amp;rest</span> r)
+</span></span><span style="display:flex;"><span>                (let ((shr-use-fonts <span style="color:#66d9ef">nil</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#a6e22e">apply</span> fun r)))))
+</span></span></code></pre></div><p>The advice there forces elfeed to use monospace fonts in the show buffer.</p>
+<p>I also use <a href="https://github.com/remyhonig/elfeed-org">elfeed-org</a>, which gives an option to store the feed config in an <code>.org</code> file instead of a variable:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package elfeed-org
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :after (elfeed)
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (setq rmh-elfeed-org-files <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;~/.emacs.d/elfeed.org&#34;</span>))
+</span></span><span style="display:flex;"><span>  (elfeed-org))
+</span></span></code></pre></div><p>So, however you&rsquo;ve got URLs for YouTube channels, put them into elfeed.</p>
+<p>To fetch the feeds, open elfeed with <code>M-x elfeed</code> and run <code>M-x elfeed-search-fetch</code> in the search buffer. And as usual, take a look at <a href="https://github.com/skeeto/elfeed">the package documentation</a> for more information.</p>
+<p>To help with navigating through the long list of entries, I&rsquo;ve made the following function to narrow the search buffer to the feed of the entry under cursor:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/elfeed-search-filter-source (entry)
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Filter elfeed search buffer by the feed under cursor.&#34;</span>
+</span></span><span style="display:flex;"><span>  (interactive (<span style="color:#a6e22e">list</span> (elfeed-search-selected :ignore-region)))
+</span></span><span style="display:flex;"><span>  (when (elfeed-entry-p entry)
+</span></span><span style="display:flex;"><span>    (elfeed-search-set-filter
+</span></span><span style="display:flex;"><span>     (<span style="color:#a6e22e">concat</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;@6-months-ago &#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;+unread &#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;=&#34;</span>
+</span></span><span style="display:flex;"><span>      (replace-regexp-in-string
+</span></span><span style="display:flex;"><span>       (rx <span style="color:#e6db74">&#34;?&#34;</span> (<span style="color:#a6e22e">*</span> not-newline) eos)
+</span></span><span style="display:flex;"><span>       <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>       (elfeed-feed-url (elfeed-entry-feed entry)))))))
+</span></span></code></pre></div><p>So I mostly alternate between <code>M-x my/elfeed-search-filter-source</code> and <code>M-x elfeed-search-clear-filter</code>. I tag the entries which I want to watch later with <code>+later</code>, and add the ones I want to watch right now to the playlist.</p>
+<h3 id="integrating-with-emms">Integrating with EMMS</h3>
+<p>Finally, here&rsquo;s the solution I came up with to add an entry from elfeed to the EMMS playlist. First, we&rsquo;ve got to get a URL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/get-youtube-url (link)
+</span></span><span style="display:flex;"><span>  (let ((watch-id (cadr
+</span></span><span style="display:flex;"><span>                   (<span style="color:#a6e22e">assoc</span> <span style="color:#e6db74">&#34;watch?v&#34;</span>
+</span></span><span style="display:flex;"><span>                          (url-parse-query-string
+</span></span><span style="display:flex;"><span>                           (<span style="color:#a6e22e">substring</span>
+</span></span><span style="display:flex;"><span>                            (url-filename
+</span></span><span style="display:flex;"><span>                             (url-generic-parse-url link))
+</span></span><span style="display:flex;"><span>                            <span style="color:#ae81ff">1</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;https://www.youtube.com/watch?v=&#34;</span> watch-id)))
+</span></span></code></pre></div><p>This function is intended to work with both Invidious and YouTube RSS feeds. Of course, it will require some adaptation if you want to watch channels from something like PeerTube or Odysee.</p>
+<p>The easiest way to put the URL to the playlist is to define a new source for EMMS:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(define-emms-source elfeed (entry)
+</span></span><span style="display:flex;"><span>    (let ((track (emms-track
+</span></span><span style="display:flex;"><span>                  <span style="color:#e6db74">&#39;url</span> (my/get-youtube-url (elfeed-entry-link entry)))))
+</span></span><span style="display:flex;"><span>      (emms-track-set track <span style="color:#e6db74">&#39;info-title</span> (elfeed-entry-title entry))
+</span></span><span style="display:flex;"><span>      (emms-playlist-insert-track track)))
+</span></span></code></pre></div><p>Because <code>define-emms-source</code> is an EMMS macro, the code block above has to be evaluated with EMMS loaded. E.g. you can wrap it into <code>(with-eval-after-load 'emms ...)</code> or put in the <code>:config</code> section.</p>
+<p>The macro defines a bunch of functions to work with the source, which we can use in another function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/elfeed-add-emms-youtube ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (emms-add-elfeed elfeed-show-entry)
+</span></span><span style="display:flex;"><span>  (elfeed-tag elfeed-show-entry <span style="color:#e6db74">&#39;watched</span>)
+</span></span><span style="display:flex;"><span>  (elfeed-show-refresh))
+</span></span></code></pre></div><p>Now, calling <code>M-x my/elfeed-add-emms-youtube</code> in the <code>*elfeed-show*</code> buffer will add the correct URL to the playlist and tag the entry with <code>+watched</code>. I&rsquo;ve bound the function to <code>gm</code>.</p>
+
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+        <div class="container text-center">
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2022"><small>Pavel Korytov, 2022</small></a>
+        </div>
+    
+</div>
+</body>
+</html>

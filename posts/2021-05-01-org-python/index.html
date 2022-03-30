@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Replacing Jupyter Notebook with Org Mode</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<div class="container">
+    <figure><img src="/ox-hugo/org-python-screenshot.png"/>
+</figure>
+
+<h2 id="why">Why?</h2>
+<p><a href="https://jupyter-notebook.readthedocs.io/en/stable/">Jupyter Notebook</a> and its successor <a href="https://jupyterlab.readthedocs.io/en/stable/">Jupyter Lab</a> providing an interactive development environment for many programming languages are in lots of ways great pieces of software.</p>
+<p>But while I was using the former, and then the latter, I was also an as-full-time-as-one-can-get NeoVim user. &ldquo;As one can get&rdquo; is because, of course, there is no sensible way to extend the NeoVim editing experience to the Jupyter ecosystem.</p>
+<p>A possibility for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.</p>
+<p>Sometime past that decision, it&rsquo;s time to wrap up the results. To start with, I&rsquo;ll briefly discuss the pros &amp; cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:</p>
+<ul>
+<li>Emacs, at least for me, is way more comfortable to use than a browser</li>
+<li>Org mode allows using multiple programming languages in one file or multiple sessions with one programming language</li>
+<li>Richer &amp; way more flexible export &amp; tangle capacities</li>
+<li>More reasonable version control because org mode is just plain text, contrary to Jupyter&rsquo;s JSONs</li>
+</ul>
+<p>The first point deserves to be spelled out with more detail. To start with, Emacs is an objectively better text editor than Jupyter, as Emacs offers a considerable superset of Jupyter&rsquo;s features concerning just writing and editing text. The farthest one can go with Jupyter Lab is to install a vim emulation plugin, which still isn&rsquo;t as good as Evil mode.</p>
+<p>The fact that Emacs can be used for different purposes also helps. For instance, I often write LaTeX documents, which are loosely based on the nearby code, e.g. using some generated charts or tables. Switching an Emacs buffer is easier than switching between Emacs and browser, not to mention that Emacs buffers usually have the same set of keybindings.</p>
+<p>Emacs&rsquo; buffer management system, which is good enough for a window manager, is barely comparable to the tabs of Jupyter Lab. And so on.</p>
+<p>As for why one may want to use Jupyter instead, here is my take on cons:</p>
+<ul>
+<li>Potential performance issues</li>
+<li>The output is not as rich as in the browser</li>
+<li>Collaboration with non-Emacs users is somewhat complicated</li>
+</ul>
+<p>Separation of kernels, server, and client together with non-blocking JavaScript-based UI is a good argument for using Jupyter. And it certainly won&rsquo;t be a problem for a browser to suddenly print a line a million characters long.</p>
+<p>As for the richness of the output, while there are ways to work around the limitations of Emacs there, in some cases the best thing one can do is open the output in question with a browser. I&rsquo;ll discuss doing that further below.</p>
+<p>The collaboration issue can be alleviated with rich export capabilities, but if someone wants to change something in your Org file, execute it and send it back to you, they have to use Emacs.</p>
+<h2 id="basic-setup">Basic setup</h2>
+<p>The core package to this whole venture is <a href="https://github.com/nnicandro/emacs-jupyter">emacs-jupyter</a> (another notable alternative <a href="https://github.com/millejoh/emacs-ipython-notebook">ein</a>, using which can help with the collaboration problem).</p>
+<p>Install it however you install packages in Emacs, here is my preferred way with <code>use-package</code> and <code>straight.el</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package jupyter
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>)
+</span></span></code></pre></div><p>Then, we have to enable languages for <code>org-babel</code>. Put the following in your org mode config section:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(org-babel-do-load-languages
+</span></span><span style="display:flex;"><span> <span style="color:#e6db74">&#39;org-babel-load-languages</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&#39;</span>((emacs-lisp <span style="color:#f92672">.</span> <span style="color:#66d9ef">t</span>) <span style="color:#75715e">;; Other languages</span>
+</span></span><span style="display:flex;"><span>   (shell <span style="color:#f92672">.</span> <span style="color:#66d9ef">t</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">;; Python &amp; Jupyter</span>
+</span></span><span style="display:flex;"><span>   (python <span style="color:#f92672">.</span> <span style="color:#66d9ef">t</span>)
+</span></span><span style="display:flex;"><span>   (jupyter <span style="color:#f92672">.</span> <span style="color:#66d9ef">t</span>)))
+</span></span></code></pre></div><p>Now, you should be able to use source blocks with names like <code>jupyter-LANG</code>, e.g. <code>jupyter-python</code>. To use just <code>LANG</code> src blocks, call the following function after <code>org-babel-do-load-languages</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(org-babel-jupyter-override-src-block <span style="color:#e6db74">&#34;python&#34;</span>)
+</span></span></code></pre></div><p>That overrides the built-in <code>python</code> block with <code>jupyter-python</code>.</p>
+<p>If you use <a href="https://github.com/astahlman/ob-async">ob-async</a>, you have to set <code>jupyter-LANG</code> blocks as ignored by this package, because emacs-jupyter has async execution of its own.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq ob-async-no-async-languages-alist <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;python&#34;</span> <span style="color:#e6db74">&#34;jupyter-python&#34;</span>))
+</span></span></code></pre></div><h2 id="environments">Environments</h2>
+<p>So, we&rsquo;ve set up a basic emacs-jupyter configuration.</p>
+<p>The catch here is that Jupyter should be available on Emacs startup (at the time of evaluation of the <code>emacs-jupyter</code> package, to be precise). That means, if you are launching Emacs with something like an application launcher, global Python &amp; Jupyter will be used.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>sys<span style="color:#f92672">.</span>executable
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/usr/bin/python3
+</span></span></code></pre></div><p>Which is probably not what we want. To resolve that, we have to make the right Python available at the required time.</p>
+<h3 id="anaconda">Anaconda</h3>
+<p>If you were using Jupyter Lab or Notebook before, there is a good chance you install it via <a href="https://anaconda.org/">Anaconda</a>. If not, in a nutshell, it is a package &amp; environment manager, which specializes in Python &amp; R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don&rsquo;t use some advanced package manager like Guix.</p>
+<p>As one may expect, there is an Emacs package called <a href="https://github.com/necaris/conda.el">conda.el</a> to help working with conda environments in Emacs. We have to put it somewhere before the <code>emacs-jupyter</code> package and call <code>conda-env-activate</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package conda
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (setq conda-anaconda-home (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Programs/miniconda3/&#34;</span>))
+</span></span><span style="display:flex;"><span>  (setq conda-env-home-directory (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/Programs/miniconda3/&#34;</span>))
+</span></span><span style="display:flex;"><span>  (setq conda-env-subdirectory <span style="color:#e6db74">&#34;envs&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(unless (getenv <span style="color:#e6db74">&#34;CONDA_DEFAULT_ENV&#34;</span>)
+</span></span><span style="display:flex;"><span>  (conda-env-activate <span style="color:#e6db74">&#34;base&#34;</span>))
+</span></span></code></pre></div><p>If you have Anaconda installed on a custom path, as I do, you&rsquo;d have to add these <code>setq</code> lines in the <code>:config</code> section. Also, there is no point in activating the environment if Emacs is somehow already launched in an environment.</p>
+<p>That&rsquo;ll give us Jupyter from a base conda environment.</p>
+<p>If you use a plain virtual environment, you can use <a href="https://github.com/porterjamesj/virtualenvwrapper.el">virtualenvwrapper.el</a>, which is similar in its design to conda.el (or, rather, the other way round).</p>
+<h3 id="switching-an-environment">Switching an environment</h3>
+<p>However, as you will notice rather soon, <code>emacs-jupyter</code> will always use the Python kernel found on startup. So if you switch to a new environment, the code will still be running in the old one, which is not too convenient.</p>
+<p>Fortunately, to fix that we have only to force the refresh of Jupyter kernelspecs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/jupyter-refresh-kernelspecs ()
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Refresh Jupyter kernelspecs&#34;</span>
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (jupyter-available-kernelspecs <span style="color:#66d9ef">t</span>))
+</span></span></code></pre></div><p>Calling <code>M-x my/jupyter-refresh-kernelspecs</code> after an environment switch will give you a new kernel. Just keep in mind that a kernelspec seems to be attached to a session, so you&rsquo;d also have to change the session name to get a new kernel.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>sys<span style="color:#f92672">.</span>executable
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/home/pavel/Programs/miniconda3/bin/python
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(conda-env-activate <span style="color:#e6db74">&#34;ann&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>sys<span style="color:#f92672">.</span>executable
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/home/pavel/Programs/miniconda3/bin/python
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my/jupyter-refresh-kernelspecs)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>sys<span style="color:#f92672">.</span>executable
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/home/pavel/Programs/miniconda3/envs/ann/bin/python
+</span></span></code></pre></div><h2 id="programming">Programming</h2>
+<p>To test if everything is working correctly, run <code>M-x jupyter-run-repl</code>, which should give you a REPL with a chosen kernel. If so, we can finally start using Python in org mode.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python :session hello :async yes
+</span></span><span style="display:flex;"><span>print(&#39;Hello, world!&#39;)
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>: Hello, world!
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span></code></pre></div><p>To avoid repeating similar arguments for the src block, we can set the <code>header-args</code> property at the start of the file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+PROPERTY: header-args:python :session hello
+</span></span><span style="display:flex;"><span>#+PROPERTY: header-args:python+ :async yes
+</span></span></code></pre></div><p>When a kernel is initialized, an associated REPL buffer is also created with a name like <code>*jupyter-repl[python 3.9.2]-hello*</code>.</p>
+<p>One advantage of emacs-jupyter over the standard Org source execution is that kernel requests for input are queried through the minibuffer. So, you can run a code like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python
+</span></span><span style="display:flex;"><span>name = input(&#39;Name: &#39;)
+</span></span><span style="display:flex;"><span>print(f&#39;Hello, {name}!&#39;)
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>: Hello, Pavel!
+</span></span></code></pre></div><p>without any additional setup.</p>
+<h2 id="code-output">Code output</h2>
+<h3 id="images">Images</h3>
+<p>Image output should work out of the box. Run <code>M-x org-toggle-inline-images</code> (<code>C-c C-x C-v</code>) after the execution to see the image inline.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python
+</span></span><span style="display:flex;"><span>import matplotlib.pyplot as plt
+</span></span><span style="display:flex;"><span>fig, ax = plt.subplots()
+</span></span><span style="display:flex;"><span>ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+</span></span><span style="display:flex;"><span>pass
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>[[file:./.ob-jupyter/86b3c5e1bbaee95d62610e1fb9c7e755bf165190.png]]
+</span></span></code></pre></div><p>There is some room for improvement though. First, you can add the following hook if you don&rsquo;t want to press this awkward keybinding every time:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(add-hook <span style="color:#e6db74">&#39;org-babel-after-execute-hook</span> <span style="color:#e6db74">&#39;org-redisplay-inline-images</span>)
+</span></span></code></pre></div><p>Second, we may override the image save path like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python :file img/hello.png
+</span></span><span style="display:flex;"><span>import matplotlib.pyplot as plt
+</span></span><span style="display:flex;"><span>fig, ax = plt.subplots()
+</span></span><span style="display:flex;"><span>ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+</span></span><span style="display:flex;"><span>pass
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>[[file:img/hello.png]]
+</span></span></code></pre></div><p>That can save you a <code>savefig</code> call if the image has to be used somewhere further.</p>
+<p>Finally, by default, the image has a transparent background and a ridiculously small size. That can be fixed with some matplotlib settings:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib <span style="color:#66d9ef">as</span> mpl
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mpl<span style="color:#f92672">.</span>rcParams[<span style="color:#e6db74">&#39;figure.dpi&#39;</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>mpl<span style="color:#f92672">.</span>rcParams[<span style="color:#e6db74">&#39;figure.facecolor&#39;</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;1&#39;</span>
+</span></span></code></pre></div><p>At the same time, we can set the image width to prevent images from becoming too large. I prefer to do it inside a <code>emacs-lisp</code> code block in the same org file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq-local org-image-actual-width <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">1024</span>))
+</span></span></code></pre></div><h3 id="basic-tables">Basic tables</h3>
+<p>If you are evaluating something like pandas DataFrame, it will be outputted in the HTML format, wrapped in the <code>begin_export</code> block. To view the data in text format, you can set <code>:display plain</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python :display plain
+</span></span><span style="display:flex;"><span>import pandas as pd
+</span></span><span style="display:flex;"><span>pd.DataFrame({&#34;a&#34;: [1, 2], &#34;b&#34;: [3, 4]})
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>:    a  b
+</span></span><span style="display:flex;"><span>: 0  1  3
+</span></span><span style="display:flex;"><span>: 1  2  4
+</span></span></code></pre></div><p>Another solution is to use something like the <a href="https://pypi.org/project/tabulate/">tabulate</a> package:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python
+</span></span><span style="display:flex;"><span>import pandas as pd
+</span></span><span style="display:flex;"><span>import tabulate
+</span></span><span style="display:flex;"><span>df = pd.DataFrame({&#34;a&#34;: [1, 2], &#34;b&#34;: [3, 4]})
+</span></span><span style="display:flex;"><span>print(tabulate.tabulate(df, headers=df.columns, tablefmt=&#34;orgtbl&#34;))
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>: |    |   a |   b |
+</span></span><span style="display:flex;"><span>: |----+-----+-----|
+</span></span><span style="display:flex;"><span>: |  0 |   1 |   3 |
+</span></span><span style="display:flex;"><span>: |  1 |   2 |   4 |
+</span></span></code></pre></div><h3 id="html-and-other-rich-output">HTML &amp; other rich output</h3>
+<p>Yet another solution is to use emacs-jupyter&rsquo;s option <code>:pandoc t</code>, which invokes pandoc to convert HTML, LaTeX, and Markdown to Org. Predictably, this is slower than the options above.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+begin_src python :pandoc t
+</span></span><span style="display:flex;"><span>import pandas as pd
+</span></span><span style="display:flex;"><span>df = pd.DataFrame({&#34;a&#34;: [1, 2], &#34;b&#34;: [3, 4]})
+</span></span><span style="display:flex;"><span>df
+</span></span><span style="display:flex;"><span>#+end_src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#+RESULTS:
+</span></span><span style="display:flex;"><span>:RESULTS:
+</span></span><span style="display:flex;"><span>|   | a | b |
+</span></span><span style="display:flex;"><span>|---+---+---|
+</span></span><span style="display:flex;"><span>| 0 | 1 | 3 |
+</span></span><span style="display:flex;"><span>| 1 | 2 | 4 |
+</span></span><span style="display:flex;"><span>:END:
+</span></span></code></pre></div><p>Also, every once in a while I have to view an actual, unconverted HTML in a browser, e.g. when using <a href="https://python-visualization.github.io/folium/">folium</a> or <a href="https://spacy.io/usage/visualizers">displaCy</a>.</p>
+<p>To do that, I&rsquo;ve written a small function, which performs <code>xdg-open</code> on the HTML export block under the cursor:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/org-view-html-tmp-dir <span style="color:#e6db74">&#34;/tmp/org-html-preview/&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(use-package f
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/org-view-html ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (let ((elem (org-element-at-point))
+</span></span><span style="display:flex;"><span>        (temp-file-path (<span style="color:#a6e22e">concat</span> my/org-view-html-tmp-dir (<span style="color:#a6e22e">number-to-string</span> (<span style="color:#a6e22e">random</span> (<span style="color:#a6e22e">expt</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">32</span>))) <span style="color:#e6db74">&#34;.html&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (cond
+</span></span><span style="display:flex;"><span>     ((not (<span style="color:#a6e22e">eq</span> <span style="color:#e6db74">&#39;export-block</span> (<span style="color:#a6e22e">car</span> elem)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;Not in an export block!&#34;</span>))
+</span></span><span style="display:flex;"><span>     ((not (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">plist-get</span> (<span style="color:#a6e22e">car</span> (<span style="color:#a6e22e">cdr</span> elem)) :type) <span style="color:#e6db74">&#34;HTML&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">message</span> <span style="color:#e6db74">&#34;Export block is not HTML!&#34;</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#66d9ef">t</span> (progn
+</span></span><span style="display:flex;"><span>          (f-mkdir my/org-view-html-tmp-dir)
+</span></span><span style="display:flex;"><span>          (f-write (<span style="color:#a6e22e">plist-get</span> (<span style="color:#a6e22e">car</span> (<span style="color:#a6e22e">cdr</span> elem)) :value) <span style="color:#e6db74">&#39;utf-8</span> temp-file-path)
+</span></span><span style="display:flex;"><span>          (<span style="color:#a6e22e">start-process</span> <span style="color:#e6db74">&#34;org-html-preview&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;xdg-open&#34;</span> temp-file-path))))))
+</span></span></code></pre></div><p><code>f.el</code> is used by a lot of packages, including the above-mentioned <code>conda.el</code>, so you probably already have it installed.</p>
+<p>Put a cursor on the <code>begin_export html</code> block and run <code>M-x my/org-view-html</code>.</p>
+<p>There also <a href="https://github.com/nnicandro/emacs-jupyter#building-the-widget-support-experimental">seems to be widgets support</a> in emacs-jupyter, but I wasn&rsquo;t able to make it work.</p>
+<h3 id="dataframes">DataFrames</h3>
+<p>Last but not least option I want to mention here is specifically about pandas&rsquo; DataFrames. There aren&rsquo;t many good options to view the full dataframe inside Emacs. One way I can think of is to save the dataframe in CSV and view it with <code>csv-mode</code>.</p>
+<p>However, there are standalone packages to view dataframes. One I can point out is <a href="https://github.com/man-group/dtale">dtale</a>, which is a Flask + React app designed just for that purpose. It has a rather extensive list of features, including charting, basic statistical instruments, filters, etc. <a href="http://alphatechadmin.pythonanywhere.com/dtale/main/1">Here</a> is an online demo.</p>
+<p>The problem here is that it&rsquo;s a browser app, which means it defies one of the purposes of using Org Mode in the first place. What&rsquo;s more, this application is a rather huge one with lots of dependencies, and they have to be installed in the same environment as your project.</p>
+<p>So this approach has its pros and cons as well. Example usage is as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> dtale
+</span></span><span style="display:flex;"><span>d <span style="color:#f92672">=</span> dtale<span style="color:#f92672">.</span>show(df)
+</span></span><span style="display:flex;"><span>d<span style="color:#f92672">.</span>open_browser() <span style="color:#75715e"># Or get an URL from d._url</span>
+</span></span></code></pre></div><p>Another notable alternative is <a href="https://github.com/adamerose/pandasgui">PandasGUI</a>, which, as one can guess, is a GUI (PyQt5) application, although it uses QtWebEngine inside.</p>
+<h2 id="remote-kernels">Remote kernels</h2>
+<p>There are yet some problems in the current configuration.</p>
+<ul>
+<li>Input/output handling is far from perfect. For instance, (at least in my configuration) Emacs tends to get slow for log-like outputs, e.g. Keras with <code>verbose=2</code>. It may even hang if the output is one long line.</li>
+<li><code>ipdb</code> behaves awkwardly if called from an <code>src</code> block, although it at least will let you type <code>quit</code>.</li>
+<li>Whenever you close Emacs, kernels are stopped, so you&rsquo;d have to execute the code again on the next start.</li>
+</ul>
+<h3 id="using-a-remote-kernel">Using a &ldquo;remote&rdquo; kernel</h3>
+<p>For the reasons above I sometimes prefer to use a standalone kernel. To start a Jupyter kernel, run the following command in the environment and path you need:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jupyter kernel --kernel<span style="color:#f92672">=</span>python
+</span></span></code></pre></div><p>After the kernel is launched, write the path to the connection file into the <code>:session</code> header and press <code>C-c C-c</code> to refresh the setup:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+PROPERTY: header-args:python :session /home/pavel/.local/share/jupyter/runtime/kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
+</span></span></code></pre></div><p>Now python source blocks should be executed in the kernel.</p>
+<p>To open a REPL, run <code>M-x jupyter-connect-repl</code> and select the given JSON. Or launch a standalone REPL like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jupyter qtconsole --existing kernel-e770599c-2c98-429b-b9ec-4d1ddf5fc16c.json
+</span></span></code></pre></div><p>Executing a piece of code in the REPL allows proper debugging, for instance with <code>%pdb</code> magic. Also, Jupyter QtConsole generally handles large outputs better and even allows certain kinds of rich output in the REPL.</p>
+<h3 id="some-automation">Some automation</h3>
+<p>Now, I wouldn&rsquo;t use Emacs if it wasn&rsquo;t possible to automate at least some of the listed steps. So here are the functions I&rsquo;ve written for that.</p>
+<p>First, we need to get open ports on the system:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/get-open-ports ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">mapcar</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">#&#39;string-to-number</span>
+</span></span><span style="display:flex;"><span>   (split-string (shell-command-to-string <span style="color:#e6db74">&#34;ss -tulpnH | awk &#39;{print $5}&#39; | sed -e &#39;s/.*://&#39;&#34;</span>) <span style="color:#e6db74">&#34;\n&#34;</span>)))
+</span></span></code></pre></div><p>Then, list the available kernel JSONs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/jupyter-runtime-folder (<span style="color:#a6e22e">expand-file-name</span> <span style="color:#e6db74">&#34;~/.local/share/jupyter/runtime&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/list-jupyter-kernel-files ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">mapcar</span>
+</span></span><span style="display:flex;"><span>   (lambda (file) (<span style="color:#a6e22e">cons</span> (<span style="color:#a6e22e">car</span> file) (<span style="color:#a6e22e">cdr</span> (<span style="color:#a6e22e">assq</span> <span style="color:#e6db74">&#39;shell_port</span> (json-read-file (<span style="color:#a6e22e">car</span> file))))))
+</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">sort</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">directory-files-and-attributes</span> my/jupyter-runtime-folder <span style="color:#66d9ef">t</span> <span style="color:#e6db74">&#34;.*kernel.*json$&#34;</span>)
+</span></span><span style="display:flex;"><span>    (lambda (x y) (not (<span style="color:#a6e22e">time-less-p</span> (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">6</span> x) (<span style="color:#a6e22e">nth</span> <span style="color:#ae81ff">6</span> y)))))))
+</span></span></code></pre></div><p>And query the user for a running kernel:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/select-jupyter-kernel ()
+</span></span><span style="display:flex;"><span>  (let ((ports (my/get-open-ports))
+</span></span><span style="display:flex;"><span>        (files (my/list-jupyter-kernel-files)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">completing-read</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#e6db74">&#34;Jupyter kernels: &#34;</span>
+</span></span><span style="display:flex;"><span>     (seq-filter
+</span></span><span style="display:flex;"><span>      (lambda (file)
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">member</span> (<span style="color:#a6e22e">cdr</span> file) ports))
+</span></span><span style="display:flex;"><span>      files))))
+</span></span></code></pre></div><p>After which we can use the <code>my/select-jupyter-kernel</code> function however we want:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/insert-jupyter-kernel ()
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Insert a path to an active Jupyter kernel into the buffer&#34;</span>
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">insert</span> (my/select-jupyter-kernel)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/jupyter-connect-repl ()
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Open emacs-jupyter REPL, connected to a Jupyter kernel&#34;</span>
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (jupyter-connect-repl (my/select-jupyter-kernel) <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">t</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/jupyter-qtconsole ()
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Open Jupyter QtConsole, connected to a Jupyter kernel&#34;</span>
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">start-process</span> <span style="color:#e6db74">&#34;jupyter-qtconsole&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;setsid&#34;</span> <span style="color:#e6db74">&#34;jupyter&#34;</span> <span style="color:#e6db74">&#34;qtconsole&#34;</span> <span style="color:#e6db74">&#34;--existing&#34;</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#a6e22e">file-name-nondirectory</span> (my/select-jupyter-kernel))))
+</span></span></code></pre></div><p>The first function, which simply inserts the path to the kernel, is meant to be used on the <code>:session</code> header. One can go even further and locate the header automatically, but that&rsquo;s an idea for next time.</p>
+<p>The second one opens a REPL provided by emacs-jupyter. The <code>t</code> argument is necessary to pop up the REPL immediately.</p>
+<p>The last one launches Jupyter QtConsole. <code>setsid</code> is required to run the program in a new session, so it won&rsquo;t close together with Emacs.</p>
+<h3 id="cleaning-up">Cleaning up</h3>
+<p>I&rsquo;ve also noticed that there are JSON files left in the runtime folder whenever the kernel isn&rsquo;t stopped correctly. So here is a cleanup function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/jupyter-cleanup-kernels ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (let* ((ports (my/get-open-ports))
+</span></span><span style="display:flex;"><span>         (files (my/list-jupyter-kernel-files))
+</span></span><span style="display:flex;"><span>         (to-delete (seq-filter
+</span></span><span style="display:flex;"><span>                     (lambda (file)
+</span></span><span style="display:flex;"><span>                       (not (<span style="color:#a6e22e">member</span> (<span style="color:#a6e22e">cdr</span> file) ports)))
+</span></span><span style="display:flex;"><span>                     files)))
+</span></span><span style="display:flex;"><span>    (when (and (length&gt; to-delete <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>               (y-or-n-p (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;Delete %d files?&#34;</span> (<span style="color:#a6e22e">length</span> to-delete))))
+</span></span><span style="display:flex;"><span>      (dolist (file to-delete)
+</span></span><span style="display:flex;"><span>        (<span style="color:#a6e22e">delete-file</span> (<span style="color:#a6e22e">car</span> file)))))
+</span></span></code></pre></div><h2 id="export">Export</h2>
+<p>An uncountable number of articles have been written already on the subject of Org Mode export, so I will just cover my particular setup.</p>
+<h3 id="html">HTML</h3>
+<p>Export to a standalone HTML is an easy way to share the code with someone who doesn&rsquo;t use Emacs, just remember that HTML may not be the only file you&rsquo;d have to share if you have images in the document. Although you may use something like <a href="https://github.com/BitLooter/htmlark">htmlark</a> later to get a proper self-contained HTML.</p>
+<p>To do the export, run <code>M-x org-html-export-to-html</code>. It should work out of the box, however, we can improve the output a bit.</p>
+<p>First, we can add a custom CSS to the file. I like this one:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+HTML_HEAD: &lt;link rel=&#34;stylesheet&#34; type=&#34;text/css&#34; href=&#34;https://gongzhitaao.org/orgcss/org.css&#34;/&gt;
+</span></span></code></pre></div><p>To get a syntax highlighting, we need the <code>htmlize</code> package:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package htmlize
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :after ox
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (setq org-html-htmlize-output-type <span style="color:#e6db74">&#39;css</span>))
+</span></span></code></pre></div><p>If you use the <a href="https://github.com/Fanael/rainbow-delimiters">rainbow-delimeters</a> package, as I do, default colors for delimiters may not look good with the light theme. To fix such issues, put an HTML snippet like this in a <code>begin_export html</code> block or a CSS file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">style</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/css&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>.<span style="color:#a6e22e">org-rainbow-delimiters-depth-1</span><span style="color:#f92672">,</span> .<span style="color:#a6e22e">org-rainbow-delimiters-depth-2</span><span style="color:#f92672">,</span> .<span style="color:#a6e22e">org-rainbow-delimiters-depth-3</span><span style="color:#f92672">,</span> .<span style="color:#a6e22e">org-rainbow-delimiters-depth-4</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">color</span>: <span style="color:#66d9ef">black</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">style</span>&gt;
+</span></span></code></pre></div><h3 id="latex-pdf">LaTeX -&gt; pdf</h3>
+<p>Even though I use LaTeX quite extensively, I don&rsquo;t like to add another layer of complexity here and 98% of the time write plain <code>.tex</code> files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to &ldquo;traditional&rdquo; text processors.</p>
+<p>Nevertheless, I want to get at least a tolerable pdf from Org, so here is a piece of my config with some inline comments.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/setup-org-latex ()
+</span></span><span style="display:flex;"><span>  (setq org-latex-compiler <span style="color:#e6db74">&#34;xelatex&#34;</span>) <span style="color:#75715e">;; Probably not necessary</span>
+</span></span><span style="display:flex;"><span>  (setq org-latex-pdf-process <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;latexmk -outdir=%o %f&#34;</span>)) <span style="color:#75715e">;; Use latexmk</span>
+</span></span><span style="display:flex;"><span>  (setq org-latex-listings <span style="color:#e6db74">&#39;minted</span>)   <span style="color:#75715e">;; Use minted to highlight source code</span>
+</span></span><span style="display:flex;"><span>  (setq org-latex-minted-options      <span style="color:#75715e">;; Some minted options I like</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#39;</span>((<span style="color:#e6db74">&#34;breaklines&#34;</span> <span style="color:#e6db74">&#34;true&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;tabsize&#34;</span> <span style="color:#e6db74">&#34;4&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;autogobble&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;linenos&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;numbersep&#34;</span> <span style="color:#e6db74">&#34;0.5cm&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;xleftmargin&#34;</span> <span style="color:#e6db74">&#34;1cm&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#e6db74">&#34;frame&#34;</span> <span style="color:#e6db74">&#34;single&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; Use extarticle without the default packages</span>
+</span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;org-latex-classes</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;org-plain-extarticle&#34;</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#34;\\documentclass{extarticle}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[NO-DEFAULT-PACKAGES]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[PACKAGES]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[EXTRA]&#34;</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#e6db74">&#34;\\section{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\section*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#e6db74">&#34;\\subsection{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subsection*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#e6db74">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subsubsection*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#e6db74">&#34;\\paragraph{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\paragraph*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#e6db74">&#34;\\subparagraph{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subparagraph*{%s}&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; Make sure to eval the function when org-latex-classes list already exists</span>
+</span></span><span style="display:flex;"><span>(with-eval-after-load <span style="color:#e6db74">&#39;ox-latex</span>
+</span></span><span style="display:flex;"><span>  (my/setup-org-latex))
+</span></span></code></pre></div><p>In the document itself, add the following headers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+LATEX_CLASS: org-plain-extarticle
+</span></span><span style="display:flex;"><span>#+LATEX_CLASS_OPTIONS: [a4paper, 14pt]
+</span></span></code></pre></div><p>14pt size is required by certain state standards of ours for some reason.</p>
+<p>After which you can put whatever you want in the preamble with <code>LATEX_HEADER</code>. My workflow with LaTeX is to write a bunch of <code>.sty</code> files beforehand and import the necessary ones in the preamble. <a href="https://github.com/SqrtMinusOne/LaTeX%5Ftemplates">Here</a> is the repo with these files, although quite predictably, it&rsquo;s a mess. At any rate, I have to write something like the following in the target Org file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+LATEX_HEADER: \usepackage{styles/generalPreamble}
+</span></span><span style="display:flex;"><span>#+LATEX_HEADER: \usepackage{styles/reportFormat}
+</span></span><span style="display:flex;"><span>#+LATEX_HEADER: \usepackage{styles/mintedSourceCode}
+</span></span><span style="display:flex;"><span>#+LATEX_HEADER: \usepackage{styles/russianLocale}
+</span></span></code></pre></div><p><code>M-x org-latex-export-to-latex</code> should export the document to the .tex file. As an alternative, run <code>M-x org-export-dispatch</code> (by default should be on <code>C-c C-e</code>) an pick the required option there.</p>
+<h3 id="ipynb">ipynb</h3>
+<p>One last export backend I want to mention is <a href="https://github.com/jkitchin/ox-ipynb">ox-ipynb</a>, which allows exporting Org documents to Jupyter notebooks. Sometimes it works, sometimes it doesn&rsquo;t.</p>
+<p>Also, the package isn&rsquo;t on MELPA, so you have to install it from the repo directly.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package ox-ipynb
+</span></span><span style="display:flex;"><span>  :straight (:host github :repo <span style="color:#e6db74">&#34;jkitchin/ox-ipynb&#34;</span>)
+</span></span><span style="display:flex;"><span>  :after ox)
+</span></span></code></pre></div><p>To (try to) do export, run <code>M-x ox-ipynb-export-org-file-ipynb-file</code>.</p>
+
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+        <div class="container text-center">
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2022"><small>Pavel Korytov, 2022</small></a>
+        </div>
+    
+</div>
+</body>
+</html>

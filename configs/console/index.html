@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Console</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<div class="container">
+    <p>#+TOC headlines 6</p>
+<h2 id="dot-profile"><code>.profile</code></h2>
+<h3 id="environment">Environment</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export QT_QPA_PLATFORMTHEME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;qt5ct&#34;</span>
+</span></span><span style="display:flex;"><span>export QT_AUTO_SCREEN_SCALE_FACTOR<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>Set ripgrep config path</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export RIPGREP_CONFIG_PATH<span style="color:#f92672">=</span>$HOME/.config/ripgrep/ripgreprc
+</span></span></code></pre></div><p>hledger path</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export LEDGER_FILE<span style="color:#f92672">=</span>~/Documents/org-mode/ledger/ledger.journal
+</span></span></code></pre></div><p>Checking if running inside termux</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> command -v termux-setup-storage &gt; /dev/null; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export IS_ANDROID<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f ~/.android_profile <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> . ~/.android_profile
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h3 id="my-paths">My paths</h3>
+<p>My script folders</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/bin&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/bin/scripts:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/bin&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h3 id="guix-settings">Guix settings</h3>
+<p>Enable extra profiles</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span>$IS_ANDROID<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    GUIX_EXTRA_PROFILES<span style="color:#f92672">=</span>$HOME/.guix-extra-profiles
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i in $GUIX_EXTRA_PROFILES/*; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>	profile<span style="color:#f92672">=</span>$i/<span style="color:#66d9ef">$(</span>basename <span style="color:#e6db74">&#34;</span>$i<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;</span>$profile<span style="color:#e6db74">&#34;</span>/etc/profile <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	    GUIX_PROFILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$profile<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>	    . <span style="color:#e6db74">&#34;</span>$GUIX_PROFILE<span style="color:#e6db74">&#34;</span>/etc/profile
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>	export XDG_DATA_DIRS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$XDG_DATA_DIRS<span style="color:#e6db74">:</span>$profile<span style="color:#e6db74">/share&#34;</span>
+</span></span><span style="display:flex;"><span>	unset profile
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Set Jupyter config PATH. It defaults to readonly directory somewhere in Guix profile.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export JUPYTER_CONFIG_DIR<span style="color:#f92672">=</span>$HOME/.config/jupyter
+</span></span></code></pre></div><p>Set a folder for my packages.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export GUIX_PACKAGE_PATH<span style="color:#f92672">=</span>~/guix-packages
+</span></span></code></pre></div><p>Locale settings</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export GUIX_LOCPATH<span style="color:#f92672">=</span>$HOME/.guix-extra-profiles/console/console/lib/locale
+</span></span></code></pre></div><h3 id="other-package-managers">Other package managers</h3>
+<p>Using other package managers with Guix requires some extra work.</p>
+<p>Cask</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.cask&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/.cask/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Make flatpak apps visible to launchers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/share/flatpak&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export XDG_DATA_DIRS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$XDG_DATA_DIRS<span style="color:#e6db74">:</span>$HOME<span style="color:#e6db74">/.local/share/flatpak/exports/share&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Enable Nix</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f /run/current-system/profile/etc/profile.d/nix.sh <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  . /run/current-system/profile/etc/profile.d/nix.sh
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Use Guix fontconfig. Necessary for nix apps</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.guix-extra-profiles/desktop-misc&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export FONTCONFIG_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.guix-extra-profiles/desktop-misc/desktop-misc/etc/fonts&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Make nix apps visible to launchers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.nix-profile&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export XDG_DATA_DIRS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$XDG_DATA_DIRS<span style="color:#e6db74">:</span>$HOME<span style="color:#e6db74">/.nix-profile/share/applications&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h4 id="npm">npm</h4>
+<p>npm is especially cumbersome, for instance because by default it tries to install packages to <code>/gnu/store/</code>.</p>
+<p>In principle, one can set a prefix like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#a6e22e">prefix</span><span style="color:#f92672">=</span><span style="color:#e6db74">/home/pavel/.npm-packages</span>
+</span></span></code></pre></div><p>But I also want to use node from conda occasionally, where prefix is already set correctly. So instead of tangling the above to the <code>~/.npmrc</code> directly, I set an environment variable in the profile:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export NPM_CONFIG_USERCONFIG<span style="color:#f92672">=</span>$HOME/._npmrc
+</span></span></code></pre></div><p>The variable is unset in a script in <a href="/configs/guix/#conda">Guix.org</a>.</p>
+<p>Set PATH &amp; MANPATH</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>NPM_PACKAGES<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>HOME<span style="color:#e6db74">}</span><span style="color:#e6db74">/.npm-packages&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">:</span>$NPM_PACKAGES<span style="color:#e6db74">/bin&#34;</span>
+</span></span><span style="display:flex;"><span>export MANPATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MANPATH-<span style="color:#66d9ef">$(</span>manpath<span style="color:#66d9ef">)</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span>$NPM_PACKAGES<span style="color:#e6db74">/share/man&#34;</span>
+</span></span></code></pre></div><h3 id="xresources">XResources</h3>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xrdb</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span>$IS_ANDROID<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    xrdb ~/.Xresources
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h3 id="off--package-manager-paths"><span class="org-todo done OFF">OFF</span> (OFF) Package manager paths</h3>
+<p>Turned off for now, because probably it won&rsquo;t be necessary in Guix.</p>
+<p>LaTeX</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;/usr/local/texlive/2020&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export MANPATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/texlive/2020/texmf-dist/doc/man:</span>$MANPATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    export INFOPATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/texlive/2020/texmf-dist/doc/info:</span>$INFOPATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/texlive/2020/bin/x86_64-linux:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Cargo (Rust)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.cargo&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.cargo/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>RVM (Ruby)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.rvm&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$PATH<span style="color:#e6db74">:</span>$HOME<span style="color:#e6db74">/.rvm/bin&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># if [ -d &#34;$HOME/.gem&#34; ]; then</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     export PATH=&#34;$HOME/.gem/ruby/2.7.0/bin:$PATH&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fi</span>
+</span></span></code></pre></div><p>Go</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/go&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/go/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>ghcup (Haskell)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;/home/pavel/.ghcup/env&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> source <span style="color:#e6db74">&#34;/home/pavel/.ghcup/env&#34;</span> <span style="color:#75715e"># ghcup-env</span>
+</span></span></code></pre></div><p>Perl</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/perl5&#34;</span> <span style="color:#f92672">]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/perl5/bin</span><span style="color:#e6db74">${</span>PATH:+:<span style="color:#e6db74">${</span>PATH<span style="color:#e6db74">}}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    PERL5LIB<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/perl5/lib/perl5</span><span style="color:#e6db74">${</span>PERL5LIB:+:<span style="color:#e6db74">${</span>PERL5LIB<span style="color:#e6db74">}}</span><span style="color:#e6db74">&#34;</span>; export PERL5LIB;
+</span></span><span style="display:flex;"><span>    PERL_LOCAL_LIB_ROOT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/pavel/perl5</span><span style="color:#e6db74">${</span>PERL_LOCAL_LIB_ROOT:+:<span style="color:#e6db74">${</span>PERL_LOCAL_LIB_ROOT<span style="color:#e6db74">}}</span><span style="color:#e6db74">&#34;</span>; export PERL_LOCAL_LIB_ROOT;
+</span></span><span style="display:flex;"><span>    PERL_MB_OPT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--install_base \&#34;/home/pavel/perl5\&#34;&#34;</span>; export PERL_MB_OPT;
+</span></span><span style="display:flex;"><span>    PERL_MM_OPT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;INSTALL_BASE=/home/pavel/perl5&#34;</span>; export PERL_MM_OPT;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h2 id="bash">Bash</h2>
+<h3 id="dot-bash-profile"><code>.bash_profile</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[[</span> -f ~/.profile <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> . ~/.profile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -f ~/.bashrc <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> . ~/.bashrc
+</span></span></code></pre></div><h3 id="dot-bashrc"><code>.bashrc</code></h3>
+<p>My <code>.bashrc</code>, which has pieces from the default ones in Guix &amp; Manjaro, as well some mine settings.</p>
+<h4 id="startup-and-environment">Startup &amp; environment</h4>
+<p>Export &lsquo;SHELL&rsquo; to child processes.  Programs such as &lsquo;screen&rsquo; honor it and otherwise use /bin/sh.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export SHELL
+</span></span></code></pre></div><p>We are being invoked from a non-interactive shell.  If this is an SSH session (as in &ldquo;ssh host command&rdquo;), source /etc/profile so we get PATH and other essential variables.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $- !<span style="color:#f92672">=</span> *i* <span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$SSH_CLIENT<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&amp;&amp;</span> -f <span style="color:#e6db74">&#34;/etc/bashrc&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> source /etc/profile
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>If <code>termux-setup-storage</code> is available, then we&rsquo;re running inside termux. It is necessary to source <code>~/.profile</code> manually.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> command -v termux-setup-storage &gt; /dev/null; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$IS_ANDROID<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	source ~/.profile
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Source the system-wide file</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;/etc/bashrc&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    source /etc/bashrc
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xhost</td>
+</tr>
+</tbody>
+</table>
+<p>Allow other users to access X server. Necessary for stuff like aw-watcher-window.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xhost +local:root &gt; /dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>Set manpager to bat</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export MANPAGER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sh -c &#39;sed -e s/.\\\\x08//g | bat -l man -p&#39;&#34;</span>
+</span></span></code></pre></div><h4 id="launch-fish">Launch fish</h4>
+<p>Launch fish shell unless bash itself is launched from fish.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>use_fish<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>ps --no-header --pid<span style="color:#f92672">=</span>$PPID --format<span style="color:#f92672">=</span>cmd<span style="color:#66d9ef">)</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fish&#34;</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#e6db74">${</span>use_fish<span style="color:#e6db74">}</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">$(</span>command -v fish<span style="color:#66d9ef">)</span> <span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    exec fish
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>The rest of <code>.bashrc</code> is not executed if fish was launched.</p>
+<h4 id="colors">Colors</h4>
+<p>Setting for colors, packed in the default <code>.bashrc</code> in Manjaro</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>use_color<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Set colorful PS1 only on colorful terminals.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dircolors --print-database uses its own built-in database</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># instead of using /etc/DIR_COLORS.  Try to use the external file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># first to take advantage of user additions.  Use internal bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># globbing instead of external grep binary.</span>
+</span></span><span style="display:flex;"><span>safe_term<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>TERM//[^[:alnum:]]/?<span style="color:#e6db74">}</span>   <span style="color:#75715e"># sanitize TERM</span>
+</span></span><span style="display:flex;"><span>match_lhs<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -f ~/.dir_colors   <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> match_lhs<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>match_lhs<span style="color:#e6db74">}</span><span style="color:#66d9ef">$(</span>&lt;~/.dir_colors<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -f /etc/DIR_COLORS <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> match_lhs<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>match_lhs<span style="color:#e6db74">}</span><span style="color:#66d9ef">$(</span>&lt;/etc/DIR_COLORS<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> -z <span style="color:#e6db74">${</span>match_lhs<span style="color:#e6db74">}</span>    <span style="color:#f92672">]]</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#f92672">&amp;&amp;</span> type -P dircolors &gt;/dev/null <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#f92672">&amp;&amp;</span> match_lhs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>dircolors --print-database<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span> <span style="color:#e6db74">$&#39;\n&#39;</span><span style="color:#e6db74">${</span>match_lhs<span style="color:#e6db74">}</span> <span style="color:#f92672">==</span> *<span style="color:#e6db74">$&#39;\n&#39;</span><span style="color:#e6db74">&#34;TERM &#34;</span><span style="color:#e6db74">${</span>safe_term<span style="color:#e6db74">}</span>* <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> use_color<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#e6db74">${</span>use_color<span style="color:#e6db74">}</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Enable colors for ls, etc.  Prefer ~/.dir_colors #64489</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> type -P dircolors &gt;/dev/null ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -f ~/.dir_colors <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	    eval <span style="color:#66d9ef">$(</span>dircolors -b ~/.dir_colors<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">elif</span> <span style="color:#f92672">[[</span> -f /etc/DIR_COLORS <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	    eval <span style="color:#66d9ef">$(</span>dircolors -b /etc/DIR_COLORS<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">${</span>EUID<span style="color:#e6db74">}</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    alias ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ls --color=auto&#39;</span>
+</span></span><span style="display:flex;"><span>    alias grep<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;grep --colour=auto&#39;</span>
+</span></span><span style="display:flex;"><span>    alias egrep<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;egrep --colour=auto&#39;</span>
+</span></span><span style="display:flex;"><span>    alias fgrep<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fgrep --colour=auto&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">${</span>EUID<span style="color:#e6db74">}</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># show root@ when we don&#39;t have colors</span>
+</span></span><span style="display:flex;"><span>	PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\u@\h \W \$ &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\u@\h \w \$ &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>unset use_color safe_term match_lhs sh
+</span></span></code></pre></div><h4 id="settings">Settings</h4>
+<p>Some general bash settings.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html">shopt list</a></li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>complete -cf sudo           <span style="color:#75715e"># Sudo autocompletion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>shopt -s checkwinsize       <span style="color:#75715e"># Check windows size after each command</span>
+</span></span><span style="display:flex;"><span>shopt -s expand_aliases     <span style="color:#75715e"># Aliases</span>
+</span></span><span style="display:flex;"><span>shopt -s autocd             <span style="color:#75715e"># Cd to directory just by typing its name (without cd)</span>
+</span></span></code></pre></div><p>History control</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>shopt -s histappend
+</span></span><span style="display:flex;"><span>export HISTCONTROL<span style="color:#f92672">=</span>ignoredups:erasedups
+</span></span><span style="display:flex;"><span>HISTSIZE<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>HISTFILESIZE<span style="color:#f92672">=</span>
+</span></span></code></pre></div><p>Autocompletions</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[</span> -r /usr/share/bash-completion/bash_completion <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> . /usr/share/bash-completion/bash_completion
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;/usr/share/fzf&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    source /usr/share/fzf/completion.bash
+</span></span><span style="display:flex;"><span>    source /usr/share/fzf/key-bindings.bash
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h4 id="aliases">Aliases</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>alias v<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vim&#34;</span>
+</span></span><span style="display:flex;"><span>alias gg<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;lazygit&#34;</span>
+</span></span><span style="display:flex;"><span>alias ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;exa --icons&#34;</span>
+</span></span><span style="display:flex;"><span>alias ll<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;exa -lah --icons&#34;</span>
+</span></span><span style="display:flex;"><span>alias q<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;exit&#34;</span>
+</span></span><span style="display:flex;"><span>alias c<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;clear&#34;</span>
+</span></span><span style="display:flex;"><span>alias ci<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;init_conda&#34;</span>
+</span></span><span style="display:flex;"><span>alias ca<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;conda activate&#34;</span>
+</span></span><span style="display:flex;"><span>alias cii<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;export INIT_CONDA=true &amp;&amp; init_conda&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -z <span style="color:#e6db74">&#34;</span>$SIMPLE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    unalias ls
+</span></span><span style="display:flex;"><span>    alias ll<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ls -lah&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h4 id="anaconda">Anaconda</h4>
+<blockquote>
+<p>managed by &lsquo;conda init&rsquo; !!!</p>
+</blockquote>
+<p>Yeah, tell this to yourself</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>init_conda <span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    __conda_setup<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span><span style="color:#e6db74">&#39;/home/pavel/.guix-extra-profiles/dev/dev/bin/conda&#39;</span> <span style="color:#e6db74">&#39;shell.bash&#39;</span> <span style="color:#e6db74">&#39;hook&#39;</span> 2&gt; /dev/null<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> $? -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	eval <span style="color:#e6db74">&#34;</span>$__conda_setup<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;/home/pavel/.guix-extra-profiles/dev/dev/etc/profile.d/conda.sh&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	    . <span style="color:#e6db74">&#34;/home/pavel/.guix-extra-profiles/dev/dev/etc/profile.d/conda.sh&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#75715e"># export PATH=&#34;/home/pavel/Programs/miniconda3/bin:$PATH&#34;</span>
+</span></span><span style="display:flex;"><span>	    echo <span style="color:#e6db74">&#34;what&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>    unset __conda_setup
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -z <span style="color:#e6db74">&#34;</span>$INIT_CONDA<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    init_conda
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h4 id="starship">Starship</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$SIMPLE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    eval <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>starship init bash<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h2 id="fish">Fish</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fish</td>
+<td>An alternative non POSIX-compliant shell</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://fishshell.com/">Fish shell</a> is a non-POSIX-compliant shell, which offers some fancy UI &amp; UX features.</p>
+<p>Launch starship</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#a6e22e">starship</span> init fish <span style="color:#f92672">|</span> source
+</span></span></code></pre></div><p>Enable vi keybindings &amp; aliases. The alias syntax is the same as in bash, so it&rsquo;s just a noweb reference to <code>.bashrc</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#a6e22e">fish_vi_key_bindings</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;&lt;shell-alias</span>es<span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>alias cad<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;conda activate (basename (pwd))&#34;</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dt-colorscripts</td>
+</tr>
+</tbody>
+</table>
+<p>Launch a random <a href="https://gitlab.com/dwt1/shell-color-scripts">DT&rsquo;s colorscript</a> unless ran inside tmux or Emacs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ! test <span style="color:#a6e22e">-n</span> <span style="color:#e6db74">&#34;</span>$TMUX<span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">and</span> ! test <span style="color:#a6e22e">-n</span> <span style="color:#e6db74">&#34;</span>$IS_EMACS<span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">colorscript</span> random
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Suppress fish greeting</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_greeting
+</span></span></code></pre></div><h3 id="anaconda">Anaconda</h3>
+<p>First, a function to initialize anaconda.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">init_conda</span>
+</span></span><span style="display:flex;"><span>    eval /home/pavel/.guix-extra-profiles/dev/dev/bin/conda <span style="color:#e6db74">&#34;shell.fish&#34;</span> <span style="color:#e6db74">&#34;hook&#34;</span> $argv <span style="color:#f92672">|</span> source
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">test</span> <span style="color:#a6e22e">-n</span> <span style="color:#e6db74">&#34;</span>$INIT_CONDA<span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">init_conda</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>Then, check if launched from Emacs with environment activated.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">test</span> <span style="color:#a6e22e">-n</span> <span style="color:#e6db74">&#34;</span>$EMACS_CONDA_ENV<span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">conda</span> activate $EMACS_CONDA_ENV
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h3 id="colors">Colors</h3>
+<p>Fish seems to have hardcoded colorcodes in some color settings. I set these to base16 colors so they would match Xresources.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_command cyan
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_comment green
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_end white
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_error red
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_escape yellow
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_operator yellow
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_param magenta
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_quote brwhite
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">set</span> fish_color_redirection yellow
+</span></span></code></pre></div><h3 id="keybindings">Keybindings</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>bind <span style="color:#a6e22e">-M</span> insert <span style="color:#ae81ff">\e</span>l forward-char
+</span></span><span style="display:flex;"><span>bind <span style="color:#a6e22e">-M</span> insert <span style="color:#ae81ff">\e</span>h backward-char
+</span></span><span style="display:flex;"><span>bind <span style="color:#a6e22e">-M</span> insert <span style="color:#ae81ff">\e</span>w forward-word
+</span></span><span style="display:flex;"><span>bind <span style="color:#a6e22e">-M</span> insert <span style="color:#ae81ff">\e</span>b backward-word
+</span></span></code></pre></div><h3 id="functions">Functions</h3>
+<p>A small function to open the file with <code>$EDITOR</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">e</span>
+</span></span><span style="display:flex;"><span>    eval $EDITOR $argv
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h3 id="direnv">direnv</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#a6e22e">direnv</span> hook fish <span style="color:#f92672">|</span> source
+</span></span></code></pre></div><h2 id="nushell">Nushell</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nushell-bin</td>
+</tr>
+</tbody>
+</table>
+<p>A structured shell. I don&rsquo;t use it as of now, but perhaps one day.</p>
+<p>Set starship prompt</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">startup</span> = [
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">&lt;&lt;</span><span style="color:#a6e22e">nu-aliases</span><span style="color:#960050;background-color:#1e0010">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;mkdir ~/.cache/starship&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;starship init nu | save ~/.cache/starship/init.nu&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;source ~/.cache/starship/init.nu&#34;</span>,
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">prompt</span> = <span style="color:#e6db74">&#34;starship_prompt&#34;</span>
+</span></span></code></pre></div><p>Skip welcome message</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">skip_welcome_message</span> = <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><p>Set table mode</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">table_mode</span> = <span style="color:#e6db74">&#34;rounded&#34;</span>
+</span></span></code></pre></div><p>Aliases</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#e6db74">&#34;alias ll = ls -l&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;alias c = clear&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;alias q = exit&#34;</span>
+</span></span></code></pre></div><p>Colors</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">color_config</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_filesize</span>=<span style="color:#e6db74">&#34;ub&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_boolean</span>=<span style="color:#e6db74">&#34;yu&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_duration</span>=<span style="color:#e6db74">&#34;g&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_path</span>=<span style="color:#e6db74">&#34;y&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_date</span>=<span style="color:#e6db74">&#34;r&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_int</span>=<span style="color:#e6db74">&#34;c&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">primitive_decimal</span>=<span style="color:#e6db74">&#34;c&#34;</span>
+</span></span></code></pre></div><h2 id="starship-prompt">Starship prompt</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rust-starship</td>
+<td>my prompt of choice</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://starship.rs/">Starship</a> is a nice cross-shell prompt, written in Rust.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://starship.rs/config/">Startship config guide</a></li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">character</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">success_symbol</span> = <span style="color:#e6db74">&#34;[➤ ](bold green)&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_symbol</span> = <span style="color:#e6db74">&#34;[ ](bold red)&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">vicmd_symbol</span> = <span style="color:#e6db74">&#34;[ᐊ ](bold green)&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">aws</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [battery]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># full_symbol = &#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># charging_symbol = &#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># discharging_symbol = &#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">conda</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">cmd_duration</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">min_time</span> = <span style="color:#ae81ff">500</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">format</span> = <span style="color:#e6db74">&#34; [$duration]($style) &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">docker_context</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">elixir</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">elm</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">git_branch</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">truncation_length</span> = <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">golang</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [haskell]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># symbol = &#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">hg_branch</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">java</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">julia</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">memory_usage</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">nim</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">nix_shell</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">nodejs</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">package</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">disabled</span> = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">php</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">python</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">ruby</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">rust</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">symbol</span> = <span style="color:#e6db74">&#34; &#34;</span>
+</span></span></code></pre></div><h2 id="tmux">Tmux</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tmux</td>
+</tr>
+<tr>
+<td>python-tmuxp</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/tmux/tmux">tmux</a> is my terminal multiplexer of choice.</p>
+<p>It provides pretty sane defaults, so the config is not too large. I rebind the prefix to <code>C-a</code> though.</p>
+<h3 id="term-settings">Term settings</h3>
+<p>I have no idea how and why these two work.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">default</span>-<span style="color:#a6e22e">terminal</span> <span style="color:#e6db74">&#34;screen-256color&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">ga</span> <span style="color:#a6e22e">terminal</span>-<span style="color:#a6e22e">overrides</span> <span style="color:#e6db74">&#34;,*256col*:Tc&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>History limit.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">history</span>-<span style="color:#a6e22e">limit</span> <span style="color:#ae81ff">20000</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="keybindings">Keybindings</h3>
+<p>Enable vi keys and mouse.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">set</span>-<span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">option</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">mode</span>-<span style="color:#a6e22e">keys</span> <span style="color:#a6e22e">vi</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span>-<span style="color:#a6e22e">option</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">xterm</span>-<span style="color:#a6e22e">keys</span> <span style="color:#a6e22e">on</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span>-<span style="color:#a6e22e">option</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">mouse</span> <span style="color:#a6e22e">on</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">sg</span> <span style="color:#a6e22e">escape</span>-<span style="color:#a6e22e">time</span> <span style="color:#ae81ff">10</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Change prefix from <code>C-b</code> to <code>C-a</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">unbind</span> <span style="color:#a6e22e">C</span>-<span style="color:#a6e22e">b</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">prefix</span> <span style="color:#a6e22e">C</span>-<span style="color:#a6e22e">a</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">C</span>-<span style="color:#a6e22e">a</span> <span style="color:#a6e22e">send</span>-<span style="color:#a6e22e">prefix</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Vi-like keybindings to manage panes &amp; windows.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">h</span> <span style="color:#a6e22e">select</span>-<span style="color:#a6e22e">pane</span> -<span style="color:#a6e22e">L</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">j</span> <span style="color:#a6e22e">select</span>-<span style="color:#a6e22e">pane</span> -<span style="color:#a6e22e">D</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">k</span> <span style="color:#a6e22e">select</span>-<span style="color:#a6e22e">pane</span> -<span style="color:#a6e22e">U</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">l</span> <span style="color:#a6e22e">select</span>-<span style="color:#a6e22e">pane</span> -<span style="color:#a6e22e">R</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">s</span> <span style="color:#a6e22e">split</span>-<span style="color:#a6e22e">window</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">v</span> <span style="color:#a6e22e">split</span>-<span style="color:#a6e22e">window</span> -<span style="color:#a6e22e">h</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span>-<span style="color:#a6e22e">key</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">new</span>-<span style="color:#a6e22e">window</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span>-<span style="color:#a6e22e">key</span> <span style="color:#a6e22e">t</span> <span style="color:#a6e22e">next</span>-<span style="color:#a6e22e">window</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span>-<span style="color:#a6e22e">key</span> <span style="color:#a6e22e">T</span> <span style="color:#a6e22e">previous</span>-<span style="color:#a6e22e">window</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Reload the config.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">bind</span> <span style="color:#a6e22e">r</span> <span style="color:#a6e22e">source</span>-<span style="color:#a6e22e">file</span> ~/.<span style="color:#a6e22e">tmux</span>.<span style="color:#a6e22e">conf</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="copy-to-clipboard">Copy to clipboard</h3>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xclip</td>
+</tr>
+</tbody>
+</table>
+<p>Make tmux copying copy to clipboard as well</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">bind</span>-<span style="color:#a6e22e">key</span> -<span style="color:#a6e22e">T</span> <span style="color:#a6e22e">copy</span>-<span style="color:#a6e22e">mode</span>-<span style="color:#a6e22e">vi</span> <span style="color:#a6e22e">MouseDragEnd1Pane</span> <span style="color:#a6e22e">send</span>-<span style="color:#a6e22e">keys</span> -<span style="color:#a6e22e">X</span> <span style="color:#a6e22e">copy</span>-<span style="color:#a6e22e">pipe</span>-<span style="color:#a6e22e">and</span>-<span style="color:#a6e22e">cancel</span> <span style="color:#e6db74">&#34;xclip -selection clipboard -i&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">bind</span>-<span style="color:#a6e22e">key</span> -<span style="color:#a6e22e">T</span> <span style="color:#a6e22e">copy</span>-<span style="color:#a6e22e">mode</span>-<span style="color:#a6e22e">vi</span> <span style="color:#a6e22e">y</span> <span style="color:#a6e22e">send</span>-<span style="color:#a6e22e">keys</span> -<span style="color:#a6e22e">X</span> <span style="color:#a6e22e">copy</span>-<span style="color:#a6e22e">pipe</span>-<span style="color:#a6e22e">and</span>-<span style="color:#a6e22e">cancel</span> <span style="color:#e6db74">&#34;xclip -selection clipboard -i&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="ui">UI</h3>
+<p>I generated the following with <a href="https://github.com/edkolev/tmuxline.vim">tmuxline.vim</a> plugin and palenight theme for <a href="https://github.com/vim-airline/vim-airline">vim-airline</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># <span style="color:#a6e22e">This</span> <span style="color:#a6e22e">tmux</span> <span style="color:#a6e22e">statusbar</span> <span style="color:#a6e22e">config</span> <span style="color:#a6e22e">was</span> <span style="color:#a6e22e">created</span> <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">tmuxline</span>.<span style="color:#a6e22e">vim</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span># <span style="color:#a6e22e">on</span> <span style="color:#a6e22e">Wed</span>, <span style="color:#ae81ff">22</span> <span style="color:#a6e22e">Jan</span> <span style="color:#ae81ff">2020</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">justify</span> <span style="color:#e6db74">&#34;centre&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span> <span style="color:#e6db74">&#34;on&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">left</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;none&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">message</span>-<span style="color:#a6e22e">command</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;fg=#bfc7d5,bg=#474b59&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">right</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;none&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">pane</span>-<span style="color:#a6e22e">active</span>-<span style="color:#a6e22e">border</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;fg=#939ede&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;none,bg=#333747&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">message</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;fg=#bfc7d5,bg=#474b59&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">pane</span>-<span style="color:#a6e22e">border</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;fg=#474b59&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">right</span>-<span style="color:#a6e22e">length</span> <span style="color:#e6db74">&#34;100&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">left</span>-<span style="color:#a6e22e">length</span> <span style="color:#e6db74">&#34;100&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">setw</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">activity</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;none,fg=#939ede,bg=#333747&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">setw</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">separator</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">setw</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">style</span> <span style="color:#e6db74">&#34;none,fg=#bfc7d5,bg=#333747&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">left</span> <span style="color:#e6db74">&#34;#[fg=#292D3E,bg=#939ede] #S #[fg=#939ede,bg=#474b59,nobold,nounderscore,noitalics]#[fg=#bfc7d5,bg=#474b59] #W #[fg=#474b59,bg=#333747,nobold,nounderscore,noitalics]&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">set</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">right</span> <span style="color:#e6db74">&#34;#[fg=#333747,bg=#333747,nobold,nounderscore,noitalics]#[fg=#bfc7d5,bg=#333747] %-H:%M #[fg=#474b59,bg=#333747,nobold,nounderscore,noitalics]#[fg=#bfc7d5,bg=#474b59] %a, %b %d #[fg=#939ede,bg=#474b59,nobold,nounderscore,noitalics]#[fg=#292D3E,bg=#939ede] #H &#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">setw</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;#[fg=#333747,bg=#333747,nobold,nounderscore,noitalics]#[default] #I #W #[align=left] #[fg=#333747,bg=#333747,nobold,nounderscore,noitalics]&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">setw</span> -<span style="color:#a6e22e">g</span> <span style="color:#a6e22e">window</span>-<span style="color:#a6e22e">status</span>-<span style="color:#a6e22e">current</span>-<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;#[fg=#333747,bg=#474b59,nobold,nounderscore,noitalics]#[fg=#bfc7d5,bg=#474b59] #I #W #[fg=#474b59,bg=#333747,nobold,nounderscore,noitalics]&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Source the line config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">source</span> ~/.<span style="color:#a6e22e">tmux</span>.<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">conf</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="alacritty">Alacritty</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alacritty</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/alacritty/alacritty">Alacritty</a> is a GPU-accelerated terminal emulator. I haven&rsquo;t found it to be an inch faster than st, but configuration the in yml format is way more convinient than patches.</p>
+<p>Once again, we have an application which doesn&rsquo;t support reading Xresources, so here goes noweb.</p>
+<p><a id="code-snippet--get-xrdb"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xrdb -query all | grep <span style="color:#e6db74">&#34;</span>$color<span style="color:#e6db74">:&#34;</span> | cut -f <span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq-local org-confirm-babel-evaluate <span style="color:#66d9ef">nil</span>)
+</span></span></code></pre></div><p>References:</p>
+<ul>
+<li><a href="https://github.com/alacritty/alacritty/blob/master/alacritty.yml">default config</a></li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">decorations</span>: <span style="color:#ae81ff">none</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">font</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">normal</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">family</span>: <span style="color:#ae81ff">JetBrainsMono Nerd Font</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">style</span>: <span style="color:#ae81ff">Regular</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">size</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">TERM</span>: <span style="color:#ae81ff">xterm-256color</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">colors</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">primary</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">background</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color0&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">foreground</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color7&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">normal</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">black</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color0&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">red</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color1&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">green</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color2&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">yellow</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color3&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">blue</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color4&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">magenta</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color5&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cyan</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color6&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">white</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color7&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">bright</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Black</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color8&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Red</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color9&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Green</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color10&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Yellow</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color11&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Blue</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color12&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Magenta</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color13&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Cyan</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color14&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">White</span>: <span style="color:#e6db74">&#39;&lt;&lt;get-xrdb(color=&#34;color15&#34;)&gt;&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">background_opacity</span>: <span style="color:#ae81ff">0.80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">window</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">padding</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">x</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">y</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">dynamic_padding</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">key_bindings</span>:
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Paste,                                       action</span>: <span style="color:#ae81ff">Paste          }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Copy,                                        action</span>: <span style="color:#ae81ff">Copy           }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: L,         mods: Control,                    action</span>: <span style="color:#ae81ff">ClearLogNotice }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: L,         mods: Control, mode: ~Vi|~Search, chars</span>: <span style="color:#e6db74">&#34;\x0c&#34;</span>          }
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: PageUp,    mods: Shift,   mode: ~Alt,        action</span>: <span style="color:#ae81ff">ScrollPageUp,  }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: PageDown,  mods: Shift,   mode: ~Alt,        action</span>: <span style="color:#ae81ff">ScrollPageDown }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Home,      mods: Shift,   mode: ~Alt,        action</span>: <span style="color:#ae81ff">ScrollToTop,   }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: End,       mods: Shift,   mode: ~Alt,        action</span>: <span style="color:#ae81ff">ScrollToBottom }</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#  Turn off vi mode</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Space,  mods: Shift|Control, mode: ~Search,    action</span>: <span style="color:#ae81ff">ReceiveChar             }</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># (Windows, Linux, and BSD only)</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: V,              mods: Control|Shift, mode: ~Vi,        action</span>: <span style="color:#ae81ff">Paste            }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: C,              mods: Control|Shift,                   action</span>: <span style="color:#ae81ff">Copy             }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: F,              mods: Control|Shift, mode: ~Search,    action</span>: <span style="color:#ae81ff">ReceiveChar    }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: B,              mods: Control|Shift, mode: ~Search,    action</span>: <span style="color:#ae81ff">ReceiveChar   }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Insert,         mods: Shift,                           action</span>: <span style="color:#ae81ff">PasteSelection   }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Key0,           mods: Control,                         action</span>: <span style="color:#ae81ff">ResetFontSize    }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Equals,         mods: Control,                         action</span>: <span style="color:#ae81ff">IncreaseFontSize }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Plus,           mods: Control,                         action</span>: <span style="color:#ae81ff">IncreaseFontSize }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: NumpadAdd,      mods: Control,                         action</span>: <span style="color:#ae81ff">IncreaseFontSize }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: Minus,          mods: Control,                         action</span>: <span style="color:#ae81ff">DecreaseFontSize }</span>
+</span></span><span style="display:flex;"><span>  - { <span style="color:#f92672">key: NumpadSubtract, mods: Control,                         action</span>: <span style="color:#ae81ff">DecreaseFontSize }</span>
+</span></span></code></pre></div><h2 id="various-console-applications">Various console applications</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ncurses</td>
+<td>Provides stuff like <code>clear</code></td>
+</tr>
+<tr>
+<td>exa</td>
+<td><code>ls</code> replacement, written in Rust</td>
+</tr>
+<tr>
+<td>bat</td>
+<td><code>cat</code> clone with syntax highlighting</td>
+</tr>
+<tr>
+<td>htop</td>
+<td>Interactive process viewer</td>
+</tr>
+<tr>
+<td>nethogs</td>
+<td>A tool to group processed by used bandwidth</td>
+</tr>
+<tr>
+<td>osync</td>
+<td>rsync wrapper</td>
+</tr>
+<tr>
+<td>neofetch</td>
+<td>Fetch system info</td>
+</tr>
+<tr>
+<td>fzf</td>
+<td>fuzzy finder</td>
+</tr>
+<tr>
+<td>p7zip</td>
+<td>archiver</td>
+</tr>
+<tr>
+<td>password-store</td>
+<td>CLI password manager</td>
+</tr>
+<tr>
+<td>zip</td>
+<td></td>
+</tr>
+<tr>
+<td>unzip</td>
+<td></td>
+</tr>
+<tr>
+<td>jmtpfs</td>
+<td>A tool to mount MTP devices (e.g. Android)</td>
+</tr>
+<tr>
+<td>tokei</td>
+<td>Count lines of code</td>
+</tr>
+<tr>
+<td>sshfs</td>
+<td>Mount stuff over SSH</td>
+</tr>
+<tr>
+<td>git-lfs</td>
+<td></td>
+</tr>
+<tr>
+<td>glibc-locales</td>
+<td></td>
+</tr>
+<tr>
+<td>direnv</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ripgrep-config">ripgrep config</h3>
+<p>Occasionally I can&rsquo;t exclude certain files from ripgrep via the VCS settings, so here is a simple config to ignore certain files globally.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>--ignore-file=/home/pavel/.config/ripgrep/ripgrepignore
+</span></span></code></pre></div><p>The corresponding ignore file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>*.ts.snap
+</span></span></code></pre></div><p>By default ripgrep doesn&rsquo;t read any configs, so it is necessary to set the <code>RIPGREP_CONFIG_PATH</code> variable in the <a href="#environment">.profile.</a></p>
+<h2 id="misc-scripts">Misc scripts</h2>
+<h3 id="nt-exec-command-with-a-finished-notification"><code>nt</code> - exec command with a finished notification</h3>
+<p>Usage:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>nt &lt;command&gt;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>command<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$@<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> ! -z <span style="color:#e6db74">&#34;</span>$command<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    start_time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>date -u +%s<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    $command
+</span></span><span style="display:flex;"><span>    end_time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>date -u +%s<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    elapsed<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$((</span>$end_time<span style="color:#f92672">-</span>$start_time<span style="color:#66d9ef">))</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Terminal&#34;</span> <span style="color:#e6db74">&#34;Command\n</span>$command<span style="color:#e6db74">\nexecuted in </span>$elapsed<span style="color:#e6db74"> seconds&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Terminal&#34;</span> <span style="color:#e6db74">&#34;Command execution complete&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h3 id="autocommit"><code>autocommit</code></h3>
+<p>A script to autocommit files in a repository. I use it to sync my org directory and password store. I guess it&rsquo;s not how git is intended to be used, but it works for me.</p>
+<p>Usage:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>autocommit &lt;repository&gt; [-F]
+</span></span></code></pre></div><p>Environment:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TIMEOUT_MIN</code></td>
+<td>Default timeout</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<p>Here&rsquo;s more or less what the script is doing:</p>
+<ul>
+<li>If there is a merge conflict, notify</li>
+<li>If there are changed files in the last <code>TIMEOUT_MIN</code> minutes, commit</li>
+<li>Fetch</li>
+<li>If there are were changes in the last <code>TTMEOUT_MIN</code>, merge (usually the merge has to be fast-forward)</li>
+<li>If fetch was successful &amp; merge was successful or delayed because of changes in the last <code>TIMEOUT_MIN</code>, push</li>
+<li>Send a notification about the events above</li>
+<li>Send a separate notification if there is a merge conflict</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>TIMEOUT_MIN<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>TIMEOUT_MIN<span style="color:#66d9ef">:-</span>60<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export DISPLAY<span style="color:#f92672">=</span>:0
+</span></span><span style="display:flex;"><span>cd <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TIMESTAMP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%s<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>LAST_COMMIT_TIMESTAMP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git log -1 --format<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;%at&#34;</span> | xargs -I<span style="color:#f92672">{}</span> date -d @<span style="color:#f92672">{}</span> +%s<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>RECENTLY_CHANGED_NUM<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>find . -not -path <span style="color:#e6db74">&#39;*/\.*&#39;</span> -mmin -$TIMEOUT_MIN | wc -l<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>CHANGED_NUM<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git status --porcelain | wc -l<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>COMMITED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span>PUSHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span>FETCHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span>MERGED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>git ls-files -u | wc -l<span style="color:#66d9ef">)</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    notify-send -u critical <span style="color:#e6db74">&#34;Autocommit </span><span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;Merge conflict!&#34;</span>
+</span></span><span style="display:flex;"><span>    exit
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#f92672">(</span>$RECENTLY_CHANGED_NUM -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> $2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-F&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> $CHANGED_NUM -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    read -r -d <span style="color:#e6db74">&#39;&#39;</span> MESSAGE <span style="color:#e6db74">&lt;&lt; EOM
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Autocommit $(date -Iminutes)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Hostname: $(hostname)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOM</span>
+</span></span><span style="display:flex;"><span>    git add -A
+</span></span><span style="display:flex;"><span>    git commit -m <span style="color:#e6db74">&#34;</span>$MESSAGE<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    COMMITED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Yes&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NEED_TO_PUSH<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git log origin/master..HEAD | wc -l<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>git fetch <span style="color:#f92672">&amp;&amp;</span> FETCHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> FETCHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $RECENTLY_CHANGED_NUM -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> $2 !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;-F&#39;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    MERGED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Waiting&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#f92672">(</span>$RECENTLY_CHANGED_NUM -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> $2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-F&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> $FETCHED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    MERGE_OUT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git merge origin/master<span style="color:#66d9ef">)</span> <span style="color:#f92672">&amp;&amp;</span> MERGED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> MERGED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $NEED_TO_PUSH -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">(</span>$MERGED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> $MERGED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Waiting&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    git push origin <span style="color:#f92672">&amp;&amp;</span> PUSHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> PUSHED<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;No&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $PUSHED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> $COMMITED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">||</span> <span style="color:#f92672">(</span>$MERGED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">&amp;&amp;</span>  $MERGE_OUT !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Already up to date.&#34;</span><span style="color:#f92672">)]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    read -r -d <span style="color:#e6db74">&#39;&#39;</span> NOTIFICATION <span style="color:#e6db74">&lt;&lt; EOM
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Commited: $COMMITED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Fetched: $FETCHED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Merged: $MERGED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Pushed: $PUSHED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOM</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Autocommit </span><span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span>$NOTIFICATION<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>git ls-files -u | wc -l<span style="color:#66d9ef">)</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    notify-send -u critical <span style="color:#e6db74">&#34;Autocommit </span><span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;Merge conflict!&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p><code>mcron</code> job:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">job</span> <span style="color:#e6db74">&#34;0 * * * *&#34;</span> <span style="color:#e6db74">&#34;autocommit ~/Documents/org-mode&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">job</span> <span style="color:#e6db74">&#34;0,15,30,45 * * * *&#34;</span> <span style="color:#e6db74">&#34;autocommit ~/.password-store&#34;</span>)
+</span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
+<p><a id="code-snippet--packages"></a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my/format-guix-dependencies)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">specifications-&gt;manifest</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&#39;</span>(
+</span></span><span style="display:flex;"><span>   &lt;&lt;packages()&gt;&gt;))
+</span></span></code></pre></div><h2 id="android-notes">Android notes</h2>
+<p>SSH instructions: <a href="https://wiki.termux.com/wiki/Remote_Access">https://wiki.termux.com/wiki/Remote_Access</a></p>
+<p>Don&rsquo;t forget to install the following termux packages:</p>
+<table>
+<thead>
+<tr>
+<th>Termux package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vim</td>
+</tr>
+<tr>
+<td>tmux</td>
+</tr>
+<tr>
+<td>starship</td>
+</tr>
+<tr>
+<td>fish</td>
+</tr>
+<tr>
+<td>exa</td>
+</tr>
+<tr>
+<td>bat</td>
+</tr>
+<tr>
+<td>git</td>
+</tr>
+</tbody>
+</table>
+<p>Also:</p>
+<ul>
+<li>cleanup <code>$PREFIX/etc/motd</code> to remove hello message.</li>
+<li>copy the required font at <code>$HOME/.termux/font.ttf</code> and run <code>termux-reload-settings</code>.</li>
+</ul>
+<h3 id="installation-of-dt-s-colorscripts">Installation of <a href="https://gitlab.com/dwt1/shell-color-scripts">DT&rsquo;s colorscripts</a>:</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/dwt1/shell-color-scripts.git
+</span></span><span style="display:flex;"><span>cd shell-color-scripts
+</span></span></code></pre></div><p>Apply a patch:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-diff" data-lang="diff"><span style="display:flex;"><span><span style="color:#f92672">--- a/colorscript.sh
+</span></span></span><span style="display:flex;"><span><span style="color:#f92672"></span><span style="color:#a6e22e">+++ b/colorscript.sh
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e"></span><span style="color:#75715e">@@ -2,7 +2,7 @@
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span> # Simple CLI for shell-color-scripts
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">-DIR_COLORSCRIPTS=&#34;/opt/shell-color-scripts/colorscripts&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#f92672"></span><span style="color:#a6e22e">+DIR_COLORSCRIPTS=&#34;$PREFIX/opt/shell-color-scripts/colorscripts&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e"></span> LS_CMD=&#34;$(command -v ls)&#34;
+</span></span><span style="display:flex;"><span> fmt_help=&#34;  %-20s\t%-54s\n&#34;
+</span></span><span style="display:flex;"><span> list_colorscripts=&#34;$($LS_CMD &#34;${DIR_COLORSCRIPTS}&#34; | cut -d &#39; &#39; -f 1 | nl)&#34;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mkdir -p $PREFIX/opt/shell-color-scripts/colorscripts <span style="color:#f92672">||</span> <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>sudo cp -rf colorscripts/* $PREFIX/opt/shell-color-scripts/colorscripts
+</span></span><span style="display:flex;"><span>sudo cp colorscript.sh $PREFIX/bin/colorscript
+</span></span></code></pre></div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+        <div class="container text-center">
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2022"><small>Pavel Korytov, 2022</small></a>
+        </div>
+    
+</div>
+</body>
+</html>
