@@ -879,8 +879,10 @@
 <h4 id="ivy-posframe">ivy-posframe</h4>
 <p><a href="https://github.com/tumashu/ivy-posframe">ivy-posframe</a> is an extension to show ivy candidates in a posframe.</p>
 <p>Take a look at <a href="https://github.com/ch11ng/exwm/issues/550">this issue</a> in the EXWM repo about setting it up.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-09 Sat&gt;</span></span>: This looks nice, but unfortunately too unstable. Disabling it.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package ivy-posframe
 </span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>  :disabled
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (setq ivy-posframe-parameters <span style="color:#f92672">&#39;</span>((left-fringe <span style="color:#f92672">.</span> <span style="color:#ae81ff">10</span>)
 </span></span><span style="display:flex;"><span>				  (right-fringe <span style="color:#f92672">.</span> <span style="color:#ae81ff">10</span>)
@@ -904,8 +906,8 @@
 </span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">apply</span> fn args)
 </span></span><span style="display:flex;"><span>      (x-set-mouse-absolute-pixel-position (<span style="color:#a6e22e">car</span> pos)
 </span></span><span style="display:flex;"><span>					   (<span style="color:#a6e22e">cdr</span> pos)))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(advice-add <span style="color:#a6e22e">#&#39;</span>ivy-posframe--read :around <span style="color:#a6e22e">#&#39;</span>my/advise-fn-suspend-follow-mouse)
+</span></span><span style="display:flex;"><span>(with-eval-after-load <span style="color:#e6db74">&#39;ivy-posframe</span>
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>ivy-posframe--read :around <span style="color:#a6e22e">#&#39;</span>my/advise-fn-suspend-follow-mouse))
 </span></span></code></pre></div><h5 id="disable-changing-focus">Disable changing focus</h5>
 <p>Not sure about that. The cursor occasionally changes focus when I&rsquo;m exiting posframe, and this doesn&rsquo;t catch all the cases.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/setup-posframe (<span style="color:#66d9ef">&amp;rest</span> args)
@@ -929,8 +931,9 @@
 </span></span><span style="display:flex;"><span>	mouse-autoselect-window
 </span></span><span style="display:flex;"><span>	focus-follows-mouse)))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(advice-add <span style="color:#a6e22e">#&#39;</span>posframe--create-posframe :after <span style="color:#a6e22e">#&#39;</span>my/setup-posframe)
-</span></span><span style="display:flex;"><span>(advice-add <span style="color:#a6e22e">#&#39;</span>ivy-posframe-cleanup :after <span style="color:#a6e22e">#&#39;</span>my/restore-posframe)
+</span></span><span style="display:flex;"><span>(with-eval-after-load <span style="color:#e6db74">&#39;ivy-posframe</span>
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>posframe--create-posframe :after <span style="color:#a6e22e">#&#39;</span>my/setup-posframe)
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>ivy-posframe-cleanup :after <span style="color:#a6e22e">#&#39;</span>my/restore-posframe))
 </span></span></code></pre></div><h4 id="linux-app">Linux app</h4>
 <p><code>counsel-linux-app</code> is a counsel interface to select a Linux desktop application.</p>
 <p>By default, it also shows paths from <code>/gnu/store</code>, so there is a custom formatter function.</p>

@@ -453,6 +453,18 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span></code></pre></div><p>Then, the problem with my Guix setup is that Emacs by default doesn&rsquo;t see the elisp files of notmuch, so here is a small workaround:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(let ((default-directory  <span style="color:#e6db74">&#34;/home/pavel/.guix-extra-profiles/mail/mail/share/emacs/site-lisp&#34;</span>))
 </span></span><span style="display:flex;"><span>  (normal-top-level-add-subdirs-to-load-path))
+</span></span></code></pre></div><p>Some functions to toggle tags:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/notmuch-toggle-trash ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (evil-collection-notmuch-toggle-tag <span style="color:#e6db74">&#34;trash&#34;</span> <span style="color:#e6db74">&#34;search&#34;</span> <span style="color:#a6e22e">#&#39;</span>ignore))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/notmuch-toggle-inbox ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (evil-collection-notmuch-toggle-tag <span style="color:#e6db74">&#34;inbox&#34;</span> <span style="color:#e6db74">&#34;search&#34;</span> <span style="color:#a6e22e">#&#39;</span>ignore))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/notmuch-toggle-unread ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (evil-collection-notmuch-toggle-tag <span style="color:#e6db74">&#34;unread&#34;</span> <span style="color:#e6db74">&#34;search&#34;</span> <span style="color:#a6e22e">#&#39;</span>ignore))
 </span></span></code></pre></div><p>Finally the proper notmuch settings:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package notmuch
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; :ensure nil</span>
@@ -470,6 +482,12 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (setq send-mail-function <span style="color:#a6e22e">#&#39;</span>sendmail-send-it)
 </span></span><span style="display:flex;"><span>  (setq mml-secure-openpgp-sign-with-sender <span style="color:#66d9ef">t</span>)
 </span></span><span style="display:flex;"><span>  (setq notmuch-mua-user-agent-function <span style="color:#e6db74">&#39;notmuch-mua-user-agent-full</span>)
+</span></span><span style="display:flex;"><span>  (general-define-key
+</span></span><span style="display:flex;"><span>   :keymaps <span style="color:#e6db74">&#39;notmuch-search-mode-map</span>
+</span></span><span style="display:flex;"><span>   :states <span style="color:#f92672">&#39;</span>(normal)
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/notmuch-toggle-trash
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;i&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/notmuch-toggle-inbox
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;u&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/notmuch-toggle-unread)
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; Use org-contacts for completion</span>
 </span></span><span style="display:flex;"><span>  (require <span style="color:#e6db74">&#39;org-contacts</span>)
 </span></span><span style="display:flex;"><span>  (setq notmuch-address-command <span style="color:#e6db74">&#39;as-is</span>)

@@ -411,6 +411,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <li><a href="#apply-ansi-color-codes">Apply ANSI color codes</a></li>
 </ul>
 </li>
+<li><a href="#executing-stuff">Executing stuff</a></li>
 <li><a href="#managing-a-literate-programming-project">Managing a literate programming project</a></li>
 </ul>
 </li>
@@ -1018,6 +1019,10 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(my-leader-def <span style="color:#e6db74">&#34;?&#34;</span> <span style="color:#e6db74">&#39;which-key-show-top-level</span>)
 </span></span><span style="display:flex;"><span>(my-leader-def <span style="color:#e6db74">&#34;E&#34;</span> <span style="color:#e6db74">&#39;eval-expression</span>)
+</span></span><span style="display:flex;"><span>(my-leader-def
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;SPC&#34;</span> <span style="color:#f92672">&#39;</span>(:wk <span style="color:#e6db74">&#34;second level&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;SPC x&#34;</span> <span style="color:#f92672">&#39;</span>(:wk <span style="color:#e6db74">&#34;ctl-x&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;SPC x&#34;</span> ctl-x-map)
 </span></span></code></pre></div><p><code>general.el</code> has a nice integration with which-key, so I use that to show more descriptive annotations for certain groups of keybindings (the default annotation is just <code>prefix</code>).</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my-leader-def
 </span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;apps&#34;</span>))
@@ -1288,12 +1293,14 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span></code></pre></div><h4 id="snippets">Snippets</h4>
 <p>A snippet system for Emacs and a collection of pre-built snippets.</p>
 <p><code>yasnippet-snippets</code> has to be loaded before <code>yasnippet</code> for user snippets to override the pre-built ones.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-11 Mon&gt; </span></span> I don&rsquo;t really use <code>yasnippet-snippets</code>, so I&rsquo;d rather write stuff manually.</p>
 <p>References:</p>
 <ul>
 <li><a href="http://joaotavora.github.io/yasnippet/">yasnippet documentation</a></li>
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package yasnippet-snippets
+</span></span><span style="display:flex;"><span>  :disabled
 </span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(use-package yasnippet
@@ -1301,9 +1308,17 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (setq yas-snippet-dirs
 </span></span><span style="display:flex;"><span>	<span style="color:#f92672">`</span>(<span style="color:#f92672">,</span>(<span style="color:#a6e22e">concat</span> (<span style="color:#a6e22e">expand-file-name</span> user-emacs-directory) <span style="color:#e6db74">&#34;snippets&#34;</span>)
-</span></span><span style="display:flex;"><span>	  yasnippet-snippets-dir))
+</span></span><span style="display:flex;"><span>	  <span style="color:#75715e">;; yasnippet-snippets-dir</span>
+</span></span><span style="display:flex;"><span>	  ))
 </span></span><span style="display:flex;"><span>  (setq yas-triggers-in-field <span style="color:#66d9ef">t</span>)
-</span></span><span style="display:flex;"><span>  (yas-global-mode <span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>  (yas-global-mode <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>  (my-leader-def
+</span></span><span style="display:flex;"><span>    :keymaps <span style="color:#e6db74">&#39;yas-minor-mode-map</span>
+</span></span><span style="display:flex;"><span>    :infix <span style="color:#e6db74">&#34;es&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">&#39;</span>(:wk <span style="color:#e6db74">&#34;yasnippet&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;n&#34;</span> <span style="color:#a6e22e">#&#39;</span>yas-new-snippet
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;s&#34;</span> <span style="color:#a6e22e">#&#39;</span>yas-insert-snippet
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;v&#34;</span> <span style="color:#a6e22e">#&#39;</span>yas-visit-snippet-file))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(general-imap <span style="color:#e6db74">&#34;M-TAB&#34;</span> <span style="color:#e6db74">&#39;company-yasnippet</span>)
 </span></span></code></pre></div><h4 id="other-small-packages">Other small packages</h4>
@@ -1509,7 +1524,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span> :states <span style="color:#f92672">&#39;</span>(<span style="color:#a6e22e">insert</span> normal)
 </span></span><span style="display:flex;"><span> <span style="color:#e6db74">&#34;C-y&#34;</span> <span style="color:#e6db74">&#39;counsel-yank-pop</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(my-leader-def <span style="color:#e6db74">&#34;SPC&#34;</span> <span style="color:#e6db74">&#39;ivy-resume</span>)
+</span></span><span style="display:flex;"><span>(my-leader-def <span style="color:#e6db74">&#34;SPC SPC&#34;</span> <span style="color:#e6db74">&#39;ivy-resume</span>)
 </span></span><span style="display:flex;"><span>(my-leader-def <span style="color:#e6db74">&#34;s&#34;</span> <span style="color:#e6db74">&#39;swiper-isearch</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;S&#34;</span> <span style="color:#e6db74">&#39;swiper-all</span>)
 </span></span><span style="display:flex;"><span>
@@ -1559,6 +1574,15 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span></code></pre></div><p>As I use <code>C-h</code> to switch buffers, I moved the help to <code>SPC-h</code> with the code below.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my-leader-def
 </span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;h&#34;</span> <span style="color:#f92672">&#39;</span>(:keymap help-map :which-key <span style="color:#e6db74">&#34;help&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(my-leader-def
+</span></span><span style="display:flex;"><span>  :infix <span style="color:#e6db74">&#34;h&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;help&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;h&#34;</span> <span style="color:#f92672">&#39;</span>(:keymap help-map :which-key <span style="color:#e6db74">&#34;help-map&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;f&#34;</span> <span style="color:#e6db74">&#39;helpful-function</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;k&#34;</span> <span style="color:#e6db74">&#39;helpful-key</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;v&#34;</span> <span style="color:#e6db74">&#39;helpful-variable</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;o&#34;</span> <span style="color:#e6db74">&#39;helpful-symbol</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(general-define-key
 </span></span><span style="display:flex;"><span> :keymaps <span style="color:#e6db74">&#39;help-map</span>
@@ -2450,14 +2474,40 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (my-leader-def
 </span></span><span style="display:flex;"><span>    :keymaps <span style="color:#e6db74">&#39;jest-test-mode-map</span>
 </span></span><span style="display:flex;"><span>    :infix <span style="color:#e6db74">&#34;t&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;t&#34;</span> <span style="color:#e6db74">&#39;jest-test-run-at-point</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#e6db74">&#39;jest-test-run</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#e6db74">&#39;jest-test-run-all-tests</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;t&#34;</span> <span style="color:#a6e22e">#&#39;</span>jest-test-run-at-point
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;d&#34;</span> <span style="color:#a6e22e">#&#39;</span>jest-test-debug-run-at-point
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;r&#34;</span> <span style="color:#a6e22e">#&#39;</span>jest-test-run
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#a6e22e">#&#39;</span>jest-test-run-all-tests)
+</span></span><span style="display:flex;"><span>  (defmacro my/jest-test-with-debug-flags (form)
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Execute FORM with debugger flags set.&#34;</span>
+</span></span><span style="display:flex;"><span>    (declare (indent <span style="color:#ae81ff">0</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">`</span>(let ((jest-test-options (seq-concatenate <span style="color:#e6db74">&#39;list</span> jest-test-options (<span style="color:#a6e22e">list</span> <span style="color:#e6db74">&#34;--runInBand&#34;</span>) ))
+</span></span><span style="display:flex;"><span>	   (jest-test-npx-options (seq-concatenate <span style="color:#e6db74">&#39;list</span> jest-test-npx-options (<span style="color:#a6e22e">list</span> <span style="color:#e6db74">&#34;--node-options&#34;</span> <span style="color:#e6db74">&#34;--inspect-brk&#34;</span>))))
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">,</span>form))
+</span></span><span style="display:flex;"><span>  (defun my/jest-test-debug ()
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Run the test with an inline debugger attached.&#34;</span>
+</span></span><span style="display:flex;"><span>    (interactive)
+</span></span><span style="display:flex;"><span>    (my/jest-test-with-debug-flags
+</span></span><span style="display:flex;"><span>      (jest-test-run)))
+</span></span><span style="display:flex;"><span>  (defun my/jest-test-debug-rerun-test ()
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Run the test with an inline debugger attached.&#34;</span>
+</span></span><span style="display:flex;"><span>    (interactive)
+</span></span><span style="display:flex;"><span>    (my/jest-test-with-debug-flags
+</span></span><span style="display:flex;"><span>      (jest-test-rerun-test)))
+</span></span><span style="display:flex;"><span>  (defun my/jest-test-debug-run-at-point ()
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Run the test with an inline debugger attached.&#34;</span>
+</span></span><span style="display:flex;"><span>    (interactive)
+</span></span><span style="display:flex;"><span>    (my/jest-test-with-debug-flags
+</span></span><span style="display:flex;"><span>      (jest-test-run-at-point)))
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>jest-test-debug :override <span style="color:#a6e22e">#&#39;</span>my/jest-test-debug)
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>jest-test-debug-rerun-test :override <span style="color:#a6e22e">#&#39;</span>my/jest-test-debug-rerun-test)
+</span></span><span style="display:flex;"><span>  (advice-add <span style="color:#a6e22e">#&#39;</span>jest-test-debug-run-at-point
+</span></span><span style="display:flex;"><span>	      :override <span style="color:#a6e22e">#&#39;</span>my/jest-test-debug-run-at-point))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/jest-test-run-at-point-copy ()
 </span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Run the top level describe block of the current buffer&#39;s point.&#34;</span>
 </span></span><span style="display:flex;"><span>  (interactive)
 </span></span><span style="display:flex;"><span>  (let ((filename (jest-test-find-file))
-</span></span><span style="display:flex;"><span>	(example  (jest-test-example-at-point)))
+</span></span><span style="display:flex;"><span>	(example  (jest-test-unit-at-point)))
 </span></span><span style="display:flex;"><span>    (if (and filename example)
 </span></span><span style="display:flex;"><span>	(jest-test-from-project-directory filename
 </span></span><span style="display:flex;"><span>	  (let ((jest-test-options (seq-concatenate <span style="color:#e6db74">&#39;list</span> jest-test-options (<span style="color:#a6e22e">list</span> <span style="color:#e6db74">&#34;-t&#34;</span> example))))
@@ -3604,6 +3654,43 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (if org-babel-ansi-colors-mode
 </span></span><span style="display:flex;"><span>      (add-hook <span style="color:#e6db74">&#39;org-babel-after-execute-hook</span> <span style="color:#a6e22e">#&#39;</span>my/babel-ansi)
 </span></span><span style="display:flex;"><span>    (remove-hook <span style="color:#e6db74">&#39;org-babel-after-execute-hook</span> <span style="color:#a6e22e">#&#39;</span>my/babel-ansi)))
+</span></span></code></pre></div><h4 id="executing-stuff">Executing stuff</h4>
+<p>A few convinient functions and keybindings to execute things in an org buffer.</p>
+<p>First, execute things above and below the point:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/org-babel-execute-buffer-below (<span style="color:#66d9ef">&amp;optional</span> arg)
+</span></span><span style="display:flex;"><span>  (interactive <span style="color:#e6db74">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (org-babel-eval-wipe-error-buffer)
+</span></span><span style="display:flex;"><span>  (let ((<span style="color:#a6e22e">point</span> (<span style="color:#a6e22e">point</span>)))
+</span></span><span style="display:flex;"><span>    (org-save-outline-visibility <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>      (org-babel-map-executables <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>	(when (<span style="color:#a6e22e">&gt;=</span> (<span style="color:#a6e22e">point</span>) <span style="color:#a6e22e">point</span>)
+</span></span><span style="display:flex;"><span>	  (if (<span style="color:#a6e22e">memq</span> (org-element-type (org-element-context))
+</span></span><span style="display:flex;"><span>			    <span style="color:#f92672">&#39;</span>(babel-call inline-babel-call))
+</span></span><span style="display:flex;"><span>	      (org-babel-lob-execute-maybe)
+</span></span><span style="display:flex;"><span>	    (org-babel-execute-src-block arg)))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(defun my/org-babel-execute-buffer-above (<span style="color:#66d9ef">&amp;optional</span> arg)
+</span></span><span style="display:flex;"><span>  (interactive <span style="color:#e6db74">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (org-babel-eval-wipe-error-buffer)
+</span></span><span style="display:flex;"><span>  (let ((<span style="color:#a6e22e">point</span> (<span style="color:#a6e22e">point</span>)))
+</span></span><span style="display:flex;"><span>    (org-save-outline-visibility <span style="color:#66d9ef">t</span>
+</span></span><span style="display:flex;"><span>      (org-babel-map-executables <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>	(when (<span style="color:#a6e22e">&lt;=</span> (<span style="color:#a6e22e">point</span>) <span style="color:#a6e22e">point</span>)
+</span></span><span style="display:flex;"><span>	  (if (<span style="color:#a6e22e">memq</span> (org-element-type (org-element-context))
+</span></span><span style="display:flex;"><span>			    <span style="color:#f92672">&#39;</span>(babel-call inline-babel-call))
+</span></span><span style="display:flex;"><span>	      (org-babel-lob-execute-maybe)
+</span></span><span style="display:flex;"><span>	    (org-babel-execute-src-block arg)))))))
+</span></span></code></pre></div><p>Some keybindings:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(with-eval-after-load <span style="color:#e6db74">&#39;org-babel</span>
+</span></span><span style="display:flex;"><span>  (general-define-key
+</span></span><span style="display:flex;"><span>   :keymaps <span style="color:#e6db74">&#39;org-babel-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;B&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/org-babel-execute-buffer-below
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;A&#34;</span> <span style="color:#a6e22e">#&#39;</span>my/org-babel-execute-buffer-above)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (my-leader-def
+</span></span><span style="display:flex;"><span>    :keymaps <span style="color:#e6db74">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;SPC b&#34;</span> <span style="color:#f92672">&#39;</span>(:wk <span style="color:#e6db74">&#34;org-babel&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;SPC b&#34;</span> org-babel-map))
 </span></span></code></pre></div><h4 id="managing-a-literate-programming-project">Managing a literate programming project</h4>
 <p>A few tricks to do literate programming.</p>
 <p>I prefer to put the org files to a separate directory (e.g. <code>org</code>). So I&rsquo;ve come up with the following solution to avoid manually prefixing the <code>:tangle</code> arguments.</p>
@@ -4422,6 +4509,17 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subsubsection*{%s}&#34;</span>)
 </span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\paragraph{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\paragraph*{%s}&#34;</span>)
 </span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\subparagraph{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subparagraph*{%s}&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;org-latex-classes</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;org-plain-extreport&#34;</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#e6db74">&#34;\\documentclass{extreport}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[NO-DEFAULT-PACKAGES]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[PACKAGES]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[EXTRA]&#34;</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\chapter{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\chapter*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\section{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\section*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\subsection{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subsection*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\subsubsection*{%s}&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#e6db74">&#34;\\paragraph{%s}&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\\paragraph*{%s}&#34;</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; Use beamer without the default packages</span>
 </span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;org-latex-classes</span>
 </span></span><span style="display:flex;"><span>	       <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;org-latex-beamer&#34;</span>
@@ -5781,6 +5879,15 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package devdocs
 </span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
 </span></span><span style="display:flex;"><span>  :commands (devdocs-install devdocs-lookup)
+</span></span><span style="display:flex;"><span>  :config
+</span></span><span style="display:flex;"><span>  (general-define-key
+</span></span><span style="display:flex;"><span>   :keymaps <span style="color:#e6db74">&#39;devdocs-mode-map</span>
+</span></span><span style="display:flex;"><span>   :states <span style="color:#f92672">&#39;</span>(normal)
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;H&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-go-back
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;L&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-go-forward
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;o&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-lookup
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;[&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-previous-page
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;]&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-next-page)
 </span></span><span style="display:flex;"><span>  :init
 </span></span><span style="display:flex;"><span>  (my-leader-def
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;he&#34;</span> <span style="color:#a6e22e">#&#39;</span>devdocs-lookup
@@ -5814,8 +5921,8 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>   :states <span style="color:#f92672">&#39;</span>(normal)
 </span></span><span style="display:flex;"><span>   :keymaps <span style="color:#f92672">&#39;</span>(sx-question-mode-map)
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;gr&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-mode-refresh
-</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;j&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-mode-next-section
-</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;k&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-mode-previous-section
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;J&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-mode-next-section
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;K&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-mode-previous-section
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-answer
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;e&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-edit
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;D&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-delete
@@ -5828,7 +5935,11 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;k&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-list-previous
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;S&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-search
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;m&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-list-mark-read
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;O&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-question-list-order-by
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;t&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-tab-switch)
+</span></span><span style="display:flex;"><span>  (my-leader-def
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;hs&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-search
+</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;hS&#34;</span> <span style="color:#a6e22e">#&#39;</span>sx-tab-frontpage)
 </span></span><span style="display:flex;"><span>  (my/use-doom-colors
 </span></span><span style="display:flex;"><span>   (sx-question-mode-accepted :foreground (doom-color <span style="color:#e6db74">&#39;green</span>)
 </span></span><span style="display:flex;"><span>			      :weight <span style="color:#e6db74">&#39;bold</span>)
