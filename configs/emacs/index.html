@@ -494,7 +494,6 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <li><a href="#addons">Addons</a></li>
 <li><a href="#subdirectories">Subdirectories</a></li>
 <li><a href="#tramp">TRAMP</a></li>
-<li><a href="#fast-navigation-with-avy">Fast navigation with Avy</a></li>
 <li><a href="#bookmarks">Bookmarks</a></li>
 </ul>
 </li>
@@ -4980,55 +4979,6 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (setq tramp-remote-path
 </span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">append</span> tramp-remote-path
 </span></span><span style="display:flex;"><span>		<span style="color:#f92672">&#39;</span>(tramp-own-remote-path))))
-</span></span></code></pre></div><h4 id="fast-navigation-with-avy">Fast navigation with Avy</h4>
-<p>Some experimentation with using Dired &amp; Avy.</p>
-<p>Still work in progress.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun avy-dired-cands ()
-</span></span><span style="display:flex;"><span>  (let (candidates
-</span></span><span style="display:flex;"><span>	eol
-</span></span><span style="display:flex;"><span>	(ws (<span style="color:#a6e22e">window-start</span>))
-</span></span><span style="display:flex;"><span>	(we (<span style="color:#a6e22e">window-end</span> (<span style="color:#a6e22e">selected-window</span>) <span style="color:#66d9ef">t</span>)))
-</span></span><span style="display:flex;"><span>    (save-excursion
-</span></span><span style="display:flex;"><span>      (save-restriction
-</span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">narrow-to-region</span> ws we)
-</span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">goto-char</span> (<span style="color:#a6e22e">point-min</span>))
-</span></span><span style="display:flex;"><span>	(while (<span style="color:#a6e22e">&lt;</span> (<span style="color:#a6e22e">point</span>) (<span style="color:#a6e22e">point-max</span>))
-</span></span><span style="display:flex;"><span>	  (setq eol (<span style="color:#a6e22e">line-end-position</span>))
-</span></span><span style="display:flex;"><span>	  (let ((change (<span style="color:#a6e22e">next-single-property-change</span> (<span style="color:#a6e22e">point</span>) <span style="color:#e6db74">&#39;dired-filename</span> <span style="color:#66d9ef">nil</span> eol)))
-</span></span><span style="display:flex;"><span>	    (cond
-</span></span><span style="display:flex;"><span>	     ((and change (<span style="color:#a6e22e">&lt;</span> change eol))
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">goto-char</span> change)
-</span></span><span style="display:flex;"><span>	      (push (<span style="color:#a6e22e">cons</span> (<span style="color:#a6e22e">point</span>) (<span style="color:#a6e22e">selected-window</span>)) candidates))
-</span></span><span style="display:flex;"><span>	     ((<span style="color:#a6e22e">re-search-forward</span> directory-listing-before-filename-regexp eol <span style="color:#66d9ef">t</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">goto-char</span> (<span style="color:#a6e22e">match-end</span> <span style="color:#ae81ff">0</span>))
-</span></span><span style="display:flex;"><span>	      (push (<span style="color:#a6e22e">cons</span> (<span style="color:#a6e22e">point</span>) (<span style="color:#a6e22e">selected-window</span>)) candidates))))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">forward-line</span> <span style="color:#ae81ff">1</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">nreverse</span> candidates)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(defun avy-dired-goto-line ()
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Jump to a line in dired buffer&#34;</span>
-</span></span><span style="display:flex;"><span>  (interactive)
-</span></span><span style="display:flex;"><span>  (unless (derived-mode-p <span style="color:#e6db74">&#39;dired-mode</span>)
-</span></span><span style="display:flex;"><span>    (dired default-directory))
-</span></span><span style="display:flex;"><span>  (avy-with avy-dired-goto-line
-</span></span><span style="display:flex;"><span>    (let* ((avy-handler-old avy-handler-function)
-</span></span><span style="display:flex;"><span>	   (avy-handler-function
-</span></span><span style="display:flex;"><span>	    (lambda (char)
-</span></span><span style="display:flex;"><span>	      (pcase char
-</span></span><span style="display:flex;"><span>		(<span style="color:#e6db74">?K</span> (progn
-</span></span><span style="display:flex;"><span>		      (scroll-up-command)
-</span></span><span style="display:flex;"><span>		      (avy-dired-goto-line)))
-</span></span><span style="display:flex;"><span>		(<span style="color:#e6db74">?J</span> (progn
-</span></span><span style="display:flex;"><span>		      (scroll-down-command)
-</span></span><span style="display:flex;"><span>		      (avy-dired-goto-line)))
-</span></span><span style="display:flex;"><span>		(_ (<span style="color:#a6e22e">funcall</span> avy-handler-old char)))))
-</span></span><span style="display:flex;"><span>	   (r (avy-process (avy-dired-cands))))
-</span></span><span style="display:flex;"><span>      (when (not (<span style="color:#a6e22e">memq</span> r <span style="color:#f92672">&#39;</span>(<span style="color:#66d9ef">t</span> <span style="color:#66d9ef">nil</span>)))
-</span></span><span style="display:flex;"><span>	(avy-action-goto r)
-</span></span><span style="display:flex;"><span>	(let ((file (dired-get-file-for-visit)))
-</span></span><span style="display:flex;"><span>	  (dired-open-file)
-</span></span><span style="display:flex;"><span>	  (when (<span style="color:#a6e22e">file-directory-p</span> file)
-</span></span><span style="display:flex;"><span>	    (avy-dired-goto-line)))))))
 </span></span></code></pre></div><h4 id="bookmarks">Bookmarks</h4>
 <p>A simple bookmark list for Dired, mainly to use with TRAMP. I may look into a proper bookmarking system later.</p>
 <p>Bookmarks are listed in the <a href=".emacs.d/private.el">private.el</a> file, which has an expression like this:</p>
