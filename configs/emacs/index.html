@@ -542,6 +542,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <li><a href="#ytel">ytel</a></li>
 <li><a href="#eww">EWW</a></li>
 <li><a href="#erc">ERC</a></li>
+<li><a href="#ement-dot-el">ement.el</a></li>
 <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
 <li><a href="#google-translate">Google Translate</a></li>
 </ul>
@@ -1690,8 +1691,10 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span></code></pre></div><h4 id="keycast">Keycast</h4>
 <p>Showing the last pressed key. Occasionally useful.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package keycast
+</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (define-minor-mode keycast-mode
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Keycast mode&#34;</span>
 </span></span><span style="display:flex;"><span>    :global <span style="color:#66d9ef">t</span>
 </span></span><span style="display:flex;"><span>    (if keycast-mode
 </span></span><span style="display:flex;"><span>	(progn
@@ -1881,6 +1884,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (setq doom-modeline-persp-name <span style="color:#66d9ef">nil</span>)
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (setq doom-modeline-minor-modes <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>  (setq doom-modeline-irc <span style="color:#66d9ef">nil</span>)
 </span></span><span style="display:flex;"><span>  (setq doom-modeline-buffer-state-icon <span style="color:#66d9ef">nil</span>)
 </span></span><span style="display:flex;"><span>  (doom-modeline-mode <span style="color:#ae81ff">1</span>))
 </span></span></code></pre></div><h3 id="perspective-dot-el">perspective.el</h3>
@@ -4891,6 +4895,12 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>   :keymap <span style="color:#e6db74">&#39;dired-mode-map</span>
 </span></span><span style="display:flex;"><span>   :states <span style="color:#f92672">&#39;</span>(normal emacs)
 </span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;)&#34;</span> <span style="color:#e6db74">&#39;dired-git-info-mode</span>))
+</span></span></code></pre></div><p><a href="https://github.com/SqrtMinusOne/avy-dired">avy-dired</a> is my experimentation with Avy &amp; Dired. It&rsquo;s somewhat unstable.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package avy-dired
+</span></span><span style="display:flex;"><span>  :straight (:host github :repo <span style="color:#e6db74">&#34;SqrtMinusOne/avy-dired&#34;</span>)
+</span></span><span style="display:flex;"><span>  :after (dired)
+</span></span><span style="display:flex;"><span>  :init
+</span></span><span style="display:flex;"><span>  (my-leader-def <span style="color:#e6db74">&#34;aa&#34;</span> <span style="color:#a6e22e">#&#39;</span>avy-dired-goto-line))
 </span></span></code></pre></div><h4 id="subdirectories">Subdirectories</h4>
 <p>Subdirectories are one of the interesting features of Dired. It allows displaying multiple folders on the same window.</p>
 <p>I add my own keybindings and some extra functionality.</p>
@@ -5563,7 +5573,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;asT&#34;</span> <span style="color:#a6e22e">#&#39;</span>lyrics-fetcher-show-lyrics-query)
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (setq lyrics-fetcher-genius-access-token
-</span></span><span style="display:flex;"><span>	(password-store-get <span style="color:#e6db74">&#34;My_Online/APIs/genius.com&#34;</span>))
+</span></span><span style="display:flex;"><span>	(my/password-store-get <span style="color:#e6db74">&#34;My_Online/APIs/genius.com&#34;</span>))
 </span></span><span style="display:flex;"><span>  (general-define-key
 </span></span><span style="display:flex;"><span>   :states <span style="color:#f92672">&#39;</span>(emacs normal)
 </span></span><span style="display:flex;"><span>   :keymaps <span style="color:#e6db74">&#39;emms-browser-mode-map</span>
@@ -5708,10 +5718,14 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (setq erc-log-channels-directory <span style="color:#e6db74">&#34;~/.erc/logs&#34;</span>)
 </span></span><span style="display:flex;"><span>  (setq erc-save-buffer-on-part <span style="color:#66d9ef">t</span>)
 </span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;erc-modules</span> <span style="color:#e6db74">&#39;autojoin</span>)
+</span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;erc-modules</span> <span style="color:#e6db74">&#39;notifications</span>)
 </span></span><span style="display:flex;"><span>  (add-to-list <span style="color:#e6db74">&#39;erc-modules</span> <span style="color:#e6db74">&#39;log</span>)
 </span></span><span style="display:flex;"><span>  (erc-update-modules)
 </span></span><span style="display:flex;"><span>  (setq erc-autojoin-channels-alist
-</span></span><span style="display:flex;"><span>	<span style="color:#f92672">`</span>((<span style="color:#f92672">,</span>(rx <span style="color:#e6db74">&#34;libera.chat&#34;</span>) <span style="color:#e6db74">&#34;#systemcrafters&#34;</span>)))
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">`</span>((<span style="color:#f92672">,</span>(rx <span style="color:#e6db74">&#34;libera.chat&#34;</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#e6db74">&#34;#systemcrafters&#34;</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#e6db74">&#34;#emacs&#34;</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#e6db74">&#34;#guix&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (setq erc-kill-buffer-on-part <span style="color:#66d9ef">t</span>)
 </span></span><span style="display:flex;"><span>  (setq erc-track-shorten-start <span style="color:#ae81ff">8</span>))
 </span></span></code></pre></div><p>Exclude everything but actual messages from notifications.</p>
@@ -5740,7 +5754,23 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (setq znc-servers
 </span></span><span style="display:flex;"><span>	<span style="color:#f92672">`</span>((<span style="color:#e6db74">&#34;sqrtminusone.xyz&#34;</span> <span style="color:#ae81ff">6697</span> <span style="color:#66d9ef">t</span>
 </span></span><span style="display:flex;"><span>	   ((libera <span style="color:#e6db74">&#34;sqrtminusone&#34;</span>
-</span></span><span style="display:flex;"><span>		    <span style="color:#f92672">,</span>(password-store-get <span style="color:#e6db74">&#34;Selfhosted/ZNC&#34;</span>)))))))
+</span></span><span style="display:flex;"><span>		    <span style="color:#f92672">,</span>(my/password-store-get <span style="color:#e6db74">&#34;Selfhosted/ZNC&#34;</span>)))))))
+</span></span></code></pre></div><p>Send <code>/detach</code> to all servers. Kinda strange that there&rsquo;s no such function already</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/erc-detach-all ()
+</span></span><span style="display:flex;"><span>  (interactive)
+</span></span><span style="display:flex;"><span>  (cl-loop for buf being the buffers
+</span></span><span style="display:flex;"><span>	   if (<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">buffer-local-value</span> <span style="color:#e6db74">&#39;major-mode</span> buf) <span style="color:#e6db74">&#39;erc-mode</span>)
+</span></span><span style="display:flex;"><span>	   do (with-current-buffer buf
+</span></span><span style="display:flex;"><span>		(when (erc-server-process-alive)
+</span></span><span style="display:flex;"><span>		  (let ((tgt (erc-default-target)))
+</span></span><span style="display:flex;"><span>		    (erc-server-send (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;DETACH %s&#34;</span> tgt) <span style="color:#66d9ef">nil</span> tgt))))))
+</span></span></code></pre></div><h4 id="ement-dot-el">ement.el</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package plz
+</span></span><span style="display:flex;"><span>  :straight (:host github :repo <span style="color:#e6db74">&#34;alphapapa/plz.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  :defer <span style="color:#66d9ef">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(use-package ement
+</span></span><span style="display:flex;"><span>  :straight (:host github :repo <span style="color:#e6db74">&#34;alphapapa/ement.el&#34;</span>))
 </span></span></code></pre></div><h4 id="off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package srv
 </span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
@@ -5907,6 +5937,11 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (my-leader-def <span style="color:#e6db74">&#34;ak&#34;</span> <span style="color:#a6e22e">#&#39;</span>pass)
 </span></span><span style="display:flex;"><span>  :config
 </span></span><span style="display:flex;"><span>  (setq pass-show-keybindings <span style="color:#66d9ef">nil</span>))
+</span></span></code></pre></div><p>Also I use <code>password-store-get</code> in a few places in my config, and by default it returns <code>nil</code> if I make an error in the password, which is not too convinient. So:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/password-store-get (entry)
+</span></span><span style="display:flex;"><span>  (if-let ((res (password-store-get entry)))
+</span></span><span style="display:flex;"><span>      res
+</span></span><span style="display:flex;"><span>    (my/password-store-get entry)))
 </span></span></code></pre></div><h4 id="docker">Docker</h4>
 <p>A package to manage docker containers from Emacs.</p>
 <p>The file <code>progidy-config.el</code> sets variable <code>my/docker-directories</code>, which allows to</p>
