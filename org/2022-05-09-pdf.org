@@ -7,28 +7,28 @@
 #+HUGO_DRAFT: true
 
 * Intro
-[[https://github.com/skeeto/elfeed][elfeed]] is one of the most popular packages in Emacs, and it's also one in which I ended up investing a lot of effort. I wrote about the [[https://sqrtminusone.xyz/posts/2021-09-07-emms/][EMMS integration]] and even made a [[https://github.com/SqrtMinusOne/elfeed-summary][custom frontpage]] to my liking. Among my other experimentations is integrating elfeed with [[https://alphacephei.com/vosk/][Vosk]] to get automatic transcripts of podcasts, which may result in another blog post if I like the results.
+[[https://github.com/skeeto/elfeed][elfeed]] is one of the most popular Emacs packages, and it's also one in which I ended up investing a lot of effort. I wrote about the [[https://sqrtminusone.xyz/posts/2021-09-07-emms/][EMMS integration]] and even made a [[https://github.com/SqrtMinusOne/elfeed-summary][custom frontpage]] to my liking. Among my other experimentations is integrating elfeed with [[https://alphacephei.com/vosk/][Vosk]] to get automatic transcripts of podcasts, which may result in another blog post if I like the results.
 
-However, this time I want to I want to share a bunch of tricks that I've found to greatly improve my RSS experience, namely:
+However, this time I want to share a bunch of tricks that I've found to greatly improve my RSS experience, namely:
 - using [[https://github.com/eafer/rdrview][rdrview]] to extend elfeed articles;
 - using [[https://pandoc.org][pandoc]] and LaTeX to convert articles to PDFs;
 
 * rdrview
 [[https://github.com/eafer/rdrview][rdrview]] is a command-line tool to strip webpage from unnecessary clutter, extracting only parts related to the actual content. It's a standalone port of the corresponding feature of Firefox, called [[https://support.mozilla.org/en-US/kb/firefox-reader-view-clutter-free-web-pages][Reader View]].
 
-It seems like the tool [[https://repology.org/project/rdrview/versions][isn't available]] in a whole lot of package repositories, bit it's pretty easy to compile. I've put together a [[https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm][Guix definition]], which maybe one day I'll submit to upstream.
+It seems like the tool [[https://repology.org/project/rdrview/versions][isn't available]] in a whole lot of package repositories, but it's pretty easy to compile. I've put together a [[https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm][Guix definition]], which /one day/ I'll submit to upstream.
 
 ** Integrating rdrview with Emacs
 Let's start by integrating =rdrview= with Emacs. In the general case, we want to fetch both metadata and the actual content from the page.
 
-However, the interface of =rdrview= is bit awkward in this part, so we have the following options:
+However, the interface of =rdrview= is a bit awkward in this part, so we have the following options:
 - call =rdrview= two times: with =-M= flag to fetch the metadata and without it;
 - call =rdrview= with =-T= flag to append the metadata to the resulting HTML.
 
 I've decided to go with the second option. So, here is a function that calls rdrview with the required flags:
 #+begin_src emacs-lisp
 (defun my/rdrview-get (url callback)
-  "Get the rdrview repesentation of URL.
+  "Get the rdrview representation of URL.
 
 Call CALLBACK with the output."
   (let* ((buffer (generate-new-buffer "rdrview"))
@@ -95,9 +95,9 @@ With that said, here's a function that does the required changes:
 #+end_src
 
 ** Using rdrview from elfeed
-Because I didn't find a smart way to advise the wanted behaviour into elfeed, here's a modification of the =elfeed-show-refresh--mail-style= function with two changes:
+Because I didn't find a smart way to advise the wanted behavior into elfeed, here's a modification of the =elfeed-show-refresh--mail-style= function with two changes:
 - it uses =rdrview= to fetch the HTML;
-- it save the resulting HTML into a buffer-local variable (we'll need in later).
+- it saves the resulting HTML into a buffer-local variable (we'll need that later).
 
 #+begin_src emacs-lisp
 (defvar-local my/elfeed-show-rdrview-html nil)
@@ -156,18 +156,18 @@ Because I didn't find a smart way to advise the wanted behaviour into elfeed, he
 That way, calling =M-x my/rdrview-elfeed-show= replaces the original content with one from =rdrview=.
 
 ** How well does it work?
-Rather ironically, it works well with sites that already ship with a proper RSS, like [[https://protesilaos.com/][Protesilaos Stavrou's]] or [[https://karthinks.com/software/simple-folding-with-hideshow/][Karthik Chikmagalur's]] blogs, or [[https://www.theatlantic.com/world/][The Atlantic]] maganize.
+Rather ironically, it works well with sites that already ship with a proper RSS, like [[https://protesilaos.com/][Protesilaos Stavrou's]] or [[https://karthinks.com/software/simple-folding-with-hideshow/][Karthik Chikmagalur's]] blogs, or [[https://www.theatlantic.com/world/][The Atlantic]] magazine.
 
-From other my subscriptions, it does a pretty good job with [[https://www.theverge.com/][The Verge]], which by default sends entries truncated by the words "Read the full article". For [[https://arstechnica.com/][Ars Technica]], it works only if the story is not large enough, because otherwise the site returns its HTML-based pagination interface.
+From other my subscriptions, it does a pretty good job with [[https://www.theverge.com/][The Verge]], which by default sends entries truncated by the words "Read the full article". For [[https://arstechnica.com/][Ars Technica]], it works only if the story is not large enough, because otherwise, the site returns its HTML-based pagination interface.
 
-For paywalled sites, like [[https://www.nytimes.com/][New York Times]] or [[https://www.economist.com/][The Economist]], it usually doesn't work (by the way, what's the problem with providing individual RSS feeds for subscribers?). If you want stuff like that, I'd advise using the [[https://github.com/RSS-Bridge/rss-bridge][RSS-Bridge]] project. And if something is not available, contributing business logic there definitely makes more sense than implemeting workarounds in Emacs Lisp.
+For paywalled sites, like [[https://www.nytimes.com/][New York Times]] or [[https://www.economist.com/][The Economist]], it usually doesn't work (by the way, what's the problem with providing individual RSS feeds for subscribers?). If you want stuff like that, I'd advise using the [[https://github.com/RSS-Bridge/rss-bridge][RSS-Bridge]] project. And if something is not available, contributing business logic there definitely makes more sense than implementing workarounds in Emacs Lisp.
 * LaTeX and pandoc
-However, I find that I'm not really a fan of reading articles from Emacs. Somehow what works for program code doesn't work that well with natural text. When I have to, I usually switch theme to the light one.
+However, I find that I'm not really a fan of reading articles from Emacs. Somehow what works for program code doesn't work that well with the natural text. When I have to, I usually switch the Emacs theme to the light one.
 
-But the best solution I've found so far is to render the required articles to PDF. I may even print out some large articles I want to read.
+But the best solution I've found so far is to render the required articles as PDFs. I may even print out some large articles I want to read.
 
 ** Template
-So, first we need a LaTeX template. Pandoc already ships with one, but I don't like it too much, so I've put up a template from my LaTeX styles, targeting my preferred XeLaTeX engine.
+So, first, we need a LaTeX template. Pandoc already ships with one, but I don't like it too much, so I've put up a template from my LaTeX styles, targeting my preferred XeLaTeX engine.
 
 I'll add the code here for completeness' sake, but if you use LaTeX, you'll probably end up better using your own setup. Be sure to define the following variables:
 - =main-lang= and =other-lang= for polyglossia (or remove them if you have only one language)
@@ -362,7 +362,7 @@ Now let's invoke pandoc. We need to pass the following flags:
 - =-o <path-to-pdf>=;
 - =--variable key=value=.
 
-In fact, pandoc is pretty awesome tool in the sense that it allows for feeding custom variable in templates and using a pretty rich templating language.
+In fact, pandoc is a pretty awesome tool in the sense that it allows for feeding custom variables to templates and using a rich templating language.
 
 So, the rendering function is as follows:
 #+begin_src emacs-lisp
@@ -370,15 +370,15 @@ So, the rendering function is as follows:
                                      &key file-name overwrite)
   "Render CONTENT with pandoc.
 
-TYPE is a file extension as supported by pandoc, for instance
+TYPE is a file extension as supported by pandoc, for instance,
 html or txt.  VARIABLES is an alist that is fed into the
-template.  After the rendering is complete sucessfully, CALLBACK
+template.  After the rendering is complete successfully, CALLBACK
 is called with the resulting PDF.
 
 FILE-NAME is a path to the resulting PDF, if nil it's generated
 randomly.
 
-If a file with given FILE-NAME already exists, the function will
+If a file with the given FILE-NAME already exists, the function will
 invoke CALLBACK straight away without doing the rendering, unless
 OVERWRITE is non-nil."
   (unless file-name
@@ -471,7 +471,7 @@ So, we can open elfeed entries in a PDF viewer, which I find much nicer to read.
 
 [[./images/pdf-prot.png]]
 
-** Opening aritrary sites
+** Opening arbitrary sites
 As you might've noticed, we also can renderer arbitrary web pages with this setup, so let's go ahead and implement that:
 #+begin_src emacs-lisp
 (defun my/get-languages (url)
@@ -509,7 +509,7 @@ As you might've noticed, we also can renderer arbitrary web pages with this setu
 
 Unfortunately, this part doesn't work that well, so we can't just uninstall Firefox or Chromium and browse the web from a PDF viewer.
 
-The most common problem I faced is incorrectly formed pictures, for instance =.png= files without the boundary info. I'm sure you've encountered this if you ever tried to insert a lot of Internet pictures to a LaTeX document.
+The most common problem I faced is incorrectly formed pictures, for instance, =.png= files without the boundary info. I'm sure you've encountered this if you ever tried to insert a lot of Internet pictures into a LaTeX document.
 
 However, sans the pictures issue, it works nicely with Wikipedia pages. For instance, here's how the Emacs page looks:
 [[./images/pdf-emacs.png]]
