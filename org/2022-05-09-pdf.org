@@ -1,20 +1,33 @@
 #+HUGO_SECTION: posts
 #+HUGO_BASE_DIR: ../
-#+TITLE: Viewing elfeed entries in a PDF viewer
+#+TITLE: Extending elfeed entries with a PDF viewer, subtitles fetcher, and a speech recognition engine
 #+DATE: 2022-05-08
 #+HUGO_TAGS: emacs
 #+HUGO_TAGS: org-mode
 #+HUGO_DRAFT: true
 
 * Intro
-[[https://github.com/skeeto/elfeed][elfeed]] is one of the most popular Emacs packages, and it's also one in which I ended up investing a lot of effort. I wrote about the [[https://sqrtminusone.xyz/posts/2021-09-07-emms/][EMMS integration]] and even made a [[https://github.com/SqrtMinusOne/elfeed-summary][custom frontpage]] to my liking. Among my other experimentations is integrating elfeed with [[https://alphacephei.com/vosk/][Vosk]] to get automatic transcripts of podcasts, which may result in another blog post if I like the results.
+[[https://github.com/skeeto/elfeed][elfeed]] is one of the most popular Emacs packages, and it's also one in which I ended up investing a lot of effort. I wrote about the [[https://sqrtminusone.xyz/posts/2021-09-07-emms/][EMMS integration]] and even made a [[https://github.com/SqrtMinusOne/elfeed-summary][custom frontpage]] to my liking.
 
-However, this time I want to share a bunch of tricks that I've found to greatly improve my RSS experience, namely:
+One general issue with RSS readers is that sites often limit the amount of information shipped in the RSS feed. For instance, oftentimes an RSS entry doesn't include the entire content.
+
+Also, there's non-textual content. If you're subscribed to video or audio feeds, for instance, YouTube channels or podcasts, you have to use video and audio players correspondingly. Which elfeed allows, for instance with the aforementioned EMMS integration. But we can do more.
+
+Which is why in this post I consider the following tricks to extend elfeed entries:
 - using [[https://github.com/eafer/rdrview][rdrview]] to extend elfeed articles;
 - using [[https://pandoc.org][pandoc]] and LaTeX to convert articles to PDFs;
+- using [[https://github.com/jdepoix/youtube-transcript-api][youtube-transcript-api]] to download YouTube subtitles and [[https://github.com/sachac/subed][subed]] to control the MPV playback;
+- using [[https://github.com/alphacep/vosk-api][Vosk]] to get transcripts of podcasts.
+
+That's a lot of stuff that I even considered splitting into two separate posts, but I think a long one will also do just fine.
+
+Also, heads up! You'll need lexical binding enabled for the code blocks. The easiest way to accomplish this is to add the following to the first line of =init.el=:
+#+begin_src emacs-lisp
+;;; -*- lexical-binding: t -*-
+#+end_src
 
 * rdrview
-[[https://github.com/eafer/rdrview][rdrview]] is a command-line tool to strip webpage from unnecessary clutter, extracting only parts related to the actual content. It's a standalone port of the corresponding feature of Firefox, called [[https://support.mozilla.org/en-US/kb/firefox-reader-view-clutter-free-web-pages][Reader View]].
+[[https://github.com/eafer/rdrview][rdrview]] is a command-line tool to strip webpages from clutter, extracting only parts related to the actual content. It's a standalone port of the corresponding feature of Firefox, called [[https://support.mozilla.org/en-US/kb/firefox-reader-view-clutter-free-web-pages][Reader View]].
 
 It seems like the tool [[https://repology.org/project/rdrview/versions][isn't available]] in a whole lot of package repositories, but it's pretty easy to compile. I've put together a [[https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm][Guix definition]], which /one day/ I'll submit to upstream.
 
@@ -375,7 +388,7 @@ html or txt.  VARIABLES is an alist that is fed into the
 template.  After the rendering is complete successfully, CALLBACK
 is called with the resulting PDF.
 
-FILE-NAME is a path to the resulting PDF, if nil it's generated
+FILE-NAME is a path to the resulting PDF. If nil it's generated
 randomly.
 
 If a file with the given FILE-NAME already exists, the function will
@@ -513,3 +526,112 @@ The most common problem I faced is incorrectly formed pictures, for instance, =.
 
 However, sans the pictures issue, it works nicely with Wikipedia pages. For instance, here's how the Emacs page looks:
 [[./images/pdf-emacs.png]]
+* YouTube transcripts
+** Getting subtitles
+Now, let's get to transcripts.
+
+In principle, the YouTube API allows for downloading subtitles, but I've found [[https://github.com/jdepoix/youtube-transcript-api][this awesome Python script]] which does the same. You can install it from =pip=, or here's mine [[https://github.com/SqrtMinusOne/channel-q/blob/master/youtube-transcript-api.scm][Guix definition]] once again.
+
+Much like the previous cases, we need to invoke the program and save the output. The [[https://en.wikipedia.org/wiki/WebVTT][WebVTT]] format will work well enough for our purposes. Here goes the function:
+#+begin_src emacs-lisp
+(cl-defun my/youtube-subtitles-get (video-id callback &key file-name overwrite)
+  "Get subtitles for VIDEO-ID in WebVTT format.
+
+Call CALLBACK when done.
+
+FILE-NAME is a path to the resulting WebVTT file. If nil it's
+generated randomly.
+
+If a file with the given FILE-NAME already exists, the function will
+invoke CALLBACK straight away without doing the rendering, unless
+OVERWRITE is non-nil."
+  (unless file-name
+    (setq file-name (format "/tmp/%d.vtt" (random 100000000))))
+  (if (and (file-exists-p file-name) (not overwrite))
+      (funcall callback file-name)
+    (let* ((buffer (generate-new-buffer "youtube-transcripts"))
+           (proc (start-process "youtube_transcript_api" buffer
+                                "youtube_transcript_api" video-id
+                                "--format" "webvtt")))
+      (set-process-sentinel
+       proc
+       (lambda (process _msg)
+         (let ((status (process-status process))
+               (code (process-exit-status process)))
+           (cond ((and (eq status 'exit) (= code 0))
+                  (progn
+                    (with-current-buffer (process-buffer process)
+                      (setq buffer-file-name file-name)
+                      (save-buffer))
+                    (kill-buffer (process-buffer process))
+                    (funcall callback file-name)))
+                 ((or (and (eq status 'exit) (> code 0))
+                      (eq status 'signal))
+                  (let ((err (with-current-buffer (process-buffer process)
+                               (buffer-string))))
+                    (kill-buffer (process-buffer process))
+                    (user-error "Error in youtube_transcript_api: %s" err)))))))
+      proc)))
+#+end_src
+** elfeed and subed
+Now that we have a standalone function, let's invoke it with the current =elfeed-show-entry=:
+
+#+begin_src emacs-lisp
+(setq my/elfeed-srt-dir (expand-file-name "~/.elfeed/srt/"))
+
+(defun my/elfeed-youtube-subtitles (entry &optional arg)
+  "Get subtitles for the current elfeed ENTRY.
+
+Works only in the entry is a YouTube video.
+
+If ARG is non-nil, re-fetch the subtitles regardless of whether
+they were fetched before."
+  (interactive (list elfeed-show-entry current-prefix-arg))
+  (let ((video-id (cadr
+                   (assoc "watch?v"
+                          (url-parse-query-string
+                           (substring
+                            (url-filename
+                             (url-generic-parse-url (elfeed-entry-link entry)))
+                            1))))))
+    (unless video-id
+      (user-error "Can't get video ID from the entry"))
+    (my/youtube-subtitles-get
+     video-id
+     (lambda (file-name)
+       (with-current-buffer (find-file-other-window file-name)
+         (setq-local elfeed-show-entry entry)
+         (goto-char (point-min))))
+     :file-name (concat my/elfeed-srt-dir
+                        (elfeed-ref-id (elfeed-entry-content entry))
+                        ".vtt")
+     :overwrite arg)))
+#+end_src
+
+That opens up a =.vtt= buffer with subtitles for the current video, which means now we can use the functionality of an awesome package of Sacha Chua called [[https://github.com/sachac/subed][subed]].
+
+This package, besides syntax highlighting, allows for controlling the MPV playback, for instance by moving the cursor in the subtitles buffer. Using that requires having the URL of the video in the subtitles buffer, which is why the string with =setq-local= in the previous function is necessary.
+
+Also, the package launches its own instance of MPV to control it via JSON-IPC, so there seems to be no easy way to integrate it with EMMS. But at least I can reuse the =emms-player-mpv-parameters= variable, the method of setting which I've discussed in a [[https://sqrtminusone.xyz/posts/2021-09-07-emms/][previous blog post]]. So, here's the function:
+#+begin_src emacs-lisp
+(defun my/subed-elfeed (entry)
+  "Open the video file from elfeed ENTRY in MPV.
+
+This has to be launched from inside the subtitles buffer, opened
+by the `my/elfeed-youtube-subtitles' function."
+  (interactive (list elfeed-show-entry))
+  (unless entry
+    (user-error "No entry!"))
+  (unless (derived-mode-p 'subed-mode)
+    (user-error "Not subed mode!"))
+  (setq-local subed-mpv-arguments
+              (seq-uniq
+               (append subed-mpv-arguments emms-player-mpv-parameters)))
+  (setq-local subed-mpv-video-file (elfeed-entry-link entry))
+  (subed-mpv--play subed-mpv-video-file))
+#+end_src
+
+And here's how using it looks:
+[[./images/pdf-subed.png]]
+
+Keep in mind that this function has to be launched inside the buffer opened by the =my/elfeed-youtube-subtitles= function.
