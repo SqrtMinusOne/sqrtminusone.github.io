@@ -59,6 +59,7 @@
 <hr>
 <div id="content">
 <div class="container">
+    <h1>Guix</h1>
     <p><a href="https://guix.gnu.org/">GNU Guix</a> is (1) a transactional package manager and (2) a GNU/Linux distribution.</p>
 <p>My personal selling points are declarative package configuration and transactional upgrades.</p>
 <p>References:</p>
@@ -121,79 +122,79 @@
 </ul>
 <h3 id="activate-profiles">Activate profiles</h3>
 <p>A script to activate guix profiles. Usage:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>activate-profiles [profile1] [profile2] ...
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>activate-profiles [profile1] [profile2] ...
 </span></span></code></pre></div><p>Source: <a href="https://github.com/daviwil/dotfiles/blob/master/Systems.org#activating-profiles">David Wilson&rsquo;s config</a></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>GREEN<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\033[1;32m&#39;</span>
-</span></span><span style="display:flex;"><span>RED<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\033[1;30m&#39;</span>
-</span></span><span style="display:flex;"><span>NC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\033[0m&#39;</span>
-</span></span><span style="display:flex;"><span>GUIX_EXTRA_PROFILES<span style="color:#f92672">=</span>$HOME/.guix-extra-profiles
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">GREEN</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\033[1;32m&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">RED</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\033[1;30m&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">NC</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\033[0m&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">GUIX_EXTRA_PROFILES</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.guix-extra-profiles
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>profiles<span style="color:#f92672">=</span>$*
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $# -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>    profiles<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.config/guix/manifests/*.scm&#34;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">profiles</span><span style="color:#666">=</span><span style="color:#19177c">$*</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#19177c">$#</span> -eq <span style="color:#666">0</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">profiles</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/.config/guix/manifests/*.scm&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> profile in $profiles; <span style="color:#66d9ef">do</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Remove the path and file extension, if any</span>
-</span></span><span style="display:flex;"><span>  profileName<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename $profile<span style="color:#66d9ef">)</span>
-</span></span><span style="display:flex;"><span>  profileName<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>profileName%.*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>  profilePath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$GUIX_EXTRA_PROFILES<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>  manifestPath<span style="color:#f92672">=</span>$HOME/.config/guix/manifests/$profileName.scm
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> profile in <span style="color:#19177c">$profiles</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic"># Remove the path and file extension, if any</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">profileName</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>basename <span style="color:#19177c">$profile</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">profileName</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">profileName</span>%.*<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">profilePath</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_EXTRA_PROFILES</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">manifestPath</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.config/guix/manifests/<span style="color:#19177c">$profileName</span>.scm
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f $manifestPath <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>    echo
-</span></span><span style="display:flex;"><span>    echo -e <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>GREEN<span style="color:#e6db74">}</span><span style="color:#e6db74">Activating profile:&#34;</span> $manifestPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>NC<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    echo
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#19177c">$manifestPath</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> -e <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">GREEN</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">Activating profile:&#34;</span> <span style="color:#19177c">$manifestPath</span> <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">NC</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    mkdir -p $profilePath
-</span></span><span style="display:flex;"><span>    guix package --manifest<span style="color:#f92672">=</span>$manifestPath --profile<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$profilePath<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#19177c">$profilePath</span>
+</span></span><span style="display:flex;"><span>    guix package --manifest<span style="color:#666">=</span><span style="color:#19177c">$manifestPath</span> --profile<span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profilePath</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Source the new profile</span>
-</span></span><span style="display:flex;"><span>    GUIX_PROFILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$profilePath<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f $GUIX_PROFILE/etc/profile <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>	. <span style="color:#e6db74">&#34;</span>$GUIX_PROFILE<span style="color:#e6db74">&#34;</span>/etc/profile
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span>	echo -e <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RED<span style="color:#e6db74">}</span><span style="color:#e6db74">Couldn&#39;t find profile:&#34;</span> $GUIX_PROFILE/etc/profile <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>NC<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;No profile found at path&#34;</span> $profilePath
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic"># Source the new profile</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">GUIX_PROFILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profilePath</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#19177c">$GUIX_PROFILE</span>/etc/profile <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>	. <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_PROFILE</span><span style="color:#ba2121">&#34;</span>/etc/profile
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000">echo</span> -e <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">RED</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">Couldn&#39;t find profile:&#34;</span> <span style="color:#19177c">$GUIX_PROFILE</span>/etc/profile <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">NC</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;No profile found at path&#34;</span> <span style="color:#19177c">$profilePath</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
 </span></span></code></pre></div><h3 id="update-profiles">Update profiles</h3>
 <p>A script to update Guix profiles. Usage:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>update-profiles [profile1] [profile2] ...
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>update-profiles [profile1] [profile2] ...
 </span></span></code></pre></div><p>Source: once again, <a href="https://github.com/daviwil/dotfiles/blob/master/Systems.org#updating-profiles">David Wilson&rsquo;s config</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>GREEN<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\033[1;32m&#39;</span>
-</span></span><span style="display:flex;"><span>NC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;\033[0m&#39;</span>
-</span></span><span style="display:flex;"><span>GUIX_EXTRA_PROFILES<span style="color:#f92672">=</span>$HOME/.guix-extra-profiles
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">GREEN</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\033[1;32m&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">NC</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\033[0m&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">GUIX_EXTRA_PROFILES</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.guix-extra-profiles
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>profiles<span style="color:#f92672">=</span>$*
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $# -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>    profiles<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$GUIX_EXTRA_PROFILES<span style="color:#e6db74">/*&#34;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">profiles</span><span style="color:#666">=</span><span style="color:#19177c">$*</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#19177c">$#</span> -eq <span style="color:#666">0</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">profiles</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_EXTRA_PROFILES</span><span style="color:#ba2121">/*&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> profile in $profiles; <span style="color:#66d9ef">do</span>
-</span></span><span style="display:flex;"><span>  profileName<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename $profile<span style="color:#66d9ef">)</span>
-</span></span><span style="display:flex;"><span>  profilePath<span style="color:#f92672">=</span>$GUIX_EXTRA_PROFILES/$profileName
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> profile in <span style="color:#19177c">$profiles</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">profileName</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>basename <span style="color:#19177c">$profile</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">profilePath</span><span style="color:#666">=</span><span style="color:#19177c">$GUIX_EXTRA_PROFILES</span>/<span style="color:#19177c">$profileName</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  echo
-</span></span><span style="display:flex;"><span>  echo -e <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>GREEN<span style="color:#e6db74">}</span><span style="color:#e6db74">Updating profile:&#34;</span> $profilePath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>NC<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>  echo
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">echo</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">echo</span> -e <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">GREEN</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">Updating profile:&#34;</span> <span style="color:#19177c">$profilePath</span> <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">NC</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">echo</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  guix package --profile<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$profilePath<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span> --manifest<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.config/guix/manifests/</span>$profileName<span style="color:#e6db74">.scm&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>  guix package --profile<span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profilePath</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span> --manifest<span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/.config/guix/manifests/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">.scm&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
 </span></span></code></pre></div><h3 id="run-guix-package-in-profile">Run <code>guix package</code> in profile</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>GUIX_EXTRA_PROFILES<span style="color:#f92672">=</span>$HOME/.guix-extra-profiles
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">GUIX_EXTRA_PROFILES</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.guix-extra-profiles
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>profileName<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename $1<span style="color:#66d9ef">)</span>
-</span></span><span style="display:flex;"><span>profileName<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>profileName%.*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>profilePath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$GUIX_EXTRA_PROFILES<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">profileName</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>basename <span style="color:#19177c">$1</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">profileName</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">profileName</span>%.*<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">profilePath</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_EXTRA_PROFILES</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -d $profilePath <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>    guix package --profile<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$profilePath<span style="color:#e6db74">/</span>$profileName<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">${</span>@:2<span style="color:#e6db74">}</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span>    echo -e <span style="color:#e6db74">&#34;No profile found at path: &#34;</span> $profilePath
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -d <span style="color:#19177c">$profilePath</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    guix package --profile<span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profilePath</span><span style="color:#ba2121">/</span><span style="color:#19177c">$profileName</span><span style="color:#ba2121">&#34;</span> <span style="color:#b68;font-weight:bold">${</span>@:<span style="color:#19177c">2</span><span style="color:#b68;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> -e <span style="color:#ba2121">&#34;No profile found at path: &#34;</span> <span style="color:#19177c">$profilePath</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h2 id="channels">Channels</h2>
 <p>Specifying additional channels.</p>
 <p><a href="https://github.com/SqrtMinusOne/channel-q">channel-q</a> is my Guix channel. Don&rsquo;t use it at home.</p>
@@ -203,38 +204,38 @@
 <li><a href="https://guix.gnu.org/manual/en/html_node/Channels.html">Guix channels reference</a></li>
 </ul>
 <!--listend-->
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">cons*</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;channel-q</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;file:///home/pavel/Code/channel-q&#34;</span>))
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;flat</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;https://github.com/flatwhatson/guix-channel.git&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">introduction</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">make-channel-introduction</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;33f86a4b48205c0dc19d7c036c85393f0766f806&#34;</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">openpgp-fingerprint</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#e6db74">&#34;736A C00E 1254 378B A982  7AF6 9DBE 8265 81B6 4490&#34;</span>))))
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;nonguix</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; (commit &#34;d54973e47b89fe5772a5b6e2d0c0b86acb089e27&#34;)</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">introduction</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">make-channel-introduction</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;897c1a470da759236cc11798f4e0a5f7d4d59fbc&#34;</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">openpgp-fingerprint</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#e6db74">&#34;2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5&#34;</span>))))
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; What can possibly go wrong, huh</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;guix-gaming-games</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;https://gitlab.com/guix-gaming-channels/games.git&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">;; Enable signature verification:</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">introduction</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">make-channel-introduction</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;c23d64f1b8cc086659f8781b27ab6c7314c5cca5&#34;</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">openpgp-fingerprint</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#e6db74">&#34;50F3 3E2E 5B0C 3D90 0424  ABE8 9BDC F497 A4BB CC7F&#34;</span>))))
-</span></span><span style="display:flex;"><span> %default-channels)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;channel-q</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;file:///home/pavel/Code/channel-q&#34;</span>))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;flat</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://github.com/flatwhatson/guix-channel.git&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">introduction</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">make-channel-introduction</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;33f86a4b48205c0dc19d7c036c85393f0766f806&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">openpgp-fingerprint</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;736A C00E 1254 378B A982  7AF6 9DBE 8265 81B6 4490&#34;</span>))))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;nonguix</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (commit &#34;d54973e47b89fe5772a5b6e2d0c0b86acb089e27&#34;)</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">introduction</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">make-channel-introduction</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;897c1a470da759236cc11798f4e0a5f7d4d59fbc&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">openpgp-fingerprint</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5&#34;</span>))))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; What can possibly go wrong, huh</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;guix-gaming-games</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://gitlab.com/guix-gaming-channels/games.git&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Enable signature verification:</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">introduction</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">make-channel-introduction</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;c23d64f1b8cc086659f8781b27ab6c7314c5cca5&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">openpgp-fingerprint</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;50F3 3E2E 5B0C 3D90 0424  ABE8 9BDC F497 A4BB CC7F&#34;</span>))))
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">%default-channels</span>)
 </span></span></code></pre></div><h2 id="systems">Systems</h2>
 <p>Configuring systems with Guix.</p>
 <p>Yes, all my machines are named after colors I like.</p>
@@ -242,84 +243,84 @@
 <p>The base configuration is shared between all the machines.</p>
 <p>While it&rsquo;s possible to make a single <code>.scm</code> file with base configuration and load it, I noticed that it produces more cryptic error messages whenever there is an error in the base file, so I opt-in for noweb.</p>
 <p><code>guix system</code> invocation is as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>sudo -E guix system reconfigure ~/.config/guix/systems/[system].scm
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>sudo -E guix system reconfigure ~/.config/guix/systems/[system].scm
 </span></span></code></pre></div><p>Common modules:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span>))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> system nss))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages bash))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> ((<span style="color:#a6e22e">gnu</span> packages base) <span style="color:#f92672">#</span>:select (<span style="color:#a6e22e">coreutils</span> glibc)))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages certs))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages version-control))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages vim))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages gnome))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages xorg))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages wm))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> packages openbox))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> services docker))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> services cups))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">gnu</span> services virtualization))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">srfi</span> srfi-1))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">guix</span> channels))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">guix</span> inferior))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">nongnu</span> packages linux))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-modules</span> (<span style="color:#a6e22e">nongnu</span> system linux-initrd))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">system</span> <span style="color:#19177c">nss</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">bash</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> ((<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">base</span>) <span style="color:#666">#</span><span style="color:#19177c">:select</span> (<span style="color:#00f">coreutils</span> <span style="color:#19177c">glibc</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">certs</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">version-control</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">vim</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">gnome</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">xorg</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">wm</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">openbox</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">services</span> <span style="color:#19177c">docker</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">services</span> <span style="color:#19177c">cups</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">gnu</span> <span style="color:#19177c">services</span> <span style="color:#19177c">virtualization</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">srfi</span> <span style="color:#19177c">srfi-1</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">guix</span> <span style="color:#19177c">channels</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">guix</span> <span style="color:#19177c">inferior</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">nongnu</span> <span style="color:#19177c">packages</span> <span style="color:#19177c">linux</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-modules</span> (<span style="color:#00f">nongnu</span> <span style="color:#19177c">system</span> <span style="color:#19177c">linux-initrd</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-service-modules</span> desktop networking ssh xorg nix)
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">use-package-modules</span> ssh)
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-service-modules</span> <span style="color:#19177c">desktop</span> <span style="color:#19177c">networking</span> <span style="color:#19177c">ssh</span> <span style="color:#19177c">xorg</span> <span style="color:#19177c">nix</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">use-package-modules</span> <span style="color:#19177c">ssh</span>)
 </span></span></code></pre></div><p>In principle, we could define a variable called <code>base-operating-system</code> and extend it in ancestors. However, then we would have to define mandatory fields like <code>host-name</code>, <code>bootloader</code> with dummy values. Since I&rsquo;m already using noweb, there is little point.</p>
 <p>The following code will be inserted at the top of the <code>operating-system</code> definition.</p>
 <p>Use the full Linux kernel. I hope I&rsquo;ll be able to use Libre kernel somewhere later.</p>
 <p>Inferior in the kernel is used to avoid recompilation. It looks like I can pin these to different commits than in my <code>channels.scm</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">kernel</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">let*</span>
-</span></span><span style="display:flex;"><span>     ((<span style="color:#a6e22e">channels</span>
-</span></span><span style="display:flex;"><span>       (list (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;nonguix</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">commit</span> <span style="color:#e6db74">&#34;393b8e0405f44835c498d7735a8ae9ff4682b07f&#34;</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">channel</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;guix</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">url</span> <span style="color:#e6db74">&#34;https://git.savannah.gnu.org/git/guix.git&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">commit</span> <span style="color:#e6db74">&#34;4c812db049d5c9f2c438748e180f9486ad221b0a&#34;</span>))))
-</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">inferior</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#a6e22e">inferior-for-channels</span> channels)))
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">first</span> (<span style="color:#a6e22e">lookup-inferior-packages</span> inferior <span style="color:#e6db74">&#34;linux&#34;</span> <span style="color:#e6db74">&#34;5.15.12&#34;</span>))))
-</span></span><span style="display:flex;"><span><span style="color:#75715e">;; (kernel linux)</span>
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">initrd</span> microcode-initrd)
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">firmware</span> (list linux-firmware))
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">locale</span> <span style="color:#e6db74">&#34;en_US.utf8&#34;</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">timezone</span> <span style="color:#e6db74">&#34;Europe/Moscow&#34;</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">kernel</span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">let*</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">channels</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">list </span>(<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;nonguix</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;393b8e0405f44835c498d7735a8ae9ff4682b07f&#34;</span>))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;guix</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://git.savannah.gnu.org/git/guix.git&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;4c812db049d5c9f2c438748e180f9486ad221b0a&#34;</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">inferior</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">inferior-for-channels</span> <span style="color:#19177c">channels</span>)))
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">first</span> (<span style="color:#00f">lookup-inferior-packages</span> <span style="color:#19177c">inferior</span> <span style="color:#ba2121">&#34;linux&#34;</span> <span style="color:#ba2121">&#34;5.15.12&#34;</span>))))
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (kernel linux)</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">initrd</span> <span style="color:#19177c">microcode-initrd</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">firmware</span> (<span style="color:#008000">list </span><span style="color:#19177c">linux-firmware</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">locale</span> <span style="color:#ba2121">&#34;en_US.utf8&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">timezone</span> <span style="color:#ba2121">&#34;Europe/Moscow&#34;</span>)
 </span></span></code></pre></div><p>US/RU keyboard layout, switch with Alt+Shift.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">keyboard-layout</span> (<span style="color:#a6e22e">keyboard-layout</span> <span style="color:#e6db74">&#34;us,ru&#34;</span> <span style="color:#f92672">#</span>:options <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;grp:alt_shift_toggle&#34;</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">keyboard-layout</span> (<span style="color:#00f">keyboard-layout</span> <span style="color:#ba2121">&#34;us,ru&#34;</span> <span style="color:#666">#</span><span style="color:#19177c">:options</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;grp:alt_shift_toggle&#34;</span>)))
 </span></span></code></pre></div><p>User accounts.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">users</span> (<span style="color:#a6e22e">cons*</span> (<span style="color:#a6e22e">user-account</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#34;pavel&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#a6e22e">comment</span> <span style="color:#e6db74">&#34;Pavel&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#a6e22e">group</span> <span style="color:#e6db74">&#34;users&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#a6e22e">home-directory</span> <span style="color:#e6db74">&#34;/home/pavel&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#a6e22e">supplementary-groups</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;wheel&#34;</span>  <span style="color:#75715e">;; sudo</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;netdev&#34;</span> <span style="color:#75715e">;; network devices</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;audio&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;video&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;input&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;tty&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;docker&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;scanner&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;libvirt&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;lp&#34;</span>)))
-</span></span><span style="display:flex;"><span>	      %base-user-accounts))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">users</span> (<span style="color:#00f">cons*</span> (<span style="color:#00f">user-account</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">name</span> <span style="color:#ba2121">&#34;pavel&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">comment</span> <span style="color:#ba2121">&#34;Pavel&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">group</span> <span style="color:#ba2121">&#34;users&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">home-directory</span> <span style="color:#ba2121">&#34;/home/pavel&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">supplementary-groups</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;wheel&#34;</span>  <span style="color:#408080;font-style:italic">;; sudo</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;netdev&#34;</span> <span style="color:#408080;font-style:italic">;; network devices</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;audio&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;video&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;input&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;tty&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;docker&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;scanner&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;libvirt&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;lp&#34;</span>)))
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">%base-user-accounts</span>))
 </span></span></code></pre></div><p>Base packages, necessary right after the installation.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">packages</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">append</span>
-</span></span><span style="display:flex;"><span>  (list nss-certs
-</span></span><span style="display:flex;"><span>	    git
-</span></span><span style="display:flex;"><span>	i3-gaps
-</span></span><span style="display:flex;"><span>	i3lock
-</span></span><span style="display:flex;"><span>	openbox
-</span></span><span style="display:flex;"><span>	xterm
-</span></span><span style="display:flex;"><span>	    vim)
-</span></span><span style="display:flex;"><span>  %base-packages))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">packages</span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">list </span><span style="color:#19177c">nss-certs</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">git</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">i3-gaps</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">i3lock</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">openbox</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">xterm</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">vim</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">%base-packages</span>))
 </span></span></code></pre></div><p>Default services for each machine:</p>
 <ul>
 <li>override the default <code>%desktop-services</code> to add OpenVPN support</li>
@@ -330,173 +331,173 @@
 <li>add a symlink to ELF interpreter to where most Linux binaries expect it</li>
 </ul>
 <!--listend-->
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#66d9ef">define </span>%my-base-services
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">cons*</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> openssh-service-type)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">screen-locker-service</span> i3lock <span style="color:#e6db74">&#34;i3lock&#34;</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">extra-special-file</span> <span style="color:#e6db74">&#34;/lib64/ld-linux-x86-64.so.2&#34;</span> (<span style="color:#a6e22e">file-append</span> glibc <span style="color:#e6db74">&#34;/lib/ld-linux-x86-64.so.2&#34;</span>))
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> nix-service-type)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> cups-service-type
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">cups-configuration</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">web-interface?</span> <span style="color:#66d9ef">#t</span>)))
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> docker-service-type)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> libvirt-service-type
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">libvirt-configuration</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">unix-sock-group</span> <span style="color:#e6db74">&#34;libvirt&#34;</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">tls-port</span> <span style="color:#e6db74">&#34;16555&#34;</span>)))
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">service</span> virtlog-service-type)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">modify-services</span> %desktop-services
-</span></span><span style="display:flex;"><span>		    (<span style="color:#a6e22e">network-manager-service-type</span>
-</span></span><span style="display:flex;"><span>		     config =&gt;
-</span></span><span style="display:flex;"><span>		     (<span style="color:#a6e22e">network-manager-configuration</span>
-</span></span><span style="display:flex;"><span>		      (<span style="color:#a6e22e">inherit</span> config)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#a6e22e">vpn-plugins</span> (list network-manager-openvpn)))))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">%my-base-services</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">openssh-service-type</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">screen-locker-service</span> <span style="color:#19177c">i3lock</span> <span style="color:#ba2121">&#34;i3lock&#34;</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">extra-special-file</span> <span style="color:#ba2121">&#34;/lib64/ld-linux-x86-64.so.2&#34;</span> (<span style="color:#00f">file-append</span> <span style="color:#19177c">glibc</span> <span style="color:#ba2121">&#34;/lib/ld-linux-x86-64.so.2&#34;</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">nix-service-type</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">cups-service-type</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">cups-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">web-interface?</span> <span style="color:#800">#t</span>)))
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">docker-service-type</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">libvirt-service-type</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">libvirt-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">unix-sock-group</span> <span style="color:#ba2121">&#34;libvirt&#34;</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">tls-port</span> <span style="color:#ba2121">&#34;16555&#34;</span>)))
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">service</span> <span style="color:#19177c">virtlog-service-type</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">modify-services</span> <span style="color:#19177c">%desktop-services</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">network-manager-service-type</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">network-manager-configuration</span>
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">vpn-plugins</span> (<span style="color:#008000">list </span><span style="color:#19177c">network-manager-openvpn</span>)))))))
 </span></span></code></pre></div><h3 id="indigo">indigo</h3>
 <p><code>indigo</code> is my desktop PC.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>&lt;&lt;system-common&gt;&gt;
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;system-common&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">operating-system</span>
-</span></span><span style="display:flex;"><span> &lt;&lt;system-base&gt;&gt;
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">operating-system</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">&lt;&lt;system-base&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">host-name</span> <span style="color:#e6db74">&#34;indigo&#34;</span>)
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">services</span> (<span style="color:#a6e22e">cons*</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">set-xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
-</span></span><span style="display:flex;"><span>	    %my-base-services))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">host-name</span> <span style="color:#ba2121">&#34;indigo&#34;</span>)
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">services</span> (<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">%my-base-services</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">bootloader</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">bootloader-configuration</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">bootloader</span> grub-efi-bootloader)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">target</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">bootloader</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">bootloader-configuration</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">bootloader</span> <span style="color:#19177c">grub-efi-bootloader</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">target</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">swap-devices</span>
-</span></span><span style="display:flex;"><span>  (list (<span style="color:#a6e22e">uuid</span> <span style="color:#e6db74">&#34;3a77c542-7d24-46ff-8123-f7398d1c2677&#34;</span>)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">swap-devices</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">list </span>(<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;3a77c542-7d24-46ff-8123-f7398d1c2677&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">file-systems</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">cons*</span> (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">device</span> (<span style="color:#a6e22e">file-system-label</span> <span style="color:#e6db74">&#34;my-root&#34;</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;ext4&#34;</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">device</span> <span style="color:#e6db74">&#34;/dev/sda1&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;vfat&#34;</span>))
-</span></span><span style="display:flex;"><span>	 %base-file-systems)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">file-systems</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">cons*</span> (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">device</span> (<span style="color:#00f">file-system-label</span> <span style="color:#ba2121">&#34;my-root&#34;</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;ext4&#34;</span>))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">device</span> <span style="color:#ba2121">&#34;/dev/sda1&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;vfat&#34;</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">%base-file-systems</span>)))
 </span></span></code></pre></div><h3 id="eminence">eminence</h3>
 <p><code>eminence</code> is a HP 15s laptop.</p>
 <p><code>%backlight-udev-rule</code> should enable members of <code>video</code> group change the display backlight. See the relevant page at <a href="https://wiki.archlinux.org/title/Backlight">Arch Wiki</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>&lt;&lt;system-common&gt;&gt;
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;system-common&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">define </span>%backlight-udev-rule
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">udev-rule</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;90-backlight.rules&#34;</span>
-</span></span><span style="display:flex;"><span>   (string-append <span style="color:#e6db74">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;RUN+=\&#34;/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;\n&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;RUN+=\&#34;/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\&#34;&#34;</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">%backlight-udev-rule</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">udev-rule</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;90-backlight.rules&#34;</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">string-append </span><span style="color:#ba2121">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;RUN+=\&#34;/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;\n&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;RUN+=\&#34;/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\&#34;&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">operating-system</span>
-</span></span><span style="display:flex;"><span> &lt;&lt;system-base&gt;&gt;
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">operating-system</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">&lt;&lt;system-base&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">host-name</span> <span style="color:#e6db74">&#34;eminence&#34;</span>)
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">services</span> (<span style="color:#a6e22e">cons*</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">set-xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">modify-services</span> %my-base-services
-</span></span><span style="display:flex;"><span>			     (<span style="color:#a6e22e">elogind-service-type</span>
-</span></span><span style="display:flex;"><span>			      config =&gt;
-</span></span><span style="display:flex;"><span>			      (<span style="color:#a6e22e">elogind-configuration</span>
-</span></span><span style="display:flex;"><span>			       (<span style="color:#a6e22e">inherit</span> config)
-</span></span><span style="display:flex;"><span>			       (<span style="color:#a6e22e">handle-lid-switch-external-power</span> <span style="color:#e6db74">&#39;suspend</span>)))
-</span></span><span style="display:flex;"><span>			     (<span style="color:#a6e22e">udev-service-type</span>
-</span></span><span style="display:flex;"><span>			      config =&gt;
-</span></span><span style="display:flex;"><span>			      (<span style="color:#a6e22e">udev-configuration</span>
-</span></span><span style="display:flex;"><span>			       (<span style="color:#a6e22e">inherit</span> config)
-</span></span><span style="display:flex;"><span>			       (<span style="color:#a6e22e">rules</span> (cons %backlight-udev-rule
-</span></span><span style="display:flex;"><span>					    (<span style="color:#a6e22e">udev-configuration-rules</span> config))))))))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">host-name</span> <span style="color:#ba2121">&#34;eminence&#34;</span>)
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">services</span> (<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">modify-services</span> <span style="color:#19177c">%my-base-services</span>
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">elogind-service-type</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">elogind-configuration</span>
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">handle-lid-switch-external-power</span> <span style="color:#19177c">&#39;suspend</span>)))
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">udev-service-type</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">udev-configuration</span>
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">rules</span> (<span style="color:#008000">cons </span><span style="color:#19177c">%backlight-udev-rule</span>
+</span></span><span style="display:flex;"><span>					    (<span style="color:#00f">udev-configuration-rules</span> <span style="color:#19177c">config</span>))))))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">bootloader</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">bootloader-configuration</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">bootloader</span> grub-efi-bootloader)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">target</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">bootloader</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">bootloader-configuration</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">bootloader</span> <span style="color:#19177c">grub-efi-bootloader</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">target</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">swap-devices</span>
-</span></span><span style="display:flex;"><span>  (list (<span style="color:#a6e22e">uuid</span> <span style="color:#e6db74">&#34;f93cf3f6-7ee7-42ec-8ee2-f3d896fdf9b5&#34;</span>)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">swap-devices</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">list </span>(<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;f93cf3f6-7ee7-42ec-8ee2-f3d896fdf9b5&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">file-systems</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">cons*</span> (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">device</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#a6e22e">uuid</span> <span style="color:#e6db74">&#34;1d937704-bbeb-43b5-bc63-453886c426af&#34;</span>
-</span></span><span style="display:flex;"><span>		 <span style="color:#e6db74">&#39;ext4</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;ext4&#34;</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">device</span> (<span style="color:#a6e22e">uuid</span> <span style="color:#e6db74">&#34;0031-3784&#34;</span> <span style="color:#e6db74">&#39;fat32</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;vfat&#34;</span>))
-</span></span><span style="display:flex;"><span>	 %base-file-systems)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">file-systems</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">cons*</span> (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">device</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;1d937704-bbeb-43b5-bc63-453886c426af&#34;</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#19177c">&#39;ext4</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;ext4&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">device</span> (<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;0031-3784&#34;</span> <span style="color:#19177c">&#39;fat32</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;vfat&#34;</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">%base-file-systems</span>)))
 </span></span></code></pre></div><h3 id="azure">azure</h3>
 <p><code>azure</code> is a Lenovo Ideapad 330 laptop.</p>
 <p><code>%backlight-udev-rule</code> should enable members of <code>video</code> group change the display backlight. See the relevant page at <a href="https://wiki.archlinux.org/title/Backlight">Arch Wiki</a>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>&lt;&lt;system-common&gt;&gt;
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;system-common&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">define </span>%backlight-udev-rule
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">udev-rule</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#e6db74">&#34;90-backlight.rules&#34;</span>
-</span></span><span style="display:flex;"><span>   (string-append <span style="color:#e6db74">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;RUN+=\&#34;/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;\n&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#e6db74">&#34;RUN+=\&#34;/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\&#34;&#34;</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">%backlight-udev-rule</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">udev-rule</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;90-backlight.rules&#34;</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">string-append </span><span style="color:#ba2121">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;RUN+=\&#34;/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;\n&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;ACTION==\&#34;add\&#34;, SUBSYSTEM==\&#34;backlight\&#34;, &#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;RUN+=\&#34;/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\&#34;&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#a6e22e">operating-system</span>
-</span></span><span style="display:flex;"><span> &lt;&lt;system-base&gt;&gt;
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">operating-system</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">&lt;&lt;system-base&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">host-name</span> <span style="color:#e6db74">&#34;azure&#34;</span>)
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">services</span> (<span style="color:#a6e22e">cons*</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">set-xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">xorg-configuration</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#a6e22e">modify-services</span> %my-base-services
-</span></span><span style="display:flex;"><span>			     (<span style="color:#a6e22e">elogind-service-type</span> config =&gt;
-</span></span><span style="display:flex;"><span>						   (<span style="color:#a6e22e">elogind-configuration</span> (<span style="color:#a6e22e">inherit</span> config)
-</span></span><span style="display:flex;"><span>									  (<span style="color:#a6e22e">handle-lid-switch-external-power</span> <span style="color:#e6db74">&#39;suspend</span>)))
-</span></span><span style="display:flex;"><span>			     (<span style="color:#a6e22e">udev-service-type</span> config =&gt;
-</span></span><span style="display:flex;"><span>						(<span style="color:#a6e22e">udev-configuration</span> (<span style="color:#a6e22e">inherit</span> config)
-</span></span><span style="display:flex;"><span>								    (<span style="color:#a6e22e">rules</span> (cons %backlight-udev-rule
-</span></span><span style="display:flex;"><span>										 (<span style="color:#a6e22e">udev-configuration-rules</span> config))))))))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">host-name</span> <span style="color:#ba2121">&#34;azure&#34;</span>)
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">services</span> (<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">modify-services</span> <span style="color:#19177c">%my-base-services</span>
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">elogind-service-type</span> <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>						   (<span style="color:#00f">elogind-configuration</span> (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>									  (<span style="color:#00f">handle-lid-switch-external-power</span> <span style="color:#19177c">&#39;suspend</span>)))
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">udev-service-type</span> <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>						(<span style="color:#00f">udev-configuration</span> (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>								    (<span style="color:#00f">rules</span> (<span style="color:#008000">cons </span><span style="color:#19177c">%backlight-udev-rule</span>
+</span></span><span style="display:flex;"><span>										 (<span style="color:#00f">udev-configuration-rules</span> <span style="color:#19177c">config</span>))))))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">bootloader</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">bootloader-configuration</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">bootloader</span> grub-efi-bootloader)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">target</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">keyboard-layout</span> keyboard-layout)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">bootloader</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">bootloader-configuration</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">bootloader</span> <span style="color:#19177c">grub-efi-bootloader</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">target</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">swap-devices</span>
-</span></span><span style="display:flex;"><span>  (list (<span style="color:#a6e22e">uuid</span> <span style="color:#e6db74">&#34;4b2dedb3-b111-4e69-8c05-6daa2b072c76&#34;</span>)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">swap-devices</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">list </span>(<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;4b2dedb3-b111-4e69-8c05-6daa2b072c76&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span> (<span style="color:#a6e22e">file-systems</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">cons*</span> (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">device</span> (<span style="color:#a6e22e">file-system-label</span> <span style="color:#e6db74">&#34;my-root&#34;</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;ext4&#34;</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#a6e22e">file-system</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">mount-point</span> <span style="color:#e6db74">&#34;/boot/efi&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">device</span> <span style="color:#e6db74">&#34;/dev/sda1&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#a6e22e">type</span> <span style="color:#e6db74">&#34;vfat&#34;</span>))
-</span></span><span style="display:flex;"><span>	 %base-file-systems)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">file-systems</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">cons*</span> (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">device</span> (<span style="color:#00f">file-system-label</span> <span style="color:#ba2121">&#34;my-root&#34;</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;ext4&#34;</span>))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">device</span> <span style="color:#ba2121">&#34;/dev/sda1&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;vfat&#34;</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">%base-file-systems</span>)))
 </span></span></code></pre></div><h2 id="system-installation">System installation</h2>
 <h3 id="preparation">Preparation</h3>
 <p>In my case, the provided ISO doesn&rsquo;t work because of the Libre kernel.</p>
 <p>Fortunately, David Wilson has made <a href="https://github.com/SystemCrafters/guix-installer">a repository</a> with a toolchain to make an ISO with the full kernel. In case it won&rsquo;t be an option, the <a href="https://gitlab.com/nonguix/nonguix">nonguix repo</a> also has instructions on how to do that.</p>
 <p>When an ISO is there, we have to write it on a USB stick. Run <code>sudo fdisk -l</code> to get a list of disks.</p>
 <p>The approach given in the official instruction is to create a bootable USB with <code>dd</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>sudo dd of=/dev/sdxX if=&lt;path-to-iso&gt; status=progress &amp;&amp; sync
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>sudo dd of=/dev/sdxX if=&lt;path-to-iso&gt; status=progress &amp;&amp; sync
 </span></span></code></pre></div><p>However, I couldn&rsquo;t make it work for some strange reason. Fortunately, <code>gnome-disk-utility</code> was able to produce a bootable USB.</p>
 <h3 id="installation">Installation</h3>
 <p>Going further, the official instructions for installation &amp; SystemCrafters wiki entry are pretty good, so it&rsquo;s not necessary to repeat them here.</p>
@@ -505,14 +506,14 @@
 <p>Set a password for the main user (pavel). Login with openbox to get a tolerable interface because i3&rsquo;s default config is horrible.</p>
 <p><a href="https://guix.gnu.org/en/manual/en/html_node/Keyboard-Layout-and-Networking-and-Partitioning.html#Keyboard-Layout-and-Networking-and-Partitioning">Connect to the internet</a>.</p>
 <p>Clone the dotfiles repo:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>mkdir Code
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>mkdir Code
 </span></span><span style="display:flex;"><span>cd Code
 </span></span><span style="display:flex;"><span>git clone https://github.com/SqrtMinusOne/dotfiles.git
 </span></span></code></pre></div><p>Copy the channels file and run guix pull:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>cp ~/Code/dotfiles/.config/guix/channels.scm ~/.config/guix
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>cp ~/Code/dotfiles/.config/guix/channels.scm ~/.config/guix
 </span></span><span style="display:flex;"><span>guix pull
 </span></span></code></pre></div><p>The first pull usually takes a while. After that install yadm and pull dotfiles:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>guix install yadm
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>guix install yadm
 </span></span><span style="display:flex;"><span>guix clone https://github.com/SqrtMinusOne/dotfiles.git
 </span></span></code></pre></div><p>And activate the required profiles. Again, downloading &amp; building Emacs, Starship and stuff will take a while.</p>
 <p>Don&rsquo;t forget to install <code>JetBrainsMono Nerd Font</code>.</p>
@@ -570,80 +571,80 @@
 <ul>
 <li>
 <p>paths to <code>ca</code>, <code>cert</code> and <code>key</code> are made absolute</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">ca</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.vpn/</span><span style="color:#a6e22e">ca</span>.<span style="color:#a6e22e">crt</span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">cert</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.vpn/</span><span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">crt</span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">key</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.vpn/</span><span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">key</span><span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>ca <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>ca.crt<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>cert <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.crt<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>key <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.key<span style="">
 </span></span></span></code></pre></div></li>
 <li>
 <p>added <code>auth-user-pass</code> with a link to login info</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">auth</span>-<span style="color:#a6e22e">user</span>-<span style="color:#a6e22e">pass</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.vpn/</span><span style="color:#a6e22e">auth</span>.<span style="color:#a6e22e">conf</span><span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>auth-user-pass <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>auth.conf<span style="">
 </span></span></span></code></pre></div><p><code>auth.conf</code> looks like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>login
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>login
 </span></span><span style="display:flex;"><span>password
 </span></span></code></pre></div></li>
 <li>
 <p>Run <a href="https://github.com/alfredopalhares/openvpn-update-resolv-conf">openvpn-update-resolv-conf</a> script to fix DNS. <code>openvpn-update-resolve-conf</code> originates in my <a href="https://github.com/SqrtMinusOne/channel-q">channel-q</a>.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-07 Thu&gt;</span></span>: Looks like this doesn&rsquo;t work on some connections. See the next option in that case</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">setenv</span> <span style="color:#a6e22e">PATH</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.guix-extra-profiles/</span><span style="color:#a6e22e">system</span><span style="color:#e6db74">/system/</span><span style="color:#a6e22e">bin</span>:<span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.guix-extra-profiles/</span><span style="color:#a6e22e">system</span><span style="color:#e6db74">/system/</span><span style="color:#a6e22e">sbin</span>:<span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.guix-extra-profiles/</span><span style="color:#a6e22e">console</span><span style="color:#e6db74">/console/</span><span style="color:#a6e22e">bin</span>:<span style="color:#e6db74">/run/</span><span style="color:#a6e22e">current</span>-<span style="color:#a6e22e">system</span><span style="color:#e6db74">/profile/</span><span style="color:#a6e22e">bin</span>:<span style="color:#e6db74">/run/</span><span style="color:#a6e22e">current</span>-<span style="color:#a6e22e">system</span><span style="color:#e6db74">/profile/</span><span style="color:#a6e22e">sbin</span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">up</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.guix-extra-profiles/</span><span style="color:#a6e22e">system</span><span style="color:#e6db74">/system/</span><span style="color:#a6e22e">bin</span>/<span style="color:#a6e22e">update</span>-<span style="color:#a6e22e">resolv</span>-<span style="color:#a6e22e">conf</span>.<span style="color:#a6e22e">sh</span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">down</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/.guix-extra-profiles/</span><span style="color:#a6e22e">system</span><span style="color:#e6db74">/system/</span><span style="color:#a6e22e">bin</span>/<span style="color:#a6e22e">update</span>-<span style="color:#a6e22e">resolv</span>-<span style="color:#a6e22e">conf</span>.<span style="color:#a6e22e">sh</span><span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>setenv PATH <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>sbin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>console<span style="color:#b68">/console/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>sbin<span style="">
+</span></span></span><span style="display:flex;"><span><span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh<span style="">
 </span></span></span></code></pre></div><p><code>setenv PATH</code> is necessary because both <code>resolvconf</code> (openresolve) and <code>update-resolv-conf.sh</code> are shell scripts which need GNU coreutils and stuff, and OpenVPN clears PATH by default.</p>
 </li>
 <li>
 <p>Fix <code>etc/resolv.conf</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp /etc/resolv.conf /etc/resolv.conf-bak
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;nameserver 8.8.8.8&#34;</span> &gt; /etc/resolv.conf
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cp /etc/resolv.conf /etc/resolv.conf-bak
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;nameserver 8.8.8.8&#34;</span> &gt; /etc/resolv.conf
 </span></span></code></pre></div><p>Restore <code>resolv.conf</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>resolveconf -u
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">up</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/bin/</span><span style="color:#a6e22e">scripts</span>/<span style="color:#a6e22e">fix</span>-<span style="color:#a6e22e">resolve</span>-<span style="color:#a6e22e">conf</span><span style="color:#960050;background-color:#1e0010">
-</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#a6e22e">down</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/bin/</span><span style="color:#a6e22e">scripts</span>/<span style="color:#a6e22e">restore</span>-<span style="color:#a6e22e">resolve</span>-<span style="color:#a6e22e">conf</span><span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>resolveconf -u
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/fix-resolve-conf<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/restore-resolve-conf<span style="">
 </span></span></span></code></pre></div></li>
 <li>
 <p>run a script to fix Docker routes</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span><span style="color:#a6e22e">route</span>-<span style="color:#a6e22e">up</span> <span style="color:#e6db74">/home/</span><span style="color:#a6e22e">pavel</span><span style="color:#e6db74">/bin/</span><span style="color:#a6e22e">scripts</span>/<span style="color:#a6e22e">vpn</span>-<span style="color:#a6e22e">fix</span>-<span style="color:#a6e22e">routes</span><span style="color:#960050;background-color:#1e0010">
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>route-up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/vpn-fix-routes<span style="">
 </span></span></span></code></pre></div><p>References:</p>
 <ul>
 <li><a href="https://github.com/moby/libnetwork/issues/779">Github issue</a></li>
 </ul>
 <p>The script itself:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Adding default route to </span>$route_vpn_gateway<span style="color:#e6db74"> with /0 mask...&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Adding default route to </span><span style="color:#19177c">$route_vpn_gateway</span><span style="color:#ba2121"> with /0 mask...&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>IP<span style="color:#f92672">=</span>/run/current-system/profile/sbin/ip
+</span></span><span style="display:flex;"><span><span style="color:#19177c">IP</span><span style="color:#666">=</span>/run/current-system/profile/sbin/ip
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>$IP route add default via $route_vpn_gateway
+</span></span><span style="display:flex;"><span><span style="color:#19177c">$IP</span> route add default via <span style="color:#19177c">$route_vpn_gateway</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Removing /1 routes...&#34;</span>
-</span></span><span style="display:flex;"><span>$IP route del 0.0.0.0/1 via $route_vpn_gateway
-</span></span><span style="display:flex;"><span>$IP route del 128.0.0.0/1 via $route_vpn_gateway
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Removing /1 routes...&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">$IP</span> route del 0.0.0.0/1 via <span style="color:#19177c">$route_vpn_gateway</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">$IP</span> route del 128.0.0.0/1 via <span style="color:#19177c">$route_vpn_gateway</span>
 </span></span></code></pre></div></li>
 </ul>
 <h4 id="vpn-start">vpn-start</h4>
 <p>As of now, CyberGhost doesn&rsquo;t provide ipv6, so we have to disable it.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export DISPLAY<span style="color:#f92672">=</span>:0
-</span></span><span style="display:flex;"><span>CONN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>nmcli -f NAME con show --active | grep -Ev <span style="color:#e6db74">&#34;(.*docker.*|NAME|br-.*|veth.*|tun.*|vnet.*|virbr.*)&#34;</span> | sed <span style="color:#e6db74">&#39;s/ *$//g&#39;</span><span style="color:#66d9ef">)</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">DISPLAY</span><span style="color:#666">=</span>:0
+</span></span><span style="display:flex;"><span><span style="color:#19177c">CONN</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>nmcli -f NAME con show --active | grep -Ev <span style="color:#ba2121">&#34;(.*docker.*|NAME|br-.*|veth.*|tun.*|vnet.*|virbr.*)&#34;</span> | sed <span style="color:#ba2121">&#39;s/ *$//g&#39;</span><span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span>$CONN<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;No connection!&#34;</span>
-</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;VPN&#34;</span> <span style="color:#e6db74">&#34;No connection for VPN to run&#34;</span>
-</span></span><span style="display:flex;"><span>    exit
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;No connection!&#34;</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#ba2121">&#34;VPN&#34;</span> <span style="color:#ba2121">&#34;No connection for VPN to run&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">exit</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># if [[ &#34;$CONN&#34; != *&#34;Wired&#34;* ]]; then</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#     echo &#34;Connection: $CONN&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#     notify-send &#34;VPN&#34; &#34;Initializing for connection: $CONN&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># if [[ &#34;$CONN&#34; != *&#34;Wired&#34;* ]]; then</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     echo &#34;Connection: $CONN&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     notify-send &#34;VPN&#34; &#34;Initializing for connection: $CONN&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#     pkexec nmcli con modify &#34;$CONN&#34; ipv6.method ignore</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#     nmcli connection up &#34;$CONN&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     pkexec nmcli con modify &#34;$CONN&#34; ipv6.method ignore</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     nmcli connection up &#34;$CONN&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># fi</span>
 </span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/openvpn.ovpn
 </span></span></code></pre></div><h4 id="vpn-stop">vpn-stop</h4>
 <p>Also a script to reverse the changes.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>CONN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>nmcli -f NAME con show --active | grep -Ev <span style="color:#e6db74">&#34;(.*docker.*|NAME|br-.*|veth.*|tun.*)&#34;</span> | sed <span style="color:#e6db74">&#39;s/ *$//g&#39;</span><span style="color:#66d9ef">)</span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Connection: </span>$CONN<span style="color:#e6db74">&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">CONN</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>nmcli -f NAME con show --active | grep -Ev <span style="color:#ba2121">&#34;(.*docker.*|NAME|br-.*|veth.*|tun.*)&#34;</span> | sed <span style="color:#ba2121">&#39;s/ *$//g&#39;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Connection: </span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>pkexec nmcli con modify <span style="color:#e6db74">&#34;</span>$CONN<span style="color:#e6db74">&#34;</span> ipv6.method auto
-</span></span><span style="display:flex;"><span>nmcli connection up <span style="color:#e6db74">&#34;</span>$CONN<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>pkexec nmcli con modify <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span> ipv6.method auto
+</span></span><span style="display:flex;"><span>nmcli connection up <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span>
 </span></span></code></pre></div><h3 id="flatpak">flatpak</h3>
 <p>As for now, the easiest way to install most of proprietary software is via flatpak. See the relevant section in <a href="/configs/desktop/">Desktop.org</a>.</p>
 <h3 id="conda">conda</h3>
@@ -652,59 +653,59 @@
 <p>First, it&rsquo;s impossible to perform <code>conda init</code> to patch files like <code>.bashrc</code>, because the command is hell-bent on modifying <code>/gnu/store/</code>. So I do this manually, look for the <code>init_conda</code> procedures in <a href="/configs/console/">Console.org</a>.</p>
 <p>Second, the base environment has <code>/gnu/store/...</code> as a root, so don&rsquo;t install anything there (and don&rsquo;t run <code>conda</code> with superuser rights!).</p>
 <p>Third, by default it tries to create envronments in <code>/gnu/store</code>. It&rsquo;s enough to create one environment like this to fix it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p ~/.conda/envs
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p ~/.conda/envs
 </span></span><span style="display:flex;"><span>conda create -p ~/.conda/envs/test
 </span></span></code></pre></div><p>Fourth, you may need to unset <code>$PYTHONPATH</code> if you have any global packages installed, otherwise Python from anaconda will try to import them instead of the conda versions.</p>
 <p>Finally, I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
 <p>So here is a script to set up conda hooks:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Get writable conda envs with npm &amp; without it</span>
-</span></span><span style="display:flex;"><span>readarray -t CONDA_ENVS_ALL <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#66d9ef">$(</span>conda env list --json | jq <span style="color:#e6db74">&#39;.envs[]&#39;</span><span style="color:#66d9ef">)</span>
-</span></span><span style="display:flex;"><span>CONDA_ENVS_NPM<span style="color:#f92672">=()</span>
-</span></span><span style="display:flex;"><span>CONDA_ENVS_NO_NPM<span style="color:#f92672">=()</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> env in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>CONDA_ENVS_ALL[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
-</span></span><span style="display:flex;"><span>    env<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>env:1:<span style="color:#e6db74">${#</span>env<span style="color:#e6db74">}</span>-2<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -w <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/bin/npm&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
-</span></span><span style="display:flex;"><span>	    CONDA_ENVS_NPM<span style="color:#f92672">+=(</span>$env<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span>	    CONDA_ENVS_NO_NPM<span style="color:#f92672">+=(</span>$env<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">fi</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Get writable conda envs with npm &amp; without it</span>
+</span></span><span style="display:flex;"><span>readarray -t CONDA_ENVS_ALL <span style="color:#666">&lt;&lt;&lt;</span> <span style="color:#008000;font-weight:bold">$(</span>conda env list --json | jq <span style="color:#ba2121">&#39;.envs[]&#39;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">CONDA_ENVS_NPM</span><span style="color:#666">=()</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">CONDA_ENVS_NO_NPM</span><span style="color:#666">=()</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> env in <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">CONDA_ENVS_ALL</span>[@]<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">env</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">env</span>:<span style="color:#19177c">1</span>:<span style="color:#b68;font-weight:bold">${#</span><span style="color:#19177c">env</span><span style="color:#b68;font-weight:bold">}</span>-2<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -w <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/bin/npm&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">CONDA_ENVS_NPM</span><span style="color:#666">+=(</span><span style="color:#19177c">$env</span><span style="color:#666">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">CONDA_ENVS_NO_NPM</span><span style="color:#666">+=(</span><span style="color:#19177c">$env</span><span style="color:#666">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> env in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>CONDA_ENVS_NPM[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Found npm in </span>$env<span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/activate.d&#34;</span>
-</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/deactivate.d&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> env in <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">CONDA_ENVS_NPM</span>[@]<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Found npm in </span><span style="color:#19177c">$env</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/activate.d&#34;</span>
+</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/deactivate.d&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;unset NPM_CONFIG_USERCONFIG&#34;</span> &gt; <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/activate.d/conda.sh&#34;</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;set -e NPM_CONFIG_USERCONFIG&#34;</span> &gt; <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/activate.d/conda.fish&#34;</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;export NPM_CONFIG_USERCONFIG=</span>$HOME<span style="color:#e6db74">/._npmrc&#34;</span> &gt; <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/deactivate.d/conda.sh&#34;</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;export NPM_CONFIG_USERCONFIG=</span>$HOME<span style="color:#e6db74">/._npmrc&#34;</span> &gt; <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/deactivate.d/conda.fish&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;unset NPM_CONFIG_USERCONFIG&#34;</span> &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/activate.d/conda.sh&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;set -e NPM_CONFIG_USERCONFIG&#34;</span> &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/activate.d/conda.fish&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;export NPM_CONFIG_USERCONFIG=</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/._npmrc&#34;</span> &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/deactivate.d/conda.sh&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;export NPM_CONFIG_USERCONFIG=</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/._npmrc&#34;</span> &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/deactivate.d/conda.fish&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> env in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>CONDA_ENVS_NO_NPM<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
-</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Did not found npm in </span>$env<span style="color:#e6db74">&#34;</span>
-</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/activate.d/conda.sh&#34;</span> <span style="color:#f92672">||</span> true
-</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/activate.d/conda.fish&#34;</span> <span style="color:#f92672">||</span> true
-</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/deactivate.d/conda.sh&#34;</span> <span style="color:#f92672">||</span> true
-</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#e6db74">&#34;</span>$env<span style="color:#e6db74">/etc/conda/deactivate.d/conda.fish&#34;</span> <span style="color:#f92672">||</span> true
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> env in <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">CONDA_ENVS_NO_NPM</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Did not found npm in </span><span style="color:#19177c">$env</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/activate.d/conda.sh&#34;</span> <span style="color:#666">||</span> <span style="color:#008000">true</span>
+</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/activate.d/conda.fish&#34;</span> <span style="color:#666">||</span> <span style="color:#008000">true</span>
+</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/deactivate.d/conda.sh&#34;</span> <span style="color:#666">||</span> <span style="color:#008000">true</span>
+</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$env</span><span style="color:#ba2121">/etc/conda/deactivate.d/conda.fish&#34;</span> <span style="color:#666">||</span> <span style="color:#008000">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
 </span></span></code></pre></div><h3 id="slack">Slack</h3>
 <p>What a nonsense of a program.</p>
 <p>I was able to launch the nix version with the following wrapper script:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/bin/dummies:</span>$PATH<span style="color:#e6db74">&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">PATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/bin/dummies:</span><span style="color:#19177c">$PATH</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>mkdir -p ~/.cache/slack
 </span></span><span style="display:flex;"><span>slack -r ~/.cache/slack
 </span></span></code></pre></div><p>Also, it requires a <code>lsb_release</code> in the PATH, so here is one:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;LSB Version:    Hey. I spent an hour figuring out why Slack doesn&#39;t launch.&#34;</span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Distributor ID: It seems like it requires an lsb_release.&#34;</span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Description:    But GNU Guix doesn&#39;t have one.&#34;</span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Release:        42.2&#34;</span>
-</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Codename:       n/a&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;LSB Version:    Hey. I spent an hour figuring out why Slack doesn&#39;t launch.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Distributor ID: It seems like it requires an lsb_release.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Description:    But GNU Guix doesn&#39;t have one.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Release:        42.2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Codename:       n/a&#34;</span>
 </span></span></code></pre></div><h3 id="virt-manager">virt-manager</h3>
 <p>Run the following to fix the network:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo virsh net-define /run/current-system/profile/etc/libvirt/qemu/networks/default.xml
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo virsh net-define /run/current-system/profile/etc/libvirt/qemu/networks/default.xml
 </span></span><span style="display:flex;"><span>sudo virsh net-start default
 </span></span><span style="display:flex;"><span>sudo herd restart libvirtd
 </span></span></code></pre></div><h3 id="wakatime-cli">wakatime-cli</h3>
@@ -730,11 +731,11 @@
 </ul>
 <h3 id="manifest">Manifest</h3>
 <p><a id="code-snippet--packages"></a></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my/format-guix-dependencies category)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-guix-dependencies</span> <span style="color:#19177c">category</span>)
 </span></span></code></pre></div><p>System</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#a6e22e">specifications-&gt;manifest</span>
-</span></span><span style="display:flex;"><span> <span style="color:#f92672">&#39;</span>(
-</span></span><span style="display:flex;"><span>   &lt;&lt;packages(<span style="color:#e6db74">&#34;system&#34;</span>)&gt;&gt;))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">specifications-&gt;manifest</span>
+</span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>(<span style="color:#ba2121">&#34;system&#34;</span>)<span style="color:#19177c">&gt;&gt;</span>))
 </span></span></code></pre></div>
 </div>
 

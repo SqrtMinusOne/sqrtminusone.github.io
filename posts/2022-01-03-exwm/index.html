@@ -59,6 +59,7 @@
 <hr>
 <div id="content">
 <div class="container">
+    <h1>Using EXWM and perspective.el on multi-monitor setup</h1>
     <p>I wrote about <a href="https://sqrtminusone.xyz/posts/2021-10-04-emacs-i3/">Emacs and i3</a> integration around two months ago. Shortly after however, I decided to give EXWM another try, mainly because my largest reservation - lack of performance - seems to have been resolved by updates to the native compilation since my first attempt. Or I may have lost some sensitivity to that issue. Regardless, the second dive into EXWM thus far feels successful, and I think it&rsquo;s the right time to share some of my thoughts on the subject.</p>
 <p>Before we start though, I&rsquo;ll point out that I won&rsquo;t go into detail about the initial setup. I think David Wilson&rsquo;s &ldquo;<a href="https://systemcrafters.net/emacs-desktop-environment/">Emacs Desktop Environment</a>&rdquo; series describes this part pretty well, so I don&rsquo;t feel the need to repeat much of that.</p>
 <p>This post is a sort of a snapshot of the path from the baseline of <a href="https://github.com/daviwil/emacs-from-scratch/blob/master/Desktop.org">Emacs From Scratch</a> to my image of a perfect window manager, and it may or may not be coincidental that the latter resembles i3 in many aspects.</p>
@@ -73,85 +74,85 @@
 <li>Provides some additional functionality that makes use of both perspective.el and EXWM.</li>
 </ul>
 <p>So, you can install the package however you normally do so. E.g. I do that with straight.el &amp; use-package:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package perspective-exwm
-</span></span><span style="display:flex;"><span>  :straight <span style="color:#66d9ef">t</span>
-</span></span><span style="display:flex;"><span>  :config
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">perspective-exwm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">...</span>)
 </span></span></code></pre></div><p>Then load the provided minor mode before <code>exwm-init</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(use-package exwm
-</span></span><span style="display:flex;"><span>  :config
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>  (perspective-exwm-mode)
-</span></span><span style="display:flex;"><span>  (exwm-init))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">...</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">perspective-exwm-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-init</span>))
 </span></span></code></pre></div><h3 id="initial-perspective-names">Initial perspective names</h3>
 <p>One nice thing this package can do is set up the initial perspective names for different workspaces. By default, enabling <code>perspective-exwm-mode</code> sets names like <code>main-1</code> for workspace with index 1 and so on, because otherwise different perspectives will share the same <code>*scratch*</code> buffer.</p>
 <p>But names can be overridden like that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq perspective-exwm-override-initial-name
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#39;</span>((<span style="color:#ae81ff">0</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;misc&#34;</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#ae81ff">1</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;core&#34;</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#ae81ff">2</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;browser&#34;</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#ae81ff">3</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;comms&#34;</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#ae81ff">4</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;dev&#34;</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">perspective-exwm-override-initial-name</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#666">0</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;misc&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">1</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;core&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">2</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;browser&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">3</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;comms&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">4</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;dev&#34;</span>)))
 </span></span></code></pre></div><h3 id="assigning-apps-to-workspaces-and-perspectives">Assigning apps to workspaces and perspectives</h3>
 <p>By default, a new Emacs buffer opens in the current perspective in the current workspace, but sure enough, it&rsquo;s possible to change that.</p>
 <p>For EXWM windows, the <code>perspective-exwm</code> package provides a function called <code>perspective-exwm-assign-window</code>, which is intended to be used in <code>exwm-manage-finish-hook</code>, for instance:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-configure-window ()
-</span></span><span style="display:flex;"><span>  (interactive)
-</span></span><span style="display:flex;"><span>  (pcase exwm-class-name
-</span></span><span style="display:flex;"><span>    ((or <span style="color:#e6db74">&#34;Firefox&#34;</span> <span style="color:#e6db74">&#34;Nightly&#34;</span>)
-</span></span><span style="display:flex;"><span>     (perspective-exwm-assign-window
-</span></span><span style="display:flex;"><span>      :workspace-index <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span>      :persp-name <span style="color:#e6db74">&#34;browser&#34;</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Alacritty&#34;</span>
-</span></span><span style="display:flex;"><span>     (perspective-exwm-assign-window
-</span></span><span style="display:flex;"><span>      :persp-name <span style="color:#e6db74">&#34;term&#34;</span>))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-configure-window</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">pcase</span> <span style="color:#19177c">exwm-class-name</span>
+</span></span><span style="display:flex;"><span>    ((<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;Firefox&#34;</span> <span style="color:#ba2121">&#34;Nightly&#34;</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:workspace-index</span> <span style="color:#666">2</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;browser&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#ba2121">&#34;Alacritty&#34;</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;term&#34;</span>))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(add-hook <span style="color:#e6db74">&#39;exwm-manage-finish-hook</span> <span style="color:#a6e22e">#&#39;</span>my/exwm-configure-window)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-manage-finish-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-configure-window</span>)
 </span></span></code></pre></div><p>This hook is run after a new EXWM buffer is created and configured in the context of this buffer, so it seems customary to do such settings there. With this snippet, Firefox will always open in workspace 2 in the perspective named &ldquo;browser&rdquo;, and Alacritty will always open in the current workspace in the perspective named &ldquo;term&rdquo;.</p>
 <p>To pull this off for various Emacs apps, it is necessary to open the right EXWM workspace and perspective before opening the app. As I use <a href="https://github.com/noctuid/general.el">general.el</a>, I made a macro to automate that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defmacro my/command-in-persp (command-name persp-name workspace-index <span style="color:#66d9ef">&amp;rest</span> args)
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">`&#39;</span>((lambda ()
-</span></span><span style="display:flex;"><span>       (interactive)
-</span></span><span style="display:flex;"><span>       (when (and <span style="color:#f92672">,</span>workspace-index (<span style="color:#a6e22e">fboundp</span> <span style="color:#a6e22e">#&#39;</span>exwm-workspace-switch-create))
-</span></span><span style="display:flex;"><span>         (exwm-workspace-switch-create <span style="color:#f92672">,</span>workspace-index))
-</span></span><span style="display:flex;"><span>       (persp-switch <span style="color:#f92672">,</span>persp-name)
-</span></span><span style="display:flex;"><span>       (delete-other-windows)
-</span></span><span style="display:flex;"><span>       <span style="color:#f92672">,@</span>args)
-</span></span><span style="display:flex;"><span>     :wk <span style="color:#f92672">,</span>command-name))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/command-in-persp</span> (<span style="color:#19177c">command-name</span> <span style="color:#19177c">persp-name</span> <span style="color:#19177c">workspace-index</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#666">`&#39;</span>((<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#666">,</span><span style="color:#19177c">workspace-index</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm-workspace-switch-create</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">exwm-workspace-switch-create</span> <span style="color:#666">,</span><span style="color:#19177c">workspace-index</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">persp-switch</span> <span style="color:#666">,</span><span style="color:#19177c">persp-name</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">delete-other-windows</span>)
+</span></span><span style="display:flex;"><span>       <span style="color:#666">,@</span><span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:wk</span> <span style="color:#666">,</span><span style="color:#19177c">command-name</span>))
 </span></span></code></pre></div><p><code>fboundp</code> is meant to provide compatibility with running Emacs without EXWM. Usage of the macro is as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(my-leader-def
-</span></span><span style="display:flex;"><span>  :infix <span style="color:#e6db74">&#34;as&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">&#39;</span>(:which-key <span style="color:#e6db74">&#34;emms&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;s&#34;</span> (my/command-in-persp <span style="color:#e6db74">&#34;emms&#34;</span> <span style="color:#e6db74">&#34;EMMS&#34;</span> <span style="color:#ae81ff">0</span> (emms-smart-browse))
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;as&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;emms&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;s&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;emms&#34;</span> <span style="color:#ba2121">&#34;EMMS&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">emms-smart-browse</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#666">...</span>)
 </span></span></code></pre></div><p><code>my-leader-def</code> is a <a href="https://github.com/noctuid/general.el#creating-new-key-definers">custom definer</a>. That way the defined keybinding opens <a href="https://www.gnu.org/software/emms/">EMMS</a> in the workspace 0 in the perspective &ldquo;EMMS&rdquo;. I have this for several other apps, like elfeed, notmuch, dired <code>$HOME</code> and so on.</p>
 <h3 id="some-workflow-notes">Some workflow notes</h3>
 <p>As I said above, using perspectives in EXWM makes a lot of sense. Because all the EXWM workspace share the same buffer list (sans X windows), and because Emacs becomes the central program (for instance, it can&rsquo;t be easily closed), it is only natural to split the buffer list.</p>
 <p>Another aspect of using EXWM is that it becomes very easy to work with code on multiple monitors. While it may signify issues with the code in question if such need arises, having that possibility is still handy and it&rsquo;s not something easily replicable on other tiling WMs. <code>perspective-exwm</code> also presents some features here, for instance, <code>M-x perspective-exwm-copy-to-workspace</code> can be used to copy the current perspective to the adjacent monitor.</p>
 <p>Also, in my opinion, Emacs apps like <a href="https://www.gnu.org/software/emms/">EMMS</a> and <a href="https://github.com/skeeto/elfeed">elfeed</a> deserve to be on the same &ldquo;level&rdquo; as &ldquo;proper&rdquo; apps like a browser. On other tiling WMs, something like that can be done with Emacs daemon and multiple Emacs frames, but with EXWM and perspectives this seems natural without much extra work.</p>
 <p>As for switching between X windows and perspectives, I ended up preferring to have one perspective for all X windows in the workspace, at least if these windows are full-fledged apps. For instance, all my messengers go to the workspace 3 to the perspective &ldquo;comms&rdquo;, and I switch between them with <code>M-x perspective-exwm-cycle-exwm-buffers-&lt;forward|backward&gt;</code>, bound to <code>s-[</code> and <code>s-]</code>. For switching perspectives, I&rsquo;ve bound <code>s-,</code> and <code>s-.</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq exwm-input-global-keys
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">`</span>(
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; Switch perspectives</span>
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-,&#34;</span>) <span style="color:#f92672">.</span> persp-prev)
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-.&#34;</span>) <span style="color:#f92672">.</span> persp-next)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-input-global-keys</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#666">...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; Switch perspectives</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-,&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">persp-prev</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-.&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">persp-next</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; EXWM buffers</span>
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-[&#34;</span>) <span style="color:#f92672">.</span> perspective-exwm-cycle-exwm-buffers-backward)
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-]&#34;</span>) <span style="color:#f92672">.</span> perspective-exwm-cycle-exwm-buffers-forward)
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; EXWM buffers</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-[&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">perspective-exwm-cycle-exwm-buffers-backward</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-]&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">perspective-exwm-cycle-exwm-buffers-forward</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#666">...</span>)
 </span></span></code></pre></div><h2 id="workspaces-on-multiple-monitors">Workspaces on multiple monitors</h2>
 <p>Here, <code>exwm-randr</code> provides basic functionality for running EXWM on multiple monitors. For instance, with configuration like that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(require <span style="color:#e6db74">&#39;exwm-randr</span>)
-</span></span><span style="display:flex;"><span>(exwm-randr-enable)
-</span></span><span style="display:flex;"><span><span style="color:#75715e">;; The script is generated by ARandR</span>
-</span></span><span style="display:flex;"><span>(start-process-shell-command <span style="color:#e6db74">&#34;xrandr&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;~/bin/scripts/screen-layout&#34;</span>)
-</span></span><span style="display:flex;"><span>(when (string= (<span style="color:#a6e22e">system-name</span>) <span style="color:#e6db74">&#34;indigo&#34;</span>)
-</span></span><span style="display:flex;"><span>  (setq exwm-randr-workspace-monitor-plist <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">2</span> <span style="color:#e6db74">&#34;DVI-D-0&#34;</span> <span style="color:#ae81ff">3</span> <span style="color:#e6db74">&#34;DVI-D-0&#34;</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;exwm-randr</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">exwm-randr-enable</span>)
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; The script is generated by ARandR</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">start-process-shell-command</span> <span style="color:#ba2121">&#34;xrandr&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;~/bin/scripts/screen-layout&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;indigo&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#666">&#39;</span>(<span style="color:#666">2</span> <span style="color:#ba2121">&#34;DVI-D-0&#34;</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;DVI-D-0&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>(exwm-init)
+</span></span><span style="display:flex;"><span><span style="color:#666">...</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">exwm-init</span>)
 </span></span></code></pre></div><p>workspaces 2 and 3 on the machine with hostname &ldquo;indigo&rdquo; will be displayed on the monitor <code>DVI-D-0</code>.</p>
 <p>However, some features, common in other tiling WMs, are missing in EXWM out of the box, namely:</p>
 <ul>
@@ -163,76 +164,76 @@
 <h3 id="tracking-recently-used-workspaces">Tracking recently used workspaces</h3>
 <p>First up though, we need to track the workspaces in the usage order. I&rsquo;m not sure if there&rsquo;s some built-in functionality in EXWM for that, but it seems simple enough to implement.</p>
 <p>Here is a snippet of code that does it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/exwm-last-workspaces <span style="color:#f92672">&#39;</span>(<span style="color:#ae81ff">1</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-last-workspaces</span> <span style="color:#666">&#39;</span>(<span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(defun my/exwm-store-last-workspace ()
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Save the last workspace to </span><span style="color:#e6db74">`my/exwm-last-workspaces&#39;</span><span style="color:#e6db74">.&#34;</span>
-</span></span><span style="display:flex;"><span>  (setq my/exwm-last-workspaces
-</span></span><span style="display:flex;"><span>        (seq-uniq (<span style="color:#a6e22e">cons</span> exwm-workspace-current-index
-</span></span><span style="display:flex;"><span>                        my/exwm-last-workspaces))))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-store-last-workspace</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Save the last workspace to </span><span style="color:#19177c">`my/exwm-last-workspaces&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-last-workspaces</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">seq-uniq</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">exwm-workspace-current-index</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#19177c">my/exwm-last-workspaces</span>))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(add-hook <span style="color:#e6db74">&#39;exwm-workspace-switch-hook</span>
-</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">#&#39;</span>my/exwm-store-last-workspace)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-workspace-switch-hook</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-store-last-workspace</span>)
 </span></span></code></pre></div><p>The variable <code>my/exwm-last-workspaces</code> stores the workspace indices; the first item is the index of the current workspace, the second item is the index of the previous workspace, and so on.</p>
 <p>One note here is that workspaces may also disappear (e.g. after <code>M-x exwm-workspace-delete</code>), so we also need a function to clean the list:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-last-workspaces-clear ()
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Clean </span><span style="color:#e6db74">`my/exwm-last-workspaces&#39;</span><span style="color:#e6db74"> from deleted workspaces.&#34;</span>
-</span></span><span style="display:flex;"><span>  (setq my/exwm-last-workspaces
-</span></span><span style="display:flex;"><span>        (seq-filter
-</span></span><span style="display:flex;"><span>         (lambda (i) (<span style="color:#a6e22e">nth</span> i exwm-workspace--list))
-</span></span><span style="display:flex;"><span>         my/exwm-last-workspaces)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-last-workspaces-clear</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Clean </span><span style="color:#19177c">`my/exwm-last-workspaces&#39;</span><span style="color:#ba2121"> from deleted workspaces.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-last-workspaces</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">lambda</span> (<span style="color:#19177c">i</span>) (<span style="color:#00f">nth</span> <span style="color:#19177c">i</span> <span style="color:#19177c">exwm-workspace--list</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">my/exwm-last-workspaces</span>)))
 </span></span></code></pre></div><h3 id="the-monitor-list">The monitor list</h3>
 <p>The second piece of the puzzle is getting the monitor list in the right order.</p>
 <p>While it is possible to retrieve the monitor list from <code>exwm-randr-workspace-output-plist</code>, this won&rsquo;t scale well beyond two monitors, mainly because changing this variable may screw up the order.</p>
 <p>So the easiest way is to just define the variable like that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/exwm-monitor-list
-</span></span><span style="display:flex;"><span>      (pcase (<span style="color:#a6e22e">system-name</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#e6db74">&#34;indigo&#34;</span> <span style="color:#f92672">&#39;</span>(<span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;DVI-D-0&#34;</span>))
-</span></span><span style="display:flex;"><span>        (_ <span style="color:#f92672">&#39;</span>(<span style="color:#66d9ef">nil</span>))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-monitor-list</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">pcase</span> (<span style="color:#00f">system-name</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#ba2121">&#34;indigo&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span> <span style="color:#ba2121">&#34;DVI-D-0&#34;</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">_</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span>))))
 </span></span></code></pre></div><p>If you are changing the RandR configuration on the fly, this variable will also need to be changed, but for now, I don&rsquo;t have such a necessity.</p>
 <p>A function to get the current monitor:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-get-current-monitor ()
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Return the current monitor name or nil.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">plist-get</span> exwm-randr-workspace-output-plist
-</span></span><span style="display:flex;"><span>             (cl-position (<span style="color:#a6e22e">selected-frame</span>)
-</span></span><span style="display:flex;"><span>                          exwm-workspace--list)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-get-current-monitor</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return the current monitor name or nil.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">cl-position</span> (<span style="color:#00f">selected-frame</span>)
+</span></span><span style="display:flex;"><span>                          <span style="color:#19177c">exwm-workspace--list</span>)))
 </span></span></code></pre></div><p>And a function to cycle the monitor list in either direction:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-get-other-monitor (dir)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Cycle the monitor list in the direction DIR.
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DIR is either &#39;left or &#39;right.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">nth</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#a6e22e">%</span> (<span style="color:#a6e22e">+</span> (cl-position
-</span></span><span style="display:flex;"><span>          (my/exwm-get-current-monitor)
-</span></span><span style="display:flex;"><span>          my/exwm-monitor-list
-</span></span><span style="display:flex;"><span>          :test <span style="color:#a6e22e">#&#39;string-equal</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#a6e22e">length</span> my/exwm-monitor-list)
-</span></span><span style="display:flex;"><span>         (pcase dir
-</span></span><span style="display:flex;"><span>           (<span style="color:#e6db74">&#39;right</span> <span style="color:#ae81ff">1</span>)
-</span></span><span style="display:flex;"><span>           (<span style="color:#e6db74">&#39;left</span> <span style="color:#ae81ff">-1</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">length</span> my/exwm-monitor-list))
-</span></span><span style="display:flex;"><span>   my/exwm-monitor-list))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-get-other-monitor</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Cycle the monitor list in the direction DIR.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">DIR is either &#39;left or &#39;right.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">nth</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">%</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">cl-position</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">my/exwm-get-current-monitor</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#19177c">my/exwm-monitor-list</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">length</span> <span style="color:#19177c">my/exwm-monitor-list</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">pcase</span> <span style="color:#19177c">dir</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">&#39;right</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">&#39;left</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">length</span> <span style="color:#19177c">my/exwm-monitor-list</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">my/exwm-monitor-list</span>))
 </span></span></code></pre></div><h3 id="switch-to-another-monitor">Switch to another monitor</h3>
 <p>With the functions from the previous two sections, we can implement switching to another monitor by switching to the most recently used workspace on that monitor.</p>
 <video controls width="100%">
 <source src="/ox-hugo/exwm-workspace-switch.mp4" type="video/mp4">
 </video>
 <p>One caveat here is that on the startup the <code>my/exwm-last-workspaces</code> variable won&rsquo;t have any values from other monitor(s), so this list is concatenated with the list of available workspace indices.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-switch-to-other-monitor (<span style="color:#66d9ef">&amp;optional</span> dir)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Switch to another monitor.&#34;</span>
-</span></span><span style="display:flex;"><span>  (interactive)
-</span></span><span style="display:flex;"><span>  (my/exwm-last-workspaces-clear)
-</span></span><span style="display:flex;"><span>  (exwm-workspace-switch
-</span></span><span style="display:flex;"><span>   (cl-loop with other-monitor <span style="color:#a6e22e">=</span> (my/exwm-get-other-monitor (or dir <span style="color:#e6db74">&#39;right</span>))
-</span></span><span style="display:flex;"><span>            for i in (<span style="color:#a6e22e">append</span> my/exwm-last-workspaces
-</span></span><span style="display:flex;"><span>                             (cl-loop for i from <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>                                      for _ in exwm-workspace--list
-</span></span><span style="display:flex;"><span>                                      collect i))
-</span></span><span style="display:flex;"><span>            if (if other-monitor
-</span></span><span style="display:flex;"><span>                   (<span style="color:#a6e22e">string-equal</span> (<span style="color:#a6e22e">plist-get</span> exwm-randr-workspace-output-plist i)
-</span></span><span style="display:flex;"><span>                                 other-monitor)
-</span></span><span style="display:flex;"><span>                 (not (<span style="color:#a6e22e">plist-get</span> exwm-randr-workspace-output-plist i)))
-</span></span><span style="display:flex;"><span>            return i)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-switch-to-other-monitor</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Switch to another monitor.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/exwm-last-workspaces-clear</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-workspace-switch</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">with</span> <span style="color:#19177c">other-monitor</span> <span style="color:#00f">=</span> (<span style="color:#19177c">my/exwm-get-other-monitor</span> (<span style="color:#008000">or</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">&#39;right</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">in</span> (<span style="color:#00f">append</span> <span style="color:#19177c">my/exwm-last-workspaces</span>
+</span></span><span style="display:flex;"><span>                             (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#19177c">for</span> <span style="color:#19177c">_</span> <span style="color:#19177c">in</span> <span style="color:#19177c">exwm-workspace--list</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#19177c">collect</span> <span style="color:#19177c">i</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">if</span> (<span style="color:#008000">if</span> <span style="color:#19177c">other-monitor</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">string-equal</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span> <span style="color:#19177c">i</span>)
+</span></span><span style="display:flex;"><span>                                 <span style="color:#19177c">other-monitor</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">not</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span> <span style="color:#19177c">i</span>)))
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">return</span> <span style="color:#19177c">i</span>)))
 </span></span></code></pre></div><p>I bind this function to <code>s-q</code>, as I&rsquo;m used from i3.</p>
 <h3 id="move-the-workspace-to-another-monitor">Move the workspace to another monitor</h3>
 <p>Now, moving the workspace to another monitor.</p>
@@ -240,58 +241,58 @@
 <source src="/ox-hugo/exwm-workspace-move.mp4" type="video/mp4">
 </video>
 <p>This is actually quite easy to pull off - one just has to update <code>exwm-randr-workspace-monitor-plist</code> accordingly and run <code>exwm-randr-refresh</code>. I just add another check there because I don&rsquo;t want some monitor to remain without workspaces at all.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-workspace-switch-monitor ()
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Move the current workspace to another monitor.&#34;</span>
-</span></span><span style="display:flex;"><span>  (interactive)
-</span></span><span style="display:flex;"><span>  (let ((new-monitor (my/exwm-get-other-monitor <span style="color:#e6db74">&#39;right</span>))
-</span></span><span style="display:flex;"><span>        (current-monitor (my/exwm-get-current-monitor)))
-</span></span><span style="display:flex;"><span>    (when (and current-monitor
-</span></span><span style="display:flex;"><span>               (<span style="color:#a6e22e">&gt;=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>                   (cl-loop for (key value) on exwm-randr-workspace-monitor-plist
-</span></span><span style="display:flex;"><span>                            by <span style="color:#e6db74">&#39;cddr</span>
-</span></span><span style="display:flex;"><span>                            if (<span style="color:#a6e22e">string-equal</span> value current-monitor) sum <span style="color:#ae81ff">1</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#a6e22e">error</span> <span style="color:#e6db74">&#34;Can&#39;t remove the last workspace on the monitor!&#34;</span>))
-</span></span><span style="display:flex;"><span>    (setq exwm-randr-workspace-monitor-plist
-</span></span><span style="display:flex;"><span>          (map-delete exwm-randr-workspace-monitor-plist exwm-workspace-current-index))
-</span></span><span style="display:flex;"><span>    (when new-monitor
-</span></span><span style="display:flex;"><span>      (setq exwm-randr-workspace-monitor-plist
-</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">plist-put</span> exwm-randr-workspace-monitor-plist
-</span></span><span style="display:flex;"><span>                       exwm-workspace-current-index
-</span></span><span style="display:flex;"><span>                       new-monitor))))
-</span></span><span style="display:flex;"><span>  (exwm-randr-refresh))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-workspace-switch-monitor</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move the current workspace to another monitor.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">new-monitor</span> (<span style="color:#19177c">my/exwm-get-other-monitor</span> <span style="color:#19177c">&#39;right</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">current-monitor</span> (<span style="color:#19177c">my/exwm-get-current-monitor</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">current-monitor</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">&gt;=</span> <span style="color:#666">1</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">key</span> <span style="color:#19177c">value</span>) <span style="color:#19177c">on</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#19177c">by</span> <span style="color:#19177c">&#39;cddr</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#008000">if</span> (<span style="color:#00f">string-equal</span> <span style="color:#19177c">value</span> <span style="color:#19177c">current-monitor</span>) <span style="color:#19177c">sum</span> <span style="color:#666">1</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Can&#39;t remove the last workspace on the monitor!&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">map-delete</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#19177c">exwm-workspace-current-index</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">new-monitor</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">plist-put</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">exwm-workspace-current-index</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">new-monitor</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-randr-refresh</span>))
 </span></span></code></pre></div><p>In my configuration this is bound to <code>s-&lt;tab&gt;</code>.</p>
 <h3 id="windmove-between-monitors">Windmove between monitors</h3>
 <p>And the final (for now) piece of the puzzle is using the same command to switch between windows and monitors. E.g. when the focus is on the right-most window on one monitor, I want the command to switch to the left-most window on the monitor to the right instead of saying &ldquo;No window right from the selected window&rdquo;, as <code>windmove-right</code> does.</p>
 <p>So here is my implementation of that. It always does <code>windmove-do-select-window</code> for <code>'down</code> and <code>'up</code>. For <code>'right</code> and <code>'left</code> though, the function calls the previously defined function to switch to other monitor if <code>windmove-find-other-window</code> doesn&rsquo;t return anything.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-windmove (dir)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Move to window or monitor in the direction DIR.&#34;</span>
-</span></span><span style="display:flex;"><span>  (if (or (<span style="color:#a6e22e">eq</span> dir <span style="color:#e6db74">&#39;down</span>) (<span style="color:#a6e22e">eq</span> dir <span style="color:#e6db74">&#39;up</span>))
-</span></span><span style="display:flex;"><span>      (windmove-do-window-select dir)
-</span></span><span style="display:flex;"><span>    (let ((other-window (windmove-find-other-window dir))
-</span></span><span style="display:flex;"><span>          (other-monitor (my/exwm-get-other-monitor dir))
-</span></span><span style="display:flex;"><span>          (opposite-dir (pcase dir
-</span></span><span style="display:flex;"><span>                          (<span style="color:#e6db74">&#39;left</span> <span style="color:#e6db74">&#39;right</span>)
-</span></span><span style="display:flex;"><span>                          (<span style="color:#e6db74">&#39;right</span> <span style="color:#e6db74">&#39;left</span>))))
-</span></span><span style="display:flex;"><span>      (if other-window
-</span></span><span style="display:flex;"><span>          (windmove-do-window-select dir)
-</span></span><span style="display:flex;"><span>        (my/exwm-switch-to-other-monitor dir)
-</span></span><span style="display:flex;"><span>        (cl-loop while (windmove-find-other-window opposite-dir)
-</span></span><span style="display:flex;"><span>                 do (windmove-do-window-select opposite-dir))))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-windmove</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to window or monitor in the direction DIR.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">&#39;down</span>) (<span style="color:#00f">eq</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">&#39;up</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">windmove-do-window-select</span> <span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">other-window</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">dir</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">other-monitor</span> (<span style="color:#19177c">my/exwm-get-other-monitor</span> <span style="color:#19177c">dir</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">opposite-dir</span> (<span style="color:#008000">pcase</span> <span style="color:#19177c">dir</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">&#39;left</span> <span style="color:#19177c">&#39;right</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">&#39;right</span> <span style="color:#19177c">&#39;left</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> <span style="color:#19177c">other-window</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">windmove-do-window-select</span> <span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/exwm-switch-to-other-monitor</span> <span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">cl-loop</span> <span style="color:#008000">while</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">opposite-dir</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#008000">do</span> (<span style="color:#19177c">windmove-do-window-select</span> <span style="color:#19177c">opposite-dir</span>))))))
 </span></span></code></pre></div><p>I bind it to the corresponding keys like that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq exwm-input-global-keys
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">`</span>(
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; Switch windows</span>
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;left&gt;&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;left</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;right&gt;&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;right</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;up&gt;&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;up</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-&lt;down&gt;&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;down</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-input-global-keys</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#666">...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; Switch windows</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-&lt;left&gt;&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;left</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-&lt;right&gt;&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;right</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-&lt;up&gt;&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;up</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-&lt;down&gt;&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;down</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-h&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;left</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-l&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;right</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-k&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;up</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-j&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-windmove <span style="color:#e6db74">&#39;down</span>)))
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-h&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;left</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-l&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;right</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-k&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;up</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-j&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-windmove</span> <span style="color:#19177c">&#39;down</span>)))
+</span></span><span style="display:flex;"><span>        <span style="color:#666">...</span>)
 </span></span></code></pre></div><h2 id="managing-windows">Managing windows</h2>
 <p>Another thing I want to tackle here is managing windows.</p>
 <p>This section of the post depends on <a href="https://github.com/emacs-evil/evil">evil-mode</a>, which provides a reasonable set of vim-like commands to manage windows. But a few points to improve upon remain.</p>
@@ -303,130 +304,130 @@
 </ul>
 <p>I can&rsquo;t say it&rsquo;s better or worse than the built-in functionality or one provided by evil, but I&rsquo;m used to it and I think it fits better for managing a lot of windows.</p>
 <p>So, first, we need a predicate that checks whether there is space in the given direction:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-direction-exists-p (dir)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Check if there is space in the direction DIR.
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Does not take the minibuffer into account.&#34;</span>
-</span></span><span style="display:flex;"><span>  (cl-some (lambda (dir)
-</span></span><span style="display:flex;"><span>             (let ((win (windmove-find-other-window dir)))
-</span></span><span style="display:flex;"><span>               (and win (not (<span style="color:#a6e22e">window-minibuffer-p</span> win)))))
-</span></span><span style="display:flex;"><span>           (pcase dir
-</span></span><span style="display:flex;"><span>             (<span style="color:#e6db74">&#39;width</span> <span style="color:#f92672">&#39;</span>(left right))
-</span></span><span style="display:flex;"><span>             (<span style="color:#e6db74">&#39;height</span> <span style="color:#f92672">&#39;</span>(up down)))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-direction-exists-p</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Check if there is space in the direction DIR.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Does not take the minibuffer into account.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">cl-some</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">let</span> ((<span style="color:#19177c">win</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">dir</span>)))
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">and</span> <span style="color:#19177c">win</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">window-minibuffer-p</span> <span style="color:#19177c">win</span>)))))
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">pcase</span> <span style="color:#19177c">dir</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">&#39;width</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">left</span> <span style="color:#19177c">right</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">&#39;height</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">up</span> <span style="color:#19177c">down</span>)))))
 </span></span></code></pre></div><p>And a function to implement that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-move-window (dir)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Move the current window in the direction DIR.&#34;</span>
-</span></span><span style="display:flex;"><span>  (let ((other-window (windmove-find-other-window dir))
-</span></span><span style="display:flex;"><span>        (other-direction (my/exwm-direction-exists-p
-</span></span><span style="display:flex;"><span>                          (pcase dir
-</span></span><span style="display:flex;"><span>                            (<span style="color:#e6db74">&#39;up</span> <span style="color:#e6db74">&#39;width</span>)
-</span></span><span style="display:flex;"><span>                            (<span style="color:#e6db74">&#39;down</span> <span style="color:#e6db74">&#39;width</span>)
-</span></span><span style="display:flex;"><span>                            (<span style="color:#e6db74">&#39;left</span> <span style="color:#e6db74">&#39;height</span>)
-</span></span><span style="display:flex;"><span>                            (<span style="color:#e6db74">&#39;right</span> <span style="color:#e6db74">&#39;height</span>)))))
-</span></span><span style="display:flex;"><span>    (cond
-</span></span><span style="display:flex;"><span>     ((and other-window (not (<span style="color:#a6e22e">window-minibuffer-p</span> other-window)))
-</span></span><span style="display:flex;"><span>      (window-swap-states (<span style="color:#a6e22e">selected-window</span>) other-window))
-</span></span><span style="display:flex;"><span>     (other-direction
-</span></span><span style="display:flex;"><span>      (evil-move-window dir)))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-move-window</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move the current window in the direction DIR.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">other-window</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">dir</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">other-direction</span> (<span style="color:#19177c">my/exwm-direction-exists-p</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">pcase</span> <span style="color:#19177c">dir</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">&#39;up</span> <span style="color:#19177c">&#39;width</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">&#39;down</span> <span style="color:#19177c">&#39;width</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">&#39;left</span> <span style="color:#19177c">&#39;height</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">&#39;right</span> <span style="color:#19177c">&#39;height</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> <span style="color:#19177c">other-window</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">window-minibuffer-p</span> <span style="color:#19177c">other-window</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">window-swap-states</span> (<span style="color:#00f">selected-window</span>) <span style="color:#19177c">other-window</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">other-direction</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">evil-move-window</span> <span style="color:#19177c">dir</span>)))))
 </span></span></code></pre></div><p>My preferred keybindings for this part are, of course, <code>s-&lt;H|J|K|L&gt;</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq exwm-input-global-keys
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">`</span>(
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">;; Moving windows</span>
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-H&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;left</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-L&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;right</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-K&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;up</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#f92672">,</span>(kbd <span style="color:#e6db74">&#34;s-J&#34;</span>) <span style="color:#f92672">.</span> (lambda () (interactive) (my/exwm-move-window <span style="color:#e6db74">&#39;down</span>)))
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-input-global-keys</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; Moving windows</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-H&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-move-window</span> <span style="color:#19177c">&#39;left</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-L&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-move-window</span> <span style="color:#19177c">&#39;right</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-K&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-move-window</span> <span style="color:#19177c">&#39;up</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-J&#34;</span>) <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-move-window</span> <span style="color:#19177c">&#39;down</span>)))
+</span></span><span style="display:flex;"><span>        <span style="color:#666">...</span>))
 </span></span></code></pre></div><h3 id="resizing-windows">Resizing windows</h3>
 <p>I find this odd that there are different commands to resize tiling and floating windows.</p>
 <video controls width="100%">
 <source src="/ox-hugo/exwm-resize-hydra.mp4" type="video/mp4">
 </video>
 <p>So let&rsquo;s define one command to perform both resizes depending on the context:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq my/exwm-resize-value <span style="color:#ae81ff">5</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-resize-value</span> <span style="color:#666">5</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(defun my/exwm-resize-window (dir kind <span style="color:#66d9ef">&amp;optional</span> value)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Resize the current window in the direction DIR.
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">DIR is either &#39;height or &#39;width, KIND is either &#39;shrink or
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"> &#39;grow.  VALUE is </span><span style="color:#e6db74">`my/exwm-resize-value&#39;</span><span style="color:#e6db74"> by default.
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">If the window is an EXWM floating window, execute the
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">corresponding command from the exwm-layout group, execute the
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">command from the evil-window group.&#34;</span>
-</span></span><span style="display:flex;"><span>  (unless value
-</span></span><span style="display:flex;"><span>    (setq value my/exwm-resize-value))
-</span></span><span style="display:flex;"><span>  (let* ((is-exwm-floating
-</span></span><span style="display:flex;"><span>          (and (derived-mode-p <span style="color:#e6db74">&#39;exwm-mode</span>)
-</span></span><span style="display:flex;"><span>               exwm--floating-frame))
-</span></span><span style="display:flex;"><span>         (func (if is-exwm-floating
-</span></span><span style="display:flex;"><span>                   (<span style="color:#a6e22e">intern</span>
-</span></span><span style="display:flex;"><span>                    (<span style="color:#a6e22e">concat</span>
-</span></span><span style="display:flex;"><span>                     <span style="color:#e6db74">&#34;exwm-layout-&#34;</span>
-</span></span><span style="display:flex;"><span>                     (pcase kind (<span style="color:#e6db74">&#39;shrink</span> <span style="color:#e6db74">&#34;shrink&#34;</span>) (<span style="color:#e6db74">&#39;grow</span> <span style="color:#e6db74">&#34;enlarge&#34;</span>))
-</span></span><span style="display:flex;"><span>                     <span style="color:#e6db74">&#34;-window&#34;</span>
-</span></span><span style="display:flex;"><span>                     (pcase dir (<span style="color:#e6db74">&#39;height</span> <span style="color:#e6db74">&#34;&#34;</span>) (<span style="color:#e6db74">&#39;width</span> <span style="color:#e6db74">&#34;-horizontally&#34;</span>))))
-</span></span><span style="display:flex;"><span>                 (<span style="color:#a6e22e">intern</span>
-</span></span><span style="display:flex;"><span>                  (<span style="color:#a6e22e">concat</span>
-</span></span><span style="display:flex;"><span>                   <span style="color:#e6db74">&#34;evil-window&#34;</span>
-</span></span><span style="display:flex;"><span>                   (pcase kind (<span style="color:#e6db74">&#39;shrink</span> <span style="color:#e6db74">&#34;-decrease-&#34;</span>) (<span style="color:#e6db74">&#39;grow</span> <span style="color:#e6db74">&#34;-increase-&#34;</span>))
-</span></span><span style="display:flex;"><span>                   (<span style="color:#a6e22e">symbol-name</span> dir))))))
-</span></span><span style="display:flex;"><span>    (when is-exwm-floating
-</span></span><span style="display:flex;"><span>      (setq value (<span style="color:#a6e22e">*</span> <span style="color:#ae81ff">5</span> value)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">funcall</span> func value)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-resize-window</span> (<span style="color:#19177c">dir</span> <span style="color:#19177c">kind</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">value</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Resize the current window in the direction DIR.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">DIR is either &#39;height or &#39;width, KIND is either &#39;shrink or
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"> &#39;grow.  VALUE is </span><span style="color:#19177c">`my/exwm-resize-value&#39;</span><span style="color:#ba2121"> by default.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If the window is an EXWM floating window, execute the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">corresponding command from the exwm-layout group, execute the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">command from the evil-window group.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">value</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">value</span> <span style="color:#19177c">my/exwm-resize-value</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">is-exwm-floating</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">and</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;exwm-mode</span>)
+</span></span><span style="display:flex;"><span>               <span style="color:#19177c">exwm--floating-frame</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">func</span> (<span style="color:#008000">if</span> <span style="color:#19177c">is-exwm-floating</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">intern</span>
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>                     <span style="color:#ba2121">&#34;exwm-layout-&#34;</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">pcase</span> <span style="color:#19177c">kind</span> (<span style="color:#19177c">&#39;shrink</span> <span style="color:#ba2121">&#34;shrink&#34;</span>) (<span style="color:#19177c">&#39;grow</span> <span style="color:#ba2121">&#34;enlarge&#34;</span>))
+</span></span><span style="display:flex;"><span>                     <span style="color:#ba2121">&#34;-window&#34;</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">pcase</span> <span style="color:#19177c">dir</span> (<span style="color:#19177c">&#39;height</span> <span style="color:#ba2121">&#34;&#34;</span>) (<span style="color:#19177c">&#39;width</span> <span style="color:#ba2121">&#34;-horizontally&#34;</span>))))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">intern</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;evil-window&#34;</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">pcase</span> <span style="color:#19177c">kind</span> (<span style="color:#19177c">&#39;shrink</span> <span style="color:#ba2121">&#34;-decrease-&#34;</span>) (<span style="color:#19177c">&#39;grow</span> <span style="color:#ba2121">&#34;-increase-&#34;</span>))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">dir</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">is-exwm-floating</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">value</span> (<span style="color:#00f">*</span> <span style="color:#666">5</span> <span style="color:#19177c">value</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> <span style="color:#19177c">value</span>)))
 </span></span></code></pre></div><p>This function will call <code>exwm-layout-&lt;shrink|grow&gt;[-horizontally]</code> for EXWM floating window and <code>evil-window-&lt;decrease|increase&gt;-&lt;width|height&gt;</code> otherwise.</p>
 <p>This function can be bound to the required keybindings directly, but I prefer a hydra to emulate the i3 submode:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defhydra my/exwm-resize-hydra (:color pink :hint <span style="color:#66d9ef">nil</span> :foreign-keys run)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">^Resize^
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">_l_: Increase width   _h_: Decrease width   _j_: Increase height   _k_: Decrease height
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">_=_: Balance          &#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;h&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;width</span> <span style="color:#e6db74">&#39;shrink</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;j&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;height</span> <span style="color:#e6db74">&#39;grow</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;k&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;height</span> <span style="color:#e6db74">&#39;shrink</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;l&#34;</span> (lambda () (interactive) (my/exwm-resize-window <span style="color:#e6db74">&#39;width</span> <span style="color:#e6db74">&#39;grow</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;=&#34;</span> balance-windows)
-</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">&#34;q&#34;</span> <span style="color:#66d9ef">nil</span> <span style="color:#e6db74">&#34;quit&#34;</span> :color blue))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">defhydra</span> <span style="color:#19177c">my/exwm-resize-hydra</span> (<span style="color:#008000">:color</span> <span style="color:#19177c">pink</span> <span style="color:#008000">:hint</span> <span style="color:#800">nil</span> <span style="color:#008000">:foreign-keys</span> <span style="color:#19177c">run</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">^Resize^
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">_l_: Increase width   _h_: Decrease width   _j_: Increase height   _k_: Decrease height
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">_=_: Balance          &#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;h&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-resize-window</span> <span style="color:#19177c">&#39;width</span> <span style="color:#19177c">&#39;shrink</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;j&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-resize-window</span> <span style="color:#19177c">&#39;height</span> <span style="color:#19177c">&#39;grow</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;k&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-resize-window</span> <span style="color:#19177c">&#39;height</span> <span style="color:#19177c">&#39;shrink</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;l&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-resize-window</span> <span style="color:#19177c">&#39;width</span> <span style="color:#19177c">&#39;grow</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;=&#34;</span> <span style="color:#19177c">balance-windows</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;quit&#34;</span> <span style="color:#008000">:color</span> <span style="color:#19177c">blue</span>))
 </span></span></code></pre></div><h3 id="splitting-windows">Splitting windows</h3>
 <p><code>M-x evil-window-[v]split</code> (bound to <code>C-w v</code> and <code>C-w s</code> by default) are the default evil command to do splits.</p>
 <p>One EXWM-related issue though is that by default doing such a split &ldquo;copies&rdquo; the current buffer to the new window. But as EXWM buffer cannot be &ldquo;copied&rdquo; like that, some other buffer is displayed in the split, and generally, that&rsquo;s not a buffer I want.</p>
 <p>For instance, I prefer to have Chrome DevTools as a separate window. When I click &ldquo;Inspect&rdquo; on something, the DevTools window replaces my Ungoogled Chromium window. I press <code>C-w v</code>, and most often I have something like <code>*scratch*</code> buffer in the opened split instead of the previous Chromium window.</p>
 <p>To implement better behavior, I define the following advice:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/exwm-fill-other-window (<span style="color:#66d9ef">&amp;rest</span> _)
-</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;Open the most recently used buffer in the next window.&#34;</span>
-</span></span><span style="display:flex;"><span>  (interactive)
-</span></span><span style="display:flex;"><span>  (when (and (<span style="color:#a6e22e">eq</span> major-mode <span style="color:#e6db74">&#39;exwm-mode</span>) (not (<span style="color:#a6e22e">eq</span> (<span style="color:#a6e22e">next-window</span>) (<span style="color:#a6e22e">get-buffer-window</span>))))
-</span></span><span style="display:flex;"><span>    (let ((other-exwm-buffer
-</span></span><span style="display:flex;"><span>           (cl-loop with <span style="color:#a6e22e">other-buffer</span> <span style="color:#a6e22e">=</span> (persp-other-buffer)
-</span></span><span style="display:flex;"><span>                    for buf in (<span style="color:#a6e22e">sort</span> (persp-current-buffers) (lambda (a _) (<span style="color:#a6e22e">eq</span> a <span style="color:#a6e22e">other-buffer</span>)))
-</span></span><span style="display:flex;"><span>                    with <span style="color:#a6e22e">current-buffer</span> <span style="color:#a6e22e">=</span> (<span style="color:#a6e22e">current-buffer</span>)
-</span></span><span style="display:flex;"><span>                    when (and (not (<span style="color:#a6e22e">eq</span> <span style="color:#a6e22e">current-buffer</span> buf))
-</span></span><span style="display:flex;"><span>                              (<span style="color:#a6e22e">buffer-live-p</span> buf)
-</span></span><span style="display:flex;"><span>                              (not (string-match-p (persp--make-ignore-buffer-rx) (<span style="color:#a6e22e">buffer-name</span> buf)))
-</span></span><span style="display:flex;"><span>                              (not (<span style="color:#a6e22e">get-buffer-window</span> buf)))
-</span></span><span style="display:flex;"><span>                    return buf)))
-</span></span><span style="display:flex;"><span>      (when other-exwm-buffer
-</span></span><span style="display:flex;"><span>        (with-selected-window (<span style="color:#a6e22e">next-window</span>)
-</span></span><span style="display:flex;"><span>          (switch-to-buffer other-exwm-buffer))))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-fill-other-window</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Open the most recently used buffer in the next window.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">&#39;exwm-mode</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">next-window</span>) (<span style="color:#00f">get-buffer-window</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">other-exwm-buffer</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">with</span> <span style="color:#00f">other-buffer</span> <span style="color:#00f">=</span> (<span style="color:#19177c">persp-other-buffer</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#19177c">for</span> <span style="color:#19177c">buf</span> <span style="color:#19177c">in</span> (<span style="color:#00f">sort</span> (<span style="color:#19177c">persp-current-buffers</span>) (<span style="color:#008000">lambda</span> (<span style="color:#19177c">a</span> <span style="color:#19177c">_</span>) (<span style="color:#00f">eq</span> <span style="color:#19177c">a</span> <span style="color:#00f">other-buffer</span>)))
+</span></span><span style="display:flex;"><span>                    <span style="color:#19177c">with</span> <span style="color:#00f">current-buffer</span> <span style="color:#00f">=</span> (<span style="color:#00f">current-buffer</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">eq</span> <span style="color:#00f">current-buffer</span> <span style="color:#19177c">buf</span>))
+</span></span><span style="display:flex;"><span>                              (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buf</span>)
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#19177c">persp--make-ignore-buffer-rx</span>) (<span style="color:#00f">buffer-name</span> <span style="color:#19177c">buf</span>)))
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">not</span> (<span style="color:#00f">get-buffer-window</span> <span style="color:#19177c">buf</span>)))
+</span></span><span style="display:flex;"><span>                    <span style="color:#008000">return</span> <span style="color:#19177c">buf</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> <span style="color:#19177c">other-exwm-buffer</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">with-selected-window</span> (<span style="color:#00f">next-window</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">switch-to-buffer</span> <span style="color:#19177c">other-exwm-buffer</span>))))))
 </span></span></code></pre></div><p>This is meant to be called after doing an either vertical or horizontal split, so it&rsquo;s advised like that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(advice-add <span style="color:#e6db74">&#39;evil-window-split</span> :after <span style="color:#a6e22e">#&#39;</span>my/exwm-fill-other-window)
-</span></span><span style="display:flex;"><span>(advice-add <span style="color:#e6db74">&#39;evil-window-vsplit</span> :after <span style="color:#a6e22e">#&#39;</span>my/exwm-fill-other-window)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;evil-window-split</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-fill-other-window</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;evil-window-vsplit</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-fill-other-window</span>)
 </span></span></code></pre></div><p>This works as follows. If the current buffer is an EXWM buffer and there are other windows open (that is, <code>(next-window)</code> is not the current window), the function tries to find another suitable buffer to be opened in the split. And that also takes the perspectives into account, so buffers are searched only within the current perspective, and the buffer returned by <code>persp-other-buffer</code> will be the top candidate.</p>
 <h2 id="notes-on-floating-windows">Notes on floating windows</h2>
 <p>Floating windows are not the most stable feature of EXWM.</p>
 <p>One story is that closing a floating window often screws up the current perspective, but that&rsquo;s advised away by my <code>perspective-exwm-mode</code>.</p>
 <p>Another is that these three settings (which are reasonably <a href="https://github.com/daviwil/emacs-from-scratch/blob/5ebd390119a48cac6258843c7d5e570f4591fdd4/show-notes/Emacs-Desktop-04.org#mouse-warping">recommended</a> in the Emacs Desktop series) seem to increase chances of breaking the current EXWM session:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(setq exwm-workspace-warp-cursor <span style="color:#66d9ef">t</span>)
-</span></span><span style="display:flex;"><span>(setq mouse-autoselect-window <span style="color:#66d9ef">t</span>)
-</span></span><span style="display:flex;"><span>(setq focus-follows-mouse <span style="color:#66d9ef">t</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-workspace-warp-cursor</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">mouse-autoselect-window</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">focus-follows-mouse</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>Occasionally they create a loop of mouse warps and focus changes. I found that disabling them just for the floating windows greatly stabilized that part:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(defun my/fix-exwm-floating-windows ()
-</span></span><span style="display:flex;"><span>  (setq-local exwm-workspace-warp-cursor <span style="color:#66d9ef">nil</span>)
-</span></span><span style="display:flex;"><span>  (setq-local mouse-autoselect-window <span style="color:#66d9ef">nil</span>)
-</span></span><span style="display:flex;"><span>  (setq-local focus-follows-mouse <span style="color:#66d9ef">nil</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/fix-exwm-floating-windows</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">exwm-workspace-warp-cursor</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">mouse-autoselect-window</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">focus-follows-mouse</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(add-hook <span style="color:#e6db74">&#39;exwm-floating-setup-hook</span> <span style="color:#a6e22e">#&#39;</span>my/fix-exwm-floating-windows)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-floating-setup-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-exwm-floating-windows</span>)
 </span></span></code></pre></div><p>However, one particularly unfriendly app is the <a href="https://zoom.us/">Zoom app</a>, which proudly creates a million various popups and still manages to break the EXWM sesssion. Fortunately, it can be used from a browser, which is what I advise to do.</p>
 <h2 id="what-else-not-to-do">What else not to do</h2>
 <p>A couple of final notes to make using EXWM a somewhat better experience.</p>
