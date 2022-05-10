@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Extending elfeed entries with a PDF viewer and subtitles fetcher</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<div class="container">
+    <h1>Extending elfeed entries with a PDF viewer and subtitles fetcher</h1>
+    <h2 id="intro">Intro</h2>
+<p><a href="https://github.com/skeeto/elfeed">elfeed</a> is one of the most popular Emacs packages, and it&rsquo;s also one in which I ended up investing a lot of effort. I wrote about the <a href="https://sqrtminusone.xyz/posts/2021-09-07-emms/">EMMS integration</a> and even made a <a href="https://github.com/SqrtMinusOne/elfeed-summary">custom frontpage</a> to my liking.</p>
+<p>However, sites frequently limit the amount of information shipped in the RSS feed. Oftentimes the entry doesn&rsquo;t include the entire content (of which, by the way, this blog was guilty).</p>
+<p>Also, there&rsquo;s non-textual content, of which in this post I consider YouTube subscriptions. It&rsquo;s possible to watch YouTube from elfeed, for instance with the aforementioned EMMS integration, but we can do more.</p>
+<p>So, the plan for the post is to discuss:</p>
+<ul>
+<li>using <a href="https://github.com/eafer/rdrview">rdrview</a> to extend elfeed articles;</li>
+<li>using <a href="https://pandoc.org">pandoc</a> and LaTeX to convert articles to PDFs;</li>
+<li>using <a href="https://github.com/jdepoix/youtube-transcript-api">youtube-transcript-api</a> to download YouTube subtitles and <a href="https://github.com/sachac/subed">subed</a> to control the MPV playback;</li>
+</ul>
+<p>Also, heads up! You&rsquo;ll need lexical binding enabled for the code blocks. The easiest way to accomplish this is to add the following to the first line of <code>init.el</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;; -*- lexical-binding: t -*-</span>
+</span></span></code></pre></div><h2 id="rdrview">rdrview</h2>
+<p><a href="https://github.com/eafer/rdrview">rdrview</a> is a command-line tool to strip webpages from clutter, extracting only parts related to the actual content. It&rsquo;s a standalone port of the corresponding feature of Firefox, called <a href="https://support.mozilla.org/en-US/kb/firefox-reader-view-clutter-free-web-pages">Reader View</a>.</p>
+<p>It seems like the tool <a href="https://repology.org/project/rdrview/versions">isn&rsquo;t available</a> in a whole lot of package repositories, but it&rsquo;s pretty easy to compile. I&rsquo;ve put together a <a href="https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm">Guix definition</a>, which <em>one day</em> I&rsquo;ll submit to upstream.</p>
+<h3 id="integrating-rdrview-with-emacs">Integrating rdrview with Emacs</h3>
+<p>Let&rsquo;s start by integrating <code>rdrview</code> with Emacs. In the general case, we want to fetch both metadata and the actual content from the page.</p>
+<p>However, the interface of <code>rdrview</code> is a bit awkward in this part, so we have the following options:</p>
+<ul>
+<li>call <code>rdrview</code> two times: with <code>-M</code> flag to fetch the metadata, and without the flag to fetch the HTML;</li>
+<li>call <code>rdrview</code> with <code>-T</code> flag to append the metadata to the resulting HTML.</li>
+</ul>
+<p>I&rsquo;ve decided to go with the second option. Here is a function that calls rdrview with the required flags:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/rdrview-get</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">callback</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get the rdrview representation of URL.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Call CALLBACK with the output.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;rdrview&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;rdrview&#34;</span> <span style="color:#19177c">buffer</span> <span style="color:#ba2121">&#34;rdrview&#34;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#19177c">url</span> <span style="color:#ba2121">&#34;-T&#34;</span> <span style="color:#ba2121">&#34;title,sitename,body&#34;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#ba2121">&#34;-H&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">buffer-string</span>)))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))) )
+</span></span><span style="display:flex;"><span>               ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">let</span> ((<span style="color:#19177c">err</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">buffer-string</span>))))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in rdrview: %s&#34;</span> <span style="color:#19177c">err</span>)))))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">proc</span>))
+</span></span></code></pre></div><p>The function calls <code>callback</code> with the output of <code>rdrview</code>. This usually doesn&rsquo;t take long, but it&rsquo;s still nice to avoid freezing Emacs that way.</p>
+<p>Now we have to parse the output. The <code>-T</code> flag puts the title in the <code>&lt;h1&gt;</code> tag, the site name site in the <code>&lt;h2&gt;</code> tag, and the content in a <code>&lt;div&gt;</code>. What&rsquo;s more, headers of the content are often shifted, e.g. the top-level header may well end up being and <code>&lt;h2&gt;</code> or <code>&lt;h3&gt;</code>, which does not look great in LaTeX.</p>
+<p>With that said, here&rsquo;s a function that does the required changes:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/rdrview-parse</span> (<span style="color:#19177c">dom-string</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">dom</span> (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">insert</span> <span style="color:#19177c">dom-string</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">libxml-parse-html-region</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> (<span style="color:#19177c">title</span> <span style="color:#19177c">sitename</span> <span style="color:#19177c">content</span> (<span style="color:#19177c">i</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">child</span> (<span style="color:#19177c">dom-children</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">dom-by-id</span> <span style="color:#19177c">dom</span> <span style="color:#ba2121">&#34;readability-page-1&#34;</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">child</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>           ((<span style="color:#00f">eq</span> (<span style="color:#00f">car</span> <span style="color:#19177c">child</span>) <span style="color:#19177c">&#39;h1</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setq</span> <span style="color:#19177c">title</span> (<span style="color:#19177c">dom-text</span> <span style="color:#19177c">child</span>)))
+</span></span><span style="display:flex;"><span>           ((<span style="color:#00f">eq</span> (<span style="color:#00f">car</span> <span style="color:#19177c">child</span>) <span style="color:#19177c">&#39;h2</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setq</span> <span style="color:#19177c">sitename</span> (<span style="color:#19177c">dom-text</span> <span style="color:#19177c">child</span>)))
+</span></span><span style="display:flex;"><span>           ((<span style="color:#00f">eq</span> (<span style="color:#00f">car</span> <span style="color:#19177c">child</span>) <span style="color:#19177c">&#39;div</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setq</span> <span style="color:#19177c">content</span> <span style="color:#19177c">child</span>)))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">and</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">not</span> (<span style="color:#19177c">dom-by-tag</span> <span style="color:#19177c">content</span> <span style="color:#19177c">&#39;h1</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">dom-search</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#19177c">content</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">when</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">pcase</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">&#39;h2</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h1</span>))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">&#39;h3</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h2</span>))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">&#39;h4</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h3</span>))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">&#39;h5</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h4</span>))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">&#39;h6</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h5</span>))))))))
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#19177c">title</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">title</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">sitename</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">sitename</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">content</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">dom-print</span> <span style="color:#19177c">content</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">buffer-string</span>)))))))
+</span></span></code></pre></div><h3 id="using-rdrview-from-elfeed">Using rdrview from elfeed</h3>
+<p>Because I didn&rsquo;t find a smart way to advise the desired behavior into elfeed, here&rsquo;s a modification of the <code>elfeed-show-refresh--mail-style</code> function with two changes:</p>
+<ul>
+<li>it uses <code>rdrview</code> to fetch the HTML;</li>
+<li>it saves the resulting HTML into a buffer-local variable (we&rsquo;ll need that later).</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/elfeed-show-rdrview-html</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/rdrview-elfeed-show</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">elfeed-show-entry</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No elfeed entry in this buffer!&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/rdrview-get</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">elfeed-show-entry</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">result</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">let*</span> ((<span style="color:#19177c">data</span> (<span style="color:#19177c">my/rdrview-parse</span> <span style="color:#19177c">result</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">title</span> (<span style="color:#19177c">elfeed-entry-title</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">date</span> (<span style="color:#19177c">seconds-to-time</span> (<span style="color:#19177c">elfeed-entry-date</span> <span style="color:#19177c">elfeed-show-entry</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">authors</span> (<span style="color:#19177c">elfeed-meta</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#008000">:authors</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">link</span> (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">tags</span> (<span style="color:#19177c">elfeed-entry-tags</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">tagsstr</span> (<span style="color:#00f">mapconcat</span> <span style="color:#00f">#&#39;symbol-name</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;, &#34;</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">nicedate</span> (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%a, %e %b %Y %T %Z&#34;</span> <span style="color:#19177c">date</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">content</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;content</span> <span style="color:#19177c">data</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">feed</span> (<span style="color:#19177c">elfeed-entry-feed</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">feed-title</span> (<span style="color:#19177c">elfeed-feed-title</span> <span style="color:#19177c">feed</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">base</span> (<span style="color:#008000">and</span> <span style="color:#19177c">feed</span> (<span style="color:#19177c">elfeed-compute-base</span> (<span style="color:#19177c">elfeed-feed-url</span> <span style="color:#19177c">feed</span>)))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">erase-buffer</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Title: %s\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">propertize</span> <span style="color:#19177c">title</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-subject</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">when</span> <span style="color:#19177c">elfeed-show-entry-author</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">dolist</span> (<span style="color:#19177c">author</span> <span style="color:#19177c">authors</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">let</span> ((<span style="color:#19177c">formatted</span> (<span style="color:#19177c">elfeed--show-format-author</span> <span style="color:#19177c">author</span>)))
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">format</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Author: %s\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">propertize</span> <span style="color:#19177c">formatted</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-to</span>))))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Date: %s\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">propertize</span> <span style="color:#19177c">nicedate</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-other</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Feed: %s\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">propertize</span> <span style="color:#19177c">feed-title</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-other</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">when</span> <span style="color:#19177c">tags</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Tags: %s\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">propertize</span> <span style="color:#19177c">tagsstr</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-other</span>))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Link: &#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">elfeed-insert-link</span> <span style="color:#19177c">link</span> <span style="color:#19177c">link</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">enclosure</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">elfeed-show-entry</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;Enclosure: &#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;message-header-name</span>))
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">do</span> (<span style="color:#19177c">elfeed-insert-link</span> (<span style="color:#00f">car</span> <span style="color:#19177c">enclosure</span>))
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> <span style="color:#19177c">content</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">elfeed-insert-html</span> <span style="color:#19177c">content</span> <span style="color:#19177c">base</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;(empty)\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;italic</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">setq-local</span> <span style="color:#19177c">my/elfeed-show-rdrview-html</span> <span style="color:#19177c">content</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))))))
+</span></span></code></pre></div><p>That way, calling <code>M-x my/rdrview-elfeed-show</code> replaces the original content with one from <code>rdrview</code>.</p>
+<h3 id="how-well-does-it-work">How well does it work?</h3>
+<p>Rather ironically, it works well with sites that already ship with proper RSS, like <a href="https://protesilaos.com/">Protesilaos Stavrou&rsquo;s</a> or <a href="https://karthinks.com/software/simple-folding-with-hideshow/">Karthik Chikmagalur&rsquo;s</a> blogs or <a href="https://www.theatlantic.com/world/">The Atlantic</a> magazine.</p>
+<p>Of my other subscriptions, it does a pretty good job with <a href="https://www.theverge.com/">The Verge</a>, which by default sends entries truncated by the words &ldquo;Read the full article&rdquo;. For <a href="https://arstechnica.com/">Ars Technica</a>, it works only if the story is not large enough, otherwise the site returns its HTML-based pagination interface.</p>
+<p>For paywalled sites such as <a href="https://www.nytimes.com/">New York Times</a> or <a href="https://www.economist.com/">The Economist</a>, this usually doesn&rsquo;t work (by the way, what&rsquo;s the problem with providing individual RSS feeds for subscribers?). If you need this kind of thing, I&rsquo;d suggest using the <a href="https://github.com/RSS-Bridge/rss-bridge">RSS-Bridge</a> project. And if something is not available, contributing business logic there definitely makes more sense than implementing workarounds in Emacs Lisp.</p>
+<h2 id="latex-and-pandoc">LaTeX and pandoc</h2>
+<p>However, I also find that I&rsquo;m not really a fan of reading articles from Emacs. Somehow what works for program code doesn&rsquo;t work that well for natural text. When I have to, I usually switch the Emacs theme to a light one.</p>
+<p>But the best solution I&rsquo;ve found so far is to render the required articles as PDFs. I may even print out some large articles I want to read.</p>
+<h3 id="template">Template</h3>
+<p>So first, we need a LaTeX template. Pandoc already ships with one, but I don&rsquo;t like it too much, so I&rsquo;ve put up a template from my LaTeX styles, targeting my preferred XeLaTeX engine.</p>
+<p>I&rsquo;ll add the code here for completeness&rsquo; sake, but if you use LaTeX, you&rsquo;ll probably be better off using your own setup. Be sure to define the following variables:</p>
+<ul>
+<li><code>main-lang</code> and <code>other-lang</code> for polyglossia (or remove them if you have only one language)</li>
+<li><code>title</code></li>
+<li><code>subtitle</code></li>
+<li><code>author</code></li>
+<li><code>date</code></li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-latex" data-lang="latex"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\documentclass</span><span style="color:#7d9029">[a4paper, 12pt]</span><span style="color:#008000">{</span>extarticle<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Math ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>amsmath<span style="color:#008000">}</span> <span style="color:#408080;font-style:italic">% Math stuff
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>amssymb<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>mathspec<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== List ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>enumitem<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>etoolbox<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#008000">{</span>nosep, topsep=-10pt<span style="color:#008000">}</span> <span style="color:#408080;font-style:italic">% Remove sep-s beetween list elements
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#7d9029">[enumerate]</span><span style="color:#008000">{</span>label*=<span style="color:#008000;font-weight:bold">\arabic*</span>.<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#7d9029">[enumerate,1]</span><span style="color:#008000">{</span>after=<span style="color:#008000;font-weight:bold">\vspace</span><span style="color:#008000">{</span>0.5<span style="color:#008000;font-weight:bold">\baselineskip</span><span style="color:#008000">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#7d9029">[itemize,1]</span><span style="color:#008000">{</span>after=<span style="color:#008000;font-weight:bold">\vspace</span><span style="color:#008000">{</span>0.5<span style="color:#008000;font-weight:bold">\baselineskip</span><span style="color:#008000">}}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\AtBeginEnvironment</span><span style="color:#008000">{</span>itemize<span style="color:#008000">}{</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#7d9029">[enumerate]</span><span style="color:#008000">{</span>label=<span style="color:#008000;font-weight:bold">\arabic*</span>.<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">\setlist</span><span style="color:#7d9029">[enumerate,1]</span><span style="color:#008000">{</span>after=<span style="color:#008000;font-weight:bold">\vspace</span><span style="color:#008000">{</span>0<span style="color:#008000;font-weight:bold">\baselineskip</span><span style="color:#008000">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\providecommand</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\tightlist</span><span style="color:#008000">}{</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\setlength</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\itemsep</span><span style="color:#008000">}{</span>0pt<span style="color:#008000">}</span><span style="color:#008000;font-weight:bold">\setlength</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\parskip</span><span style="color:#008000">}{</span>0pt<span style="color:#008000">}}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Link ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>xcolor<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>hyperref<span style="color:#008000">}</span> <span style="color:#408080;font-style:italic">% Links
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\hypersetup</span><span style="color:#008000">{</span>
+</span></span><span style="display:flex;"><span>  colorlinks=true,
+</span></span><span style="display:flex;"><span>  citecolor=blue,
+</span></span><span style="display:flex;"><span>  filecolor=blue,
+</span></span><span style="display:flex;"><span>  linkcolor=blue,
+</span></span><span style="display:flex;"><span>  urlcolor=blue,
+</span></span><span style="display:flex;"><span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% Linebreaks for urls
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\expandafter\def\expandafter\UrlBreaks\expandafter</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\UrlBreaks</span><span style="color:#408080;font-style:italic">%  save the current one
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\do\Y\do\Z</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Table ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>array<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>booktabs<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>longtable<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>multirow<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>calc<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Images ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>graphicx<span style="color:#008000">}</span> <span style="color:#408080;font-style:italic">% Pictures
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatletter</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\def\maxwidth</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\ifdim\Gin</span>@nat@width&gt;<span style="color:#008000;font-weight:bold">\linewidth\linewidth\else\Gin</span>@nat@width<span style="color:#008000;font-weight:bold">\fi</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\def\maxheight</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\ifdim\Gin</span>@nat@height&gt;<span style="color:#008000;font-weight:bold">\textheight\textheight\else\Gin</span>@nat@height<span style="color:#008000;font-weight:bold">\fi</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatother</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% Scale images if necessary, so that they will not overflow the page
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% margins by default, and it is still possible to overwrite the defaults
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% using explicit options in \includegraphics[width, height, ...]{}
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\setkeys</span><span style="color:#008000">{</span>Gin<span style="color:#008000">}{</span>width=<span style="color:#008000;font-weight:bold">\maxwidth</span>,height=<span style="color:#008000;font-weight:bold">\maxheight</span>,keepaspectratio<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% Set default figure placement to htbp
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\makeatletter</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\def\fps</span>@figure<span style="color:#008000">{</span>htbp<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatother</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\newcommand</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\noimage</span><span style="color:#008000">}{</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\setlength</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\fboxsep</span><span style="color:#008000">}{</span>-<span style="color:#008000;font-weight:bold">\fboxrule</span><span style="color:#008000">}</span><span style="color:#408080;font-style:italic">%
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000;font-weight:bold">\fbox</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\phantom</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\rule</span><span style="color:#008000">{</span>150pt<span style="color:#008000">}{</span>100pt<span style="color:#008000">}}}</span><span style="color:#408080;font-style:italic">% Framed box
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatletter</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\patchcmd</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\Gin</span>@ii<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\begingroup</span><span style="color:#008000">}</span><span style="color:#408080;font-style:italic">% &lt;search&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\begingroup\renewcommand</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\@</span>latex@error<span style="color:#008000">}</span>[2]<span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\noimage</span><span style="color:#008000">}}</span><span style="color:#408080;font-style:italic">% &lt;replace&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000">{}</span><span style="color:#408080;font-style:italic">% &lt;success&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>  <span style="color:#008000">{}</span><span style="color:#408080;font-style:italic">% &lt;failure&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\makeatother</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Misc ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>fancyvrb<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>csquotes<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#7d9029">[normalem]</span><span style="color:#008000">{</span>ulem<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% Quotes and verses style
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\AtBeginEnvironment</span><span style="color:#008000">{</span>quote<span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\singlespacing</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\AtBeginEnvironment</span><span style="color:#008000">{</span>verse<span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\singlespacing</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Text spacing ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>setspace<span style="color:#008000">}</span> <span style="color:#408080;font-style:italic">% String spacing
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\onehalfspacing</span><span style="color:#008000">{}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>indentfirst<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlength\parindent</span><span style="color:#008000">{</span>0cm<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlength\parskip</span><span style="color:#008000">{</span>6pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Page layout ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span>[ <span style="color:#408080;font-style:italic">% Margins
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>left=2cm,
+</span></span><span style="display:flex;"><span>right=2cm,
+</span></span><span style="display:flex;"><span>top=2cm,
+</span></span><span style="display:flex;"><span>bottom=2cm
+</span></span><span style="display:flex;"><span>]<span style="color:#008000">{</span>geometry<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Document sectioning ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>titlesec<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titleformat*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\section</span><span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\bfseries</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titleformat*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subsection</span><span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\bfseries</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titleformat*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subsubsection</span><span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\bfseries</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titleformat*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\paragraph</span><span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\bfseries</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titleformat*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subparagraph</span><span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\bfseries\itshape</span><span style="color:#008000">}</span><span style="color:#408080;font-style:italic">% chktex 6
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titlespacing*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\section</span><span style="color:#008000">}{</span>0cm<span style="color:#008000">}{</span>12pt<span style="color:#008000">}{</span>3pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titlespacing*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subsection</span><span style="color:#008000">}{</span>0cm<span style="color:#008000">}{</span>12pt<span style="color:#008000">}{</span>3pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titlespacing*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subsubsection</span><span style="color:#008000">}{</span>0cm<span style="color:#008000">}{</span>12pt<span style="color:#008000">}{</span>0pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titlespacing*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\paragraph</span><span style="color:#008000">}{</span>0pt<span style="color:#008000">}{</span>6pt<span style="color:#008000">}{</span>6pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\titlespacing*</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subparagraph</span><span style="color:#008000">}{</span>0pt<span style="color:#008000">}{</span>6pt<span style="color:#008000">}{</span>3pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatletter</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\providecommand</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\subtitle</span><span style="color:#008000">}</span>[1]<span style="color:#008000">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">\apptocmd</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\@</span>title<span style="color:#008000">}{</span><span style="color:#008000;font-weight:bold">\par</span> <span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\large</span> #1 <span style="color:#008000;font-weight:bold">\par</span><span style="color:#008000">}}{}{}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\makeatother</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Pandoc =======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#ba2121">$</span><span style="color:#008000">if</span><span style="color:#666">(</span><span style="color:#008000">highlighting</span><span style="color:#666">-</span><span style="color:#008000">macros</span><span style="color:#666">)</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">highlighting</span><span style="color:#666">-</span><span style="color:#008000">macros</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">endif</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">% ====== Language ======
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>polyglossia<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setdefaultlanguage</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">main</span><span style="color:#666">-</span><span style="color:#008000">lang</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setotherlanguage</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">other</span><span style="color:#666">-</span><span style="color:#008000">lang</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\defaultfontfeatures</span><span style="color:#008000">{</span>Ligatures=<span style="color:#008000">{</span>TeX<span style="color:#008000">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setmainfont</span><span style="color:#008000">{</span>Open Sans<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\newfontfamily\cyrillicfont</span><span style="color:#008000">{</span>Open Sans<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setmonofont</span><span style="color:#7d9029">[Scale=0.9]</span><span style="color:#008000">{</span>DejaVu Sans Mono<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\newfontfamily</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\cyrillicfonttt</span><span style="color:#008000">}{</span>DejaVu Sans Mono<span style="color:#008000">}</span>[Scale=0.8]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>bidi<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\usepackage</span><span style="color:#008000">{</span>microtype<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\setlength</span><span style="color:#008000">{</span><span style="color:#008000;font-weight:bold">\emergencystretch</span><span style="color:#008000">}{</span>3pt<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">if</span><span style="color:#666">(</span><span style="color:#008000">title</span><span style="color:#666">)</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\title</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">title</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">endif</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">if</span><span style="color:#666">(</span><span style="color:#008000">subtitle</span><span style="color:#666">)</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\subtitle</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">subtitle</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">endif</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">if</span><span style="color:#666">(</span><span style="color:#008000">author</span><span style="color:#666">)</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\author</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">for</span><span style="color:#666">(</span><span style="color:#008000">author</span><span style="color:#666">)</span><span style="color:#ba2121">$$</span><span style="color:#008000">author</span><span style="color:#ba2121">$$</span><span style="color:#008000">sep</span><span style="color:#ba2121">$</span> <span style="color:#008000;font-weight:bold">\and</span> <span style="color:#ba2121">$</span><span style="color:#008000">endfor</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">endif</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">if</span><span style="color:#666">(</span><span style="color:#008000">date</span><span style="color:#666">)</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\date</span><span style="color:#008000">{</span><span style="color:#ba2121">$</span><span style="color:#008000">date</span><span style="color:#ba2121">$</span><span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">endif</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\begin</span><span style="color:#008000">{</span>document<span style="color:#008000">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\maketitle</span><span style="color:#008000">{}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">$</span><span style="color:#008000">body</span><span style="color:#ba2121">$</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">\end</span><span style="color:#008000">{</span>document<span style="color:#008000">}</span>
+</span></span></code></pre></div><h3 id="invoking-pandoc">Invoking pandoc</h3>
+<p>Now that we have the template, let&rsquo;s save it somewhere and store the path to a variable:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/rdrview-template</span> (<span style="color:#00f">expand-file-name</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">concat</span> <span style="color:#19177c">user-emacs-directory</span> <span style="color:#ba2121">&#34;rdrview.tex&#34;</span>)))
+</span></span></code></pre></div><p>And let&rsquo;s invoke pandoc. We need to pass the following flags:</p>
+<ul>
+<li><code>--pdf-engine=xelatex</code>, of course</li>
+<li><code>--template &lt;path-to-template&gt;</code>;</li>
+<li><code>-o &lt;path-to-pdf&gt;</code>;</li>
+<li><code>--variable key=value</code>.</li>
+</ul>
+<p>In fact, pandoc is a pretty awesome tool in the sense that it allows for feeding custom variables to rich-language templates.</p>
+<p>So, the rendering function is as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">cl-defun</span> <span style="color:#19177c">my/rdrview-render</span> (<span style="color:#19177c">content</span> <span style="color:#19177c">type</span> <span style="color:#19177c">variables</span> <span style="color:#19177c">callback</span>
+</span></span><span style="display:flex;"><span>                                     <span style="color:#008000">&amp;key</span> <span style="color:#19177c">file-name</span> <span style="color:#19177c">overwrite</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Render CONTENT with pandoc.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TYPE is a file extension as supported by pandoc, for instance,
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">html or txt.  VARIABLES is an alist that is fed into the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">template.  After the rendering is complete successfully, CALLBACK
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">is called with the resulting PDF.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FILE-NAME is a path to the resulting PDF. If nil it&#39;s generated
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">randomly.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If a file with the given FILE-NAME already exists, the function will
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">invoke CALLBACK straight away without doing the rendering, unless
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">OVERWRITE is non-nil.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">file-name</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">file-name</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;/tmp/%d.pdf&#34;</span> (<span style="color:#00f">random</span> <span style="color:#666">100000000</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> (<span style="color:#19177c">params</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">temp-file-name</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;/tmp/%d.%s&#34;</span> (<span style="color:#00f">random</span> <span style="color:#666">100000000</span>) <span style="color:#19177c">type</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">key</span> <span style="color:#666">.</span> <span style="color:#19177c">value</span>) <span style="color:#19177c">in</span> <span style="color:#19177c">variables</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">when</span> <span style="color:#19177c">value</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">push</span> <span style="color:#ba2121">&#34;--variable&#34;</span> <span style="color:#19177c">params</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">push</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s=%s&#34;</span> <span style="color:#19177c">key</span> <span style="color:#19177c">value</span>) <span style="color:#19177c">params</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">params</span> (<span style="color:#00f">nreverse</span> <span style="color:#19177c">params</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">file-name</span>) (<span style="color:#19177c">not</span> <span style="color:#19177c">overwrite</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">temp-file-name</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">insert</span> <span style="color:#19177c">content</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">proc</span> (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;start-process</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;pandoc&#34;</span> (<span style="color:#00f">get-buffer-create</span> <span style="color:#ba2121">&#34;*Pandoc*&#34;</span>) <span style="color:#ba2121">&#34;pandoc&#34;</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">temp-file-name</span> <span style="color:#ba2121">&#34;-o&#34;</span> <span style="color:#19177c">file-name</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;--pdf-engine=xelatex&#34;</span> <span style="color:#ba2121">&#34;--template&#34;</span> <span style="color:#19177c">my/rdrview-template</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">params</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Done!&#34;</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span> <span style="color:#19177c">file-name</span>)))
+</span></span><span style="display:flex;"><span>                   ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                        (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in pandoc. Check the *Pandoc* buffer&#34;</span>)))))))))
+</span></span></code></pre></div><h3 id="opening-elfeed-entries">Opening elfeed entries</h3>
+<p>Now we have everything required to open elfeed entries.</p>
+<p>Also, in my case elfeed entries come in two languages, so I have to set <code>main-lang</code> and <code>other-lang</code> variables accordingly. Here&rsquo;s the main function:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/elfeed-pdf-dir</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/.elfeed/pdf/&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-open-pdf</span> (<span style="color:#19177c">entry</span> <span style="color:#19177c">overwrite</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Open the current elfeed ENTRY with a pdf viewer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If OVERWRITE is non-nil, do the rendering even if the resulting
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">PDF already exists.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">current-prefix-arg</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">authors</span> (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">m</span>) (<span style="color:#00f">plist-get</span> <span style="color:#19177c">m</span> <span style="color:#008000">:name</span>)) (<span style="color:#19177c">elfeed-meta</span> <span style="color:#19177c">entry</span> <span style="color:#008000">:authors</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">feed-title</span> (<span style="color:#19177c">elfeed-feed-title</span> (<span style="color:#19177c">elfeed-entry-feed</span> <span style="color:#19177c">entry</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">tags</span> (<span style="color:#00f">mapconcat</span> <span style="color:#00f">#&#39;symbol-name</span> (<span style="color:#19177c">elfeed-entry-tags</span> <span style="color:#19177c">entry</span>) <span style="color:#ba2121">&#34;, &#34;</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">date</span> (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%a, %e %b %Y&#34;</span>
+</span></span><span style="display:flex;"><span>                                  (<span style="color:#19177c">seconds-to-time</span> (<span style="color:#19177c">elfeed-entry-date</span> <span style="color:#19177c">entry</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">content</span> (<span style="color:#19177c">elfeed-deref</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">file-name</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-pdf-dir</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>                           <span style="color:#ba2121">&#34;.pdf&#34;</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">main-language</span> <span style="color:#ba2121">&#34;english&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">other-language</span> <span style="color:#ba2121">&#34;russian&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">content</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No content!&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">subtitle</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>           ((<span style="color:#19177c">seq-empty-p</span> <span style="color:#19177c">authors</span>) <span style="color:#19177c">feed-title</span>)
+</span></span><span style="display:flex;"><span>           ((<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">seq-empty-p</span> (<span style="color:#00f">car</span> <span style="color:#19177c">authors</span>)))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">string-match-p</span> (<span style="color:#00f">regexp-quote</span> (<span style="color:#00f">car</span> <span style="color:#19177c">authors</span>)) <span style="color:#19177c">feed-title</span>)) <span style="color:#19177c">feed-title</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#800">t</span> (<span style="color:#00f">concat</span> (<span style="color:#19177c">string-join</span> <span style="color:#19177c">authors</span> <span style="color:#ba2121">&#34;, &#34;</span>) <span style="color:#ba2121">&#34;\\\\&#34;</span> <span style="color:#19177c">feed-title</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">member</span> <span style="color:#19177c">&#39;ru</span> (<span style="color:#19177c">elfeed-entry-tags</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">main-language</span> <span style="color:#ba2121">&#34;russian&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">other-language</span> <span style="color:#ba2121">&#34;english&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/rdrview-render</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">if</span> (<span style="color:#19177c">bound-and-true-p</span> <span style="color:#19177c">my/elfeed-show-rdrview-html</span>)
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">my/elfeed-show-rdrview-html</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">content</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">elfeed-entry-content-type</span> <span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#666">`</span>((<span style="color:#19177c">title</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">elfeed-entry-title</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">subtitle</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">subtitle</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">date</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">date</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">tags</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">tags</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">main-lang</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">main-language</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">other-lang</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">other-language</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#19177c">file-name</span>))
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:file-name</span> <span style="color:#19177c">file-name</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:overwrite</span> <span style="color:#19177c">current-prefix-arg</span>)))
+</span></span></code></pre></div><p>If the <code>my/elfeed-show-rdrview-html</code> variable is bound and true, then the content in this buffer was retrieved via <code>rdrview</code>, so we&rsquo;ll use that instead of the output of <code>elfeed-deref</code>.</p>
+<p>Now we can open elfeed entries in a PDF viewer, which I find much nicer to read. Given that RSS feeds generally ship with simpler HTML than the regular websites, results usually look awesome:</p>
+<figure><img src="/ox-hugo/pdf-prot.png"/>
+</figure>
+
+<h3 id="opening-arbitrary-sites">Opening arbitrary sites</h3>
+<p>As you may have noticed, we also can display arbitrary web pages with this setup, so let&rsquo;s go ahead and implement that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-languages</span> (<span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">main-lang</span> <span style="color:#ba2121">&#34;english&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">other-lang</span> <span style="color:#ba2121">&#34;russian&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.ru&#34;</span>) <span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">main-lang</span> <span style="color:#ba2121">&#34;russian&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">other-lang</span> <span style="color:#ba2121">&#34;english&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">list</span> <span style="color:#19177c">main-lang</span> <span style="color:#19177c">other-lang</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/rdrview-open</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">overwrite</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">let</span> ((<span style="color:#19177c">url</span> (<span style="color:#00f">read-from-minibuffer</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#ba2121">&#34;URL: &#34;</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">if</span> (<span style="color:#19177c">bound-and-true-p</span> <span style="color:#19177c">elfeed-show-entry</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">elfeed-show-entry</span>)))))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">when</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;URL is empty&#34;</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">list</span> <span style="color:#19177c">url</span> <span style="color:#19177c">current-prefix-arg</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/rdrview-get</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">url</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">res</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">let</span> ((<span style="color:#19177c">data</span> (<span style="color:#19177c">my/rdrview-parse</span> <span style="color:#19177c">res</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">langs</span> (<span style="color:#19177c">my/get-languages</span> <span style="color:#19177c">url</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">my/rdrview-render</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;content</span> <span style="color:#19177c">data</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">&#39;html</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#666">`</span>((<span style="color:#19177c">title</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;title</span> <span style="color:#19177c">data</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">subtitle</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;sitename</span> <span style="color:#19177c">data</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">main-lang</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">langs</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">other-lang</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">langs</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#19177c">file-name</span>)))))))
+</span></span></code></pre></div><p>Unfortunately, this part doesn&rsquo;t work that well, so we can&rsquo;t just uninstall Firefox or Chromium and browse the web from a PDF viewer.</p>
+<p>The most common problem I&rsquo;ve encountered is incorrectly formed pictures, such as <code>.png</code> files without the boundary info. I&rsquo;m sure you&rsquo;ve also come across this if you ever tried to insert a lot of Internet pictures into a LaTeX document.</p>
+<p>However, sans the pictures issue, for certain sites like Wikipedia this is usable. For instance, here&rsquo;s how the Emacs page looks:
+<img src="/ox-hugo/pdf-emacs.png" alt=""></p>
+<h2 id="youtube-transcripts">YouTube transcripts</h2>
+<h3 id="getting-subtitles">Getting subtitles</h3>
+<p>Finally, let&rsquo;s get to transcripts.</p>
+<p>In principle, the YouTube API allows for downloading subtitles, but I&rsquo;ve found <a href="https://github.com/jdepoix/youtube-transcript-api">this awesome Python script</a> which does the same. You can install it from <code>pip</code>, or here&rsquo;s mine <a href="https://github.com/SqrtMinusOne/channel-q/blob/master/youtube-transcript-api.scm">Guix definition</a> once again.</p>
+<p>Much like the previous cases, we need to invoke the program and save the output. The <a href="https://en.wikipedia.org/wiki/WebVTT">WebVTT</a> format will work well enough for our purposes. Here comes the function:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">cl-defun</span> <span style="color:#19177c">my/youtube-subtitles-get</span> (<span style="color:#19177c">video-id</span> <span style="color:#19177c">callback</span> <span style="color:#008000">&amp;key</span> <span style="color:#19177c">file-name</span> <span style="color:#19177c">overwrite</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get subtitles for VIDEO-ID in WebVTT format.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Call CALLBACK when done.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FILE-NAME is a path to the resulting WebVTT file. If nil it&#39;s
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">generated randomly.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If a file with the given FILE-NAME already exists, the function will
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">invoke CALLBACK straight away without doing the rendering, unless
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">OVERWRITE is non-nil.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">file-name</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">file-name</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;/tmp/%d.vtt&#34;</span> (<span style="color:#00f">random</span> <span style="color:#666">100000000</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">file-name</span>) (<span style="color:#19177c">not</span> <span style="color:#19177c">overwrite</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;youtube-transcripts&#34;</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;youtube_transcript_api&#34;</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#ba2121">&#34;youtube_transcript_api&#34;</span> <span style="color:#19177c">video-id</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#ba2121">&#34;--format&#34;</span> <span style="color:#ba2121">&#34;webvtt&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#008000">setq</span> <span style="color:#00f">buffer-file-name</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">save-buffer</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span> <span style="color:#19177c">file-name</span>)))
+</span></span><span style="display:flex;"><span>                 ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">let</span> ((<span style="color:#19177c">err</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>                               (<span style="color:#00f">buffer-string</span>))))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in youtube_transcript_api: %s&#34;</span> <span style="color:#19177c">err</span>)))))))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">proc</span>)))
+</span></span></code></pre></div><h3 id="elfeed-and-subed">elfeed and subed</h3>
+<p>Now that we have a standalone function, let&rsquo;s invoke it with the current <code>elfeed-show-entry</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/elfeed-srt-dir</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/.elfeed/srt/&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-youtube-subtitles</span> (<span style="color:#19177c">entry</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get subtitles for the current elfeed ENTRY.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Works only in the entry is a YouTube video.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If ARG is non-nil, re-fetch the subtitles regardless of whether
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">they were fetched before.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">current-prefix-arg</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">video-id</span> (<span style="color:#19177c">cadr</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">assoc</span> <span style="color:#ba2121">&#34;watch?v&#34;</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">url-parse-query-string</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">substring</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">url-filename</span>
+</span></span><span style="display:flex;"><span>                             (<span style="color:#19177c">url-generic-parse-url</span> (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">entry</span>)))
+</span></span><span style="display:flex;"><span>                            <span style="color:#666">1</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">video-id</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Can&#39;t get video ID from the entry&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/youtube-subtitles-get</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">video-id</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">with-current-buffer</span> (<span style="color:#19177c">find-file-other-window</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">setq-local</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))))
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:file-name</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-srt-dir</span>
+</span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>                        <span style="color:#ba2121">&#34;.vtt&#34;</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:overwrite</span> <span style="color:#19177c">arg</span>)))
+</span></span></code></pre></div><p>That opens up a <code>.vtt</code> buffer with the subtitles for the current video, which means now we can use the functionality of Sacha Chua&rsquo;s awesome package called <a href="https://github.com/sachac/subed">subed</a>.</p>
+<p>This package, besides syntax highlighting, allows for controlling the MPV playback, for instance by moving the cursor in the subtitles buffer. Using that requires having the URL of the video in this buffer, which necessitates the line with <code>setq-local</code> in the previous function.</p>
+<p>Also, the package launches its own instance of MPV to control it via JSON-IPC, so there seems to be no easy way to integrate it with EMMS. But at least I can reuse the <code>emms-player-mpv-parameters</code> variable, the method of setting which I&rsquo;ve discussed in a <a href="https://sqrtminusone.xyz/posts/2021-09-07-emms/">previous blog post</a>. The function is as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/subed-elfeed</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Open the video file from elfeed ENTRY in MPV.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">This has to be launched from inside the subtitles buffer, opened
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">by the </span><span style="color:#19177c">`my/elfeed-youtube-subtitles&#39;</span><span style="color:#ba2121"> function.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">entry</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No entry!&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;subed-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Not subed mode!&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">subed-mpv-arguments</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">seq-uniq</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">append</span> <span style="color:#19177c">subed-mpv-arguments</span> <span style="color:#19177c">emms-player-mpv-parameters</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">subed-mpv-video-file</span> (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
+</span></span></code></pre></div><p>And here&rsquo;s how it looks when used (the video on the screenshot is <a href="https://www.youtube.com/watch?v=qjAIXCmhCQQ">this System Crafters&rsquo; stream</a>):
+<img src="/ox-hugo/pdf-subed.png" alt=""></p>
+<p>Keep in mind that this function has to be launched inside the buffer opened by the <code>my/elfeed-youtube-subtitles</code> function.</p>
+
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+        <div class="container text-center">
+            <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2022"><small>Pavel Korytov, 2022</small></a>
+        </div>
+    
+</div>
+</body>
+</html>
