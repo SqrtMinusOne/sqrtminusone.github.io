@@ -2898,8 +2898,13 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span></code></pre></div><h4 id="subtitles">Subtitles</h4>
 <p>A major mode to work with subtitles.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">subed</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;rndusr/subed&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;subed/*.el&#34;</span>) <span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">native-compile</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;srt&#34;</span> <span style="color:#ba2121">&#34;vtt&#34;</span> <span style="color:#ba2121">&#34;ass&#34;</span>) <span style="color:#19177c">eos</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;rndusr/subed&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;subed/*.el&#34;</span>)
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">native-compile</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">subed-mode-map</span> <span style="color:#19177c">subed-vtt-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gp&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">subed-mpv-toggle-pause</span>))
 </span></span></code></pre></div><h4 id="languagetool">LanguageTool</h4>
 <p>LanguageTool is a great offline spell checker. For some reason, the download link is nowhere to be found on the home page, so it is listed in the references as well.</p>
 <p>References:</p>
@@ -2912,7 +2917,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">langtool-check</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-language-tool-server-jar</span> <span style="color:#ba2121">&#34;/home/pavel/bin/LanguageTool-5.4/languagetool-server.jar&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-language-tool-server-jar</span> <span style="color:#ba2121">&#34;/home/pavel/bin/LanguageTool-5.7/languagetool-server.jar&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-mother-tongue</span> <span style="color:#ba2121">&#34;ru&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-default-language</span> <span style="color:#ba2121">&#34;en-US&#34;</span>))
 </span></span><span style="display:flex;"><span>
@@ -4351,9 +4356,8 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;bibtex-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#19177c">&#39;org-ref-bibtex-hydra/body</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (add-to-list &#39;orhc-candidate-formats</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;              &#39;(&#34;online&#34; . &#34;  |${=key=}| ${title} ${url}&#34;))</span>
-</span></span><span style="display:flex;"><span>  )
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-display-formats</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;${author:36} ${title:*} ${note:10} ${year:4} ${=has-pdf=:1}${=type=:7}&#34;</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ref-select-bibliograhy</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -5809,7 +5813,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">dom</span> (<span style="color:#008000">with-temp-buffer</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#00f">insert</span> <span style="color:#19177c">dom-string</span>)
 </span></span><span style="display:flex;"><span>	       (<span style="color:#00f">libxml-parse-html-region</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> (<span style="color:#19177c">title</span> <span style="color:#19177c">sitename</span> <span style="color:#19177c">content</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> (<span style="color:#19177c">title</span> <span style="color:#19177c">sitename</span> <span style="color:#19177c">content</span> (<span style="color:#19177c">i</span> <span style="color:#666">0</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">child</span> (<span style="color:#19177c">dom-children</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">dom-by-id</span> <span style="color:#19177c">dom</span> <span style="color:#ba2121">&#34;readability-page-1&#34;</span>))))
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">child</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#008000">cond</span>
@@ -5819,16 +5823,18 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">sitename</span> (<span style="color:#19177c">dom-text</span> <span style="color:#19177c">child</span>)))
 </span></span><span style="display:flex;"><span>	   ((<span style="color:#00f">eq</span> (<span style="color:#00f">car</span> <span style="color:#19177c">child</span>) <span style="color:#19177c">&#39;div</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">content</span> <span style="color:#19177c">child</span>)))))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">dom-search</span>
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">content</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">when</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">el</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">pcase</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">&#39;h2</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h1</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">&#39;h3</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h2</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">&#39;h4</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h3</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">&#39;h5</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h4</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">&#39;h6</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h5</span>))))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">and</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">not</span> (<span style="color:#19177c">dom-by-tag</span> <span style="color:#19177c">content</span> <span style="color:#19177c">&#39;h1</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">dom-search</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">content</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">when</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">pcase</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">&#39;h2</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h1</span>))
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">&#39;h3</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h2</span>))
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">&#39;h4</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h3</span>))
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">&#39;h5</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h4</span>))
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">&#39;h6</span> (<span style="color:#008000">setf</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">&#39;h5</span>))))))))
 </span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#19177c">title</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">title</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">sitename</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">sitename</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">content</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">with-temp-buffer</span>
@@ -5906,10 +5912,13 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#19177c">file-name</span>)))))))
 </span></span></code></pre></div><h5 id="rendering-elfeed-entries-as-pdfs">Rendering elfeed entries as PDFs</h5>
 <p>This also goes really well with elfeed, because for these RSS feeds that have a well-formed HTML part there&rsquo;s even no need to invoke <code>rdrview</code>, we can just feed the HTML to <code>pandoc</code>.</p>
-<p>TODO escape title</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/elfeed-pdf-dir</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/.elfeed/pdf/&#34;</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-open-pdf</span> (<span style="color:#19177c">entry</span> <span style="color:#19177c">overwrite</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Open the current elfeed ENTRY with a pdf viewer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If OVERWRITE is non-nil, do the rendering even if the resulting
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">PDF already exists.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">current-prefix-arg</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">authors</span> (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">m</span>) (<span style="color:#00f">plist-get</span> <span style="color:#19177c">m</span> <span style="color:#008000">:name</span>)) (<span style="color:#19177c">elfeed-meta</span> <span style="color:#19177c">entry</span> <span style="color:#008000">:authors</span>)))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">feed-title</span> (<span style="color:#19177c">elfeed-feed-title</span> (<span style="color:#19177c">elfeed-entry-feed</span> <span style="color:#19177c">entry</span>)))
