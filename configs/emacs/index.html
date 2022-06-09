@@ -269,7 +269,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <li><a href="#controls">Controls</a></li>
 <li><a href="#ui-fixes">UI Fixes</a></li>
 <li><a href="#helper-functions">Helper functions</a></li>
-<li><a href="#improved-stack-frame-switching">Improved stack frame switching</a></li>
+<li><a href="#switch-to-stack-frame-with-filter">Switch to stack frame with filter</a></li>
 <li><a href="#smarter-switch-to-stack-frame">Smarter switch to stack frame</a></li>
 <li><a href="#debug-templates">Debug templates</a></li>
 </ul>
@@ -2286,7 +2286,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">insert</span> <span style="color:#19177c">value</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#00f">select-window</span> (<span style="color:#19177c">display-buffer</span> <span style="color:#19177c">buffer</span>))))))
-</span></span></code></pre></div><h5 id="improved-stack-frame-switching">Improved stack frame switching</h5>
+</span></span></code></pre></div><h5 id="switch-to-stack-frame-with-filter">Switch to stack frame with filter</h5>
 <p>One significant improvement over Chrome Inspector for my particular stack is an ability to filter the stack frame list, for instance, to see only frames that relate to my current project.</p>
 <p>So, here are functions that customize the filters:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;dap-mode</span>
@@ -2366,35 +2366,34 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>				      <span style="color:#008000">return</span> <span style="color:#19177c">persp-name</span>))
 </span></span><span style="display:flex;"><span>			<span style="color:#008000">return</span> (<span style="color:#19177c">cl-position</span> <span style="color:#19177c">frame</span> <span style="color:#19177c">exwm-workspace--list</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">target-workspace</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">buf</span> <span style="color:#19177c">target-workspace</span>))))
-</span></span></code></pre></div><p>And override <code>dap--go-to-stack-frame</code> to take that into account:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dap--go-to-stack-frame-override</span> (<span style="color:#19177c">debug-session</span> <span style="color:#19177c">stack-frame</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Make STACK-FRAME the active STACK-FRAME of DEBUG-SESSION.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">with-lsp-workspace</span> (<span style="color:#19177c">dap--debug-session-workspace</span> <span style="color:#19177c">debug-session</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">stack-frame</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">-let*</span> (((<span style="color:#19177c">&amp;hash</span> <span style="color:#ba2121">&#34;line&#34;</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;column&#34;</span> <span style="color:#19177c">column</span> <span style="color:#ba2121">&#34;name&#34;</span> <span style="color:#19177c">name</span>) <span style="color:#19177c">stack-frame</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">path</span> (<span style="color:#19177c">dap--get-path-for-frame</span> <span style="color:#19177c">stack-frame</span>)))
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setf</span> (<span style="color:#19177c">dap--debug-session-active-frame</span> <span style="color:#19177c">debug-session</span>) <span style="color:#19177c">stack-frame</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; If we have a source file with path attached, open it and</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; position the point in the line/column referenced in the</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; stack trace.</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#008000">and</span> <span style="color:#19177c">path</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">path</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">progn</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">let</span> ((<span style="color:#19177c">exwm-target</span> (<span style="color:#19177c">my/exwm-perspective-find-buffer</span> <span style="color:#19177c">path</span>)))
-</span></span><span style="display:flex;"><span>		(<span style="color:#008000">if</span> <span style="color:#19177c">exwm-target</span>
-</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">progn</span>
-</span></span><span style="display:flex;"><span>		      (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">exwm-target</span>) <span style="color:#19177c">exwm-workspace-current-index</span>)
-</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">exwm-workspace-switch</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">exwm-target</span>)))
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">persp-switch-to-buffer</span> (<span style="color:#00f">car</span> <span style="color:#19177c">exwm-target</span>)))
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">select-window</span> (<span style="color:#19177c">get-mru-window</span> (<span style="color:#00f">selected-frame</span>) <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">find-file</span> <span style="color:#19177c">path</span>)))
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">forward-line</span> (<span style="color:#00f">1-</span> <span style="color:#19177c">line</span>))
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">forward-char</span> <span style="color:#19177c">column</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;No source code for %s. Cursor at %s:%s.&#34;</span> <span style="color:#19177c">name</span> <span style="color:#19177c">line</span> <span style="color:#19177c">column</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">run-hook-with-args</span> <span style="color:#19177c">&#39;dap-stack-frame-changed-hook</span> <span style="color:#19177c">debug-session</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;exwm</span>
+</span></span></code></pre></div><p>And override <code>dap--go-to-stack-frame</code> to take that into account. For some reason, evaluating this before <code>dap-mode</code> doesn&rsquo;t work.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;exwm</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;dap-mode</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">defun</span> <span style="color:#19177c">my/dap--go-to-stack-frame-override</span> (<span style="color:#19177c">debug-session</span> <span style="color:#19177c">stack-frame</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;Make STACK-FRAME the active STACK-FRAME of DEBUG-SESSION.&#34;</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">with-lsp-workspace</span> (<span style="color:#19177c">dap--debug-session-workspace</span> <span style="color:#19177c">debug-session</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> <span style="color:#19177c">stack-frame</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">-let*</span> (((<span style="color:#19177c">&amp;hash</span> <span style="color:#ba2121">&#34;line&#34;</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;column&#34;</span> <span style="color:#19177c">column</span> <span style="color:#ba2121">&#34;name&#34;</span> <span style="color:#19177c">name</span>) <span style="color:#19177c">stack-frame</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">path</span> (<span style="color:#19177c">dap--get-path-for-frame</span> <span style="color:#19177c">stack-frame</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setf</span> (<span style="color:#19177c">dap--debug-session-active-frame</span> <span style="color:#19177c">debug-session</span>) <span style="color:#19177c">stack-frame</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; If we have a source file with path attached, open it and</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; position the point in the line/column referenced in the</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; stack trace.</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> <span style="color:#19177c">path</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">let</span> ((<span style="color:#19177c">exwm-target</span> (<span style="color:#19177c">my/exwm-perspective-find-buffer</span> <span style="color:#19177c">path</span>)))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">if</span> <span style="color:#19177c">exwm-target</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">exwm-target</span>) <span style="color:#19177c">exwm-workspace-current-index</span>)
+</span></span><span style="display:flex;"><span>			    (<span style="color:#19177c">exwm-workspace-switch</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">exwm-target</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">persp-switch-to-buffer</span> (<span style="color:#00f">car</span> <span style="color:#19177c">exwm-target</span>)))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">select-window</span> (<span style="color:#19177c">get-mru-window</span> (<span style="color:#00f">selected-frame</span>) <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">find-file</span> <span style="color:#19177c">path</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">forward-line</span> (<span style="color:#00f">1-</span> <span style="color:#19177c">line</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">forward-char</span> <span style="color:#19177c">column</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;No source code for %s. Cursor at %s:%s.&#34;</span> <span style="color:#19177c">name</span> <span style="color:#19177c">line</span> <span style="color:#19177c">column</span>))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">run-hook-with-args</span> <span style="color:#19177c">&#39;dap-stack-frame-changed-hook</span> <span style="color:#19177c">debug-session</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dap--go-to-stack-frame</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dap--go-to-stack-frame-override</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (advice-remove #&#39;dap--go-to-stack-frame #&#39;my/dap--go-to-stack-frame-override)</span>
@@ -2426,6 +2425,7 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/copilot-tab</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">copilot-accept-completion</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">indent-for-tab-command</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/setup-copilot</span> ()
@@ -2434,7 +2434,9 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/copilot-mode-map</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">evil-define-key*</span> <span style="color:#19177c">&#39;insert</span> <span style="color:#19177c">map</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span>) <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span>) <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;M-j&#34;</span>) <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-accept-completion-by-line</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;M-l&#34;</span>) <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-accept-completion-by-word</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">map</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">define-minor-mode</span> <span style="color:#19177c">my/copilot-mode</span>
@@ -2446,6 +2448,9 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;company-active-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;backtab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;copilot-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-mode</span>))
 </span></span></code></pre></div><h4 id="general-additional-config">General additional config</h4>
 <p>Make smartparens behave the way I like for C-like languages.</p>
@@ -2478,11 +2483,16 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </table>
 <p>My bit of config here:</p>
 <ul>
-<li>makes Emmet activate only in certain mmm-mode submodes.</li>
 <li>makes <code>TAB</code> the only key I have to use</li>
 </ul>
 <!--listend-->
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emmet-mode</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/should-run-emmet-p</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">and</span> <span style="color:#19177c">emmet-mode</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;web-mode</span>)
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">member</span> (<span style="color:#19177c">web-mode-language-at-pos</span>) <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;html&#34;</span> <span style="color:#ba2121">&#34;css&#34;</span>)))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;web-mode</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emmet-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> ((<span style="color:#19177c">vue-html-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">emmet-mode</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">svelte-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">emmet-mode</span>)
@@ -2491,18 +2501,13 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">css-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">emmet-mode</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">scss-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">emmet-mode</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq emmet-indent-after-insert nil)</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/emmet-mmm-submodes</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">vue-html-mode</span> <span style="color:#19177c">css-mode</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">my/emmet-or-tab</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#008000">and</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;mmm-current-submode</span>)
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">mmm-current-submode</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">mmm-current-submode</span> <span style="color:#19177c">my/emmet-mmm-submodes</span>)))
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">indent-for-tab-command</span> <span style="color:#19177c">arg</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">or</span> (<span style="color:#19177c">emmet-expand-line</span> <span style="color:#19177c">arg</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">emmet-go-to-edit-point</span> <span style="color:#666">1</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">indent-for-tab-command</span> <span style="color:#19177c">arg</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#19177c">my/short-run-emmet-p</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">or</span> (<span style="color:#19177c">emmet-expand-line</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">emmet-go-to-edit-point</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">indent-for-tab-command</span> <span style="color:#19177c">arg</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">indent-for-tab-command</span> <span style="color:#19177c">arg</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-imap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;emmet-mode-keymap</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;TAB&#34;</span> <span style="color:#19177c">&#39;my/emmet-or-tab</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&lt;backtab&gt;&#34;</span> <span style="color:#19177c">&#39;emmet-prev-edit-point</span>))
@@ -2603,7 +2608,9 @@ One thing where Emacs is particularly good is writing Lisp code, e.g. Clojure, C
 </span></span></code></pre></div><p>Vue settings</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/web-mode-vue-setup</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.vue&#34;</span> <span style="color:#19177c">eos</span>) (<span style="color:#00f">buffer-name</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-script-padding</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-script-padding</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-style-padding</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">create-lockfiles</span> <span style="color:#800">nil</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;web-mode-hook</span> <span style="color:#19177c">&#39;my/web-mode-vue-setup</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;editorconfig-after-apply-functions</span> <span style="color:#19177c">&#39;my/web-mode-vue-setup</span>)
