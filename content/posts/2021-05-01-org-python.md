@@ -6,7 +6,7 @@ tags = ["emacs", "org"]
 draft = false
 +++
 
-{{< figure src="/ox-hugo/org-python-screenshot.png" >}}
+{{< figure src="/images/org-python/org-python-screenshot.png" >}}
 
 
 ## Why? {#why}
@@ -17,11 +17,11 @@ But while I was using the former, and then the latter, I was also an as-full-tim
 
 A possibility for change appeared with my discovery of Emacs not so long ago. Emacs, a substantially more extensible piece of software, potentially can be used for the mentioned kind of programming. So I decided to try.
 
-Sometime past that decision, it's time to wrap up the results. To start with, I'll briefly discuss the pros & cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:
+Sometime past that decision, it's time to wrap up the results. To start with, I'll briefly discuss the pros &amp; cons of using Org mode rather than Jupyter Notebook/Lab. Here is my list of advantages:
 
 -   Emacs, at least for me, is way more comfortable to use than a browser
 -   Org mode allows using multiple programming languages in one file or multiple sessions with one programming language
--   Richer & way more flexible export & tangle capacities
+-   Richer &amp; way more flexible export &amp; tangle capacities
 -   More reasonable version control because org mode is just plain text, contrary to Jupyter's JSONs
 
 The first point deserves to be spelled out with more detail. To start with, Emacs is an objectively better text editor than Jupyter, as Emacs offers a considerable superset of Jupyter's features concerning just writing and editing text. The farthest one can go with Jupyter Lab is to install a vim emulation plugin, which still isn't as good as Evil mode.
@@ -85,7 +85,7 @@ If you use [ob-async](https://github.com/astahlman/ob-async), you have to set `j
 
 So, we've set up a basic emacs-jupyter configuration.
 
-The catch here is that Jupyter should be available on Emacs startup (at the time of evaluation of the `emacs-jupyter` package, to be precise). That means, if you are launching Emacs with something like an application launcher, global Python & Jupyter will be used.
+The catch here is that Jupyter should be available on Emacs startup (at the time of evaluation of the `emacs-jupyter` package, to be precise). That means, if you are launching Emacs with something like an application launcher, global Python &amp; Jupyter will be used.
 
 ```python
 import sys
@@ -101,7 +101,7 @@ Which is probably not what we want. To resolve that, we have to make the right P
 
 ### Anaconda {#anaconda}
 
-If you were using Jupyter Lab or Notebook before, there is a good chance you install it via [Anaconda](https://anaconda.org/). If not, in a nutshell, it is a package & environment manager, which specializes in Python & R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
+If you were using Jupyter Lab or Notebook before, there is a good chance you install it via [Anaconda](https://anaconda.org/). If not, in a nutshell, it is a package &amp; environment manager, which specializes in Python &amp; R, but also supports a whole lot of stuff like Node.js. In my opinion, it is the easiest way to manage multiple Python installations if you don't use some advanced package manager like Guix.
 
 As one may expect, there is an Emacs package called [conda.el](https://github.com/necaris/conda.el) to help working with conda environments in Emacs. We have to put it somewhere before the `emacs-jupyter` package and call `conda-env-activate`:
 
@@ -304,7 +304,7 @@ print(tabulate.tabulate(df, headers=df.columns, tablefmt="orgtbl"))
 ```
 
 
-### HTML & other rich output {#html-and-other-rich-output}
+### HTML &amp; other rich output {#html-and-other-rich-output}
 
 Yet another solution is to use emacs-jupyter's option `:pandoc t`, which invokes pandoc to convert HTML, LaTeX, and Markdown to Org. Predictably, this is slower than the options above.
 
@@ -534,7 +534,7 @@ If you use the [rainbow-delimeters](https://github.com/Fanael/rainbow-delimiters
 ```
 
 
-### LaTeX -> pdf {#latex-pdf}
+### LaTeX -&gt; pdf {#latex-pdf}
 
 Even though I use LaTeX quite extensively, I don't like to add another layer of complexity here and 98% of the time write plain `.tex` files. LaTeX by itself provides many good options whenever you need to write a document together with some data or source code, contrary to "traditional" text processors.
 
@@ -580,7 +580,7 @@ In the document itself, add the following headers:
 
 14pt size is required by certain state standards of ours for some reason.
 
-After which you can put whatever you want in the preamble with `LATEX_HEADER`. My workflow with LaTeX is to write a bunch of `.sty` files beforehand and import the necessary ones in the preamble. [Here](https://github.com/SqrtMinusOne/LaTeX%5Ftemplates) is the repo with these files, although quite predictably, it's a mess. At any rate, I have to write something like the following in the target Org file:
+After which you can put whatever you want in the preamble with `LATEX_HEADER`. My workflow with LaTeX is to write a bunch of `.sty` files beforehand and import the necessary ones in the preamble. [Here](https://github.com/SqrtMinusOne/LaTeX_templates) is the repo with these files, although quite predictably, it's a mess. At any rate, I have to write something like the following in the target Org file:
 
 ```text
 #+LATEX_HEADER: \usepackage{styles/generalPreamble}
