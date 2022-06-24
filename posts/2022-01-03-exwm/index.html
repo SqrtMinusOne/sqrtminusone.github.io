@@ -156,8 +156,8 @@
 </span></span></code></pre></div><p>workspaces 2 and 3 on the machine with hostname &ldquo;indigo&rdquo; will be displayed on the monitor <code>DVI-D-0</code>.</p>
 <p>However, some features, common in other tiling WMs, are missing in EXWM out of the box, namely:</p>
 <ul>
-<li>a command to <a href="https://i3wm.org/docs/userguide.html#%5Ffocusing%5Fmoving%5Fcontainers">switch to another monitor</a>;</li>
-<li>a command to <a href="https://i3wm.org/docs/userguide.html#move%5Fto%5Foutputs">move the current workspace to another monitor</a>;</li>
+<li>a command to <a href="https://i3wm.org/docs/userguide.html#_focusing_moving_containers">switch to another monitor</a>;</li>
+<li>a command to <a href="https://i3wm.org/docs/userguide.html#move_to_outputs">move the current workspace to another monitor</a>;</li>
 <li>using the same commands to switch between windows and monitors.</li>
 </ul>
 <p>Here&rsquo;s my take on implementing them.</p>
@@ -216,7 +216,7 @@
 </span></span></code></pre></div><h3 id="switch-to-another-monitor">Switch to another monitor</h3>
 <p>With the functions from the previous two sections, we can implement switching to another monitor by switching to the most recently used workspace on that monitor.</p>
 <video controls width="100%">
-<source src="/ox-hugo/exwm-workspace-switch.mp4" type="video/mp4">
+<source src="/videos/exwm-workspace-switch.mp4" type="video/mp4">
 </video>
 <p>One caveat here is that on the startup the <code>my/exwm-last-workspaces</code> variable won&rsquo;t have any values from other monitor(s), so this list is concatenated with the list of available workspace indices.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-switch-to-other-monitor</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
@@ -238,7 +238,7 @@
 <h3 id="move-the-workspace-to-another-monitor">Move the workspace to another monitor</h3>
 <p>Now, moving the workspace to another monitor.</p>
 <video controls width="100%">
-<source src="/ox-hugo/exwm-workspace-move.mp4" type="video/mp4">
+<source src="/videos/exwm-workspace-move.mp4" type="video/mp4">
 </video>
 <p>This is actually quite easy to pull off - one just has to update <code>exwm-randr-workspace-monitor-plist</code> accordingly and run <code>exwm-randr-refresh</code>. I just add another check there because I don&rsquo;t want some monitor to remain without workspaces at all.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-workspace-switch-monitor</span> ()
@@ -341,7 +341,7 @@
 </span></span></code></pre></div><h3 id="resizing-windows">Resizing windows</h3>
 <p>I find this odd that there are different commands to resize tiling and floating windows.</p>
 <video controls width="100%">
-<source src="/ox-hugo/exwm-resize-hydra.mp4" type="video/mp4">
+<source src="/videos/exwm-resize-hydra.mp4" type="video/mp4">
 </video>
 <p>So let&rsquo;s define one command to perform both resizes depending on the context:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-resize-value</span> <span style="color:#666">5</span>)

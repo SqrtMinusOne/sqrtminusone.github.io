@@ -66,10 +66,10 @@
 <p>Any classical IMAP/SMTP client is hard to use in my case, because a message with multiple labels is copied to IMAP folders for each of the label plus the inbox folder, and the copies look like different messages from the client-side. For example, a message can be read in one label and unread in another.</p>
 <p>For a few years, my solution was <a href="https://getmailspring.com/">Mailspring</a>, which provides first-class support for labels. However, it has a feature to deploy <a href="https://www.bbc.com/news/technology-56071437">spy pixels</a> on emails (and offers no protection from them, obviously), the client is Electron-based with a mouse-driven interface, and the sync engine was closed-source at the time.</p>
 <p>So, I found an alternative in Emacs+notmuch+lieer and ditched one more proprietary app (the last big one I can&rsquo;t let go of is DataGrip).</p>
-<figure><img src="/ox-hugo/main.png"/>
+<figure><img src="/images/gmail/main.png"/>
 </figure>
 
-<figure><img src="/ox-hugo/mail.png"/>
+<figure><img src="/images/gmail/mail.png"/>
 </figure>
 
 <p>Notmuch&rsquo;s tags are just as advanced as Gmail&rsquo;s labels, so I have basically the same mail structure accessible from Emacs, Gmail Android client and even the web UI when I don&rsquo;t have access to the first two.</p>
@@ -95,6 +95,7 @@
 </span></span><span style="display:flex;"><span>pip install .
 </span></span></code></pre></div><p>After which we may check if the <code>gmi</code> executable is available:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>which gmi
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/home/pavel/Programs/miniconda3/envs/mail/bin/gmi
 </span></span></code></pre></div><h3 id="notmuch">Notmuch</h3>
 <p><a href="https://notmuchmail.org/">Notmuch</a> is present in most of the package repositories, so you can install it with your package manager, which is <code>pacman</code> in my case.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -S notmuch
@@ -187,7 +188,7 @@
 <p>Authorization parameters will be saved to your <a href="https://www.emacswiki.org/emacs/GnusAuthinfo">authinfo</a> file. If you didn&rsquo;t have one, the plaintext <code>.authinfo</code> will be created, so it&rsquo;s reasonable to encrypt it:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">cd</span> ~
 </span></span><span style="display:flex;"><span>gpg -o .authinfo.gpg -c --cipher-algo AES256 .authinfo
-</span></span></code></pre></div><p>However, if you plan to use multiple accounts with different SMTP servers, it makes more sense to use something like <a href="https://marlam.de/msmtp/msmtp.html">MSMTP</a> to manage multiple accounts. Here are a couple of examples (<a href="https://www.reddit.com/r/emacs/comments/9piml5/a%5Ffew%5Fquick%5Femacsnotmuch%5Fquestions/e83zcck?utm%5Fsource=share&amp;utm%5Fmedium=web2x&amp;context=3">1</a>, <a href="https://www.reddit.com/r/emacs/comments/9piml5/a%5Ffew%5Fquick%5Femacsnotmuch%5Fquestions/e84otah?utm%5Fsource=share&amp;utm%5Fmedium=web2x&amp;context=3">2</a>) how to do that.</p>
+</span></span></code></pre></div><p>However, if you plan to use multiple accounts with different SMTP servers, it makes more sense to use something like <a href="https://marlam.de/msmtp/msmtp.html">MSMTP</a> to manage multiple accounts. Here are a couple of examples (<a href="https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e83zcck?utm_source=share&amp;utm_medium=web2x&amp;context=3">1</a>, <a href="https://www.reddit.com/r/emacs/comments/9piml5/a_few_quick_emacsnotmuch_questions/e84otah?utm_source=share&amp;utm_medium=web2x&amp;context=3">2</a>) how to do that.</p>
 <p>Another alternative for Gmail is to use <a href="https://github.com/gauteh/lieer/wiki/GNU-Emacs-and-Lieer">lieer as sendmail program</a>. That may make sense if you don&rsquo;t want to enable IMAP and SMTP on your account.</p>
 <p>There are also <a href="https://notmuchmail.org/emacstips/#index13h2">a bunch of ways</a> to set up address completion if the built-in completion based on notmuch database does not suffice.</p>
 <p>I also use <a href="https://github.com/mhayashi1120/Emacs-langtool">LanguageTool for Emacs</a> to do a spell checking of important emails (integrations like that really make Emacs shine). For some reason, developers don&rsquo;t give a link to download the server on the frontpage, so <a href="https://dev.languagetool.org/http-server">here it is</a>. And here is the relevant part of my Emacs config:</p>
@@ -287,7 +288,7 @@
 </span></span></code></pre></div><p>The script is launched with cron every 5 minutes:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>*/5 * * * * bash /home/pavel/bin/scripts/check-email
 </span></span></code></pre></div><p>Here&rsquo;s how the notification looks like:
-<img src="/ox-hugo/notification.png" alt=""></p>
+<img src="/images/gmail/notification.png" alt=""></p>
 <h2 id="caveats">Caveats</h2>
 <ul>
 <li><a href="https://github.com/gauteh/lieer#caveats">lieer</a> has an extensive list of caveats concerning Gmail API</li>
