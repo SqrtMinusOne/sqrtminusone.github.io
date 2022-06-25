@@ -12,8 +12,8 @@ Master's student of Saint-Petersurg State Electrotechnical University, Russia at
 ### Links
 * [e-mail](mailto:thexcloud@gmail.com)
 * [GitHub](https://github.com/SqrtMinusOne)
-* [VK](https://vk.com/sqrtminusone)
 * [Twitter](https://twitter.com/SqrtMinusTwo)
+* [Telegram](https://t.me/SqrtMinusTwo)
 * [Reddit](https://www.reddit.com/user/XCapitan_1)
 
 ### Also

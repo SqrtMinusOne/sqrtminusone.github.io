@@ -2,12 +2,16 @@
     <hr>
     <div class="container text-center">
         {{ range $item := .Site.Params.socialIcons }}
-            <a href="{{ $item.url }}" class="{{ $item.icon }} fa-1x" title="{{ $item.title }}"></a>
+        <a href="{{ $item.url }}" class="{{ $item.icon }} fa-1x" title="{{ $item.title }}"></a>
         {{ end }}
     </div>
     {{ with .Site.Params.footer }}
-        <div class="container text-center">
-            <a href="{{ .url | absURL }}" title="{{ .text }}"><small>{{ .text }}</small></a>
-        </div>
+    <div class="container text-center">
+        <a href="{{ .url | absURL }}" title="{{ .text }}"><small>{{ .text | safeHTML }}</small></a>
+        {{ if .license }}
+        <br>
+        <a href="{{ .licenseURL }}" title="{{ .license }}"><small>{{ .license }}</small></a>
+        {{ end }}
+    </div>
     {{ end }}
 </div>
