@@ -1,12 +1,15 @@
 const tocId = "TableOfContents";
 const actualContentId = "actual-content";
+let showAll = false;
+let currentActiveLinkId = null;
+let elemsToHide = [];
+let linksById = {};
+
 let headerObserver;
 
 function observeHeadings() {
   const links = document.querySelectorAll(`#${tocId} a`);
   const headings = document.querySelectorAll(`${actualContentId} h1,h2,h3,h4`);
-  const elemsToHide = [];
-  const linksById = {};
 
   for (const link of links) {
     linksById[link.getAttribute("href")] = link;
@@ -19,30 +22,20 @@ function observeHeadings() {
 
   headerObserver = new IntersectionObserver(
     (entries) => {
-      let newActiveLinkId;
       for (const entry of entries) {
         if (entry.isIntersecting && linksById[`#${entry.target.id}`]) {
-          newActiveLinkId = `#${entry.target.id}`;
+          currentActiveLinkId = `#${entry.target.id}`;
           break;
         }
       }
-      if (newActiveLinkId) {
+      if (currentActiveLinkId) {
         for (const link of links) {
           link.classList.remove("active");
         }
-        for (const elem of elemsToHide) {
-          elem.classList.add("hidden");
-        }
-        linksById[newActiveLinkId].classList.add("active");
-        for (
-          let elem = linksById[newActiveLinkId];
-          (elem = elem.parentElement);
-          elem.id !== tocId
-        ) {
-          elem.classList.remove("hidden");
-        }
-        for (const elem of linksById[newActiveLinkId].parentElement.children) {
-          elem.classList.remove("hidden");
+        linksById[currentActiveLinkId].classList.add("active");
+
+        if (!showAll) {
+          hideHeadings();
         }
       }
     },
@@ -55,11 +48,56 @@ function observeHeadings() {
   for (const heading of headings) {
     headerObserver.observe(heading);
   }
+  hideHeadings();
+}
+
+function observeButtons() {
+  const unhideButton = document.getElementById("unhide-all-button");
+  const hideButton = document.getElementById("hide-all-button");
+  unhideButton.addEventListener("click", () => {
+    showAll = true;
+    showHeadings();
+    unhideButton.classList.add("hidden");
+    hideButton.classList.remove("hidden");
+  });
+  hideButton.addEventListener("click", () => {
+    showAll = false;
+    hideHeadings();
+    hideButton.classList.add("hidden");
+    unhideButton.classList.remove("hidden");
+  });
+  unhideButton.classList.remove("hidden");
+}
+
+function hideHeadings() {
+  for (const elem of elemsToHide) {
+    elem.classList.add("hidden");
+  }
+  if (!currentActiveLinkId) {
+    return;
+  }
+  for (
+    let elem = linksById[currentActiveLinkId];
+    (elem = elem.parentElement);
+    elem.id !== tocId
+  ) {
+    elem.classList.remove("hidden");
+  }
+  for (const elem of linksById[currentActiveLinkId].parentElement.children) {
+    elem.classList.remove("hidden");
+  }
+}
+
+function showHeadings() {
+  for (const elem of elemsToHide) {
+    elem.classList.remove("hidden");
+  }
 }
 
 window.addEventListener("load", (event) => {
   if ("IntersectionObserver" in window) {
     observeHeadings();
+    observeButtons();
   }
 });
 
