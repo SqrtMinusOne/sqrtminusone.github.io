@@ -31,6 +31,9 @@
   :ensure t)
 
 (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org)
+(setq org-hugo-anchor-functions '(org-hugo-get-page-or-bundle-name
+                                  org-hugo-get-custom-id
+                                  org-hugo-get-md5))
 
 (setq org-hugo-section "configs")
 (setq org-hugo-base-dir (vc-find-root default-directory ".git"))
