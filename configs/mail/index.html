@@ -58,9 +58,12 @@
 </div>
 <hr>
 <div id="content">
-<div class="container">
-    <h1>Mail</h1>
-    <p>:TOC:      :include all :depth 3</p>
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">Mail</h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen">Mail</h1>
+        <p>:TOC:      :include all :depth 3</p>
 <p>My email configration. Currently I use <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
 <p>My problem with any particular mail setup was that I use Gmail labels quite extensively, and handling these over IMAP is rather awkward. Notmuch seems to be the only software that provides the same first-class support for labels.</p>
 <p>But I also have an Exchange account, with which I communicate via IMAP/SMTP adapter, and in this case, I synchronize notmuch tags and IMAP folders.</p>
@@ -68,7 +71,7 @@
 <ul>
 <li><a href="https://sqrtminusone.xyz/posts/2021-02-27-gmail/">My post</a> about email configuration. I wrote it some time ago, but the general idea remains.</li>
 </ul>
-<h2 id="lieer">Lieer</h2>
+<h2 id="3e7475">Lieer</h2>
 <table>
 <thead>
 <tr>
@@ -89,7 +92,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>gmi set --replace-slash-with-dot
 </span></span><span style="display:flex;"><span>gmi set --ignore-tags-local new
 </span></span></code></pre></div><p>Running <code>gmi sync</code> in the required directory performs the synchronization. The first sync takes a while, the subsequent syncs are pretty fast.</p>
-<h2 id="davmail">DavMail</h2>
+<h2 id="0abc7d">DavMail</h2>
 <p>is a gateway between MS Exchange and the rest of the world, which uses IMAP/SMTP/LDAP/etc. As I have one corporate MS Exchange address, this is just the program I need. As of yet, it isn&rsquo;t packaged for Guix, but it&rsquo;s easy enough to download.</p>
 <p>It has a GUI mode, but I prefer headless config.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">davmail.server</span><span style="color:#666">=</span><span style="color:#ba2121">true</span>
@@ -109,8 +112,8 @@
 </span></span></code></pre></div><p>Also it&rsquo;s a bit of problem to get it launched as it looks for its jars in the pwd, so here is a script.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">cd</span> <span style="color:#19177c">$HOME</span>/bin/davmail-6.0.0-3375
 </span></span><span style="display:flex;"><span>./davmail davmail.properties
-</span></span></code></pre></div><p>Shepherd service is defined in <a href="/configs/desktop/#davmail">Desktop.org</a>.</p>
-<h2 id="offlineimap">OfflineIMAP</h2>
+</span></span></code></pre></div><p>Shepherd service is defined in <a href="/configs/desktop/#56f1ce">Desktop.org</a>.</p>
+<h2 id="aecb75">OfflineIMAP</h2>
 <table>
 <thead>
 <tr>
@@ -151,7 +154,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">starttls</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ssl</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">sslcacertfile</span> <span style="color:#666">=</span> <span style="color:#ba2121">/etc/ssl/certs/ca-certificates.crt</span>
-</span></span></code></pre></div><h2 id="notmuch">Notmuch</h2>
+</span></span></code></pre></div><h2 id="65a69a">Notmuch</h2>
 <table>
 <thead>
 <tr>
@@ -168,7 +171,7 @@
 </tbody>
 </table>
 <p>Notmuch is an email indexer program, which handles labels in a way somewhat similar to Gmail. It also provides a frontend for Emacs, but it&rsquo;s not the only one available.</p>
-<h3 id="config">Config</h3>
+<h3 id="fa535f">Config</h3>
 <p>Not much is going on here.</p>
 <p>First, the database path.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[database]</span>
@@ -188,7 +191,7 @@
 </span></span></code></pre></div><p>Maildir compatibility.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[maildir]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">synchronize_flags</span><span style="color:#666">=</span><span style="color:#ba2121">true</span>
-</span></span></code></pre></div><h3 id="hooks">Hooks</h3>
+</span></span></code></pre></div><h3 id="35ad48">Hooks</h3>
 <p>Now we have to link up lieer &amp; davmail&rsquo;s maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.</p>
 <p>With lieer and Gmail, it is enough to simply run the program, because Gmail has first-class support for tags. Maildir does not, so I decide to synchronize notmuch tags and IMAP folders. In essence, the idea is to:</p>
 <ul>
@@ -306,7 +309,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span>))
 </span></span><span style="display:flex;"><span>     <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">rules</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
-</span></span></code></pre></div><h4 id="pre-new"><code>pre_new</code></h4>
+</span></span></code></pre></div><h4 id="0641ad"><code>pre_new</code></h4>
 <p>This hook runs fetch from Gmail &amp; offlineimap in parallel before the <code>notmuch new</code> command. The <code>parallel</code> command is provided by <a href="https://www.gnu.org/software/parallel/">GNU Parallel</a>.</p>
 <p>It isn&rsquo;t necessary to run <code>cd</code> for offlineimap, but it&rsquo;s easier to write that way.</p>
 <p><a id="code-snippet--pre-new-pvkorytov-tags"></a></p>
@@ -319,7 +322,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">echo &#34;Pre-new filters done&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">parallel --link -j0 &#34;(cd /home/pavel/Mail/{1}/ &amp;&amp; {2} {3})&#34; ::: thexcloud progin6304 pvkorytov_etu ::: &#34;$GMI&#34; &#34;$GMI&#34; &#34;offlineima</span>p<span style="color:#ba2121">&#34; ::: sync sync &#34;&#34;
-</span></span></span></code></pre></div><h4 id="post-new"><code>post_new</code></h4>
+</span></span></span></code></pre></div><h4 id="36877e"><code>post_new</code></h4>
 <p>And this hook tags different mailboxes with different tags.</p>
 <p><a id="code-snippet--post-new-pvkorytov-tags"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/mail-format-tags-rules</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;pvkorytov_etu&#34;</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)
@@ -331,7 +334,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(ma</span>ke_tag<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,remove<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span><span style="color:#666">)</span>&gt;&gt;
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Post-new filters done&#34;</span>
 </span></span><span style="display:flex;"><span>notmuch tag -new <span style="color:#ba2121">&#34;tag:new&#34;</span>
-</span></span></code></pre></div><h2 id="sync-script">Sync script</h2>
+</span></span></code></pre></div><h2 id="cb67a8">Sync script</h2>
 <p>A script to run <code>notmuch new</code> and push a notification if there is new mail.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">DISPLAY</span><span style="color:#666">=</span>:0
 </span></span><span style="display:flex;"><span><span style="color:#19177c">CHECK_FILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/Mail/.last_check&#34;</span>
@@ -363,7 +366,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">$(</span>date +%s<span style="color:#008000;font-weight:bold">)</span><span style="color:#ba2121">&#34;</span> &gt; <span style="color:#19177c">$CHECK_FILE</span>
 </span></span></code></pre></div><p>The script is ran via GNU Mcron every 5 minutes.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">job</span> <span style="color:#ba2121">&#34;*/5 * * * * &#34;</span> <span style="color:#ba2121">&#34;~/bin/scripts/check-email&#34;</span>)
-</span></span></code></pre></div><h2 id="msmtp">MSMTP</h2>
+</span></span></code></pre></div><h2 id="dc254f">MSMTP</h2>
 <table>
 <thead>
 <tr>
@@ -405,7 +408,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span></span><span style="display:flex;"><span><span style=""></span>from pvkorytov@etu.ru<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>user pvkorytov<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>passwordeval <span style="color:#ba2121">&#34;pass show Job/Digital/Email/pvkorytov@etu.ru | head -n 1&#34;</span><span style="">
-</span></span></span></code></pre></div><h2 id="emacs">Emacs</h2>
+</span></span></span></code></pre></div><h2 id="169baf">Emacs</h2>
 <table>
 <thead>
 <tr>
@@ -465,7 +468,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-hello-mode-hook</span>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
 </span></span></code></pre></div><p>The file to which this is tangled is read in the init.el.</p>
-<h3 id="saved-filters-and-keybindings">Saved filters and keybindings</h3>
+<h3 id="4eb489">Saved filters and keybindings</h3>
 <p>I want to have the saved filters available in both notmuch interface as as keybindings. So a bit more of abusing org tables.</p>
 <p>Root keybindings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
@@ -575,7 +578,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;am&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;format-notmuch-keybindings</span>()<span style="color:#19177c">&gt;&gt;</span>)
-</span></span></code></pre></div><h3 id="signing-messages">Signing messages</h3>
+</span></span></code></pre></div><h3 id="0f17c4">Signing messages</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;message-setup-hook</span> <span style="color:#19177c">&#39;mml-secure-sign-pgpmime</span>))
 </span></span><span style="display:flex;"><span>
@@ -587,7 +590,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">CMS</span>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))))
-</span></span></code></pre></div><h2 id="mailcap">mailcap</h2>
+</span></span></code></pre></div><h2 id="40a27a">mailcap</h2>
 <p>mailcap file is a file which defines how to read to different MIME types. Notmuch also uses it, so why not keep it here.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>audio/*; mpc add %s
 </span></span><span style="display:flex;"><span>
@@ -598,13 +601,49 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>application/postscript ; zathura %s
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>text/html; firefox %s
-</span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
+</span></span></code></pre></div><h2 id="0680f7">Guix settings</h2>
 <p><a id="code-snippet--packages"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-guix-dependencies</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">specifications-&gt;manifest</span>
 </span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>()<span style="color:#19177c">&gt;&gt;</span>))
 </span></span></code></pre></div>
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#3e7475">Lieer</a></li>
+    <li><a href="#0abc7d">DavMail</a></li>
+    <li><a href="#aecb75">OfflineIMAP</a></li>
+    <li><a href="#65a69a">Notmuch</a>
+      <ul>
+        <li><a href="#fa535f">Config</a></li>
+        <li><a href="#35ad48">Hooks</a>
+          <ul>
+            <li><a href="#0641ad"><code>pre_new</code></a></li>
+            <li><a href="#36877e"><code>post_new</code></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#cb67a8">Sync script</a></li>
+    <li><a href="#dc254f">MSMTP</a></li>
+    <li><a href="#169baf">Emacs</a>
+      <ul>
+        <li><a href="#4eb489">Saved filters and keybindings</a></li>
+        <li><a href="#0f17c4">Signing messages</a></li>
+      </ul>
+    </li>
+    <li><a href="#40a27a">mailcap</a></li>
+    <li><a href="#0680f7">Guix settings</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
 </div>
 
         </div><div id="footer" class="mb-5">
