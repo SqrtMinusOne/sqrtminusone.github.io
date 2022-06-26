@@ -55,7 +55,11 @@
                       file))
              file 'overwrite))
 
-;; (copy-directory (expand-file-name "~/dot-stats/img") "dot-stats/img" t t)
+(copy-directory
+ (expand-file-name
+  (format "%s/repos/dotfiles/dot-imgs/"
+          (vc-find-root default-directory ".git")))
+ "dot-imgs" t t)
 
 (dolist (file my/config-files)
   (with-temp-buffer

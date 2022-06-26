@@ -5,7 +5,7 @@ let currentActiveLinkId = null;
 let elemsToHide = [];
 let linksById = {};
 
-let headerObserver;
+let headerObserver = null;
 
 function observeHeadings() {
   const links = document.querySelectorAll(`#${tocId} a`);
@@ -94,10 +94,25 @@ function showHeadings() {
   }
 }
 
+function setUpObserver() {
+  if (document.documentElement.clientWidth >= (750 + 350 + 25)) {
+    if (headerObserver === null) {
+      observeHeadings();
+      observeButtons();
+    }
+  } else {
+    if (headerObserver !== null) {
+      headerObserver.disconnect();
+      headerObserver = null;
+      showHeadings();
+    }
+  }
+}
+
 window.addEventListener("load", (event) => {
   if ("IntersectionObserver" in window) {
-    observeHeadings();
-    observeButtons();
+    setUpObserver();
+    window.addEventListener("resize", setUpObserver);
   }
 });
 
