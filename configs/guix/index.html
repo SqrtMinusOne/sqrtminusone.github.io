@@ -69,51 +69,6 @@
 <li><a href="https://gitlab.com/pjotrp/guix-notes">Pjotr Prins&rsquo; Guix notes</a></li>
 <li><a href="https://www.youtube.com/watch?v=iBaqOK75cho&amp;list=PLEoMzSkcN8oNxnj7jm5V2ZcGc52002pQU">Davil Wilson&rsquo;s YouTube series</a></li>
 </ul>
-<div class="ox-hugo-toc toc">
-<div class="heading">Table of Contents</div>
-<ul>
-<li><a href="#profiles">Profiles</a>
-<ul>
-<li><a href="#activate-profiles">Activate profiles</a></li>
-<li><a href="#update-profiles">Update profiles</a></li>
-<li><a href="#run-guix-package-in-profile">Run <code>guix package</code> in profile</a></li>
-</ul>
-</li>
-<li><a href="#channels">Channels</a></li>
-<li><a href="#systems">Systems</a>
-<ul>
-<li><a href="#base-configuration">Base configuration</a></li>
-<li><a href="#indigo">indigo</a></li>
-<li><a href="#eminence">eminence</a></li>
-<li><a href="#azure">azure</a></li>
-</ul>
-</li>
-<li><a href="#system-installation">System installation</a>
-<ul>
-<li><a href="#preparation">Preparation</a></li>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#after-installation">After installation</a></li>
-</ul>
-</li>
-<li><a href="#misc-software-and-notes">Misc software &amp; notes</a>
-<ul>
-<li><a href="#vpn">VPN</a>
-<ul>
-<li><a href="#vpn-start">vpn-start</a></li>
-<li><a href="#vpn-stop">vpn-stop</a></li>
-</ul>
-</li>
-<li><a href="#flatpak">flatpak</a></li>
-<li><a href="#conda">conda</a></li>
-<li><a href="#slack">Slack</a></li>
-<li><a href="#virt-manager">virt-manager</a></li>
-<li><a href="#wakatime-cli">wakatime-cli</a></li>
-<li><a href="#manifest">Manifest</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<!--endtoc-->
 <h2 id="profiles">Profiles</h2>
 <p>A profile is a way to group Guix packages. Amongst its advantages, profiles can be defined by manifests, which in turn can be stored in VCS.</p>
 <p>References:</p>
@@ -637,7 +592,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     pkexec nmcli con modify &#34;$CONN&#34; ipv6.method ignore</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     nmcli connection up &#34;$CONN&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># fi</span>
-</span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/openvpn.ovpn
+</span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/mullvad_openvpn_linux_lv_rix/mullvad_lv_rix.conf
 </span></span></code></pre></div><h4 id="vpn-stop">vpn-stop</h4>
 <p>Also a script to reverse the changes.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">CONN</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>nmcli -f NAME con show --active | grep -Ev <span style="color:#ba2121">&#34;(.*docker.*|NAME|br-.*|veth.*|tun.*)&#34;</span> | sed <span style="color:#ba2121">&#39;s/ *$//g&#39;</span><span style="color:#008000;font-weight:bold">)</span>
