@@ -31,6 +31,9 @@
   :ensure t)
 
 (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org)
+(setq org-hugo-anchor-functions '(org-hugo-get-page-or-bundle-name
+                                  org-hugo-get-custom-id
+                                  org-hugo-get-md5))
 
 (setq org-hugo-section "configs")
 (setq org-hugo-base-dir (vc-find-root default-directory ".git"))
@@ -52,7 +55,11 @@
                       file))
              file 'overwrite))
 
-;; (copy-directory (expand-file-name "~/dot-stats/img") "dot-stats/img" t t)
+(copy-directory
+ (expand-file-name
+  (format "%s/repos/dotfiles/dot-imgs/"
+          (vc-find-root default-directory ".git")))
+ "dot-imgs" t t)
 
 (dolist (file my/config-files)
   (with-temp-buffer

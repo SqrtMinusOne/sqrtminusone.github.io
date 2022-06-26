@@ -1,6 +1,18 @@
 {{ define "main" }}
-<div class="container">
-    <h1>{{ .Title }}</h1>
-    {{ .Content }}
+<script defer language="javascript" type="text/javascript"  src="{{ "/js/dynamic-toc.js" | urlize | relURL }}"></script>
+<div class="root">
+    <h1 id="title-small-screen">{{ .Title }}</h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen">{{ .Title }}</h1>
+        {{ .Content }}
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            {{ .TableOfContents }}
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
 </div>
 {{ end }}

@@ -1,6 +1,7 @@
 // Sizes
 $max-width: {{ .Param "style.pageWidth" | default "750px;" }};
 $avatar-size: {{ .Param "style.avatarSize" | default "90px;" }};
+$toc-width: {{ .Param "style.tocWidth" | default "350px;" }};
 
 // Colors
 $black: {{ .Param "style.colorBlack" | default "#222222" }};
@@ -48,9 +49,105 @@ $y-medium: 1.0rem;
     font-family: $font-family;
     line-height: 1.2;
 }
+
+$toc-left-width: $toc-width + $max-width + 25px;
+
+.root {
+    display: flex;
+    flex-direction: column;
+}
+.table-of-contents {
+    order: 0;
+    ul {
+        padding-left: 1.0rem !important;
+        & > li {
+            margin-left: 0.3em !important;
+        }
+    }
+
+    a.active {
+        font-weight: bold;
+    }
+
+    a:hover {
+        cursor: pointer;
+    }
+
+    @media(max-width: 578px) {
+        align-self: center;
+    }
+}
 .container {
     max-width: $max-width;
+    order: 1
 }
+#title-large-screen {
+    display: none;
+}
+#title-small-screen {
+    margin-left: 15px !important;
+
+    @media(max-width: 578px) {
+        align-self: center;
+    }
+}
+
+@media (max-width: $toc-left-width) {
+    .root {
+        margin-right: auto;
+        margin-left: auto;
+        width: 100%;
+        max-width: $max-width;
+    }
+
+    .table-of-contents {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (min-width: $toc-width * 1.5 + $max-width) {
+    .root {
+        margin-left: calc((100vw - 750px) / 2);
+    }
+    #actual-content {
+        margin: 0;
+    }
+}
+
+@media(min-width: $toc-left-width) {
+    .root {
+        flex-direction: row;
+    }
+
+    .table-of-contents {
+        width: $toc-width;
+        order: 2;
+        position: sticky;
+        top: 0px;
+        padding: 1em;
+        align-self: start;
+        scrollbar-width: thin;
+
+        .table-of-contents-text {
+            overflow-x: hidden;
+            overflow-y: auto;
+            max-height: calc(100vh - 155px);
+        }
+
+        .hidden {
+            display: none;
+        }
+    }
+
+    #title-small-screen {
+        display: none;
+    }
+    #title-large-screen {
+        display: block;
+    }
+}
+
 .navbar-brand {
     @extend %link-dark;
     font-size: 2rem;
