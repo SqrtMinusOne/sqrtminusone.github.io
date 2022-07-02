@@ -75,8 +75,8 @@
 <ul>
 <li><a href="https://sqrtminusone.xyz/posts/2022-02-12-literate/">A few cases of literate configuration</a>. My blog post that explains some of techniques from this file.</li>
 </ul>
-<h2 id="08fc9d">Global customization</h2>
-<h3 id="5d5088">Colors</h3>
+<h2 id="global-customization">Global customization</h2>
+<h3 id="colors">Colors</h3>
 <p>My favorite color theme is Palenight (<a href="https://github.com/JonathanSpeek/palenight-iterm2">color codes</a>), and I want to have one source of truth for these colors. Except for Emacs itself, which has <a href="https://github.com/doomemacs/themes#theme-list">doom-palenight</a> (and in which I occasionally switch to <code>doom-one-light</code>, e.g. when reading a long text), it can be done rather nicely with Org Mode.</p>
 <p>First, let&rsquo;s define a table with all the color codes:</p>
 <p><a id="table--colors"></a></p>
@@ -185,8 +185,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
 </span></span></code></pre></div><p>Test:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;get-color</span>(<span style="color:#19177c">name=</span><span style="color:#ba2121">&#34;red&#34;</span><span style="color:#666">,</span> <span style="color:#19177c">quote=1</span>)<span style="color:#19177c">&gt;&gt;</span>
-</span></span></code></pre></div><h3 id="f8aa51">Xresources</h3>
-<h4 id="371f54">Colors in Xresources</h4>
+</span></span></code></pre></div><h3 id="xresources">Xresources</h3>
+<h4 id="colors-in-xresources">Colors in Xresources</h4>
 <p>However, I&rsquo;d rather use the <code>Xresources</code> file wherever possible. Here is the code to generate an Xresources file from this table:</p>
 <p><a id="code-snippet--get-xresources"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">mapconcat</span>
@@ -202,7 +202,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>*background: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>*foreground: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>)&gt;&gt;<span style="">
 </span></span></span></code></pre></div><p>So, whenever a program is capable of reading <code>.Xresources</code>, it will get colors from there, otherwise, it will get colors from noweb expressions in the literate config. Thus, in both cases, the color is set in a single Org Mode table.</p>
-<h4 id="59c4ad">Fonts</h4>
+<h4 id="fonts">Fonts</h4>
 <p>Also, Xresources are used to set <code>Xft</code> settings. Unfortunately, the DPI setting has to be unique for each machine, which means I cannot commit <code>Xresources</code> to the repo.</p>
 <p><a id="code-snippet--get-dpi"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">hostname</span> (<span style="color:#00f">system-name</span>)))
@@ -211,7 +211,7 @@
 </span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;indigo&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#800">t</span> <span style="color:#666">96</span>)))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Xft.dpi: &lt;&lt;get-dpi()&gt;&gt;<span style="">
-</span></span></span></code></pre></div><h3 id="83915d">Themes</h3>
+</span></span></span></code></pre></div><h3 id="themes">Themes</h3>
 <p>A few programs I use to customize the apperance are listed below.</p>
 <table>
 <thead>
@@ -243,7 +243,7 @@
 </tr>
 </tbody>
 </table>
-<p><a href="https://github.com/derat/xsettingsd">xsettingsd</a> is a lightweight daemon which configures X11 applications. It is launched with shepherd in the <a href="#992a0f">Services</a> section.</p>
+<p><a href="https://github.com/derat/xsettingsd">xsettingsd</a> is a lightweight daemon which configures X11 applications. It is launched with shepherd in the <a href="#services">Services</a> section.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Net/ThemeName <span style="color:#ba2121">&#34;Matcha-dark-azul&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Net/IconThemeName <span style="color:#ba2121">&#34;Papirus-Dark&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/DecorationLayout <span style="color:#ba2121">&#34;menu:minimize,maximize,close&#34;</span><span style="">
@@ -253,7 +253,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/Antialias <span style="color:#666">1</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/Hinting <span style="color:#666">0</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/HintStyle <span style="color:#ba2121">&#34;hintnone&#34;</span><span style="">
-</span></span></span></code></pre></div><h3 id="1903a3">MIME</h3>
+</span></span></span></code></pre></div><h3 id="mime">MIME</h3>
 <p>Setting the default MIME types</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Default Applications]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">text/html</span><span style="color:#666">=</span><span style="color:#ba2121">firefox.desktop</span>
@@ -270,7 +270,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Added Associations]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">x-scheme-handler/tg</span><span style="color:#666">=</span><span style="color:#ba2121">userapp-Telegram Desktop-7PVWF1.desktop;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">application/pdf</span><span style="color:#666">=</span><span style="color:#ba2121">org.pwmt.zathura.desktop</span>
-</span></span></code></pre></div><h3 id="5e1a34">Device-specific settings</h3>
+</span></span></code></pre></div><h3 id="device-specific-settings">Device-specific settings</h3>
 <table>
 <thead>
 <tr>
@@ -300,7 +300,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;eminence&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    xgamma -gamma 1.25
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span></code></pre></div><h2 id="3d569f">EXWM</h2>
+</span></span></code></pre></div><h2 id="exwm">EXWM</h2>
 <p>Settings for <a href="https://github.com/ch11ng/exwm">Emacs X Window Manager</a>, a tiling WM implemented in Emacs Lisp. This part has a few bits copied from my blog post.</p>
 <p>References:</p>
 <ul>
@@ -308,8 +308,8 @@
 <li><a href="https://github.com/daviwil/emacs-from-scratch/blob/master/Desktop.org">Emacs From Scratch config</a></li>
 <li><a href="https://sqrtminusone.xyz/posts/2022-01-03-exwm/">Using EXWM and perspective.el on a multi-monitor setup</a></li>
 </ul>
-<h3 id="f5b786">Startup &amp; UI</h3>
-<h4 id="d58455">Xsession</h4>
+<h3 id="startup-and-ui">Startup &amp; UI</h3>
+<h4 id="xsession">Xsession</h4>
 <p>First things first, Emacs has to be launched as a window manager. On a more conventional system I&rsquo;d create a .desktop file in some system folder that can be seen by a login manager, but in the case of Guix it&rsquo;s a bit more complicated, because all such folders are not meant to be changed manually.</p>
 <table>
 <thead>
@@ -357,7 +357,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Run the Emacs startup script as a session.</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># exec dbus-launch --exit-with-session ~/.emacs.d/run-exwm.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">exec</span> dbus-launch --exit-with-session emacs -mm --debug-init -l ~/.emacs.d/desktop.el
-</span></span></code></pre></div><h4 id="a86208">Startup apps</h4>
+</span></span></code></pre></div><h4 id="startup-apps">Startup apps</h4>
 <p>Now that Emacs is launched, it is necessary to set up the EXWM-specific parts of config.</p>
 <p>I want to launch some apps from EXWM instead of the Xsession file for two purposes:</p>
 <ul>
@@ -374,7 +374,7 @@
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-run-shepherd</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;pgrep -u pavel shepherd&#34;</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;shepherd&#34;</span>)))
-</span></span></code></pre></div><h4 id="b888f9">Pinentry</h4>
+</span></span></code></pre></div><h4 id="pinentry">Pinentry</h4>
 <p>The GUI pinentry doesn&rsquo;t work too well with EXWM because of issues with popup windows, so we will use the Emacs one.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">pinentry</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -393,15 +393,15 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>max-cache-ttl <span style="color:#666">3600</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>allow-emacs-pinentry<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>allow-loopback-pinentry<span style="">
-</span></span></span></code></pre></div><h4 id="220af3">Modeline</h4>
+</span></span></span></code></pre></div><h4 id="modeline">Modeline</h4>
 <p>Show the current workspace in the modeline.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm-modeline</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/exwm-modeline&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-init-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm-modeline-mode</span>))
-</span></span></code></pre></div><h3 id="aea234">Windows</h3>
+</span></span></code></pre></div><h3 id="windows">Windows</h3>
 <p>A bunch of functions related to managing windows in EXWM.</p>
-<h4 id="5f5bba">Moving windows</h4>
+<h4 id="moving-windows">Moving windows</h4>
 <p>As I wrote in my <a href="https://sqrtminusone.xyz/posts/2021-10-04-emacs-i3/">Emacs and i3</a> post, I want to have a rather specific behavior when moving windows (which does resemble i3 in some way):</p>
 <ul>
 <li>if there is space in the required direction, move the Emacs window there;</li>
@@ -435,7 +435,7 @@
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">other-direction</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">evil-move-window</span> <span style="color:#19177c">dir</span>)))))
 </span></span></code></pre></div><p>My preferred keybindings for this part are, of course, <code>s-&lt;H|J|K|L&gt;</code>.</p>
-<h4 id="9a0030">Resizing windows</h4>
+<h4 id="resizing-windows">Resizing windows</h4>
 <p>I find this odd that there are different commands to resize tiling and floating windows. So let&rsquo;s define one command to perform both resizes depending on the context:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-resize-value</span> <span style="color:#666">5</span>)
 </span></span><span style="display:flex;"><span>
@@ -482,7 +482,7 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;l&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/exwm-resize-window</span> <span style="color:#19177c">&#39;width</span> <span style="color:#19177c">&#39;grow</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;=&#34;</span> <span style="color:#19177c">balance-windows</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;quit&#34;</span> <span style="color:#008000">:color</span> <span style="color:#19177c">blue</span>))
-</span></span></code></pre></div><h4 id="a9d026">Improving splitting windows</h4>
+</span></span></code></pre></div><h4 id="improving-splitting-windows">Improving splitting windows</h4>
 <p><code>M-x evil-window-[v]split</code> (bound to <code>C-w v</code> and <code>C-w s</code> by default) are the default evil command to do splits.</p>
 <p>One EXWM-related issue though is that by default doing such a split &ldquo;copies&rdquo; the current buffer to the new window. But as EXWM buffer cannot be &ldquo;copied&rdquo; like that, some other buffer is displayed in the split, and generally, that&rsquo;s not a buffer I want.</p>
 <p>For instance, I prefer to have Chrome DevTools as a separate window. When I click &ldquo;Inspect&rdquo; on something, the DevTools window replaces my Ungoogled Chromium window. I press <code>C-w v</code>, and most often I have something like <code>*scratch*</code> buffer in the opened split instead of the previous Chromium window.</p>
@@ -507,7 +507,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;evil-window-split</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-fill-other-window</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;evil-window-vsplit</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-fill-other-window</span>)
 </span></span></code></pre></div><p>This works as follows. If the current buffer is an EXWM buffer and there are other windows open (that is, <code>(next-window)</code> is not the current window), the function tries to find another suitable buffer to be opened in the split. And that also takes the perspectives into account, so buffers are searched only within the current perspective, and the buffer returned by <code>persp-other-buffer</code> will be the top candidate.</p>
-<h3 id="75422c">Perspectives</h3>
+<h3 id="perspectives">Perspectives</h3>
 <p><a href="https://github.com/nex3/perspective-el">perspective.el</a> is one package I like that provides workspaces for Emacs, called &ldquo;perspectives&rdquo;. Each perspective has a separate buffer list, window layout, and a few other things that make it easier to separate things within Emacs.</p>
 <p>One feature I&rsquo;d like to highlight is integration between perspective.el and <a href="https://github.com/Alexander-Miller/treemacs">treemacs</a>, where one perspective can have a separate treemacs tree. Although now tab-bar.el seems to be getting into shape to compete with perspective.el, as of the time of this writing, there&rsquo;s no such integration, at least not out of the box.</p>
 <p>perspective.el works with EXWM more or less as one would expect - each EXWM workspace has its own set of perspectives. That way it feels somewhat like having multiple Emacs frames in a tiling window manager, although, of course, much more integrated with Emacs.</p>
@@ -556,7 +556,7 @@
 </span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;dev&#34;</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-manage-finish-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-configure-window</span>)
-</span></span></code></pre></div><h3 id="218a12">Workspaces and multi-monitor setup</h3>
+</span></span></code></pre></div><h3 id="workspaces-and-multi-monitor-setup">Workspaces and multi-monitor setup</h3>
 <p>A section about improving management of EXWM workspaces.</p>
 <p>Some features, common in other tiling WMs, are missing in EXWM out of the box, namely:</p>
 <ul>
@@ -565,7 +565,7 @@
 <li>using the same commands to switch between windows and monitors.</li>
 </ul>
 <p>Here&rsquo;s my take on implementing them.</p>
-<h4 id="990303">Tracking recently used workspaces</h4>
+<h4 id="tracking-recently-used-workspaces">Tracking recently used workspaces</h4>
 <p>First up though, we need to track the workspaces in the usage order. I&rsquo;m not sure if there&rsquo;s some built-in functionality in EXWM for that, but it seems simple enough to implement.</p>
 <p>Here is a snippet of code that does it:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-last-workspaces</span> <span style="color:#666">&#39;</span>(<span style="color:#666">1</span>))
@@ -586,7 +586,7 @@
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-filter</span>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">i</span>) (<span style="color:#00f">nth</span> <span style="color:#19177c">i</span> <span style="color:#19177c">exwm-workspace--list</span>))
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">my/exwm-last-workspaces</span>)))
-</span></span></code></pre></div><h4 id="01fe92">The monitor list</h4>
+</span></span></code></pre></div><h4 id="the-monitor-list">The monitor list</h4>
 <p>The second piece of the puzzle is getting the monitor list in the right order.</p>
 <p>While it is possible to retrieve the monitor list from <code>exwm-randr-workspace-output-plist</code>, this won&rsquo;t scale well beyond two monitors, mainly because changing this variable may screw up the order.</p>
 <p>So the easiest way is to just define the variable like that:</p>
@@ -617,7 +617,7 @@
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">&#39;left</span> <span style="color:#666">-1</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">length</span> <span style="color:#19177c">my/exwm-monitor-list</span>))
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">my/exwm-monitor-list</span>))
-</span></span></code></pre></div><h4 id="e00555">Switch to another monitor</h4>
+</span></span></code></pre></div><h4 id="switch-to-another-monitor">Switch to another monitor</h4>
 <p>With the functions from the previous two sections, we can implement switching to another monitor by switching to the most recently used workspace on that monitor.</p>
 <p>One caveat here is that on the startup the <code>my/exwm-last-workspaces</code> variable won&rsquo;t have any values from other monitor(s), so this list is concatenated with the list of available workspace indices.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-switch-to-other-monitor</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
@@ -637,7 +637,7 @@
 </span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">not</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span> <span style="color:#19177c">i</span>)))
 </span></span><span style="display:flex;"><span>	      <span style="color:#008000">return</span> <span style="color:#19177c">i</span>))))
 </span></span></code></pre></div><p>I bind this function to <code>s-q</code>, as I&rsquo;m used from i3.</p>
-<h4 id="67f80b">Move the workspace to another monitor</h4>
+<h4 id="move-the-workspace-to-another-monitor">Move the workspace to another monitor</h4>
 <p>Now, moving the workspace to another monitor.</p>
 <p>This is actually quite easy to pull off - one just has to update <code>exwm-randr-workspace-monitor-plist</code> accordingly and run <code>exwm-randr-refresh</code>. I just add another check there because I don&rsquo;t want some monitor to remain without workspaces at all.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-workspace-switch-monitor</span> ()
@@ -660,7 +660,7 @@
 </span></span><span style="display:flex;"><span>		       <span style="color:#19177c">new-monitor</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-randr-refresh</span>))
 </span></span></code></pre></div><p>In my configuration this is bound to <code>s-&lt;tab&gt;</code>.</p>
-<h4 id="266d41">Windmove between monitors</h4>
+<h4 id="windmove-between-monitors">Windmove between monitors</h4>
 <p>And the final (for now) piece of the puzzle is using the same command to switch between windows and monitors. E.g. when the focus is on the right-most window on one monitor, I want the command to switch to the left-most window on the monitor to the right instead of saying &ldquo;No window right from the selected window&rdquo;, as <code>windmove-right</code> does.</p>
 <p>So here is my implementation of that. It always does <code>windmove-do-select-window</code> for <code>'down</code> and <code>'up</code>. For <code>'right</code> and <code>'left</code> though, the function calls the previously defined function to switch to other monitor if <code>windmove-find-other-window</code> doesn&rsquo;t return anything.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-windmove</span> (<span style="color:#19177c">dir</span>)
@@ -678,9 +678,9 @@
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">my/exwm-switch-to-other-monitor</span> <span style="color:#19177c">dir</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">cl-loop</span> <span style="color:#008000">while</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">opposite-dir</span>)
 </span></span><span style="display:flex;"><span>		 <span style="color:#008000">do</span> (<span style="color:#19177c">windmove-do-window-select</span> <span style="color:#19177c">opposite-dir</span>))))))
-</span></span></code></pre></div><h3 id="eaea0a">Completions</h3>
+</span></span></code></pre></div><h3 id="completions">Completions</h3>
 <p>Setting up some completion interfaces that fit particularly well to use with EXWM. While rofi also works, I want to use Emacs functionality wherever possible to have one completion interface everywhere.</p>
-<h4 id="97a82f">ivy-posframe</h4>
+<h4 id="ivy-posframe">ivy-posframe</h4>
 <p><a href="https://github.com/tumashu/ivy-posframe">ivy-posframe</a> is an extension to show ivy candidates in a posframe.</p>
 <p>Take a look at <a href="https://github.com/ch11ng/exwm/issues/550">this issue</a> in the EXWM repo about setting it up.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-09 Sat&gt;</span></span>: This looks nice, but unfortunately too unstable. Disabling it.</p>
@@ -700,7 +700,7 @@
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">swiper-isearch</span> <span style="color:#666">.</span> <span style="color:#19177c">ivy-display-function-fallback</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#19177c">ivy-posframe-display</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ivy-posframe-mode</span> <span style="color:#666">1</span>))
-</span></span></code></pre></div><h5 id="abf747">Disable mouse movement</h5>
+</span></span></code></pre></div><h5 id="disable-mouse-movement">Disable mouse movement</h5>
 <p><strong>SOURCE</strong>: <a href="https://github.com/ch11ng/exwm/issues/550#issuecomment-744784838">https://github.com/ch11ng/exwm/issues/550#issuecomment-744784838</a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/advise-fn-suspend-follow-mouse</span> (<span style="color:#19177c">fn</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">focus-follows-mouse</span> <span style="color:#800">nil</span>)
@@ -712,7 +712,7 @@
 </span></span><span style="display:flex;"><span>					   (<span style="color:#00f">cdr</span> <span style="color:#19177c">pos</span>)))))
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ivy-posframe</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ivy-posframe--read</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/advise-fn-suspend-follow-mouse</span>))
-</span></span></code></pre></div><h5 id="b34f06">Disable changing focus</h5>
+</span></span></code></pre></div><h5 id="disable-changing-focus">Disable changing focus</h5>
 <p>Not sure about that. The cursor occasionally changes focus when I&rsquo;m exiting posframe, and this doesn&rsquo;t catch all the cases.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/setup-posframe</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">mapc</span>
@@ -738,7 +738,7 @@
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ivy-posframe</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">posframe--create-posframe</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/setup-posframe</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ivy-posframe-cleanup</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/restore-posframe</span>))
-</span></span></code></pre></div><h4 id="89c1b0">Linux app</h4>
+</span></span></code></pre></div><h4 id="linux-app">Linux app</h4>
 <p><code>counsel-linux-app</code> is a counsel interface to select a Linux desktop application.</p>
 <p>By default, it also shows paths from <code>/gnu/store</code>, so there is a custom formatter function.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/counsel-linux-app-format-function</span> (<span style="color:#19177c">name</span> <span style="color:#19177c">comment</span> <span style="color:#19177c">_exec</span>)
@@ -766,12 +766,12 @@
 </tr>
 </tbody>
 </table>
-<h4 id="38907f">password-store-ivy</h4>
+<h4 id="password-store-ivy">password-store-ivy</h4>
 <p><a href="https://github.com/SqrtMinusOne/password-store-ivy">password-store-ivy</a> is another package of mine, inspired by <a href="https://github.com/carnager/rofi-pass">rofi-pass</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">password-store-ivy</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/password-store-ivy&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">exwm</span>))
-</span></span></code></pre></div><h4 id="1d7d83">emojis</h4>
+</span></span></code></pre></div><h4 id="emojis">emojis</h4>
 <p><a href="https://github.com/iqbalansari/emacs-emojify">emojify</a> is an Emacs package that adds emoji display to Emacs. While its primary capacity is no longer necessary in Emacs 28, it a few functions to insert emojis are still handy.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emojify</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -785,8 +785,8 @@
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">list</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">password-store-ivy--get-wait-command</span> <span style="color:#666">10</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;xdotool key Shift+Insert&#34;</span>))))
-</span></span></code></pre></div><h3 id="cbebf7">Keybindings</h3>
-<h4 id="19fef0">EXWM keybindings</h4>
+</span></span></code></pre></div><h3 id="keybindings">Keybindings</h3>
+<h4 id="exwm-keybindings">EXWM keybindings</h4>
 <p>Setting keybindings for EXWM. This actually has to be in the <code>:config</code> block of the <code>use-package</code> form, that is it has to be run after EXWM is loaded, so I use noweb to put this block in the correct place.</p>
 <p>First, some prefixes for keybindings that are always passed to EXWM instead of the X application in <code>line-mode</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-input-prefix-keys</span>
@@ -910,7 +910,7 @@
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">exwm-input--set-key</span> (<span style="color:#00f">car</span> <span style="color:#19177c">i</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">i</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">exwm--connection</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">exwm-input--update-global-prefix-keys</span>)))
-</span></span></code></pre></div><h4 id="43aa92">App shortcuts</h4>
+</span></span></code></pre></div><h4 id="app-shortcuts">App shortcuts</h4>
 <p>A <del>transient</del> hydra for shortcuts for the most frequent apps.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/run-in-background</span> (<span style="color:#19177c">command</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">command-parts</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">command</span> <span style="color:#ba2121">&#34;[ ]+&#34;</span>)))
@@ -932,13 +932,13 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;s&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;slack-wrapper&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;e&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;flatpak run org.telegram.desktop&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#ba2121">&#34;d&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;flatpak run com.discordapp.Discord&#34;</span>))))
-</span></span></code></pre></div><h4 id="77e439">Locking up</h4>
+</span></span></code></pre></div><h4 id="locking-up">Locking up</h4>
 <p>Run i3lock.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-lock</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;i3lock -f -i /home/pavel/Pictures/lock-wallpaper.png&#34;</span>))
-</span></span></code></pre></div><h3 id="41cf95">Fixes</h3>
-<h4 id="752575">Catch and report all errors raised when invoking command hooks</h4>
+</span></span></code></pre></div><h3 id="fixes">Fixes</h3>
+<h4 id="catch-and-report-all-errors-raised-when-invoking-command-hooks">Catch and report all errors raised when invoking command hooks</h4>
 <ul>
 <li><strong>CREDIT</strong>: Thanks David! <a href="https://github.com/daviwil/exwm/commit/7b1be884124711af0a02eac740bdb69446bc54cc">https://github.com/daviwil/exwm/commit/7b1be884124711af0a02eac740bdb69446bc54cc</a></li>
 </ul>
@@ -957,7 +957,7 @@
 </span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">standard-output</span> (<span style="color:#00f">current-buffer</span>))
 </span></span><span style="display:flex;"><span>		  (<span style="color:#00f">backtrace</span>)
 </span></span><span style="display:flex;"><span>		  (<span style="color:#00f">buffer-string</span>))))))
-</span></span></code></pre></div><h4 id="d5bde2">Improve floating windows behavior</h4>
+</span></span></code></pre></div><h4 id="improve-floating-windows-behavior">Improve floating windows behavior</h4>
 <p>These 3 settings seem to cause particular trouble with floating windows. Setting them to <code>nil</code> improves the stability greatly.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/fix-exwm-floating-windows</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">exwm-workspace-warp-cursor</span> <span style="color:#800">nil</span>)
@@ -965,7 +965,7 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">focus-follows-mouse</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-floating-setup-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-exwm-floating-windows</span>)
-</span></span></code></pre></div><h3 id="f99103">EXWM config</h3>
+</span></span></code></pre></div><h3 id="exwm-config">EXWM config</h3>
 <p>And the EXWM config itself.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-init</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-workspace-switch</span> <span style="color:#666">1</span>)
@@ -1006,7 +1006,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">perspective-exwm-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-enable</span>))
-</span></span></code></pre></div><h2 id="f1b3aa">i3wm</h2>
+</span></span></code></pre></div><h2 id="i3wm">i3wm</h2>
 <table>
 <thead>
 <tr>
@@ -1033,7 +1033,7 @@
 <li><a href="https://i3wm.org/docs/">i3wm docs</a></li>
 <li><a href="https://github.com/Airblader/i3/wiki">i3-gaps wiki</a></li>
 </ul>
-<h3 id="de6277">General settings</h3>
+<h3 id="general-settings">General settings</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>set $mod Mod4<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>font pango:monospace <span style="color:#666">10</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
@@ -1059,7 +1059,7 @@
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span># exit i3 (logs you out of your X session)<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Shift+e exec <span style="color:#ba2121">&#34;i3-nagbar -t warning -m &#39;You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.&#39; -b &#39;Yes, exit i3&#39; &#39;i3-msg exit&#39;&#34;</span><span style="">
-</span></span></span></code></pre></div><h3 id="710cb0">Managing windows</h3>
+</span></span></span></code></pre></div><h3 id="managing-windows">Managing windows</h3>
 <table>
 <thead>
 <tr>
@@ -1073,7 +1073,7 @@
 </tbody>
 </table>
 <p>Some keybindings for managing windows.</p>
-<p><code>emacs-i3-integration</code> is a script to pass some command to Emacs to get a consistent set of keybindings in both i3 and Emacs. Check out <a href="/configs/emacs/#a356c5">the section in Emacs.org</a> for details.</p>
+<p><code>emacs-i3-integration</code> is a script to pass some command to Emacs to get a consistent set of keybindings in both i3 and Emacs. Check out <a href="/configs/emacs/#i3-integration">the section in Emacs.org</a> for details.</p>
 <p>Kill focused windows</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bindsym $mod+Shift+q exec emacs-i3-integration kill<span style="">
 </span></span></span></code></pre></div><p>Change focus</p>
@@ -1123,7 +1123,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bindsym $mod+i sticky toggle<span style="">
 </span></span></span></code></pre></div><p>Set windows as floating and sticky, move to the top right.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bindsym $mod+x floating enable; sticky enable; move position <span style="color:#666">1220</span> <span style="color:#666">0</span>; resize set width <span style="color:#666">700</span> px<span style="">
-</span></span></span></code></pre></div><h3 id="d5e926">Workspaces</h3>
+</span></span></span></code></pre></div><h3 id="workspaces">Workspaces</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>set $w1 <span style="color:#ba2121">&#34;1 🚀&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set $w2 <span style="color:#ba2121">&#34;2 🌍&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set $w3 <span style="color:#ba2121">&#34;3 💬&#34;</span><span style="">
@@ -1155,7 +1155,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Shift+<span style="color:#666">8</span> move container to workspace $w8<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Shift+<span style="color:#666">9</span> move container to workspace $w9<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Shift+<span style="color:#666">0</span> move container to workspace $w10<span style="">
-</span></span></span></code></pre></div><h3 id="1f4da9">Rules</h3>
+</span></span></span></code></pre></div><h3 id="rules">Rules</h3>
 <p>Rules to automatically assign applications to workspaces and do other stuff, like enable floating.</p>
 <p>Most apps can be distinguished by a WM class (you can get one with <a href="https://www.x.org/releases/X11R7.5/doc/man/man1/xprop.1.html">xprop</a>), but in some cases it doesn&rsquo;t work, e.g. for terminal applications. In that case rules can be based on a window title, for instance.</p>
 <p>However, watch out for the following: rule such as <code>for_window [title=&quot;ncmpcpp.*&quot;] move to workspace $w9</code> will move <strong>any</strong> window with a title starting with <code>ncmpcpp</code> to workspace <code>$w9</code>. For instance, it moves your browser when you google &ldquo;ncmpcpp&rdquo;.</p>
@@ -1189,9 +1189,9 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [title=<span style="color:#ba2121">&#34;Picture-in-Picture&#34;</span>] sticky enable<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [window_role=<span style="color:#ba2121">&#34;GtkFileChooserDialog&#34;</span>] resize set width <span style="color:#666">1000</span> px height <span style="color:#666">800</span> px<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [window_role=<span style="color:#ba2121">&#34;GtkFileChooserDialog&#34;</span>] move position center<span style="">
-</span></span></span></code></pre></div><h3 id="da4231">Scratchpad</h3>
+</span></span></span></code></pre></div><h3 id="scratchpad">Scratchpad</h3>
 <p>Scratch terminal, inspired by <a href="https://www.youtube.com/watch?v=q-l7DnDbiiU">this Luke Smith&rsquo;s video</a>.</p>
-<h4 id="b30d03">Launch script</h4>
+<h4 id="launch-script">Launch script</h4>
 <p>First of all, we have to distinguish a scratchpad terminal from a normal one. To do that, one can create st with a required classname.</p>
 <p>Then, it would be cool not to duplicate scratchpads, so the following script first looks for a window with a created classname. If it exists, the script just toggles the scratchpad visibility. Otherwise, a new instance of a window is created.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">CLASSNAME</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;dropdown_tmux&#34;</span>
@@ -1202,7 +1202,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
 </span></span><span style="display:flex;"><span>    setsid -f <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">COMMAND</span><span style="color:#b68;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span></code></pre></div><h4 id="d56af8">i3 config</h4>
+</span></span></code></pre></div><h4 id="i3-config">i3 config</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Scratchpad<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [instance=<span style="color:#ba2121">&#34;dropdown_*&#34;</span>] floating enable<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [instance=<span style="color:#ba2121">&#34;dropdown_*&#34;</span>] move scratchpad<span style="">
@@ -1211,7 +1211,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>for_window [instance=<span style="color:#ba2121">&#34;dropdown_*&#34;</span>] move position center<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+u exec ~<span style="color:#b68">/bin/</span>scripts/dropdown<span style="">
-</span></span></span></code></pre></div><h3 id="dd90dd">Gaps &amp; borders</h3>
+</span></span></span></code></pre></div><h3 id="gaps-and-borders">Gaps &amp; borders</h3>
 <p>The main reason to use i3-gaps</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Borders<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span># for_window [class=<span style="color:#ba2121">&#34;.*&#34;</span>] border pixel <span style="color:#666">0</span><span style="">
@@ -1226,7 +1226,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>gaps outer $default_outer<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>smart_gaps on<span style="">
-</span></span></span></code></pre></div><h4 id="cbebf7">Keybindings</h4>
+</span></span></span></code></pre></div><h4 id="keybindings-1">Keybindings</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>mode <span style="color:#ba2121">&#34;inner gaps&#34;</span> {<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    bindsym plus gaps inner current plus <span style="color:#666">5</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    bindsym minus gaps inner current minus <span style="color:#666">5</span><span style="">
@@ -1259,7 +1259,7 @@
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+g mode <span style="color:#ba2121">&#34;inner gaps&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Shift+g mode <span style="color:#ba2121">&#34;outer gaps&#34;</span><span style="">
-</span></span></span></code></pre></div><h3 id="1c8fb2">Move &amp; resize windows</h3>
+</span></span></span></code></pre></div><h3 id="move-and-resize-windows">Move &amp; resize windows</h3>
 <table>
 <thead>
 <tr>
@@ -1329,7 +1329,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>}<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+m mode <span style="color:#ba2121">&#34;move&#34;</span> focus floating<span style="">
-</span></span></span></code></pre></div><h3 id="20b319"><span class="org-todo done OFF">OFF</span> (OFF) Intergration with dmenu</h3>
+</span></span></span></code></pre></div><h3 id="off--intergration-with-dmenu"><span class="org-todo done OFF">OFF</span> (OFF) Intergration with dmenu</h3>
 <p><a href="https://tools.suckless.org/dmenu/">dmenu</a> is a dynamic menu program for X. I&rsquo;ve opted out of using it in favour of rofi, but here is a relevant bit of config.</p>
 <p>Scripts are located in the <code>bin/scripts</code> folder.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># dmenu<span style="">
@@ -1347,8 +1347,8 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>}<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+b exec --no-startup-id dmenu-buku<span style="">
-</span></span></span></code></pre></div><h3 id="e62079">Integration with rofi</h3>
-<p>Keybindings to launch <a href="https://github.com/davatorium/rofi">rofi</a>. For more detail, look the <a href="#da7107">Rofi</a> section.</p>
+</span></span></span></code></pre></div><h3 id="integration-with-rofi">Integration with rofi</h3>
+<p>Keybindings to launch <a href="https://github.com/davatorium/rofi">rofi</a>. For more detail, look the <a href="#rofi">Rofi</a> section.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bindsym $mod+d exec <span style="color:#ba2121">&#34;rofi -modi &#39;drun,run&#39; -show drun&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+b exec --no-startup-id rofi-buku-mine<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+minus exec rofi-pass<span style="">
@@ -1363,9 +1363,9 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>    bindsym k exec rofi-pass; mode default<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    bindsym Escape mode <span style="color:#ba2121">&#34;default&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>}<span style="">
-</span></span></span></code></pre></div><h3 id="e18940">Launching apps &amp; misc keybindings</h3>
+</span></span></span></code></pre></div><h3 id="launching-apps-and-misc-keybindings">Launching apps &amp; misc keybindings</h3>
 <p>I prefer to use a separate mode to launch most of my apps, with some exceptions.</p>
-<h4 id="a6f00c">Apps</h4>
+<h4 id="apps">Apps</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Launch apps<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span># start a terminal at workspace <span style="color:#666">1</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+Return exec <span style="color:#ba2121">&#34;i3-msg &#39;workspace 1 🚀; exec alacritty&#39;&#34;</span><span style="">
@@ -1391,7 +1391,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>    # bindsym a exec emacsclient -c; mode default<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    # bindsym Shift+a exec emacs; mode default<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>}<span style="">
-</span></span></span></code></pre></div><h4 id="049d81">Media controls &amp; brightness</h4>
+</span></span></span></code></pre></div><h4 id="media-controls-and-brightness">Media controls &amp; brightness</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Pulse Audio controls<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym XF86AudioRaiseVolume exec --no-startup-id <span style="color:#ba2121">&#34;ponymix increase 5 --max-volume 150&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym XF86AudioLowerVolume exec --no-startup-id <span style="color:#ba2121">&#34;ponymix decrease 5 --max-volume 150&#34;</span><span style="">
@@ -1410,11 +1410,11 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span># Screen brightness<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym XF86MonBrightnessUp exec <span style="color:#008000">light</span> -A <span style="color:#666">5</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym XF86MonBrightnessDown exec <span style="color:#008000">light</span> -U <span style="color:#666">5</span><span style="">
-</span></span></span></code></pre></div><h4 id="46fa56">Screenshots</h4>
+</span></span></span></code></pre></div><h4 id="screenshots">Screenshots</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Screenshots<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym --release Print exec <span style="color:#ba2121">&#34;flameshot gui&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym --release Shift+Print exec <span style="color:#ba2121">&#34;xfce4-screenshooter&#34;</span><span style="">
-</span></span></span></code></pre></div><h3 id="5d5088">Colors</h3>
+</span></span></span></code></pre></div><h3 id="colors-1">Colors</h3>
 <p>Application of the XResources theme to the WM.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>exec xrdb -merge $HOME/.Xresources<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
@@ -1433,7 +1433,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>client.unfocused        $bg-color           $inactive-bg-color $inactive-text-color $bg-color       $bg-color<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>client.focused_inactive $active-color       $inactive-bg-color $inactive-text-color $bg-color       $bg-color<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>client.urgent           $urgent-bg-color    $urgent-bg-color   $urgent-text-color   $bg-color       $urgent-bg-color<span style="">
-</span></span></span></code></pre></div><h3 id="b5e1d9"><span class="org-todo done OFF">OFF</span> (OFF) i3blocks</h3>
+</span></span></span></code></pre></div><h3 id="off--i3blocks"><span class="org-todo done OFF">OFF</span> (OFF) i3blocks</h3>
 <p>I&rsquo;ve opted out of i3bar &amp; <a href="https://github.com/vivien/i3blocks">i3blocks</a> for <a href="https://github.com/polybar/polybar">polybar</a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bar {<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    status_command i3blocks -c ~<span style="color:#b68">/.config/</span>i3/i3blocks.conf<span style="">
@@ -1465,7 +1465,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>	urgent_workspace   $urgent-bg-color   $urgent-bg-color   $urgent-text-color<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    }<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>}<span style="">
-</span></span></span></code></pre></div><h3 id="fc9a0c">Keyboard Layout</h3>
+</span></span></span></code></pre></div><h3 id="keyboard-layout">Keyboard Layout</h3>
 <p>A script to set Russian-English keyboard layout:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>setxkbmap -layout us,ru
 </span></span><span style="display:flex;"><span>setxkbmap -model pc105 -option <span style="color:#ba2121">&#39;grp:win_space_toggle&#39;</span> -option <span style="color:#ba2121">&#39;grp:alt_shift_toggle&#39;</span>
@@ -1481,7 +1481,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Layout<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>exec_always --no-startup-id set_layout<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bindsym $mod+slash exec toggle_layout<span style="">
-</span></span></span></code></pre></div><h3 id="b425a6">Autostart</h3>
+</span></span></span></code></pre></div><h3 id="autostart">Autostart</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># Polybar<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>exec_always --no-startup-id <span style="color:#ba2121">&#34;bash /home/pavel/bin/polybar.sh&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
@@ -1504,7 +1504,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>exec <span style="color:#ba2121">&#34;xmodmap ~/.Xmodmap&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span># exec <span style="color:#ba2121">&#34;xrdb -merge ~/.Xresources&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span># exec <span style="color:#ba2121">&#34;bash ~/bin/autostart.sh&#34;</span><span style="">
-</span></span></span></code></pre></div><h2 id="4e2cf9">Polybar</h2>
+</span></span></span></code></pre></div><h2 id="polybar">Polybar</h2>
 <table>
 <thead>
 <tr>
@@ -1528,14 +1528,14 @@
 <ul>
 <li><a href="https://github.com/polybar/polybar/wiki">polybar docs</a></li>
 </ul>
-<h3 id="de6277">General settings</h3>
+<h3 id="general-settings-1">General settings</h3>
 <p>In relation to literate configuration, this is the most <del>crazy</del> advanced case of the former so far in my config.</p>
 <p>My polybar has:</p>
 <ul>
 <li>colors from the general color theme;</li>
 <li>powerline-ish decorations between modules.</li>
 </ul>
-<h4 id="5d5088">Colors</h4>
+<h4 id="colors-2">Colors</h4>
 <p>The &ldquo;colors&rdquo; part is straightforward enough. Polybar can use <code>Xresources</code>, so we just need to generate the appropriate bindings of Xresources to the polybar variables:</p>
 <p><a id="code-snippet--get-polybar-colors"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">mapconcat</span>
@@ -1551,7 +1551,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">background</span> <span style="color:#666">=</span> <span style="color:#ba2121">${xrdb:background}</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; foreground = ${xrdb:foreground}</span>
-</span></span></code></pre></div><h4 id="a19600">Glyph settings</h4>
+</span></span></code></pre></div><h4 id="glyph-settings">Glyph settings</h4>
 <p>As for the module decorations though, I find it ironic that with all this fancy rendering around I have to resort to Unicode glyphs.</p>
 <p>Anyhow, the approach is to put a glyph between two blocks like this:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>block1  block2
@@ -1584,7 +1584,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[glyph]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">gleft</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">gright</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
-</span></span></code></pre></div><h4 id="e94400">Defining modules</h4>
+</span></span></code></pre></div><h4 id="defining-modules">Defining modules</h4>
 <p>As we want to interweave polybar modules with these glyphs in the right order and with the right colors, it is reasonable to define a single source of truth:</p>
 <p><a id="table--polybar-modules"></a></p>
 <table>
@@ -1707,7 +1707,7 @@
 </span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>) (<span style="color:#00f">string-equal</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">el</span>) <span style="color:#19177c">module</span>))
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">table</span>)))
 </span></span></code></pre></div><p>That block is meant to be invoked in each module definition.</p>
-<h4 id="bf441c">Generating glyphs</h4>
+<h4 id="generating-glyphs">Generating glyphs</h4>
 <p>To generate the required set of glyphs, we need a glyph for every possible combination of adjacent colors that can occur in polybar.</p>
 <p>Most of these combinations can be inferred from the <code>polybar_modules</code> table, the rest are defined in another table:</p>
 <p><a id="table--polybar-extra-colors"></a></p>
@@ -1807,7 +1807,7 @@
 </span></span></code></pre></div><p>As of now, 15 of such modules is generated.</p>
 <p>Include this to the polybar config itself:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">&lt;&lt;polybar-generate-glyphs()&gt;&gt;</span>
-</span></span></code></pre></div><h4 id="ed6ff6">Generating set of modules</h4>
+</span></span></code></pre></div><h4 id="generating-set-of-modules">Generating set of modules</h4>
 <p>To configure polybar itself, we need to generate a set of modules for each monitor.</p>
 <p>The parameters here, excluding the two required tables, are:</p>
 <ul>
@@ -1843,7 +1843,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34; &#34;</span>)
 </span></span><span style="display:flex;"><span>   (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">last-color</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; glyph-%s--%s &#34;</span> <span style="color:#19177c">prev-color</span> <span style="color:#19177c">last-color</span>))))
 </span></span></code></pre></div><p>The polybar config doesn&rsquo;t support conditional statements, but it does support environment variables, so I pass the parameters from in the launch script.</p>
-<h4 id="2b3e94">Global bar config</h4>
+<h4 id="global-bar-config">Global bar config</h4>
 <p>Global bar configuration.</p>
 <p>Monitor config and base colors.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[bar/mybar]</span>
@@ -1913,7 +1913,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[global/wm]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">margin-top</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">margin-bottom</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
-</span></span></code></pre></div><h4 id="b30d03">Launch script</h4>
+</span></span></code></pre></div><h4 id="launch-script-1">Launch script</h4>
 <p>The script below allows me to:</p>
 <ul>
 <li>have different blocks on my two different-sized monitors and my laptop;</li>
@@ -1986,10 +1986,10 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">RIGHT_BLOCKS</span><span style="color:#666">=</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">BLOCKS</span>[<span style="color:#19177c">$MONITOR</span>]<span style="color:#b68;font-weight:bold">}</span>
 </span></span><span style="display:flex;"><span>    polybar mybar &amp;
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
-</span></span></code></pre></div><h3 id="4738ec">Individual modules</h3>
+</span></span></code></pre></div><h3 id="individual-modules">Individual modules</h3>
 <p>Some of the custom modules below use Org mode noweb to evaluate colors, because it&rsquo;s faster than querying <code>xrdb</code> at runtime. I wish I could reference polybar values there, but <a href="https://github.com/polybar/polybar/issues/615">it looks like this is impossible</a>.</p>
 <p>If you want to copy something, you can go to the <a href="bin/polybar/">bin/polybar</a> folder.</p>
-<h4 id="6846e4">pulseaudio</h4>
+<h4 id="pulseaudio">pulseaudio</h4>
 <p>PulseAudio status</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/pulseaudio]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/pulseaudio</span>
@@ -2032,7 +2032,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-volume-underline = ${colors.white}</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-muted-underline = ${colors.light-black}</span>
-</span></span></code></pre></div><h4 id="c1442c">mpd</h4>
+</span></span></code></pre></div><h4 id="mpd">mpd</h4>
 <p><a href="https://www.musicpd.org/">Music Player Daemon</a> status</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/mpd]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/mpd</span>
@@ -2062,14 +2062,14 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">icon-stop</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">icon-prev</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">icon-next</span> <span style="color:#666">=</span> <span style="color:#ba2121">2</span>
-</span></span></code></pre></div><h4 id="d9747e">cpu</h4>
+</span></span></code></pre></div><h4 id="cpu">cpu</h4>
 <p>CPU usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/cpu]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/cpu</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34; &lt;label&gt;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span> <span style="color:#666">=</span> <span style="color:#ba2121">%percentage%%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;cpu&#34;)&gt;&gt;</span>
-</span></span></code></pre></div><h4 id="054e6c">ram-memory</h4>
+</span></span></code></pre></div><h4 id="ram-memory">ram-memory</h4>
 <p>RAM usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/ram-memory]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/memory</span>
@@ -2089,7 +2089,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-underline = ${colors.blue}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;ram-memory&#34;)&gt;&gt;</span>
-</span></span></code></pre></div><h4 id="afb9e5">swap-memory</h4>
+</span></span></code></pre></div><h4 id="swap-memory">swap-memory</h4>
 <p>Swap usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/swap-memory]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/memory</span>
@@ -2097,7 +2097,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span><span style="color:#666">=</span><span style="color:#ba2121"> %gb_swap_used:.1f%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;swap-memory&#34;)&gt;&gt;</span>
-</span></span></code></pre></div><h4 id="91e02c">network</h4>
+</span></span></code></pre></div><h4 id="network">network</h4>
 <p>Upload/download speed</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/network]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/network</span>
@@ -2121,7 +2121,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-3</span> <span style="color:#666">=</span> <span style="color:#ba2121">3</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-4</span> <span style="color:#666">=</span> <span style="color:#ba2121">4</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-5</span> <span style="color:#666">=</span> <span style="color:#ba2121">5</span>
-</span></span></code></pre></div><h4 id="3115a5">ipstack-vpn</h4>
+</span></span></code></pre></div><h4 id="ipstack-vpn">ipstack-vpn</h4>
 <table>
 <thead>
 <tr>
@@ -2174,7 +2174,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/script</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/ipstack-vpn.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1200</span>
-</span></span></code></pre></div><h4 id="4556d1">openvpn</h4>
+</span></span></code></pre></div><h4 id="openvpn">openvpn</h4>
 <p>A module to check if openvpn is running.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">vpn</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>pgrep -a openvpn$ | head -n <span style="color:#666">1</span> | awk <span style="color:#ba2121">&#39;{print $NF }&#39;</span> | cut -d <span style="color:#ba2121">&#39;.&#39;</span> -f 1<span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -n <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$vpn</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
@@ -2187,7 +2187,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/openvpn.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;openvpn&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1200</span>
-</span></span></code></pre></div><h4 id="c5492a">xkeyboard</h4>
+</span></span></code></pre></div><h4 id="xkeyboard">xkeyboard</h4>
 <p>Current keyboard layout</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/xkeyboard]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/xkeyboard</span>
@@ -2198,7 +2198,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-layout</span> <span style="color:#666">=</span> <span style="color:#ba2121">%icon%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">layout-icon-0</span> <span style="color:#666">=</span> <span style="color:#ba2121">ru;RU</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">layout-icon-1</span> <span style="color:#666">=</span> <span style="color:#ba2121">us;US</span>
-</span></span></code></pre></div><h4 id="20c1d1">battery</h4>
+</span></span></code></pre></div><h4 id="battery">battery</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/battery]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/battery</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">battery</span> <span style="color:#666">=</span> <span style="color:#ba2121">BAT0</span>
@@ -2217,7 +2217,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-capacity-2</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-capacity-3</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-capacity-4</span> <span style="color:#666">=</span> <span style="color:#ba2121"></span>
-</span></span></code></pre></div><h4 id="aab92e">weather</h4>
+</span></span></code></pre></div><h4 id="weather">weather</h4>
 <p>Gets current weather from <a href="http://wttr.in/">wttr.in</a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">bar_format</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">BAR_FORMAT</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#ba2121">&#34;%t&#34;</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">location</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">LOCATION</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#ba2121">&#34;Saint-Petersburg&#34;</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
@@ -2239,7 +2239,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-underline = ${colors.red}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;weather&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1200</span>
-</span></span></code></pre></div><h4 id="ebd556">sun</h4>
+</span></span></code></pre></div><h4 id="sun">sun</h4>
 <table>
 <thead>
 <tr>
@@ -2286,7 +2286,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/sun.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;sun&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">60</span>
-</span></span></code></pre></div><h4 id="38f8d4">aw-afk</h4>
+</span></span></code></pre></div><h4 id="aw-afk">aw-afk</h4>
 <p>Prints out a current uptime and non-AFK time from <a href="https://github.com/ActivityWatch">ActivityWatch</a> server</p>
 <table>
 <thead>
@@ -2320,7 +2320,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/aw_afk.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">60</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;aw-afk&#34;)&gt;&gt;</span>
-</span></span></code></pre></div><h4 id="5fc732">date</h4>
+</span></span></code></pre></div><h4 id="date">date</h4>
 <p>Current date</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/date]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/date</span>
@@ -2334,7 +2334,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;date&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;%date% %time%&#34;</span>
-</span></span></code></pre></div><h4 id="9bf5ec">pomm</h4>
+</span></span></code></pre></div><h4 id="pomm">pomm</h4>
 <p>Pomodoro module.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> ps -e | grep emacs &gt;&gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    emacsclient --eval <span style="color:#ba2121">&#34;(if (boundp &#39;pomm-current-mode-line-string) pomm-current-mode-line-string \&#34;\&#34;) &#34;</span> | xargs <span style="color:#008000">echo</span> -e
@@ -2344,7 +2344,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/pomm.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-underline</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.light-green}</span>
-</span></span></code></pre></div><h4 id="edf5bd">SEP</h4>
+</span></span></code></pre></div><h4 id="sep">SEP</h4>
 <p>A simple separator</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/SEP]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/text</span>
@@ -2353,7 +2353,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">content-padding</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">content-margin</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">100000</span>
-</span></span></code></pre></div><h4 id="3a8873">TSEP</h4>
+</span></span></code></pre></div><h4 id="tsep">TSEP</h4>
 <p>A separator, which appears only if monitor is set to have a tray in the launch script</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> ! -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$TRAY</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$TRAY</span><span style="color:#ba2121">&#34;</span> !<span style="color:#666">=</span> <span style="color:#ba2121">&#34;none&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;| &#34;</span>
@@ -2363,7 +2363,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/tray-sep.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.magenta}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">100000</span>
-</span></span></code></pre></div><h4 id="51d4b5">i3</h4>
+</span></span></code></pre></div><h4 id="i3">i3</h4>
 <p>Show i3wm workspaces</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/i3]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/i3</span>
@@ -2399,7 +2399,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-urgent-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.red}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-urgent-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.black}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-urgent-padding</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
-</span></span></code></pre></div><h2 id="da7107">Rofi</h2>
+</span></span></code></pre></div><h2 id="rofi-1">Rofi</h2>
 <table>
 <thead>
 <tr>
@@ -2415,7 +2415,7 @@
 </tbody>
 </table>
 <p><a href="https://github.com/davatorium/rofi">rofi</a> is another dynamic menu generator. It can act as dmenu replacement but offers a superset of dmenu&rsquo;s features.</p>
-<h3 id="d72175">Theme</h3>
+<h3 id="theme">Theme</h3>
 <p>A theme, based on <a href="https://github.com/dracula/rofi">dracula theme</a> for rofi, but with palenight colorscheme.</p>
 <p><a id="code-snippet--get-rofi-colors"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">apply</span>
@@ -2561,8 +2561,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">margin</span>:           <span style="color:#666">0</span><span style="color:#b00040">px</span> <span style="color:#666">0.3000</span><span style="color:#b00040">em</span> <span style="color:#666">0.0000</span><span style="color:#b00040">em</span> <span style="color:#666">0.0000</span><span style="color:#b00040">em</span> ;
 </span></span><span style="display:flex;"><span>    text-color:       <span style="color:#008000;font-weight:bold">inherit</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="a83f1c">Scripts</h3>
-<h4 id="b182bd">Buku bookmarks</h4>
+</span></span></code></pre></div><h3 id="scripts">Scripts</h3>
+<h4 id="buku-bookmarks">Buku bookmarks</h4>
 <p>Inspired by the <a href="https://github.com/knatsakis/rofi-buku">knatsakis/rofi-buku</a> script.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#39;pdsk&#39;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">BUKU</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/.local/bin/buku&#34;</span>
@@ -2598,14 +2598,14 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">url</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span><span style="color:#19177c">$BUKU</span> -f <span style="color:#666">10</span> -p <span style="color:#19177c">$index</span><span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">url</span>#<span style="color:#ba2121">&#34;waiting for input&#34;</span><span style="color:#b68;font-weight:bold">}</span> | cut -d <span style="color:#ba2121">&#39; &#39;</span> -f <span style="color:#666">1</span> | xargs -I % <span style="color:#19177c">$COMMAND</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">}</span>
-</span></span></code></pre></div><h4 id="b1deb3">Man pages</h4>
+</span></span></code></pre></div><h4 id="man-pages">Man pages</h4>
 <p>Inspired by <a href="https://www.youtube.com/watch?v=8E8sUNHdzG8">this Luke Smith&rsquo;s video</a>.</p>
 <p>A script to open a man page with zathura. There is no particular reason why one should look through man pages in pdf viewer rather than in console, but why not.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">SELECTED</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>man -k . | rofi -dmenu -l <span style="color:#666">20</span> | awk <span style="color:#ba2121">&#39;{print $1}&#39;</span><span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -z <span style="color:#19177c">$SELECTED</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    man -Tpdf <span style="color:#19177c">$SELECTED</span> | zathura -
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span></code></pre></div><h4 id="80e810">Emojis</h4>
+</span></span></code></pre></div><h4 id="emojis-1">Emojis</h4>
 <table>
 <thead>
 <tr>
@@ -2620,7 +2620,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="1a1dc9">pass</h4>
+<h4 id="pass">pass</h4>
 <table>
 <thead>
 <tr>
@@ -2644,7 +2644,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#19177c">EDITOR</span><span style="color:#666">=</span>vim
 </span></span><span style="display:flex;"><span><span style="color:#19177c">default_autotype</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;username :tab pass&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">clip</span><span style="color:#666">=</span>both
-</span></span></code></pre></div><h2 id="4c5c77">Flameshot</h2>
+</span></span></code></pre></div><h2 id="flameshot">Flameshot</h2>
 <table>
 <thead>
 <tr>
@@ -2701,7 +2701,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">TYPE_TEXT</span><span style="color:#666">=</span><span style="color:#ba2121">T</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">TYPE_TOGGLE_PANEL</span><span style="color:#666">=</span><span style="color:#ba2121">Space</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">TYPE_UNDO</span><span style="color:#666">=</span><span style="color:#ba2121">Ctrl+Z</span>
-</span></span></code></pre></div><h2 id="026722">dunst</h2>
+</span></span></code></pre></div><h2 id="dunst">dunst</h2>
 <table>
 <thead>
 <tr>
@@ -3023,7 +3023,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>    timeout = <span style="color:#666">0</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    # Icon for notifications with critical urgency, uncomment to enable<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    #icon = <span style="color:#b68">/path/</span>to/icon<span style="">
-</span></span></span></code></pre></div><h2 id="563987">keynav</h2>
+</span></span></span></code></pre></div><h2 id="keynav">keynav</h2>
 <table>
 <thead>
 <tr>
@@ -3057,7 +3057,7 @@
 <ul>
 <li><a href="https://github.com/jordansissel/keynav/blob/master/keynav.pod">keynav documentation</a></li>
 </ul>
-<h3 id="fa535f">Config</h3>
+<h3 id="config">Config</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># clear all previous keybindings<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>clear<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
@@ -3109,13 +3109,13 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span><span style="color:#666">3</span> click <span style="color:#666">3</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span><span style="color:#666">4</span> click <span style="color:#666">4</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span><span style="color:#666">5</span> click <span style="color:#666">5</span><span style="">
-</span></span></span></code></pre></div><h3 id="676924">Using with picom</h3>
+</span></span></span></code></pre></div><h3 id="using-with-picom">Using with picom</h3>
 <p>I&rsquo;ve noticed that the program does not play nice with picom&rsquo;s fade effect. To fix that, add the following to you config:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">fade-exclude</span> <span style="color:#666">=</span> <span style="color:#ba2121">[
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;class_i = &#39;keynav&#39;&#34;,
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;class_g = &#39;keynav&#39;&#34;,</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">]</span>
-</span></span></code></pre></div><h2 id="b779d2">Picom</h2>
+</span></span></code></pre></div><h2 id="picom">Picom</h2>
 <table>
 <thead>
 <tr>
@@ -3137,7 +3137,7 @@
 <li><a href="https://wiki.archlinux.org/index.php/Picom">Picom on ArchWiki</a></li>
 <li><a href="https://github.com/yshui/picom/blob/next/picom.sample.conf">Sample configuration</a></li>
 </ul>
-<h3 id="dde98f">Shadows</h3>
+<h3 id="shadows">Shadows</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">shadow</span> <span style="color:#666">=</span> <span style="color:#ba2121">true;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">shadow-radius</span> <span style="color:#666">=</span> <span style="color:#ba2121">2;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">shadow-offset-x</span> <span style="color:#666">=</span> <span style="color:#ba2121">-2;</span>
@@ -3151,7 +3151,7 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;class_g = &#39;Cairo-clock&#39;&#34;,
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;_GTK_FRAME_EXTENTS@:c&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">];</span>
-</span></span></code></pre></div><h3 id="09b43b">Fading</h3>
+</span></span></code></pre></div><h3 id="fading">Fading</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">fading</span> <span style="color:#666">=</span> <span style="color:#ba2121">true</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">fade-in-step</span> <span style="color:#666">=</span> <span style="color:#ba2121">0.03;</span>
@@ -3164,7 +3164,7 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;class_i = &#39;emacs&#39;&#34;,
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;class_g = &#39;emacs&#39;&#34;,</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">]</span>
-</span></span></code></pre></div><h3 id="bad6a5">Opacity</h3>
+</span></span></code></pre></div><h3 id="opacity">Opacity</h3>
 <p>I don&rsquo;t use stuff like transparency for inactive windows.</p>
 <p>The first 5 lines of <code>opacity-rule</code> make i3wm&rsquo;s hidden windows 100% transparent, so I see the background behind the semi-transparent windows in i3wm&rsquo;s stacked and tabbed layout. Here is <a href="https://unix.stackexchange.com/questions/281131/compton-i3-tabbed-stacked-transparency-background-image">StackExchange question</a> about that.</p>
 <p>I also noticed that for some reason it doesn&rsquo;t play well with Emacs&rsquo;s built-in transparency, so the last line sets up Emacs transparency at 90%.</p>
@@ -3182,7 +3182,7 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;0:_NET_WM_STATE@[4]:32a = &#39;_NET_WM_STATE_HIDDEN&#39;&#34;,
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  &#34;90:class_g = &#39;Emacs&#39;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">];</span>
-</span></span></code></pre></div><h3 id="de6277">General settings</h3>
+</span></span></code></pre></div><h3 id="general-settings-2">General settings</h3>
 <p>Default general settings. Editing some of these may be neeeded in case of performance issues.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">backend</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;xrender&#34;;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">vsync</span> <span style="color:#666">=</span> <span style="color:#ba2121">true</span>
@@ -3204,7 +3204,7 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  popup_menu = { opacity = 1; }
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  dropdown_menu = { opacity = 1; }</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">};</span>
-</span></span></code></pre></div><h2 id="af7e75">Zathura</h2>
+</span></span></code></pre></div><h2 id="zathura">Zathura</h2>
 <table>
 <thead>
 <tr>
@@ -3257,9 +3257,9 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;yellow&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span></code></pre></div><h2 id="28bc0c">Various software</h2>
+</span></span></span></code></pre></div><h2 id="various-software">Various software</h2>
 <p>This section generates manifests for various desktop software that I&rsquo;m using.</p>
-<h3 id="e30a7d">Browsers</h3>
+<h3 id="browsers">Browsers</h3>
 <table>
 <thead>
 <tr>
@@ -3278,7 +3278,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="8580ba">Office &amp; Multimedia</h3>
+<h3 id="office-and-multimedia">Office &amp; Multimedia</h3>
 <table>
 <thead>
 <tr>
@@ -3317,7 +3317,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="5766de">LaTeX</h3>
+<h3 id="latex">LaTeX</h3>
 <table>
 <thead>
 <tr>
@@ -3348,7 +3348,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="55f37d">Dev</h3>
+<h3 id="dev">Dev</h3>
 <table>
 <thead>
 <tr>
@@ -3470,7 +3470,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="91a1b5">Manifests</h3>
+<h3 id="manifests">Manifests</h3>
 <p><a id="code-snippet--packages"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-guix-dependencies</span> <span style="color:#19177c">category</span>)
 </span></span></code></pre></div><p>Dev</p>
@@ -3505,7 +3505,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">specifications-&gt;manifest</span>
 </span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>(<span style="color:#ba2121">&#34;desktop-rofi&#34;</span>)<span style="color:#19177c">&gt;&gt;</span>))
-</span></span></code></pre></div><h3 id="b05338">Flatpak</h3>
+</span></span></code></pre></div><h3 id="flatpak">Flatpak</h3>
 <p>A lot of proprietary desktop applications can be installed most easily with flatpak &amp; flathub.</p>
 <table>
 <thead>
@@ -3559,7 +3559,7 @@
 </span></span><span style="display:flex;"><span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">c</span>) (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;flatpak install -y --user &#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">c</span>) <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">c</span>)))
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">table</span>
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;\n&#34;</span>)
-</span></span></code></pre></div><h3 id="a5ea3f">Nix</h3>
+</span></span></code></pre></div><h3 id="nix">Nix</h3>
 <table>
 <thead>
 <tr>
@@ -3581,10 +3581,10 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nix-channel --update
 </span></span></code></pre></div><p>Installing packages:</p>
 <pre tabindex="0"><code class="language-nil" data-lang="nil">nix-env -i vk-messenger slack
-</code></pre><h2 id="992a0f">Services</h2>
+</code></pre><h2 id="services-1">Services</h2>
 <p><a href="https://www.gnu.org/software/shepherd/manual/html_node/index.html">GNU Shepherd</a> is a service management system for GNU Guix.</p>
 <p>I previously used supervisor, but shepherd also seems pretty capable.</p>
-<h3 id="47dcbd">Music</h3>
+<h3 id="music">Music</h3>
 <table>
 <thead>
 <tr>
@@ -3642,7 +3642,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;mpd_watcher&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:requires</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mpd</span>)))
-</span></span></code></pre></div><h3 id="d40032">GNU Mcron</h3>
+</span></span></code></pre></div><h3 id="gnu-mcron">GNU Mcron</h3>
 <p><a href="https://www.gnu.org/software/mcron/">GNU Mcron</a> is a replacement for cron, written in Scheme.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">mcron</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
@@ -3650,7 +3650,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;mcron&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="0cd36a">ActivityWatch</h3>
+</span></span></code></pre></div><h3 id="activitywatch">ActivityWatch</h3>
 <p><a href="https://activitywatch.net/">ActivityWatch</a> is a FOSS time tracker. It tracks screen and application usage and has integrations with browsers, Emacs, etc.</p>
 <table>
 <thead>
@@ -3690,28 +3690,28 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;aw-watcher-window&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="52230d">PulseEffects</h3>
+</span></span></code></pre></div><h3 id="pulseeffects">PulseEffects</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">pulseeffects</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">pulseeffects</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;flatpak&#34;</span> <span style="color:#ba2121">&#34;run&#34;</span> <span style="color:#ba2121">&#34;com.github.wwmm.pulseeffects&#34;</span> <span style="color:#ba2121">&#34;--gapplication-service&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="16b7c3">xsettingsd</h3>
+</span></span></code></pre></div><h3 id="xsettingsd">xsettingsd</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">xsettingsd</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">xsettingsd</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;xsettingsd&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="8cdaaf">nm-applet</h3>
+</span></span></code></pre></div><h3 id="nm-applet">nm-applet</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">nm-applet</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">nm-applet</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;nm-applet&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="4d41e0">Discord rich presence</h3>
+</span></span></code></pre></div><h3 id="discord-rich-presence">Discord rich presence</h3>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/flathub/com.discordapp.Discord/wiki/Rich-Precense-(discord-rpc)">Rich Precense (discord rpc)</a></li>
@@ -3722,7 +3722,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">discord-rich-presence</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:one-shot?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-system-constructor</span> <span style="color:#ba2121">&#34;ln -sf {app/com.discordapp.Discord,$XDG_RUNTIME_DIR}/discord-ipc-0&#34;</span>)))
-</span></span></code></pre></div><h3 id="383cbc">Polkit Authentication agent</h3>
+</span></span></code></pre></div><h3 id="polkit-authentication-agent">Polkit Authentication agent</h3>
 <p>Launch an authentication agent. Necessary for stuff like <code>pkexec</code>. I suspect I&rsquo;m not doing that the intended way, but it seems to work.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">polkit-gnome</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
@@ -3730,35 +3730,35 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/desktop-misc/desktop-misc/libexec/polkit-gnome-authentication-agent-1&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="202a63">Xmodmap</h3>
+</span></span></code></pre></div><h3 id="xmodmap">Xmodmap</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">xmodmap</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">xmodmap</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:one-shot?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-system-constructor</span> <span style="color:#ba2121">&#34;xmodmap /home/pavel/.Xmodmap&#34;</span>)))
-</span></span></code></pre></div><h3 id="eaef85">VPN</h3>
-<p>Run my <a href="/configs/guix/#eaef85">OpenVPN setup</a>. Not lauching this automatially, as it requires an active connection.</p>
+</span></span></code></pre></div><h3 id="vpn">VPN</h3>
+<p>Run my <a href="/configs/guix/#vpn">OpenVPN setup</a>. Not lauching this automatially, as it requires an active connection.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">vpn</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">vpn</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/bin/scripts/vpn-start&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="56f1ce">Davmail</h3>
+</span></span></code></pre></div><h3 id="davmail">Davmail</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">davmail</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">davmail</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/bin/davmail&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="aaddb5">sqrt-data</h3>
+</span></span></code></pre></div><h3 id="sqrt-data">sqrt-data</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">sqrt-data</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">sqrt-data</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sqrt_data&#34;</span> <span style="color:#ba2121">&#34;cron&#34;</span> <span style="color:#ba2121">&#34;run-client-cron&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="49f9d4">Shepherd config</h3>
+</span></span></code></pre></div><h3 id="shepherd-config">Shepherd config</h3>
 <p>Register services</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">register-services</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">mpd</span>
@@ -3793,7 +3793,7 @@
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">xmodmap</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">nm-applet</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">sqrt-data</span>))
-</span></span></code></pre></div><h3 id="d8e87c">Sync</h3>
+</span></span></code></pre></div><h3 id="sync">Sync</h3>
 <table>
 <thead>
 <tr>
@@ -3806,7 +3806,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="0680f7">Guix settings</h2>
+<h2 id="guix-settings">Guix settings</h2>
 <p>Other desktop programs I use are listed below.</p>
 <table>
 <thead>
@@ -3926,201 +3926,201 @@
             <b><a href="#">Table of Contents</a></b>
             <nav id="TableOfContents">
   <ul>
-    <li><a href="#08fc9d">Global customization</a>
+    <li><a href="#global-customization">Global customization</a>
       <ul>
-        <li><a href="#5d5088">Colors</a></li>
-        <li><a href="#f8aa51">Xresources</a>
+        <li><a href="#colors">Colors</a></li>
+        <li><a href="#xresources">Xresources</a>
           <ul>
-            <li><a href="#371f54">Colors in Xresources</a></li>
-            <li><a href="#59c4ad">Fonts</a></li>
+            <li><a href="#colors-in-xresources">Colors in Xresources</a></li>
+            <li><a href="#fonts">Fonts</a></li>
           </ul>
         </li>
-        <li><a href="#83915d">Themes</a></li>
-        <li><a href="#1903a3">MIME</a></li>
-        <li><a href="#5e1a34">Device-specific settings</a></li>
+        <li><a href="#themes">Themes</a></li>
+        <li><a href="#mime">MIME</a></li>
+        <li><a href="#device-specific-settings">Device-specific settings</a></li>
       </ul>
     </li>
-    <li><a href="#3d569f">EXWM</a>
+    <li><a href="#exwm">EXWM</a>
       <ul>
-        <li><a href="#f5b786">Startup &amp; UI</a>
+        <li><a href="#startup-and-ui">Startup &amp; UI</a>
           <ul>
-            <li><a href="#d58455">Xsession</a></li>
-            <li><a href="#a86208">Startup apps</a></li>
-            <li><a href="#b888f9">Pinentry</a></li>
-            <li><a href="#220af3">Modeline</a></li>
+            <li><a href="#xsession">Xsession</a></li>
+            <li><a href="#startup-apps">Startup apps</a></li>
+            <li><a href="#pinentry">Pinentry</a></li>
+            <li><a href="#modeline">Modeline</a></li>
           </ul>
         </li>
-        <li><a href="#aea234">Windows</a>
+        <li><a href="#windows">Windows</a>
           <ul>
-            <li><a href="#5f5bba">Moving windows</a></li>
-            <li><a href="#9a0030">Resizing windows</a></li>
-            <li><a href="#a9d026">Improving splitting windows</a></li>
+            <li><a href="#moving-windows">Moving windows</a></li>
+            <li><a href="#resizing-windows">Resizing windows</a></li>
+            <li><a href="#improving-splitting-windows">Improving splitting windows</a></li>
           </ul>
         </li>
-        <li><a href="#75422c">Perspectives</a></li>
-        <li><a href="#218a12">Workspaces and multi-monitor setup</a>
+        <li><a href="#perspectives">Perspectives</a></li>
+        <li><a href="#workspaces-and-multi-monitor-setup">Workspaces and multi-monitor setup</a>
           <ul>
-            <li><a href="#990303">Tracking recently used workspaces</a></li>
-            <li><a href="#01fe92">The monitor list</a></li>
-            <li><a href="#e00555">Switch to another monitor</a></li>
-            <li><a href="#67f80b">Move the workspace to another monitor</a></li>
-            <li><a href="#266d41">Windmove between monitors</a></li>
+            <li><a href="#tracking-recently-used-workspaces">Tracking recently used workspaces</a></li>
+            <li><a href="#the-monitor-list">The monitor list</a></li>
+            <li><a href="#switch-to-another-monitor">Switch to another monitor</a></li>
+            <li><a href="#move-the-workspace-to-another-monitor">Move the workspace to another monitor</a></li>
+            <li><a href="#windmove-between-monitors">Windmove between monitors</a></li>
           </ul>
         </li>
-        <li><a href="#eaea0a">Completions</a>
+        <li><a href="#completions">Completions</a>
           <ul>
-            <li><a href="#97a82f">ivy-posframe</a></li>
-            <li><a href="#89c1b0">Linux app</a></li>
-            <li><a href="#38907f">password-store-ivy</a></li>
-            <li><a href="#1d7d83">emojis</a></li>
+            <li><a href="#ivy-posframe">ivy-posframe</a></li>
+            <li><a href="#linux-app">Linux app</a></li>
+            <li><a href="#password-store-ivy">password-store-ivy</a></li>
+            <li><a href="#emojis">emojis</a></li>
           </ul>
         </li>
-        <li><a href="#cbebf7">Keybindings</a>
+        <li><a href="#keybindings">Keybindings</a>
           <ul>
-            <li><a href="#19fef0">EXWM keybindings</a></li>
-            <li><a href="#43aa92">App shortcuts</a></li>
-            <li><a href="#77e439">Locking up</a></li>
+            <li><a href="#exwm-keybindings">EXWM keybindings</a></li>
+            <li><a href="#app-shortcuts">App shortcuts</a></li>
+            <li><a href="#locking-up">Locking up</a></li>
           </ul>
         </li>
-        <li><a href="#41cf95">Fixes</a>
+        <li><a href="#fixes">Fixes</a>
           <ul>
-            <li><a href="#752575">Catch and report all errors raised when invoking command hooks</a></li>
-            <li><a href="#d5bde2">Improve floating windows behavior</a></li>
+            <li><a href="#catch-and-report-all-errors-raised-when-invoking-command-hooks">Catch and report all errors raised when invoking command hooks</a></li>
+            <li><a href="#improve-floating-windows-behavior">Improve floating windows behavior</a></li>
           </ul>
         </li>
-        <li><a href="#f99103">EXWM config</a></li>
+        <li><a href="#exwm-config">EXWM config</a></li>
       </ul>
     </li>
-    <li><a href="#f1b3aa">i3wm</a>
+    <li><a href="#i3wm">i3wm</a>
       <ul>
-        <li><a href="#de6277">General settings</a></li>
-        <li><a href="#710cb0">Managing windows</a></li>
-        <li><a href="#d5e926">Workspaces</a></li>
-        <li><a href="#1f4da9">Rules</a></li>
-        <li><a href="#da4231">Scratchpad</a>
+        <li><a href="#general-settings">General settings</a></li>
+        <li><a href="#managing-windows">Managing windows</a></li>
+        <li><a href="#workspaces">Workspaces</a></li>
+        <li><a href="#rules">Rules</a></li>
+        <li><a href="#scratchpad">Scratchpad</a>
           <ul>
-            <li><a href="#b30d03">Launch script</a></li>
-            <li><a href="#d56af8">i3 config</a></li>
+            <li><a href="#launch-script">Launch script</a></li>
+            <li><a href="#i3-config">i3 config</a></li>
           </ul>
         </li>
-        <li><a href="#dd90dd">Gaps &amp; borders</a>
+        <li><a href="#gaps-and-borders">Gaps &amp; borders</a>
           <ul>
-            <li><a href="#cbebf7">Keybindings</a></li>
+            <li><a href="#keybindings-1">Keybindings</a></li>
           </ul>
         </li>
-        <li><a href="#1c8fb2">Move &amp; resize windows</a></li>
-        <li><a href="#20b319"><span class="org-todo done OFF">OFF</span> (OFF) Intergration with dmenu</a></li>
-        <li><a href="#e62079">Integration with rofi</a></li>
-        <li><a href="#e18940">Launching apps &amp; misc keybindings</a>
+        <li><a href="#move-and-resize-windows">Move &amp; resize windows</a></li>
+        <li><a href="#off--intergration-with-dmenu"><span class="org-todo done OFF">OFF</span> (OFF) Intergration with dmenu</a></li>
+        <li><a href="#integration-with-rofi">Integration with rofi</a></li>
+        <li><a href="#launching-apps-and-misc-keybindings">Launching apps &amp; misc keybindings</a>
           <ul>
-            <li><a href="#a6f00c">Apps</a></li>
-            <li><a href="#049d81">Media controls &amp; brightness</a></li>
-            <li><a href="#46fa56">Screenshots</a></li>
+            <li><a href="#apps">Apps</a></li>
+            <li><a href="#media-controls-and-brightness">Media controls &amp; brightness</a></li>
+            <li><a href="#screenshots">Screenshots</a></li>
           </ul>
         </li>
-        <li><a href="#5d5088">Colors</a></li>
-        <li><a href="#b5e1d9"><span class="org-todo done OFF">OFF</span> (OFF) i3blocks</a></li>
-        <li><a href="#fc9a0c">Keyboard Layout</a></li>
-        <li><a href="#b425a6">Autostart</a></li>
+        <li><a href="#colors-1">Colors</a></li>
+        <li><a href="#off--i3blocks"><span class="org-todo done OFF">OFF</span> (OFF) i3blocks</a></li>
+        <li><a href="#keyboard-layout">Keyboard Layout</a></li>
+        <li><a href="#autostart">Autostart</a></li>
       </ul>
     </li>
-    <li><a href="#4e2cf9">Polybar</a>
+    <li><a href="#polybar">Polybar</a>
       <ul>
-        <li><a href="#de6277">General settings</a>
+        <li><a href="#general-settings-1">General settings</a>
           <ul>
-            <li><a href="#5d5088">Colors</a></li>
-            <li><a href="#a19600">Glyph settings</a></li>
-            <li><a href="#e94400">Defining modules</a></li>
-            <li><a href="#bf441c">Generating glyphs</a></li>
-            <li><a href="#ed6ff6">Generating set of modules</a></li>
-            <li><a href="#2b3e94">Global bar config</a></li>
-            <li><a href="#b30d03">Launch script</a></li>
+            <li><a href="#colors-2">Colors</a></li>
+            <li><a href="#glyph-settings">Glyph settings</a></li>
+            <li><a href="#defining-modules">Defining modules</a></li>
+            <li><a href="#generating-glyphs">Generating glyphs</a></li>
+            <li><a href="#generating-set-of-modules">Generating set of modules</a></li>
+            <li><a href="#global-bar-config">Global bar config</a></li>
+            <li><a href="#launch-script-1">Launch script</a></li>
           </ul>
         </li>
-        <li><a href="#4738ec">Individual modules</a>
+        <li><a href="#individual-modules">Individual modules</a>
           <ul>
-            <li><a href="#6846e4">pulseaudio</a></li>
-            <li><a href="#c1442c">mpd</a></li>
-            <li><a href="#d9747e">cpu</a></li>
-            <li><a href="#054e6c">ram-memory</a></li>
-            <li><a href="#afb9e5">swap-memory</a></li>
-            <li><a href="#91e02c">network</a></li>
-            <li><a href="#3115a5">ipstack-vpn</a></li>
-            <li><a href="#4556d1">openvpn</a></li>
-            <li><a href="#c5492a">xkeyboard</a></li>
-            <li><a href="#20c1d1">battery</a></li>
-            <li><a href="#aab92e">weather</a></li>
-            <li><a href="#ebd556">sun</a></li>
-            <li><a href="#38f8d4">aw-afk</a></li>
-            <li><a href="#5fc732">date</a></li>
-            <li><a href="#9bf5ec">pomm</a></li>
-            <li><a href="#edf5bd">SEP</a></li>
-            <li><a href="#3a8873">TSEP</a></li>
-            <li><a href="#51d4b5">i3</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><a href="#da7107">Rofi</a>
-      <ul>
-        <li><a href="#d72175">Theme</a></li>
-        <li><a href="#a83f1c">Scripts</a>
-          <ul>
-            <li><a href="#b182bd">Buku bookmarks</a></li>
-            <li><a href="#b1deb3">Man pages</a></li>
-            <li><a href="#80e810">Emojis</a></li>
-            <li><a href="#1a1dc9">pass</a></li>
+            <li><a href="#pulseaudio">pulseaudio</a></li>
+            <li><a href="#mpd">mpd</a></li>
+            <li><a href="#cpu">cpu</a></li>
+            <li><a href="#ram-memory">ram-memory</a></li>
+            <li><a href="#swap-memory">swap-memory</a></li>
+            <li><a href="#network">network</a></li>
+            <li><a href="#ipstack-vpn">ipstack-vpn</a></li>
+            <li><a href="#openvpn">openvpn</a></li>
+            <li><a href="#xkeyboard">xkeyboard</a></li>
+            <li><a href="#battery">battery</a></li>
+            <li><a href="#weather">weather</a></li>
+            <li><a href="#sun">sun</a></li>
+            <li><a href="#aw-afk">aw-afk</a></li>
+            <li><a href="#date">date</a></li>
+            <li><a href="#pomm">pomm</a></li>
+            <li><a href="#sep">SEP</a></li>
+            <li><a href="#tsep">TSEP</a></li>
+            <li><a href="#i3">i3</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#4c5c77">Flameshot</a></li>
-    <li><a href="#026722">dunst</a></li>
-    <li><a href="#563987">keynav</a>
+    <li><a href="#rofi-1">Rofi</a>
       <ul>
-        <li><a href="#fa535f">Config</a></li>
-        <li><a href="#676924">Using with picom</a></li>
+        <li><a href="#theme">Theme</a></li>
+        <li><a href="#scripts">Scripts</a>
+          <ul>
+            <li><a href="#buku-bookmarks">Buku bookmarks</a></li>
+            <li><a href="#man-pages">Man pages</a></li>
+            <li><a href="#emojis-1">Emojis</a></li>
+            <li><a href="#pass">pass</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
-    <li><a href="#b779d2">Picom</a>
+    <li><a href="#flameshot">Flameshot</a></li>
+    <li><a href="#dunst">dunst</a></li>
+    <li><a href="#keynav">keynav</a>
       <ul>
-        <li><a href="#dde98f">Shadows</a></li>
-        <li><a href="#09b43b">Fading</a></li>
-        <li><a href="#bad6a5">Opacity</a></li>
-        <li><a href="#de6277">General settings</a></li>
+        <li><a href="#config">Config</a></li>
+        <li><a href="#using-with-picom">Using with picom</a></li>
       </ul>
     </li>
-    <li><a href="#af7e75">Zathura</a></li>
-    <li><a href="#28bc0c">Various software</a>
+    <li><a href="#picom">Picom</a>
       <ul>
-        <li><a href="#e30a7d">Browsers</a></li>
-        <li><a href="#8580ba">Office &amp; Multimedia</a></li>
-        <li><a href="#5766de">LaTeX</a></li>
-        <li><a href="#55f37d">Dev</a></li>
-        <li><a href="#91a1b5">Manifests</a></li>
-        <li><a href="#b05338">Flatpak</a></li>
-        <li><a href="#a5ea3f">Nix</a></li>
+        <li><a href="#shadows">Shadows</a></li>
+        <li><a href="#fading">Fading</a></li>
+        <li><a href="#opacity">Opacity</a></li>
+        <li><a href="#general-settings-2">General settings</a></li>
       </ul>
     </li>
-    <li><a href="#992a0f">Services</a>
+    <li><a href="#zathura">Zathura</a></li>
+    <li><a href="#various-software">Various software</a>
       <ul>
-        <li><a href="#47dcbd">Music</a></li>
-        <li><a href="#d40032">GNU Mcron</a></li>
-        <li><a href="#0cd36a">ActivityWatch</a></li>
-        <li><a href="#52230d">PulseEffects</a></li>
-        <li><a href="#16b7c3">xsettingsd</a></li>
-        <li><a href="#8cdaaf">nm-applet</a></li>
-        <li><a href="#4d41e0">Discord rich presence</a></li>
-        <li><a href="#383cbc">Polkit Authentication agent</a></li>
-        <li><a href="#202a63">Xmodmap</a></li>
-        <li><a href="#eaef85">VPN</a></li>
-        <li><a href="#56f1ce">Davmail</a></li>
-        <li><a href="#aaddb5">sqrt-data</a></li>
-        <li><a href="#49f9d4">Shepherd config</a></li>
-        <li><a href="#d8e87c">Sync</a></li>
+        <li><a href="#browsers">Browsers</a></li>
+        <li><a href="#office-and-multimedia">Office &amp; Multimedia</a></li>
+        <li><a href="#latex">LaTeX</a></li>
+        <li><a href="#dev">Dev</a></li>
+        <li><a href="#manifests">Manifests</a></li>
+        <li><a href="#flatpak">Flatpak</a></li>
+        <li><a href="#nix">Nix</a></li>
       </ul>
     </li>
-    <li><a href="#0680f7">Guix settings</a></li>
+    <li><a href="#services-1">Services</a>
+      <ul>
+        <li><a href="#music">Music</a></li>
+        <li><a href="#gnu-mcron">GNU Mcron</a></li>
+        <li><a href="#activitywatch">ActivityWatch</a></li>
+        <li><a href="#pulseeffects">PulseEffects</a></li>
+        <li><a href="#xsettingsd">xsettingsd</a></li>
+        <li><a href="#nm-applet">nm-applet</a></li>
+        <li><a href="#discord-rich-presence">Discord rich presence</a></li>
+        <li><a href="#polkit-authentication-agent">Polkit Authentication agent</a></li>
+        <li><a href="#xmodmap">Xmodmap</a></li>
+        <li><a href="#vpn">VPN</a></li>
+        <li><a href="#davmail">Davmail</a></li>
+        <li><a href="#sqrt-data">sqrt-data</a></li>
+        <li><a href="#shepherd-config">Shepherd config</a></li>
+        <li><a href="#sync">Sync</a></li>
+      </ul>
+    </li>
+    <li><a href="#guix-settings">Guix settings</a></li>
   </ul>
 </nav>
         </div>
