@@ -31,8 +31,38 @@
   :ensure t)
 
 (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org)
+
+(defvar-local my/org-hugo-heading-slugs nil)
+
+(defun my/increase-slug (string)
+  (if (string-match (rx "-" (1+ num) eos) string)
+      (replace-match
+       (concat
+        "-"
+        (thread-first
+          (match-string 0 string)
+          (substring 1)
+          (string-to-number)
+          (+ 1)
+          (number-to-string)))
+       t t string)
+    (concat string "-" "1")))
+
+(defun my/org-hugo-get-heading-slug (element info)
+  (let* ((title (org-export-data-with-backend
+                 (org-element-property :title element) 'md info))
+         (slug (org-string-nw-p (org-hugo-slug title :allow-double-hyphens))))
+    (unless my/org-hugo-heading-slugs
+      (setq my/org-hugo-heading-slugs (make-hash-table :test 'equal)))
+    (unless (or (null slug) (string-empty-p slug))
+      (while (gethash slug my/org-hugo-heading-slugs)
+        (setq slug (my/increase-slug slug)))
+      (puthash slug t my/org-hugo-heading-slugs))
+    slug))
+
 (setq org-hugo-anchor-functions '(org-hugo-get-page-or-bundle-name
                                   org-hugo-get-custom-id
+                                  my/org-hugo-get-heading-slug
                                   org-hugo-get-md5))
 
 (setq org-hugo-section "configs")
