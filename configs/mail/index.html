@@ -473,7 +473,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-address-command</span> <span style="color:#19177c">&#39;as-is</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-hello-mode-hook</span>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
-</span></span></code></pre></div><p>The file to which this is tangled is read in the init.el.</p>
+</span></span></code></pre></div><p>The file is read in <code>init.el</code>.</p>
 <h3 id="4eb489">Saved filters and keybindings</h3>
 <p>I want to have the saved filters available in both notmuch interface as as keybindings. So a bit more of abusing org tables.</p>
 <p>Root keybindings:</p>
@@ -596,6 +596,67 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">CMS</span>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))))
+</span></span></code></pre></div><h3 id="c2681a">Tuning signature</h3>
+<p>By default, <code>message.el</code> inserts the signature at the bottom of the message, like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;message text&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Person &lt;person@mail.org&gt; writes:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; Stuff
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Yours,
+</span></span><span style="display:flex;"><span>me
+</span></span></code></pre></div><p>This creates issues with certain email clients. For instance, MS Exchange often just cuts the text at <code>Person &lt;person@mail.org&gt;....</code>, so there&rsquo;s no way to see the signature from the UI.</p>
+<p>What&rsquo;s more, MS Exchange, Gmail and other such clients add the signature before the quotation block, like that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;message text&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Yours,
+</span></span><span style="display:flex;"><span>me
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Person &lt;person@mail.org&gt; writes:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; Stuff
+</span></span></code></pre></div><p>So here I modifiy the citation function to insert the signature like in the second example for certain cases.</p>
+<p>FIrst, determine whether it is necessary to do so:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/message-signature-on-top</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;@etu.ru&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-insert-signature-need-on-top</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">parts</span> (<span style="color:#19177c">split-string</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">message-fetch-field</span> <span style="color:#ba2121">&#34;to&#34;</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">message-fetch-field</span> <span style="color:#ba2121">&#34;cc&#34;</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">message-fetch-field</span> <span style="color:#ba2121">&#34;bcc&#34;</span>))
+</span></span><span style="display:flex;"><span>		 <span style="color:#ba2121">&#34;, &#34;</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;, &#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">and</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">seq-some</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">rule</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-some</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">part</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">string-match-p</span> <span style="color:#19177c">rule</span> <span style="color:#19177c">part</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">parts</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">my/message-signature-on-top</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#800">t</span>)))
+</span></span></code></pre></div><p>Then advice the <code>notmuch-mua-reply</code> function:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-maybe-fix-signature</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/message-insert-signature-need-on-top</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">message-signature-separator</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">move-beginning-of-line</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">kill-region</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">point-max</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">message-goto-body</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;sign=pgpmime&#34;</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">forward-line</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#19177c">current-kill</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">set-buffer-modified-p</span> <span style="color:#800">nil</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch-mua</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">notmuch-mua-reply</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-maybe-fix-signature</span>))
 </span></span></code></pre></div><h2 id="40a27a">mailcap</h2>
 <p>mailcap file is a file which defines how to read to different MIME types. Notmuch also uses it, so why not keep it here.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>audio/*; mpc add %s
@@ -640,6 +701,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
       <ul>
         <li><a href="#4eb489">Saved filters and keybindings</a></li>
         <li><a href="#0f17c4">Signing messages</a></li>
+        <li><a href="#c2681a">Tuning signature</a></li>
       </ul>
     </li>
     <li><a href="#40a27a">mailcap</a></li>
