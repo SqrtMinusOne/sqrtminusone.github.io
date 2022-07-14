@@ -237,6 +237,29 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>				(<span style="color:#008000">unless</span> (<span style="color:#19177c">frame-focus-state</span>)
 </span></span><span style="display:flex;"><span>				  (<span style="color:#00f">garbage-collect</span>))))
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-focus-change-function</span> <span style="color:#19177c">&#39;garbage-collect</span>))))
+</span></span></code></pre></div><h4 id="measure-ram-usage">Measure RAM usage</h4>
+<p>I&rsquo;ve noticed that Emacs occasionally eats a lot of RAM, especially when used with EXWM. This is my attempt to measure RAM usage.</p>
+<p>I have some concerns that <code>ps -o rss</code> may be unrepresentative because of <a href="https://stackoverflow.com/questions/131303/how-can-i-measure-the-actual-memory-usage-of-an-application-or-process">shared memory</a>, but I guess this shouldn&rsquo;t be a problem here because there&rsquo;s only one process of Emacs.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-ram-usage-async</span> (<span style="color:#19177c">callback</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">temp-buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*ps*&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;ps&#34;</span> <span style="color:#19177c">temp-buffer</span> <span style="color:#ba2121">&#34;ps&#34;</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#ba2121">&#34;-p&#34;</span> (<span style="color:#00f">number-to-string</span> (<span style="color:#00f">emacs-pid</span>)) <span style="color:#ba2121">&#34;-o&#34;</span> <span style="color:#ba2121">&#34;rss&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>) <span style="color:#19177c">&#39;exit</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">let*</span> ((<span style="color:#19177c">output</span> (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">temp-buffer</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">usage</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">output</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">ignore-errors</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">funcall</span> <span style="color:#19177c">callback</span> <span style="color:#19177c">usage</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">kill-buffer</span> <span style="color:#19177c">temp-buffer</span>))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ram-usage</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/get-ram-usage-async</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">data</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;%f Gb&#34;</span> (<span style="color:#00f">/</span> (<span style="color:#00f">float</span> <span style="color:#19177c">data</span>) <span style="color:#666">1024</span> <span style="color:#666">1024</span>)))))
 </span></span></code></pre></div><h3 id="anaconda">Anaconda</h3>
 <p><a href="https://www.anaconda.com/">Anaconda</a> is a free package and environment manager. I currently use it to manage multiple versions of Python and Node.js. Take a look at <a href="/configs/guix/#conda">the corresponding entry</a> in the Guix config for details about using it on Guix.</p>
 <p>The following code uses the <code>conda</code> package to activate the base environment on startup if Emacs is launched outside the environment.</p>
@@ -1306,6 +1329,43 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">&#39;doom-palenight</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">&#39;doom-palenight</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">&#39;doom-one-light</span>))))
+</span></span></code></pre></div><h4 id="ansi-colors">ANSI colors</h4>
+<p><code>ansi-color.el</code> is a built-in Emacs package that translates ANSI color escape codes into faces.</p>
+<p>It is used by many other packages but doesn&rsquo;t seem to have an integration with <code>doom-themes</code>, so here is one.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ansi-color</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-doom-colors</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-black</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base2</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base0</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-red</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;red</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;red</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-green</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;green</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;green</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-yellow</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-blue</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;dark-blue</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;dark-blue</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-magenta</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;violet</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;violet</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-cyan</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;dark-cyan</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;dark-cyan</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-white</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base8</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base8</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-black</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base5</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base5</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-red</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;orange</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;orange</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-green</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;teal</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;teal</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-yellow</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-blue</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;blue</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;blue</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-magenta</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;magenta</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;magenta</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-cyan</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;cyan</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;cyan</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">ansi-color-bright-white</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;fg</span>) <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;fg</span>))))
 </span></span></code></pre></div><h3 id="fonts">Fonts</h3>
 <h4 id="frame-font">Frame font</h4>
 <p>To install a font, download the font and unpack it into the <code>.local/share/fonts</code> directory. Create one if it doesn&rsquo;t exist.</p>
@@ -2775,6 +2835,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;dockerfile-mode</span> <span style="color:#19177c">&#39;smartparens-mode</span>))
+</span></span></code></pre></div><h4 id="jenkins">Jenkins</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jenkinsfile-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;jenkinsfile-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;jenkinsfile-mode</span>))
 </span></span></code></pre></div><h4 id="crontab">crontab</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">crontab-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -5944,53 +6010,23 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/password-store-get</span> <span style="color:#19177c">entry</span>)))
 </span></span></code></pre></div><h4 id="docker-1">Docker</h4>
 <p>A package to manage docker containers from Emacs.</p>
-<p>The file <code>progidy-config.el</code> sets variable <code>my/docker-directories</code>, which allows to</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">docker</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">docker</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ao&#34;</span> <span style="color:#19177c">&#39;docker</span>))
-</span></span></code></pre></div><p>By default, docker commands are run in <code>default-directory</code>. Even worse, transient doesn&rsquo;t allow to set <code>default-directory</code> temporarily, via <code>let</code>. But often I don&rsquo;t want to change <code>default-directory</code> of a buffer (e.g. via Dired) to run a command from there.</p>
-<p>So I decided to implement the following advice:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/selected-docker-directory</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/docker-override-dir</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/selected-docker-directory</span> <span style="color:#19177c">default-directory</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">my/selected-docker-directory</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
-</span></span></code></pre></div><p>It overrides <code>default-directory</code> for the first launch of a function. Now, add the advice to the required functions from <code>docker.el</code>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;docker</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">docker-compose-run-docker-compose-async</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/docker-override-dir</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">docker-compose-run-docker-compose</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/docker-override-dir</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">docker-run-docker-async</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/docker-override-dir</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">docker-run-docker</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/docker-override-dir</span>))
-</span></span></code></pre></div><p>And here is a function which prompts the user for the directory. File <code>progidy-config.el</code> sets an alist of possible directories, look the section about <a href="#progidy">progidy</a>.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/docker-from-dir</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;my/docker-directories</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">load</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">user-emacs-directory</span> <span style="color:#ba2121">&#34;prodigy-config&#34;</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">directories</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>) (<span style="color:#00f">cons</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-30s %s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">el</span>)) (<span style="color:#00f">cdr</span> <span style="color:#19177c">el</span>)))
-</span></span><span style="display:flex;"><span>	   <span style="color:#19177c">my/docker-directories</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">selected-directory</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">cdr</span> (<span style="color:#00f">assoc</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Docker: &#34;</span> <span style="color:#19177c">directories</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;^&#34;</span>)
-</span></span><span style="display:flex;"><span>		      <span style="color:#19177c">directories</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">my/selected-docker-directory</span> <span style="color:#19177c">selected-directory</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">docker</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aO&#34;</span> <span style="color:#19177c">&#39;my/docker-from-dir</span>)
-</span></span></code></pre></div><h4 id="progidy-1">Progidy</h4>
-<p><a href="https://github.com/rejeep/prodigy.el">prodigy.el</a> is a package to run various services. I&rsquo;ve previously used tmuxp + tmux, but want to try this as well.</p>
-<p>The actual service definitions are in the <code>~/.emacs.d/prodigy.org</code>, which tangles to <code>prodigy-config.el</code>. Both files are encrypted in yadm, as they contain personal data.</p>
+</span></span></code></pre></div><h4 id="progidy">Progidy</h4>
+<p><a href="https://github.com/rejeep/prodigy.el">prodigy.el</a> is a package to manage services. I&rsquo;ve been using <a href="https://github.com/tmux/tmux">tmux</a> + <a href="https://github.com/tmux-python/tmuxp">tmuxp</a> for quite a long time, but want to try this package as well.</p>
+<p>The actual service definitions are in my <code>~/.emacs.d/private.org</code>, which is encrypted by <code>yadm</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">prodigy</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">prodigy</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aP&#34;</span> <span style="color:#19177c">&#39;prodigy</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aP&#34;</span> (<span style="color:#19177c">my/command-in-persp</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#ba2121">&#34;deploy&#34;</span> <span style="color:#ba2121">&#34;prodigy&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">prodigy</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">delete-other-windows</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;my/docker-directories</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">load</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">user-emacs-directory</span> <span style="color:#ba2121">&#34;prodigy-config&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;prodigy-view-mode-map</span>
@@ -6234,6 +6270,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#measure-startup-speed">Measure startup speed</a></li>
             <li><a href="#garbage-collection">Garbage collection</a></li>
             <li><a href="#run-garbage-collection-when-emacs-is-unfocused">Run garbage collection when Emacs is unfocused</a></li>
+            <li><a href="#measure-ram-usage">Measure RAM usage</a></li>
           </ul>
         </li>
         <li><a href="#anaconda">Anaconda</a></li>
@@ -6313,6 +6350,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#custom-theme">Custom theme</a></li>
             <li><a href="#dim-inactive-buffers">Dim inactive buffers</a></li>
             <li><a href="#toggle-light-dark">Toggle light/dark</a></li>
+            <li><a href="#ansi-colors">ANSI colors</a></li>
           </ul>
         </li>
         <li><a href="#fonts">Fonts</a>
@@ -6408,6 +6446,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#dot-env">.env</a></li>
             <li><a href="#dot-gitignore">.gitignore</a></li>
             <li><a href="#docker">Docker</a></li>
+            <li><a href="#jenkins">Jenkins</a></li>
             <li><a href="#crontab">crontab</a></li>
           </ul>
         </li>
@@ -6575,7 +6614,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
           <ul>
             <li><a href="#pass">pass</a></li>
             <li><a href="#docker-1">Docker</a></li>
-            <li><a href="#progidy-1">Progidy</a></li>
+            <li><a href="#progidy">Progidy</a></li>
             <li><a href="#screenshot-dot-el">screenshot.el</a></li>
             <li><a href="#proced">proced</a></li>
             <li><a href="#guix">Guix</a></li>
