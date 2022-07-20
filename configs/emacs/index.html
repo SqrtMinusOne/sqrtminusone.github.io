@@ -1482,6 +1482,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq persp-show-modestring &#39;header)</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">persp-sort</span> <span style="color:#19177c">&#39;created</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">persp-suppress-no-prefix-key-warning</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">persp-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;x&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:keymap</span> <span style="color:#19177c">perspective-map</span> <span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;perspective&#34;</span>))
@@ -1990,6 +1991,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">copilot</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/copilot.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;dist&#34;</span> <span style="color:#ba2121">&#34;*.el&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">copilot-mode</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -3006,10 +3008,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">keys</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">prompt</span> <span style="color:#19177c">keys</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;epa</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;epa</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">epa--select-keys</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/epa--select-keys-around</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">epa-file-encrypt-to</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;DE004F32AFA00205&#34;</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/remote-server</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epa-file-encrypt-to</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;DE004F32AFA00205&#34;</span>)))
 </span></span></code></pre></div><h4 id="org-contrib">org-contrib</h4>
 <p><code>org-contrib</code> is a package with various additions to Org. I use the following:</p>
 <ul>
@@ -3024,6 +3027,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;lisp/org-contacts.el&#34;</span>))
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:build</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ox-extra</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ol-notmuch</span>)
@@ -3437,9 +3441,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <li><a href="https://rgoswami.me/posts/org-note-workflow/">Rohit Goswami: An Orgmode Note Workflow</a></li>
 </ul>
 <p>Used files</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-directory</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/roam&#34;</span>))
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>))
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-directory</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/roam&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
+</span></span><span style="display:flex;"><span>  )
 </span></span></code></pre></div><p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
@@ -5892,6 +5898,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">google-translate</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:functions</span> (<span style="color:#19177c">my-google-translate-at-point</span> <span style="color:#19177c">google-translate--search-tkk</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:custom</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">google-translate-backend-method</span> <span style="color:#19177c">&#39;curl</span>)
