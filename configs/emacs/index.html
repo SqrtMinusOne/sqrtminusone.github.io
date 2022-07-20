@@ -207,6 +207,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;minimal&gt;&gt;</span>
 </span></span></code></pre></div><p>To launch Emacs with this config, run</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>emacs -q -l ~/.emacs.d/init-minimal.el
+</span></span></code></pre></div><p>A convinience macro:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">with-eval-after-load-norem</span> (<span style="color:#19177c">file</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">body</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">declare</span> (<span style="color:#19177c">indent</span> <span style="color:#666">1</span>) (<span style="color:#19177c">debug</span> (<span style="color:#19177c">form</span> <span style="color:#19177c">def-body</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#666">`</span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/remote-server</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">with-eval-after-load</span> <span style="color:#666">,</span><span style="color:#19177c">file</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#666">,@</span><span style="color:#19177c">body</span>)))
 </span></span></code></pre></div><h3 id="performance">Performance</h3>
 <h4 id="measure-startup-speed">Measure startup speed</h4>
 <p>A small function to print out the loading time and number of GCs during the loading. Can be useful as a point of data for optimizing Emacs startup time.</p>
@@ -2957,7 +2963,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sparql-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h2 id="org-mode">Org Mode</h2>
-<p><strong>Org mode</strong> is a tool that leverages plain-text files for various tasks, like making notes, literate programming, task management, etc.</p>
+<p><strong>Org mode</strong> is a tool that leverages plain-text files for various tasks like making notes, literate programming, task management, etc.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://orgmode.org/">Org Mode homepage</a></li>
@@ -2985,23 +2991,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">rainbow-delimiters-mode</span> <span style="color:#666">-1</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-tempo</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;el&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src emacs-lisp&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;py&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src python&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sq&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src sql&#34;</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;org-crypt-setup&gt;&gt;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">my/is-termux</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">&lt;&lt;org-lang-setup&gt;&gt;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;org-ui-setup&gt;&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;org-keys-setup&gt;&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;org-productivity-setup&gt;&gt;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">rainbow-delimiters-mode</span> <span style="color:#666">-1</span>))))
 </span></span></code></pre></div><h4 id="encryption">Encryption</h4>
 <p>Setting up <code>org-crypt</code> to encrypt a part of a file.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-crypt</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">org-crypt-use-before-save-magic</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-tags-exclude-from-inheritance</span> (<span style="color:#008000">quote</span> (<span style="color:#ba2121">&#34;crypt&#34;</span>)))
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-crypt-key</span> <span style="color:#ba2121">&#34;C1EC867E478472439CC82410DE004F32AFA00205&#34;</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-crypt</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-crypt-use-before-save-magic</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-tags-exclude-from-inheritance</span> (<span style="color:#008000">quote</span> (<span style="color:#ba2121">&#34;crypt&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-crypt-key</span> <span style="color:#ba2121">&#34;C1EC867E478472439CC82410DE004F32AFA00205&#34;</span>))
 </span></span></code></pre></div><p>This enables encryption for Org segments which are tagged <code>:crypt:</code>.</p>
 <p>Another way to encrypt org files is to save them with extension <code>.org.gpg</code>. That way by default epa always prompts for a key, which is not what I want when there is in fact only one key to select. So I make the following advice:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/epa--select-keys-around</span> (<span style="color:#19177c">fun</span> <span style="color:#19177c">prompt</span> <span style="color:#19177c">keys</span>)
@@ -3031,8 +3028,15 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ox-extra</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ol-notmuch</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ox-extras-activate</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">latex-header-blocks</span> <span style="color:#19177c">ignore-headlines</span>)))
-</span></span></code></pre></div><h3 id="integration-with-evil">Integration with evil</h3>
-<p>A package to add more evil-mode keybindings to org-mode.</p>
+</span></span></code></pre></div><h4 id="org-tempo">org-tempo</h4>
+<p><code>org-tempo</code> is a convinient package that provides snippets for various org blocks.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-tempo</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;el&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src emacs-lisp&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;py&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src python&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-structure-template-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sq&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;src sql&#34;</span>)))
+</span></span></code></pre></div><h4 id="evil-org">evil-org</h4>
+<p>Better integration with evil-mode.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">evil-org</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">evil-org-mode</span>)
@@ -3055,7 +3059,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jupyter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#19177c">&#39;jupyter-run-repl</span>))
 </span></span></code></pre></div><p>Refresh kernelspecs.</p>
@@ -3073,6 +3077,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h4 id="hy-1">Hy</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ob-hy</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="view-html-in-browser">View HTML in browser</h4>
 <p>Open HTML in the <code>begin_export</code> block with xdg-open.</p>
@@ -3095,9 +3100,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">f-write</span> (<span style="color:#00f">plist-get</span> (<span style="color:#00f">car</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">elem</span>)) <span style="color:#008000">:value</span>) <span style="color:#19177c">&#39;utf-8</span> <span style="color:#19177c">temp-file-path</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;org-html-preview&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;xdg-open&#34;</span> <span style="color:#19177c">temp-file-path</span>))))))
 </span></span></code></pre></div><h4 id="plantuml-1">PlantUML</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-plantuml-executable-path</span> <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/emacs/emacs/bin/plantuml&#34;</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-plantuml-exec-mode</span> <span style="color:#19177c">&#39;plantuml</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-src-lang-modes</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;plantuml&#34;</span> <span style="color:#666">.</span> <span style="color:#19177c">plantuml</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-plantuml-executable-path</span> <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/emacs/emacs/bin/plantuml&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-plantuml-exec-mode</span> <span style="color:#19177c">&#39;plantuml</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-src-lang-modes</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;plantuml&#34;</span> <span style="color:#666">.</span> <span style="color:#19177c">plantuml</span>)))
 </span></span></code></pre></div><h4 id="restclient">Restclient</h4>
 <p><a href="https://github.com/pashky/restclient.el">restclient.el</a> is an Emacs package to send HTTP requests. <a href="https://github.com/alf/ob-restclient.el">ob-restclient</a> provides interaction with Org Babel.</p>
 <p>References:</p>
@@ -3106,30 +3112,34 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">restclient</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ob-restclient</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span> <span style="color:#19177c">restclient</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="setup-1">Setup</h4>
 <p>Enable languages</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">org-babel-do-load-languages</span>
-</span></span><span style="display:flex;"><span> <span style="color:#19177c">&#39;org-babel-load-languages</span>
-</span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>((<span style="color:#19177c">emacs-lisp</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">python</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">sql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#408080;font-style:italic">;; (typescript .t)</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">hy</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">shell</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">plantuml</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">octave</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">sparql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-do-load-languages</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">&#39;org-babel-load-languages</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#666">&#39;</span>((<span style="color:#19177c">emacs-lisp</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">python</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">sql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; (typescript .t)</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">hy</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">shell</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">plantuml</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">octave</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">sparql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-babel-after-execute-hook</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-babel-after-execute-hook</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>))
 </span></span></code></pre></div><p>Use Jupyter block instead of built-in Python.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">org-babel-jupyter-override-src-block</span> <span style="color:#ba2121">&#34;python&#34;</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">org-babel-jupyter-override-src-block</span> <span style="color:#ba2121">&#34;hy&#34;</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ob-jupyter</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-jupyter-override-src-block</span> <span style="color:#ba2121">&#34;python&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-jupyter-override-src-block</span> <span style="color:#ba2121">&#34;hy&#34;</span>))
 </span></span></code></pre></div><p>Turn of some minor modes in source blocks.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-src-mode-hook</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> ()
@@ -3218,7 +3228,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/jupyter-org-scalar</span> <span style="color:#19177c">value</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">value</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;jupyter-org-scalar</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/jupyter-org-scalar-around</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;jupyter</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;jupyter-org-scalar</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/jupyter-org-scalar-around</span>))
 </span></span></code></pre></div><h5 id="wrap-source-code-output">Wrap source code output</h5>
 <p>A function to remove the :RESULTS: drawer from results. Once again, it&rsquo;s necessary because emacs-jupyter doesn&rsquo;t seem to respect <code>:results raw</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-strip-results</span> (<span style="color:#19177c">data</span>)
@@ -3299,7 +3310,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">org-babel-lob-execute-maybe</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">org-babel-execute-src-block</span> <span style="color:#19177c">arg</span>)))))))
 </span></span></code></pre></div><p>Some keybindings:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-babel</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-babel-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;B&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-execute-buffer-below</span>
@@ -3398,7 +3409,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-attach-screenshot</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="transclusion">Transclusion</h4>
-<p>A package that implements transclusions in Org Mode, that is rendering part of one file inside of another file.</p>
+<p>A package that implements transclusions in Org Mode, i.e. rendering part of one file inside another file.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-transclusion</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">org</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;nobiot/org-transclusion&#34;</span>)
@@ -3427,9 +3438,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </ul>
 <p>Used files</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-directory</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/roam&#34;</span>))
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>
-</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;projects/comp-stuff.org&#34;</span>
-</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;projects/looking-forward.org&#34;</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>))
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
 </span></span></code></pre></div><p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
@@ -3466,8 +3475,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;* %?\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;/Entered on/ %U&#34;</span>))))
 </span></span></code></pre></div><p>Effort estimation</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-global-properties</span>
-</span></span><span style="display:flex;"><span>	     <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Effort_ALL&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-global-properties</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Effort_ALL&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>)))
 </span></span></code></pre></div><p>Log DONE time</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-log-done</span> <span style="color:#19177c">&#39;time</span>)
 </span></span></code></pre></div><h4 id="off--trello-sync"><span class="org-todo done OFF">OFF</span> (OFF) Trello sync</h4>
@@ -3509,6 +3519,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h4 id="org-ql">org-ql</h4>
 <p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;m using it in my review workflow and for custom agenda views.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ql</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:fetcher</span> <span style="color:#19177c">github</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/org-ql&#34;</span>
@@ -3616,6 +3627,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </tr>
 </tbody>
 </table>
+<p>About installing the package on Guix (<strong>CREDIT</strong>: thanks @Ashraz on the SystemCrafters discord)</p>
+<blockquote>
+<p>So, for all those interested: unfortunately, org-roam (or rather emacsql-sqlite) cannot compile the sqlite.c and emacsql.c due to missing headers (linux/falloc.h) on Guix. You would have to properly set all the include paths on Guix, and also adjust the PATH to have gcc actually find as later on in the compilation process.</p>
+<p>Instead, you should remove all Org-Roam related packages from your Emacs installation (via M-x package-delete org-roam RET and  M-x package-autoremove RET y RET) and then use the Guix package called emacs-org-roam.</p>
+</blockquote>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/org-roam/org-roam/wiki/Hitchhiker%27s-Rough-Guide-to-Org-roam-V2">Hitchhiker&rsquo;s Rough Guide to Org roam V2</a></li>
@@ -3650,16 +3666,16 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h5 id="keybindings-3">Keybindings</h5>
 <p>A set of keybindings to quickly access things in Org Roam.</p>
 <p>I used to have multiple categories of nodes in Org Roam (projects, dailies, etc), but as of now, only Zettelkasten remains.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;or&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;org-roam&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#19177c">&#39;org-roam-node-find</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;g&#34;</span> <span style="color:#19177c">&#39;org-roam-graph</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;org-roam-capture</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#19177c">&#39;org-roam-buffer-toggle</span>)
-</span></span><span style="display:flex;"><span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-roam</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;or&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;org-roam&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#19177c">&#39;org-roam-node-find</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;g&#34;</span> <span style="color:#19177c">&#39;org-roam-graph</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;org-roam-capture</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#19177c">&#39;org-roam-buffer-toggle</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-roam-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -3968,14 +3984,15 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-roam-bibtex-mode</span>))
 </span></span></code></pre></div><h4 id="org-contacts">org-contacts</h4>
-<p><code>org-contacts</code> is an <code>org-contrib</code> package to store contacts in an org file. The package is somewhat outdated, for instance it uses <code>lexical-let</code>, so I have to <code>(require 'cl)</code>.</p>
-<p>I think it will take some more work to tune the package exactly to my liking, but it seems to perform the original function just fine.</p>
+<p><code>org-contacts</code> is the <code>org-contrib</code> package to store contacts in an org file. The package is somewhat outdated, for instance it uses <code>lexical-let</code> so I have to <code>(require 'cl)</code>.</p>
+<p>I think it will take a little more work to tune the package exactly to my liking, but it seems to serve the original function just fine.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contacts</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://git.sr.ht/~bzg/org-contrib&#34;</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;lisp/org-contacts.el&#34;</span>)
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">compile</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">notmuch</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-contacts</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;cl</span>)
@@ -4034,10 +4051,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">sp--remove-local-pair</span> <span style="color:#ba2121">&#34;&#39;&#34;</span>))
 </span></span></code></pre></div><p>Call the function before opening an org file or reopen a buffer after calling the function.</p>
 <p>Scale latex fragments preview.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-latex-scale</span> <span style="color:#666">1.75</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-format-latex-options</span> (<span style="color:#00f">plist-put</span> <span style="color:#19177c">org-format-latex-options</span> <span style="color:#008000">:scale</span> <span style="color:#19177c">my/org-latex-scale</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-latex-scale</span> <span style="color:#666">1.75</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-format-latex-options</span> (<span style="color:#00f">plist-put</span> <span style="color:#19177c">org-format-latex-options</span> <span style="color:#008000">:scale</span> <span style="color:#19177c">my/org-latex-scale</span>)))
 </span></span></code></pre></div><p>Also, LaTeX fragments preview tends to break whenever the are custom <code>#+LATEX_HEADER</code> entries. To circumvent this, I add a custom header and modify the <code>org-preview-latex-process-alist</code> variable</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/latex-preview-header</span> <span style="color:#ba2121">&#34;\\documentclass{article}
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/latex-preview-header</span> <span style="color:#ba2121">&#34;\\documentclass{article}
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage[usenames]{color}
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{graphicx}
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{grffile}
@@ -4052,13 +4071,13 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{hyperref}
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\pagestyle{empty}&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-preview-latex-process-alist</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">cons</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">car</span> <span style="color:#19177c">item</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">plist-put</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">item</span>) <span style="color:#008000">:latex-header</span> <span style="color:#19177c">my/latex-preview-header</span>)))
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">org-preview-latex-process-alist</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-preview-latex-process-alist</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">cons</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">car</span> <span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">plist-put</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">item</span>) <span style="color:#008000">:latex-header</span> <span style="color:#19177c">my/latex-preview-header</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">org-preview-latex-process-alist</span>)))
 </span></span></code></pre></div><h4 id="better-headers">Better headers</h4>
 <p><a href="https://github.com/integral-dw/org-superstar-mode">org-superstar-mode</a> is a package that makes Org heading lines look a bit prettier.</p>
 <p>Disabled it for now because of overlapping functionality with org-bars.</p>
@@ -4071,32 +4090,43 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;tonyaldon/org-bars&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">display-graphic-p</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">org-bars-mode</span>))
-</span></span></code></pre></div><p>Remove the ellipsis at the end of folded headlines. The ellipsis seems unnecessary with org-bars.</p>
+</span></span></code></pre></div><p>Remove the ellipsis at the end of folded headlines, as it seems unnecessary with <code>org-bars</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-no-ellipsis-in-headlines</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">remove-from-invisibility-spec</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-invisibility-spec</span> <span style="color:#19177c">&#39;outline</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-bars</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">&#39;org-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)))
 </span></span></code></pre></div><h4 id="override-colors">Override colors</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-doom-colors</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">color-darken-name</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>))
 </span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block-begin-line</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">color-darken-name</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>)
 </span></span><span style="display:flex;"><span>		       <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;grey</span>)))
 </span></span></code></pre></div><h3 id="export">Export</h3>
-<h4 id="general-settings-4">General settings</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (setq org-export-backends &#39;(md html latex beamer org))</span>
-</span></span></code></pre></div><h4 id="hugo">Hugo</h4>
+<h4 id="hugo">Hugo</h4>
+<p>A package for exporting Org to Hugo. That&rsquo;s how I manage my <a href="https://sqrtminusone.xyz">sqrtminusone.xyz</a>.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://ox-hugo.scripter.co/">ox-hugo homepage</a></li>
+<li><a href="https://github.com/SqrtMinusOne/sqrtminusone.github.io">Source code for sqrtminusone.xyz</a></li>
+</ul>
+<!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ox-hugo</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">ox</span>)
 </span></span></code></pre></div><h4 id="jupyter-notebook">Jupyter Notebook</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ox-ipynb</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;jkitchin/ox-ipynb&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">ox</span>)
 </span></span></code></pre></div><h4 id="html-export">Html export</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">htmlize</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">ox</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-html-htmlize-output-type</span> <span style="color:#19177c">&#39;css</span>))
 </span></span></code></pre></div><h4 id="latex-1">LaTeX</h4>
@@ -4150,52 +4180,53 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		  (<span style="color:#ba2121">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;\\subsubsection*{%s}&#34;</span>)))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; Make sure to eval the function when org-latex-classes list already exists</span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ox-latex</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;ox-latex</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/setup-org-latex</span>))
 </span></span></code></pre></div><h3 id="keybindings-and-stuff">Keybindings &amp; stuff</h3>
 <h4 id="general-keybindings">General keybindings</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#19177c">&#39;org-decrypt-entry</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#19177c">&#39;org-encrypt-entry</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#19177c">&#39;org-latex-preview</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#19177c">&#39;org-decrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#19177c">&#39;org-encrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#19177c">&#39;org-latex-preview</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#19177c">&#39;org-shiftright</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#19177c">&#39;org-shiftleft</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-babel-next-src-block</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-babel-previous-src-block</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#19177c">&#39;org-shiftright</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#19177c">&#39;org-shiftleft</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-babel-next-src-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-babel-previous-src-block</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-agenda-mode-map</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-agenda-later</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-agenda-earlier</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-agenda-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-agenda-later</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-agenda-earlier</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (general-imap :keymaps &#39;org-mode-map &#34;RET&#34; &#39;evil-org-return)</span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span> <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#19177c">&#39;org-ctrl-c-ctrl-c</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (my-leader-def &#34;aa&#34; &#39;org-agenda)</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span> <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#19177c">&#39;org-ctrl-c-ctrl-c</span>))
 </span></span></code></pre></div><h4 id="copy-a-link">Copy a link</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-link-copy</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract URL from org-mode link and add it to kill ring.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;P&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">link</span> (<span style="color:#19177c">org-element-lineage</span> (<span style="color:#19177c">org-element-context</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">link</span>) <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">type</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">link</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">url</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">link</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">url</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">type</span> <span style="color:#ba2121">&#34;:&#34;</span> <span style="color:#19177c">url</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">type</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">link</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">link</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">type</span> <span style="color:#ba2121">&#34;:&#34;</span> <span style="color:#19177c">url</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">kill-new</span> <span style="color:#19177c">url</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;Copied URL: &#34;</span> <span style="color:#19177c">url</span>))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C-x C-l&#34;</span> <span style="color:#19177c">&#39;my/org-link-copy</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C-x C-l&#34;</span> <span style="color:#19177c">&#39;my/org-link-copy</span>))
 </span></span></code></pre></div><h4 id="navigating-source-blocks">Navigating source blocks</h4>
+<p>An idea born from discussing Org Mode navigation with @Infu.</p>
+<p>Modifying <code>org-babel-next-src-block</code> and <code>org-babel-previous-src-block</code> to ignore hidden source blocks.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#19177c">arg</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to the next visible source block.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
@@ -4230,11 +4261,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#00f">-</span> <span style="color:#19177c">arg</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-next-visible-src-block</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-previous-visible-src-block</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-next-visible-src-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-previous-visible-src-block</span>))
 </span></span></code></pre></div><h4 id="open-a-file-from-org-directory">Open a file from <code>org-directory</code></h4>
 <p>A function to open a file from <code>org-directory</code>, excluding a few directories like <code>roam</code> and <code>journal</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-file-open</span> ()
@@ -4245,7 +4277,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
 </span></span><span style="display:flex;"><span>	     (<span style="color:#008000">and</span>
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>) <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;journal&#34;</span> <span style="color:#ba2121">&#34;roam&#34;</span> <span style="color:#ba2121">&#34;review&#34;</span> <span style="color:#ba2121">&#34;archive&#34;</span>)) <span style="color:#19177c">f</span>))))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;journal&#34;</span> <span style="color:#ba2121">&#34;roam&#34;</span> <span style="color:#ba2121">&#34;review&#34;</span> <span style="color:#ba2121">&#34;archive&#34;</span> <span style="color:#ba2121">&#34;figured-out&#34;</span>)) <span style="color:#19177c">f</span>))))
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">projectile-current-project-files</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">project-files</span>)))))
@@ -4899,7 +4931,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h3 id="elfeed">Elfeed</h3>
 <p><a href="https://github.com/skeeto/elfeed">elfeed</a> is one of the most popular Emacs packages, and it&rsquo;s also one in which I ended up investing a lot of effort.</p>
 <p>There&rsquo;s a lot of stuff in this section, so it&rsquo;s here and not in &ldquo;Internet and Multimedia&rdquo;.</p>
-<h4 id="general-settings-5">General settings</h4>
+<h4 id="general-settings-4">General settings</h4>
 <p>The advice there sets <code>shr-use-fonts</code> to nil while rendering HTML, so the <code>elfeed-show</code> buffer will use monospace font.</p>
 <p>Using my own fork until the modifications are merged into master.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed</span>
@@ -6478,9 +6510,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
           <ul>
             <li><a href="#encryption">Encryption</a></li>
             <li><a href="#org-contrib">org-contrib</a></li>
+            <li><a href="#org-tempo">org-tempo</a></li>
+            <li><a href="#evil-org">evil-org</a></li>
           </ul>
         </li>
-        <li><a href="#integration-with-evil">Integration with evil</a></li>
         <li><a href="#literate-programing">Literate programing</a>
           <ul>
             <li><a href="#python-and-jupyter">Python &amp; Jupyter</a></li>
@@ -6528,7 +6561,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
         </li>
         <li><a href="#export">Export</a>
           <ul>
-            <li><a href="#general-settings-4">General settings</a></li>
             <li><a href="#hugo">Hugo</a></li>
             <li><a href="#jupyter-notebook">Jupyter Notebook</a></li>
             <li><a href="#html-export">Html export</a></li>
@@ -6578,7 +6610,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
         </li>
         <li><a href="#elfeed">Elfeed</a>
           <ul>
-            <li><a href="#general-settings-5">General settings</a></li>
+            <li><a href="#general-settings-4">General settings</a></li>
             <li><a href="#some-additions">Some additions</a></li>
             <li><a href="#custom-faces">Custom faces</a></li>
             <li><a href="#elfeed-summary">elfeed-summary</a></li>
