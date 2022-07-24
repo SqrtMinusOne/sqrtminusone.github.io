@@ -1639,7 +1639,7 @@
 </tr>
 <tr>
 <td>6</td>
-<td>network</td>
+<td>bandwidth</td>
 <td>light-red</td>
 <td>+</td>
 </tr>
@@ -1926,16 +1926,12 @@
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">hostname</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Settings varying on the hostname</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">WLAN_INTERFACE</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>nmcli -f DEVICE con show | grep -Ev <span style="color:#ba2121">&#34;(.*docker.*|DEVICE|br.*|tun.*|veth.*|--)&#34;</span> | xargs<span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;azure&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;eDP-1&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic"># export WLAN_INTERFACE=&#34;wlp3s0&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;eminence&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;eDP&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic"># export WLAN_INTERFACE=&#34;wlo1&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic"># export WLAN_INTERFACE=&#34;wlp35s0f3u2&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Setting varying on the monitor</span>
@@ -2103,6 +2099,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;swap-memory&#34;)&gt;&gt;</span>
 </span></span></code></pre></div><h4 id="network">network</h4>
 <p>Upload/download speed</p>
+<p>UPD <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-07-24 Sun&gt;</span></span>: Somehow it doesn&rsquo;t work with my current internet setup.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/network]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/network</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
@@ -2125,6 +2122,115 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-3</span> <span style="color:#666">=</span> <span style="color:#ba2121">3</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-4</span> <span style="color:#666">=</span> <span style="color:#ba2121">4</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-5</span> <span style="color:#666">=</span> <span style="color:#ba2121">5</span>
+</span></span></code></pre></div><h4 id="bandwidth">bandwidth</h4>
+<p><a href="bin/polybar/bandwidth3.sh">My adaption</a> of an i3blocks script called &ldquo;<a href="https://github.com/vivien/i3blocks-contrib/tree/master/bandwidth3">bandwidth3</a>&rdquo;. I&rsquo;ve only changed some defaults that are awkward to set with polybar.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/bandwidth]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/script</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/bandwidth3.sh</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">tail</span> <span style="color:#666">=</span> <span style="color:#ba2121">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;bandwidth&#34;)&gt;&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Copyright (C) 2015 James Murphy</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Copyright (C) 2022 Pavel Korytov</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Licensed under the terms of the GNU GPL v2 only.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">BLOCK_INSTANCE</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">IFACE</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#19177c">$iface</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">dt</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">DT</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#19177c">1</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">unit</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">UNIT</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#19177c">Kb</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">printf_command</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">PRINTF_COMMAND</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#ba2121">&#34;printf \&#34;↓ %-2.1f ↑ %2.1f [%s/s]\\n\&#34;, rx, wx, unit;&#34;</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">function</span> default_interface <span style="color:#666">{</span>
+</span></span><span style="display:flex;"><span>    ip route | awk <span style="color:#ba2121">&#39;/^default via/ {print $5; exit}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#666">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">function</span> check_proc_net_dev <span style="color:#666">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> ! -f <span style="color:#ba2121">&#34;/proc/net/dev&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;/proc/net/dev not found&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000">exit</span> <span style="color:#666">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#666">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">function</span> list_interfaces <span style="color:#666">{</span>
+</span></span><span style="display:flex;"><span>    check_proc_net_dev
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Interfaces in /proc/net/dev:&#34;</span>
+</span></span><span style="display:flex;"><span>    grep -o <span style="color:#ba2121">&#34;^[^:]\\+:&#34;</span> /proc/net/dev | tr -d <span style="color:#ba2121">&#34; :&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#666">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">while</span> <span style="color:#008000">getopts</span> i:t:u:p:lh opt; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">case</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$opt</span><span style="color:#ba2121">&#34;</span> in
+</span></span><span style="display:flex;"><span>	i<span style="color:#666">)</span> <span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$OPTARG</span><span style="color:#ba2121">&#34;</span> ;;
+</span></span><span style="display:flex;"><span>	t<span style="color:#666">)</span> <span style="color:#19177c">dt</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$OPTARG</span><span style="color:#ba2121">&#34;</span> ;;
+</span></span><span style="display:flex;"><span>	u<span style="color:#666">)</span> <span style="color:#19177c">unit</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$OPTARG</span><span style="color:#ba2121">&#34;</span> ;;
+</span></span><span style="display:flex;"><span>	p<span style="color:#666">)</span> <span style="color:#19177c">printf_command</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$OPTARG</span><span style="color:#ba2121">&#34;</span> ;;
+</span></span><span style="display:flex;"><span>	l<span style="color:#666">)</span> list_interfaces <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">exit</span> <span style="color:#666">0</span> ;;
+</span></span><span style="display:flex;"><span>	h<span style="color:#666">)</span> <span style="color:#008000">printf</span> <span style="color:#b62;font-weight:bold">\
+</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span><span style="color:#ba2121">&#34;Usage: bandwidth3 [-i interface] [-t time] [-u unit] [-p printf_command] [-l] [-h]
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Options:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-i\tNetwork interface to measure. Default determined using \`ip route\`.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-t\tTime interval in seconds between measurements. Default: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-u\tUnits to measure bytes in. Default: Mb
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\tAllowed units: Kb, KB, Mb, MB, Gb, GB, Tb, TB
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\tUnits may have optional it/its/yte/ytes on the end, e.g. Mbits, KByte
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-p\tAwk command to be called after a measurement is made.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\tDefault: printf \&#34;&lt;span font=&#39;FontAwesome&#39;&gt;  &lt;/span&gt;%%-5.1f/%%5.1f %%s/s\\\\n\&#34;, rx, wx, unit;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\tExposed variables: rx, wx, tx, unit, iface
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-l\tList available interfaces in /proc/net/dev
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-h\tShow this help text
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">exit</span> 0;;
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">esac</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>check_proc_net_dev
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">iface</span><span style="color:#008000;font-weight:bold">:-$(</span>default_interface<span style="color:#008000;font-weight:bold">)</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">while</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$iface</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> No default interface
+</span></span><span style="display:flex;"><span>    sleep <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$dt</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>default_interface<span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">case</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$unit</span><span style="color:#ba2121">&#34;</span> in
+</span></span><span style="display:flex;"><span>    Kb|Kbit|Kbits<span style="color:#666">)</span>   <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">/</span> <span style="color:#666">8</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    KB|KByte|KBytes<span style="color:#666">)</span> <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    Mb|Mbit|Mbits<span style="color:#666">)</span>   <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">/</span> <span style="color:#666">8</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    MB|MByte|MBytes<span style="color:#666">)</span> <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    Gb|Gbit|Gbits<span style="color:#666">)</span>   <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">/</span> <span style="color:#666">8</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    GB|GByte|GBytes<span style="color:#666">)</span> <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    Tb|Tbit|Tbits<span style="color:#666">)</span>   <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">/</span> <span style="color:#666">8</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    TB|TByte|TBytes<span style="color:#666">)</span> <span style="color:#19177c">bytes_per_unit</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span><span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span> <span style="color:#666">*</span> <span style="color:#666">1024</span><span style="color:#008000;font-weight:bold">))</span>;;
+</span></span><span style="display:flex;"><span>    *<span style="color:#666">)</span> <span style="color:#008000">echo</span> Bad unit <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$unit</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">exit</span> 1;;
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">esac</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">scalar</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$((</span>bytes_per_unit <span style="color:#666">*</span> dt<span style="color:#008000;font-weight:bold">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">init_line</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>cat /proc/net/dev | grep <span style="color:#ba2121">&#34;^[ ]*</span><span style="color:#19177c">$iface</span><span style="color:#ba2121">:&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$init_line</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> Interface not found in /proc/net/dev: <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$iface</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">exit</span> <span style="color:#666">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">init_received</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>awk <span style="color:#ba2121">&#39;{print $2}&#39;</span> <span style="color:#666">&lt;&lt;&lt;</span> <span style="color:#19177c">$init_line</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">init_sent</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>awk <span style="color:#ba2121">&#39;{print $10}&#39;</span> <span style="color:#666">&lt;&lt;&lt;</span> <span style="color:#19177c">$init_line</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#666">(</span><span style="color:#008000;font-weight:bold">while</span> true; <span style="color:#008000;font-weight:bold">do</span> cat /proc/net/dev; sleep <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$dt</span><span style="color:#ba2121">&#34;</span>; <span style="color:#008000;font-weight:bold">done</span><span style="color:#666">)</span> |<span style="color:#b62;font-weight:bold">\
+</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span>    stdbuf -oL grep <span style="color:#ba2121">&#34;^[ ]*</span><span style="color:#19177c">$iface</span><span style="color:#ba2121">:&#34;</span>|<span style="color:#b62;font-weight:bold">\
+</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span>    awk -v <span style="color:#19177c">scalar</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$scalar</span><span style="color:#ba2121">&#34;</span> -v <span style="color:#19177c">unit</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$unit</span><span style="color:#ba2121">&#34;</span> -v <span style="color:#19177c">iface</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$iface</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">BEGIN{old_received=&#39;</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$init_received</span><span style="color:#ba2121">&#34;</span><span style="color:#ba2121">&#39;;old_sent=&#39;</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$init_sent</span><span style="color:#ba2121">&#34;</span><span style="color:#ba2121">&#39;}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">{
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    received=$2
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    sent=$10
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    rx=(received-old_received)/scalar;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    wx=(sent-old_sent)/scalar;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    tx=rx+wr;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    old_received=received;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    old_sent=sent;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    if(rx &gt;= 0 &amp;&amp; wx &gt;= 0){
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	&#39;</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$printf_command</span><span style="color:#ba2121">&#34;</span><span style="color:#ba2121">&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	fflush(stdout);
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&#39;</span>
 </span></span></code></pre></div><h4 id="ipstack-vpn">ipstack-vpn</h4>
 <table>
 <thead>
@@ -4050,6 +4156,7 @@
             <li><a href="#ram-memory">ram-memory</a></li>
             <li><a href="#swap-memory">swap-memory</a></li>
             <li><a href="#network">network</a></li>
+            <li><a href="#bandwidth">bandwidth</a></li>
             <li><a href="#ipstack-vpn">ipstack-vpn</a></li>
             <li><a href="#openvpn">openvpn</a></li>
             <li><a href="#xkeyboard">xkeyboard</a></li>

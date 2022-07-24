@@ -3585,14 +3585,46 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-journal-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c t&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-journal-tags-insert-tag</span>))
-</span></span></code></pre></div><p>I also want to store some information in the journal as properties of the record. So below is a function that does just that.</p>
-<p>As of now, it stores Emacs version, hostname, location, and current EMMS track if there is one.</p>
+</span></span></code></pre></div><p>Also, I want to add some extra information to the journal. Here&rsquo;s a functionality to get the current weather from wttr.in:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">request</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/weather-last-time</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/weather-value</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/weather-get</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">&gt;</span> (<span style="color:#00f">-</span> (<span style="color:#19177c">time-convert</span> <span style="color:#800">nil</span> <span style="color:#19177c">&#39;integer</span>) <span style="color:#19177c">my/weather-last-time</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">5</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;https://wttr.in/%s&#34;</span> <span style="color:#19177c">my/location</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:params</span> <span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;format&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;%l:%20%C%20%t%20%w%20%p&#34;</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:sync</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:parser</span> (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">url-unhex-string</span> (<span style="color:#00f">buffer-string</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:success</span> (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/weather-value</span> <span style="color:#19177c">data</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/weather-last-time</span> (<span style="color:#19177c">time-convert</span> <span style="color:#800">nil</span> <span style="color:#19177c">&#39;integer</span>))))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span> (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span> <span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Got error: %S&#34;</span> <span style="color:#19177c">error-thrown</span>)))))
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">my/weather-value</span>)
+</span></span></code></pre></div><p>And here&rsquo;s a function that creates a drawer with such information. At the moment, it&rsquo;s:</p>
+<ul>
+<li>Emacs version</li>
+<li>Hostname</li>
+<li>Location</li>
+<li>Weather</li>
+<li>Current EMMS track</li>
+</ul>
+<!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/set-journal-header</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Emacs&#34;</span> <span style="color:#19177c">emacs-version</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Hostname&#34;</span> <span style="color:#00f">system-name</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-journal-tags-prop-apply-delta</span> <span style="color:#008000">:add</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;host.%s&#34;</span> (<span style="color:#00f">system-name</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;my/location</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Location&#34;</span> <span style="color:#19177c">my/location</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Location&#34;</span> <span style="color:#19177c">my/location</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">weather</span> (<span style="color:#19177c">my/weather-get</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Weather&#34;</span> <span style="color:#19177c">weather</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;my/loc-tag</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-journal-tags-prop-apply-delta</span> <span style="color:#008000">:add</span> (<span style="color:#00f">list</span> <span style="color:#19177c">my/loc-tag</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#19177c">&#39;emms-playlist-current-selected-track</span>)
