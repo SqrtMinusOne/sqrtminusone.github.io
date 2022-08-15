@@ -2241,14 +2241,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;init-english-latex-snippets&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;init-math-latex-snippets&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;init-section-latex-snippets&gt;&gt;</span>)
-</span></span></code></pre></div><h4 id="bibtex">BibTeX</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-bibtex</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ivy-bibtex</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;fB&#34;</span> <span style="color:#19177c">&#39;ivy-bibtex</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;bibtex-mode</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
 </span></span></code></pre></div><h4 id="import-dot-sty">Import *.sty</h4>
 <p>A function to import <code>.sty</code> files to the LaTeX document.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/list-sty</span> ()
@@ -2984,9 +2976,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <li><a href="https://orgmode.org/manual/">Manual</a></li>
 </ul>
 <h3 id="installation-and-basic-settings">Installation &amp; basic settings</h3>
-<p>Use the built-in org mode.</p>
+<p>Use the built-in org mode (<code>:type built-in</code>).</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">built-in</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
@@ -3029,21 +3021,23 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p><code>org-contrib</code> is a package with various additions to Org. I use the following:</p>
 <ul>
 <li><code>ox-extra</code> - extensions for org export</li>
-<li><code>ol-notmuch</code> - integration with notmuch</li>
 </ul>
-<p>Excluding <code>org-contacts</code> from here because byte compilation breaks it for some reason.</p>
+<p>This used to have <code>org-contacts</code> and <code>ol-notmuch</code> at some point, but they&rsquo;ve been migrated to separate repos since.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contrib</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">org-contrib</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://git.sr.ht/~bzg/org-contrib&#34;</span>
-</span></span><span style="display:flex;"><span>	     <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;lisp/org-contacts.el&#34;</span>))
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:build</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ox-extra</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ol-notmuch</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ox-extras-activate</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">latex-header-blocks</span> <span style="color:#19177c">ignore-headlines</span>)))
+</span></span></code></pre></div><h4 id="ol-notmuch">ol-notmuch</h4>
+<p><a href="https://git.sr.ht/~tarsius/ol-notmuch">ol-notmuch</a> is a package that adds Org links to notmuch messages.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ol-notmuch</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>))
 </span></span></code></pre></div><h4 id="org-tempo">org-tempo</h4>
 <p><code>org-tempo</code> is a convinient package that provides snippets for various org blocks.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
@@ -3452,10 +3446,30 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <li><a href="https://www.alexeyshmalko.com/how-i-note/">Alexey Shmalko: How I note</a></li>
 <li><a href="https://rgoswami.me/posts/org-note-workflow/">Rohit Goswami: An Orgmode Note Workflow</a></li>
 </ul>
-<p>Used files</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+<p>Used files:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/update-org-agenda</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">project-files</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;projects/%s&#34;</span> <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">f</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;..&#34;</span>))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">directory-files</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects&#34;</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span><span style="color:#19177c">project-files</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:level</span> <span style="color:#666">.</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:tag</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-directory</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/roam&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/update-org-agenda</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
 </span></span><span style="display:flex;"><span>  )
 </span></span></code></pre></div><p>Hotkeys</p>
@@ -3465,8 +3479,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;org-capture</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#19177c">&#39;org-agenda</span>)
 </span></span></code></pre></div><p>Refile targets</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span> <span style="color:#666">&#39;</span>())
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-outline-path-complete-in-steps</span> <span style="color:#800">nil</span>)
 </span></span></code></pre></div><h4 id="capture-templates-and-various-settings">Capture templates &amp; various settings</h4>
 <p>Settings for Org capture mode. The goal here is to have a non-disruptive process to capture various ideas.</p>
@@ -3544,7 +3557,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;helm-org-ql.el&#34;</span>))))
 </span></span></code></pre></div><h4 id="custom-agendas">Custom agendas</h4>
 <p>Some custom agendas to fit my workflow.</p>
-<p>Despite the fact that I don&rsquo;t add <code>org-trello-files</code> to <code>org-agenda-files</code> I still want to see them in agenda, so I use <code>org-ql-block</code> from <code>org-ql</code>.</p>
+<p><del>Despite the fact that I don&rsquo;t add <code>org-trello-files</code> to <code>org-agenda-files</code> I still want to see them in agenda, so I use <code>org-ql-block</code> from <code>org-ql</code>.</del></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-scheduled-get-time</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">scheduled</span> (<span style="color:#19177c">org-get-scheduled-time</span> (<span style="color:#00f">point</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">scheduled</span>
@@ -3567,6 +3580,46 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Waitlist&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-hide-tags-regexp</span> <span style="color:#ba2121">&#34;waitlist&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c %-12(my/org-scheduled-get-time)&#34;</span>)))))))
+</span></span></code></pre></div><h4 id="bibliography">Bibliography</h4>
+<p>I&rsquo;m currently trying to use <a href="https://www.zotero.org/">Zotero</a> to manage my bibliograhy.</p>
+<p>There is a Zotero extension called <a href="https://retorque.re/zotero-better-bibtex/">better bibtex</a>, which allows for having one bibtex file that is always syncronized with the library. That comes quite handy for Emacs integration.</p>
+<h5 id="org-ref">org-ref</h5>
+<p><a href="https://github.com/jkitchin/org-ref">org-ref</a> is an excellent package by John Kitchin that provides support for managing citations and references in Org Mode.</p>
+<p>It may have become less relevant since <code>org-cite</code> was merged into plain Org, but <code>org-ref</code> is still just as usable.</p>
+<p>As of now, this package loads Helm on start. To avoid this, I have to exclude Helm from the <code>Package-requires</code> in the <a href=".emacs.d/straight/repos/org-ref/org-ref.el">org-ref.el</a> file. I haven&rsquo;t found a way to do this without modifying the package source yet.</p>
+<p>There&rsquo;s a package called <a href="https://github.com/org-roam/org-roam-bibtex">org-roam-bibtex</a> that allows to keep literature notes in <a href="https://github.com/org-roam/org-roam">org-roam</a> and access them from <code>org-ref</code>, but as for now I store literature notes separately, as advised by Ahrens Sönke in his excellent book &ldquo;How to take smart notes&rdquo;.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ref</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;*helm*&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-dialect</span> <span style="color:#19177c">&#39;biblatex</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-bibliography</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/org-mode/library.bib&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-library-path</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/library&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-notes-path</span> <span style="color:#ba2121">&#34;~/Documents/org-mode/literature-notes&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-display-formats</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;${author:36} ${title:*} ${note:10} ${year:4} ${=has-pdf=:1}${=type=:7}&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-pdf-open-function</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;dired-open&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;xdg-open&#34;</span> (<span style="color:#19177c">file-truename</span> <span style="color:#19177c">file</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-ref-ivy</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ref-insert-link-hydra/body</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;bibtex-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#19177c">&#39;org-ref-bibtex-hydra/body</span>))
+</span></span></code></pre></div><h5 id="ivy-bibtex">ivy-bibtex</h5>
+<p><a href="https://github.com/tmalsburg/helm-bibtex">ivy-bibtex</a> is an Ivy interface to bibtex. It uses the same configuration variables as <code>org-ref</code>, or rather, both packages use variables from the built-in <code>bibtex.el</code></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-bibtex</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ivy-bibtex</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;fB&#34;</span> <span style="color:#19177c">&#39;ivy-bibtex</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;bibtex-mode</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
 </span></span></code></pre></div><h4 id="org-journal">Org Journal</h4>
 <p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a plugin for maintaining a journal in org mode. I want(ed) to have its entries separate from my knowledge base.</p>
 <p>I&rsquo;ve tried switching to Org Roam Dailies, but in the end decided that org-journal fits my workflow better.</p>
@@ -3660,7 +3713,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	  <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/set-journal-header</span>)
 </span></span></code></pre></div><h4 id="org-roam">Org Roam</h4>
 <p><a href="https://github.com/org-roam/org-roam">org-roam</a> is a plain-text knowledge database.</p>
-<p>I tried to do various things with Org Roam, like <a href="https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/">managing projects</a>, but ended up prefferring plain Org for most of the stuff.</p>
+<p>Things I tried with Org Roam:</p>
+<ul>
+<li>Managing projects. Ended up preferring plain Org.</li>
+<li>Writing journal. <code>org-journal</code> and <code>org-journal-tags</code> seem to be a better fit for my workflow.</li>
+</ul>
 <h5 id="basic-package-configuration">Basic package configuration</h5>
 <table>
 <thead>
@@ -3701,6 +3758,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-file-extensions</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;org&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-v2-ack</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">orb-insert-interface</span> <span style="color:#19177c">&#39;ivy-bibtex</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-node-display-template</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;${title:*} &#34;</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;${tags:10}&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;org-tag</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-roam-setup</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-roam-protocol</span>))
@@ -3741,7 +3799,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;or&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">&#39;org-roam-tag-add</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;T&#34;</span> <span style="color:#19177c">&#39;org-toam-tag-remove</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;T&#34;</span> <span style="color:#19177c">&#39;org-roam-tag-remove</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#19177c">&#39;org-roam-db-autosync-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;org-mode-map</span>
@@ -3767,6 +3825,58 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">MimeType</span><span style="color:#666">=</span><span style="color:#ba2121">x-scheme-handler/org-protocol</span>
 </span></span></code></pre></div><p>Don&rsquo;t forget to run the following after setup:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+</span></span></code></pre></div><h5 id="deft">Deft</h5>
+<p><a href="https://github.com/jrblevin/deft">Deft</a> is an Emacs package to quickly find notes. It seems quite useful to look for <code>org-roam</code> notes based on their contents.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">deft</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">deft</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ord&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deft-directory</span> <span style="color:#19177c">org-roam-directory</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deft-recursive</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deft-use-filter-string-for-filename</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;deft-mode-hook</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;deft-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-refresh</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-filter</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-filter-clear</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-filter-yank</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-toggle-incremental-search</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-toggle-sort-method</span>))
+</span></span></code></pre></div><p>The default deft view does not look that great because of various Roam metadata. To improve that, we can tweak <code>deft-strip-summary-regexp</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">deft-strip-summary-regexp</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#666">:</span> <span style="color:#ba2121">&#34;:PROPERTIES:&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">anything</span>) <span style="color:#ba2121">&#34;:END:&#34;</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#666">:</span> <span style="color:#ba2121">&#34;#+&#34;</span> (<span style="color:#00f">+</span> <span style="color:#19177c">alnum</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">regexp</span> <span style="color:#ba2121">&#34;[\n\t]&#34;</span>))))
+</span></span></code></pre></div><p>And advise <code>deft-parse-summary</code> to filter out Org links:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/deft-parse-summary-around</span> (<span style="color:#19177c">fun</span> <span style="color:#19177c">contents</span> <span style="color:#19177c">title</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> (<span style="color:#19177c">org-link-display-format</span> <span style="color:#19177c">contents</span>) <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;deft</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-parse-summary</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deft-parse-summary-around</span>))
+</span></span></code></pre></div><p>Advise <code>deft-parse-title</code> to be able to extract title from the Org property:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/deft-parse-title</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">contents</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> <span style="color:#19177c">contents</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#19177c">search-forward-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;#+title:&#34;</span> <span style="color:#ba2121">&#34;#+TITLE:&#34;</span>)) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">string-trim</span> (<span style="color:#00f">buffer-substring-no-properties</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">line-end-position</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">file</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/deft-parse-title-around</span> (<span style="color:#19177c">fun</span> <span style="color:#19177c">file</span> <span style="color:#19177c">contents</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">my/deft-parse-title</span> <span style="color:#19177c">file</span> <span style="color:#19177c">contents</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">file</span> <span style="color:#19177c">contents</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;deft</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-parse-title</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deft-parse-title-around</span>))
 </span></span></code></pre></div><h4 id="review-workflow">Review workflow</h4>
 <p>UPD <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-03-27 Sun&gt;</span></span>. Out of action for now</p>
 <p>My take on a review workflow. As a baseline, I want to have a template that lists the important changes since the last review and other basic information. I&rsquo;m doing reviews regularly, but the time intervals still may vary, hence this flexibility.</p>
@@ -3980,72 +4090,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-roam-capture-</span> <span style="color:#008000">:node</span> (<span style="color:#19177c">org-roam-node-create</span>)
 </span></span><span style="display:flex;"><span>		     <span style="color:#008000">:templates</span> <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">my/org-review-capture-template</span>)))
-</span></span></code></pre></div><h4 id="org-ref">org-ref</h4>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TODO</td>
-<td>Figure out how not to load Helm</td>
-</tr>
-</tbody>
-</table>
-<p><a href="https://github.com/jkitchin/org-ref">org-ref</a> is a package that provides support for various citations &amp; references in Org mode.</p>
-<p>Useful to use BibTeX citations in LaTeX export.</p>
-<p>As of now, this package loads Helm on start. To avoid this, I have to exclude Helm from the <code>Package-requires</code> in the <a href=".emacs.d/straight/repos/org-ref/org-ref.el">org-ref.el</a> file. I haven&rsquo;t found a way to do this without modifying the package source yet.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ref</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;*helm*&#34;</span>)))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-ref-completion-library</span> <span style="color:#19177c">&#39;org-ref-ivy-cite</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-dialect</span> <span style="color:#19177c">&#39;biblatex</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-ref-default-bibliography</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/org-mode/bibliography.bib&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reftex-default-bibliography</span> <span style="color:#19177c">org-ref-default-bibliography</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-bibliography</span> <span style="color:#19177c">org-ref-default-bibliography</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ref-insert-link-hydra/body</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;bibtex-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#19177c">&#39;org-ref-bibtex-hydra/body</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-display-formats</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;${author:36} ${title:*} ${note:10} ${year:4} ${=has-pdf=:1}${=type=:7}&#34;</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ref-select-bibliograhy</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">org-ref-default-bibliography</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#666">`</span>(<span style="color:#666">,</span>(<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Bibliograhy: &#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">reftex-default-bibliography</span> <span style="color:#19177c">org-ref-default-bibliography</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">bibtex-completion-bibliography</span> <span style="color:#19177c">org-ref-default-bibliography</span>))
-</span></span></code></pre></div><h4 id="org-roam-bibtex">org-roam-bibtex</h4>
-<p>Integration with bibtex and org-ref.</p>
-<p>There are some problems with org roam v2, so I disabled it as of now. I will probably use another way of managing bibliography notes anyway.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-roam-bibtex</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;org-roam/org-roam-bibtex&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org-roam</span> <span style="color:#19177c">org-ref</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-roam-bibtex-mode</span>))
 </span></span></code></pre></div><h4 id="org-contacts">org-contacts</h4>
-<p><code>org-contacts</code> is the <code>org-contrib</code> package to store contacts in an org file. The package is somewhat outdated, for instance it uses <code>lexical-let</code> so I have to <code>(require 'cl)</code>.</p>
-<p>I think it will take a little more work to tune the package exactly to my liking, but it seems to serve the original function just fine.</p>
+<p><code>org-contacts</code> is a package to store contacts in an org file.</p>
+<p>It seems like the package has been somewhat revived in the recent months. It used things like <code>lexical-let</code> when I first found it.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contacts</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
-</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://git.sr.ht/~bzg/org-contrib&#34;</span>
-</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;lisp/org-contacts.el&#34;</span>)
-</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">compile</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">notmuch</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">git</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://repo.or.cz/org-contacts.git&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-contacts</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-contacts</span> <span style="color:#19177c">org-contacts-db</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;cl</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-contacts-files</span> (<span style="color:#00f">list</span>
 </span></span><span style="display:flex;"><span>			    (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/contacts.org&#34;</span>))))
 </span></span></code></pre></div><p>An example contact entry can look like this:</p>
@@ -6514,7 +6566,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
         <li><a href="#latex">LaTeX</a>
           <ul>
             <li><a href="#auctex">AUCTeX</a></li>
-            <li><a href="#bibtex">BibTeX</a></li>
             <li><a href="#import-dot-sty">Import *.sty</a></li>
             <li><a href="#snippets-1">Snippets</a></li>
           </ul>
@@ -6595,6 +6646,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
           <ul>
             <li><a href="#encryption">Encryption</a></li>
             <li><a href="#org-contrib">org-contrib</a></li>
+            <li><a href="#ol-notmuch">ol-notmuch</a></li>
             <li><a href="#org-tempo">org-tempo</a></li>
             <li><a href="#evil-org">evil-org</a></li>
           </ul>
@@ -6627,11 +6679,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#off--trello-sync"><span class="org-todo done OFF">OFF</span> (OFF) Trello sync</a></li>
             <li><a href="#org-ql">org-ql</a></li>
             <li><a href="#custom-agendas">Custom agendas</a></li>
+            <li><a href="#bibliography">Bibliography</a></li>
             <li><a href="#org-journal">Org Journal</a></li>
             <li><a href="#org-roam">Org Roam</a></li>
             <li><a href="#review-workflow">Review workflow</a></li>
-            <li><a href="#org-ref">org-ref</a></li>
-            <li><a href="#org-roam-bibtex">org-roam-bibtex</a></li>
             <li><a href="#org-contacts">org-contacts</a></li>
             <li><a href="#managing-tables">Managing tables</a></li>
           </ul>
