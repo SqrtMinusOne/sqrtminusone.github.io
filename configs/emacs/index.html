@@ -344,27 +344,30 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h5 id="dump-keybindings">dump keybindings</h5>
 <p>A function to dump keybindings starting with a prefix to a buffer in a tree-like form.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dump-bindings-recursive</span> (<span style="color:#19177c">prefix</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">level</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dump-bindings-recursive</span> (<span style="color:#19177c">prefix</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">level</span> <span style="color:#19177c">buffer</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">key</span> (<span style="color:#19177c">which-key--get-bindings</span> (<span style="color:#19177c">kbd</span> <span style="color:#19177c">prefix</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">level</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#00f">make-string</span> <span style="color:#19177c">level</span> <span style="color:#ba2121">? </span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;format</span> <span style="color:#ba2121">&#34;%s%s%s\n&#34;</span> <span style="color:#19177c">key</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> <span style="color:#19177c">level</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">insert</span> (<span style="color:#00f">make-string</span> <span style="color:#19177c">level</span> <span style="color:#ba2121">? </span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;format</span> <span style="color:#ba2121">&#34;%s%s%s\n&#34;</span> <span style="color:#19177c">key</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span>
 </span></span><span style="display:flex;"><span>	   (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;+&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>))
 </span></span><span style="display:flex;"><span>	   (<span style="color:#00f">substring-no-properties</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">key</span> <span style="color:#666">2</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/dump-bindings-recursive</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">concat</span> <span style="color:#19177c">prefix</span> <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#00f">substring-no-properties</span> (<span style="color:#00f">car</span> <span style="color:#19177c">key</span>)))
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">+</span> <span style="color:#666">2</span> (<span style="color:#008000">or</span> <span style="color:#19177c">level</span> <span style="color:#666">0</span>))))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">+</span> <span style="color:#666">2</span> (<span style="color:#008000">or</span> <span style="color:#19177c">level</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">buffer</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dump-bindings</span> (<span style="color:#19177c">prefix</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Dump keybindings starting with PREFIX in a tree-like form.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;sPrefix: &#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">get-buffer-create</span> <span style="color:#ba2121">&#34;bindings&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">point-max</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">erase-buffer</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/dump-bindings-recursive</span> <span style="color:#19177c">prefix</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">switch-to-buffer-other-window</span> <span style="color:#ba2121">&#34;bindings&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#00f">get-buffer-create</span> <span style="color:#ba2121">&#34;bindings&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">erase-buffer</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/dump-bindings-recursive</span> <span style="color:#19177c">prefix</span> <span style="color:#666">0</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">switch-to-buffer-other-window</span> <span style="color:#19177c">buffer</span>)))
 </span></span></code></pre></div><h4 id="evil">Evil</h4>
 <p>An entire ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.</p>
 <p>The only problem is that the package name makes it hard to google anything by just typing &ldquo;evil&rdquo;.</p>
@@ -1468,6 +1471,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-hud</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-persp-icon</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-persp-name</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-display-misc-in-all-mode-lines</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-minor-modes</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-irc</span> <span style="color:#800">nil</span>)
@@ -3069,9 +3073,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jupyter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#19177c">&#39;jupyter-run-repl</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>))
 </span></span></code></pre></div><p>Refresh kernelspecs.</p>
 <p>Kernelspecs by default are hashed, so even switching Anaconda environments doesn&rsquo;t change the kernel (i.e. kernel from the first environment is run after the switch to the second one).</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/jupyter-refresh-kernelspecs</span> ()
@@ -3451,7 +3453,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">project-files</span>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;projects/%s&#34;</span> <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects/&#34;</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">f</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span>
 </span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">f</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;..&#34;</span>))))
 </span></span><span style="display:flex;"><span>	   (<span style="color:#00f">directory-files</span>
@@ -3461,7 +3465,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span><span style="color:#19177c">project-files</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:level</span> <span style="color:#666">.</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:level</span> <span style="color:#666">.</span> <span style="color:#666">1</span>)))
 </span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:tag</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
@@ -3803,8 +3807,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#19177c">&#39;org-roam-db-autosync-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c i&#34;</span> <span style="color:#19177c">&#39;org-id-get-create</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l o&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c i&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>))
 </span></span></code></pre></div><h5 id="org-roam-ui">Org Roam UI</h5>
 <p>A browser frontend to visualize a Roam directory in a form of a graph.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-roam-ui</span>
@@ -4373,16 +4376,18 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p>A function to open a file from <code>org-directory</code>, excluding a few directories like <code>roam</code> and <code>journal</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-file-open</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">org-directory</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">project-files</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">and</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>) <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;journal&#34;</span> <span style="color:#ba2121">&#34;roam&#34;</span> <span style="color:#ba2121">&#34;review&#34;</span> <span style="color:#ba2121">&#34;archive&#34;</span> <span style="color:#ba2121">&#34;figured-out&#34;</span>)) <span style="color:#19177c">f</span>))))
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">projectile-current-project-files</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;projects/&#34;</span> <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">f</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;..&#34;</span>))))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">directory-files</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects&#34;</span>)))))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">project-files</span>)))))
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o o&#34;</span> <span style="color:#19177c">&#39;my/org-file-open</span>)
@@ -4673,9 +4678,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>			(<span style="color:#008000">unless</span> (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;/gnu/store&#34;</span> <span style="color:#19177c">default-directory</span>)
 </span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">all-the-icons-dired-mode</span>))))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dired-add-entry</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired--refresh-advice</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dired-remove-entry</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired--refresh-advice</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dired-kill-subdir</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired--refresh-advice</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (advice-add &#39;dired-add-entry :around #&#39;all-the-icons-dired--propertize)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (advice-add &#39;dired-remove-entry :around #&#39;all-the-icons-dired--propertize)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (advice-add &#39;dired-kill-subdir :around #&#39;all-the-icons-dired--propertize)</span>
+</span></span><span style="display:flex;"><span>  )
 </span></span></code></pre></div><p>Provides stuff like <code>dired-open-xdg</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">dired-open</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -4994,7 +5000,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">eshell-info-banner</span> <span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
 </span></span><span style="display:flex;"><span>				<span style="color:#008000">:host</span> <span style="color:#19177c">github</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/eshell-info-banner.el&#34;</span>)
+</span></span><span style="display:flex;"><span>				<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;phundrak/eshell-info-banner.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">eshell-banner-load</span> <span style="color:#666">.</span> <span style="color:#19177c">eshell-info-banner-update-banner</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-info-banner-filter-duplicate-partitions</span> <span style="color:#800">t</span>)
@@ -5631,7 +5637,80 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">subed-mpv-video-file</span> (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">entry</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
 </span></span></code></pre></div><p>Keep in mind that this function has to be launched inside the buffer opened by the <code>my/elfeed-youtube-subtitles</code> function.</p>
-<h3 id="internet-and-multimedia">Internet &amp; Multimedia</h3>
+<h4 id="podcast-transcripts">Podcast transcripts</h4>
+<p>Occasionally I want to have a text version of a podcast, for instance to take some notes.</p>
+<p>In order do do that, I&rsquo;ve made a <a href="https://github.com/SqrtMinusOne/podcasts-vosk">small script</a> that uses the <a href="https://alphacephei.com/vosk/">Vosk speech recognition toolkit</a> to extract subtitles from an audio file. Here&rsquo;s a function to invoke that script.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-vosk</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Input file: &#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;SRT file: &#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;vosk&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">default-directory</span> <span style="color:#ba2121">&#34;/home/pavel/Code/system-crafting/podcasts-vosk/&#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;vosk_api&#34;</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;/home/pavel/Code/system-crafting/podcasts-vosk/venv/bin/python&#34;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;main.py&#34;</span> <span style="color:#ba2121">&#34;--file-path&#34;</span> <span style="color:#19177c">input</span> <span style="color:#ba2121">&#34;--model-path&#34;</span> <span style="color:#ba2121">&#34;./model-small&#34;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;--save-path&#34;</span> <span style="color:#19177c">output</span> <span style="color:#ba2121">&#34;--words-per-line&#34;</span> <span style="color:#ba2121">&#34;14&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;SRT conversion completed&#34;</span>))
+</span></span><span style="display:flex;"><span>	       ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">let</span> ((<span style="color:#19177c">err</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">buffer-string</span>))))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in Vosk API: %s&#34;</span> <span style="color:#19177c">err</span>)))))))))
+</span></span></code></pre></div><p>In order to use that, we need to download the file first. So here&rsquo;s a function that extracts the file name from the URL:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-file-name-from-url</span> (<span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">not</span> <span style="color:#ba2121">&#34;/&#34;</span>)) (<span style="color:#ba2121">? </span><span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#19177c">eos</span>) <span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span> <span style="color:#19177c">url</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">match</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No file name found. Somehow&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Remove the first /</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">match</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">match</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Remove the trailing /</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">match</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">match</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">match</span> <span style="color:#666">0</span> (<span style="color:#00f">1-</span> (<span style="color:#00f">length</span> <span style="color:#19177c">match</span>)))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">match</span>))
+</span></span></code></pre></div><p>Now can use that to save the file and invoke the <code>my/invoke-vosk</code> function.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-get-transcript-new</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">srt-path</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">file-name</span> (<span style="color:#19177c">my/get-file-name-from-url</span> <span style="color:#19177c">url</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">file-path</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;/tmp/%s&#34;</span> <span style="color:#19177c">file-name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:complete</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">let</span> ((<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">write-region</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#19177c">file-name</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Conversion started&#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">my/invoke-vosk</span> <span style="color:#19177c">file-path</span> <span style="color:#19177c">srt-path</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
+</span></span></code></pre></div><p>And the final entrypoint, that opens up the SRT file is it&rsquo;s available, and queues the download if it&rsquo;s not.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-get-transcript</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">enclosure</span> (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">enclosure</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No enclosure found!&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">srt-path</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-srt-dir</span>
+</span></span><span style="display:flex;"><span>			    (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>			    <span style="color:#ba2121">&#34;.srt&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">srt-path</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">find-file-other-window</span> <span style="color:#19177c">srt-path</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">my/elfeed-vosk-get-transcript-new</span> <span style="color:#19177c">enclosure</span> <span style="color:#19177c">srt-path</span>)))))
+</span></span></code></pre></div><h3 id="internet-and-multimedia">Internet &amp; Multimedia</h3>
 <h4 id="notmuch">Notmuch</h4>
 <p>My notmuch config now resides in <a href="/configs/mail/">Mail.org</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#19177c">my/remote-server</span>)
@@ -5905,6 +5984,13 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-add-emms</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">emms-add-ytel</span> (<span style="color:#19177c">ytel-get-current-video</span>)))
+</span></span></code></pre></div><p>Also, a function to copy a URL to the video under cursor.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-kill-url</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">kill-new</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;https://www.youtube.com/watch?v=&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">ytel-video-id</span> (<span style="color:#19177c">ytel-get-current-video</span>)))))
 </span></span></code></pre></div><h4 id="wallabag">wallabag</h4>
 <p><a href="https://github.com/wallabag/wallabag">Wallabag</a> is a self-hosted read-it-later project. I&rsquo;m not yet sold on integrating it in my workflow, but let&rsquo;s keep it here for now.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">wallabag</span>
@@ -6053,6 +6139,13 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate-reverse</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">&#39;google-translate-smooth-translate</span>)
+</span></span></code></pre></div><h4 id="reverso">Reverso</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/reverso.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">reverso</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>)))
 </span></span></code></pre></div><h3 id="reading-documentation">Reading documentation</h3>
 <h4 id="tldr">tldr</h4>
 <p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.</p>
@@ -6377,13 +6470,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    <span style="color:#008000">:action</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#008000">setq</span> <span style="color:#19177c">zone-programs</span> (<span style="color:#00f">vector</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">elem</span>)))
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">zone</span>))))
-</span></span></code></pre></div><p>Also, a function to copy a URL to the video under cursor.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-kill-url</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">kill-new</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;https://www.youtube.com/watch?v=&#34;</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">ytel-video-id</span> (<span style="color:#19177c">ytel-get-current-video</span>)))))
 </span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <table>
 <thead>
@@ -6411,7 +6497,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/format-guix-dependencies</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/format-guix-dependencies</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">specifications-&gt;manifest</span>
-</span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;emacs-native-comp&#34;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;emacs&#34;</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>()<span style="color:#19177c">&gt;&gt;</span>))
 </span></span></code></pre></div>
     </div>
@@ -6755,6 +6841,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#rdrview">rdrview</a></li>
             <li><a href="#latex-and-pandoc">LaTeX and pandoc</a></li>
             <li><a href="#youtube-transcripts">YouTube transcripts</a></li>
+            <li><a href="#podcast-transcripts">Podcast transcripts</a></li>
           </ul>
         </li>
         <li><a href="#internet-and-multimedia">Internet &amp; Multimedia</a>
@@ -6768,6 +6855,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
+            <li><a href="#reverso">Reverso</a></li>
           </ul>
         </li>
         <li><a href="#reading-documentation">Reading documentation</a>
