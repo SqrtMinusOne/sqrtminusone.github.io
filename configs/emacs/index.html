@@ -1537,8 +1537,49 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/persp-move-window-and-switch</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/persp-copy-window-and-switch</span>))
 </span></span></code></pre></div><h4 id="automating-perspectives">Automating perspectives</h4>
-<p>I&rsquo;d like to have various Emacs apps open up in their designated perspectives (also in their designated workspaces when I&rsquo;m using EXWM).</p>
-<p>So, here is a macro to run something in a given perspective in a given workspace. This is meant to be used in general.el keybindings.</p>
+<p>One thing I don&rsquo;t like about <code>perspective.el</code> is that it doesn&rsquo;t feature much (or any) capacity for automation. So out-of-the-box we&rsquo;re supposed to manually assign buffers to perspectives we want.</p>
+<p>But we can cook some automation ourselves. First, let&rsquo;s define a variable with &ldquo;rules&rdquo;:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/perspective-assign-alist</span> <span style="color:#666">&#39;</span>())
+</span></span></code></pre></div><p>One rule looks as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>(major-mode workspace-index persp-name)
+</span></span></code></pre></div><p>And a function to act on these rules.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/perspective-assign</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">rule</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">my/perspective-assign-alist</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">workspace-index</span> (<span style="color:#00f">car</span> <span style="color:#19177c">rule</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">persp-name</span> (<span style="color:#19177c">cadr</span> <span style="color:#19177c">rule</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">buffer</span> (<span style="color:#00f">current-buffer</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">perspective-exwm-assign-window</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">:workspace-index</span> <span style="color:#19177c">workspace-index</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">:persp-name</span> <span style="color:#19177c">persp-name</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">when</span> <span style="color:#19177c">workspace-index</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">exwm-workspace-switch</span> <span style="color:#19177c">workspace-index</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">when</span> <span style="color:#19177c">persp-name</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">persp-switch</span> <span style="color:#19177c">persp-name</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">with-perspective</span> <span style="color:#19177c">persp-name</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">persp-set-buffer</span> <span style="color:#19177c">buffer</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">persp-switch-to-buffer</span> <span style="color:#19177c">buffer</span>)))))
+</span></span></code></pre></div><p>If EXWM is available, then so is mine <code>perspective-exwm</code> package that features a convenient procedure called <code>perspective-exwm-assign-window</code>. If not, we just work with perspectives.</p>
+<p>Now, we have to put this function somewhere, and <code>after-change-major-mode-hook</code> seems like a perfect place for it.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-major-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign</span>)
+</span></span></code></pre></div><p>And here is a simple macro to add rules to the list.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/persp-add-rule</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">body</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">declare</span> (<span style="color:#19177c">indent</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> (<span style="color:#00f">%</span> (<span style="color:#00f">length</span> <span style="color:#19177c">body</span>) <span style="color:#666">3</span>) <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Malformed body in my/persp-add-rule&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> (<span style="color:#19177c">result</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> <span style="color:#19177c">body</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">major-mode</span> (<span style="color:#008000">pop</span> <span style="color:#19177c">body</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">workspace-index</span> (<span style="color:#008000">pop</span> <span style="color:#19177c">body</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">persp-name</span> (<span style="color:#008000">pop</span> <span style="color:#19177c">body</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#666">`</span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;my/perspective-assign-alist</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#666">&#39;</span>(<span style="color:#666">,</span><span style="color:#19177c">major-mode</span> <span style="color:#666">.</span> (<span style="color:#666">,</span><span style="color:#19177c">workspace-index</span> <span style="color:#666">,</span><span style="color:#19177c">persp-name</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">result</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#666">,@</span><span style="color:#19177c">result</span>)))
+</span></span></code></pre></div><p>Also, the logic above works only for cases when the buffer is created. Occasionally, the packages themselves run <code>switch-to-buffer</code>, which screws both EXWM workspaces and perspectives; to work around that, I define a macro that runs a command in a given perspective and workspace.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/command-in-persp</span> (<span style="color:#19177c">command-name</span> <span style="color:#19177c">persp-name</span> <span style="color:#19177c">workspace-index</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#666">`&#39;</span>((<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">interactive</span>)
@@ -1548,7 +1589,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>       (<span style="color:#19177c">delete-other-windows</span>)
 </span></span><span style="display:flex;"><span>       <span style="color:#666">,@</span><span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:wk</span> <span style="color:#666">,</span><span style="color:#19177c">command-name</span>))
-</span></span></code></pre></div><h2 id="programming">Programming</h2>
+</span></span></code></pre></div><p>This is meant to be used in the definitions of <code>general.el</code>.</p>
+<h2 id="programming">Programming</h2>
 <h3 id="general-setup">General setup</h3>
 <h4 id="treemacs">Treemacs</h4>
 <p><a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> is a quite large &amp; powerful package, but as of now I&rsquo;ve replaced it with dired. I still have a small configuration because lsp-mode and dap-mode depend on it.</p>
@@ -5078,7 +5120,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">elfeed</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ae&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;elfeed&#34;</span> <span style="color:#ba2121">&#34;elfeed&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">elfeed-summary</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ae&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">elfeed-summary</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">elfeed-summary-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;elfeed&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">elfeed-search-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;elfeed&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">elfeed-show-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;elfeed&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">shr-max-image-proportion</span> <span style="color:#666">0.5</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-db-directory</span> <span style="color:#ba2121">&#34;~/.elfeed&#34;</span>)
@@ -5739,16 +5785,19 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;as&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;emms&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;s&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;emms&#34;</span> <span style="color:#ba2121">&#34;EMMS&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">emms-smart-browse</span>))
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#19177c">&#39;emms-browser</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#19177c">&#39;emms-pause</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;emms-stop</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;emms-previous</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#19177c">&#39;emms-next</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#19177c">&#39;emms-player-mpd-connect</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;ww&#34;</span> <span style="color:#19177c">&#39;emms-lyrics</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wb&#34;</span> <span style="color:#19177c">&#39;emms-lyrics-toggle-display-on-minibuffer</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wm&#34;</span> <span style="color:#19177c">&#39;emms-lyrics-toggle-display-on-modeline</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-smart-browse</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-browser</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-pause</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-stop</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-previous</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-next</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-player-mpd-connect</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;ww&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wb&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics-toggle-display-on-minibuffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wm&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics-toggle-display-on-modeline</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">emms-browser-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;EMMS&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">emms-playlist-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;EMMS&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">emms-mode-line-icon-enabled-p</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;emms-setup</span>)
@@ -6067,7 +6116,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">znc-erc</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;erc&#34;</span> <span style="color:#ba2121">&#34;ERC&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">znc-erc</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">znc-erc</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">erc-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;ERC&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">znc-servers</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>((<span style="color:#ba2121">&#34;sqrtminusone.xyz&#34;</span> <span style="color:#666">6697</span> <span style="color:#800">t</span>
@@ -6282,10 +6333,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">prodigy</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aP&#34;</span> (<span style="color:#19177c">my/command-in-persp</span>
-</span></span><span style="display:flex;"><span>		       <span style="color:#ba2121">&#34;deploy&#34;</span> <span style="color:#ba2121">&#34;prodigy&#34;</span> <span style="color:#800">nil</span>
-</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">prodigy</span>)
-</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">delete-other-windows</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aP&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">prodigy</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
