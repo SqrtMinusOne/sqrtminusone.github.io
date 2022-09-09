@@ -7,7 +7,7 @@ title = "Index"
 
 **Pavel Korytov**
 
-Master's student of Saint-Petersurg State Electrotechnical University, Russia at Software Engineering.
+Graduate student of Saint-Petersurg State Electrotechnical University, Russia.
 
 ### Links
 * [e-mail](mailto:thexcloud@gmail.com)
