@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Podcast transcripts with elfeed &amp; speech recognition engine</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">Podcast transcripts with elfeed &amp; speech recognition engine</h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen">Podcast transcripts with elfeed &amp; speech recognition engine</h1>
+        <p>In my experience, finding something in a podcast is particularly troublesome. For example, occasionally I want to refer to some line in the podcast to make an <a href="https://github.com/org-roam/org-roam">org-roam</a> node, so I want to check that I got that part right.</p>
+<p>And I have no reasonable way to get there because audio files in themselves don&rsquo;t allow for <a href="https://en.wikipedia.org/wiki/Random_access">random access</a>, i.e. there are no &ldquo;landmarks&rdquo; that point to this or that portion of the file. At least if nothing like a transcript is available.</p>
+<p>For obvious reasons, podcasts rarely ship with transcripts. So in this post, I&rsquo;ll be using a speech recognition engine to make up for that. A generated transcript is not quite as good as a manually written one, but for the purpose of finding a fragment of the known podcast, it works well enough.</p>
+<figure><img src="/images/vosk/img.png"/>
+</figure>
+
+<p>The general idea is to get the podcast info from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/alphacep/vosk-api">vosk-api</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>. I&rsquo;ve done something similar for <a href="https://sqrtminusone.xyz/posts/2022-05-09-pdf/#youtube-transcripts">YouTube videos</a> in the previous post, by the way.</p>
+<p>Be sure to enable <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Lexical-Binding.html">lexical binding</a> for the context of evaluation. For instance, for <code>init.el</code> you can add the following line to the top:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;; -*- lexical-binding: t -*-</span>
+</span></span></code></pre></div><h2 id="vosk-api">Vosk API</h2>
+<p>After some search, I found <a href="https://github.com/alphacep/vosk-api">Vosk API</a>, an offline speech recognition toolkit.</p>
+<p>I want to make a program that receives an audio file and outputs an <a href="https://en.wikipedia.org/wiki/SubRip">SRT</a> file. Vosk provides bindings to different languages, of which I choose Python because&hellip; reasons.</p>
+<p>So, with the help of kindly provided <a href="https://github.com/alphacep/vosk-api/tree/master/python/example">examples</a> of how to use the Python API, the resulting script is listed below. Except Vosk, the script uses <a href="https://click.palletsprojects.com/en/8.1.x/">click</a> to make a simple CLI, a library aptly called <a href="https://github.com/cdown/srt">srt</a> to make srt files, and <a href="https://ffmpeg.org/">ffmpeg</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">datetime</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">json</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">math</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">subprocess</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">click</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">srt</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">from</span> <span style="color:#00f;font-weight:bold">vosk</span> <span style="color:#008000;font-weight:bold">import</span> KaldiRecognizer, Model, SetLogLevel
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a2f">@click</span><span style="color:#666">.</span>command()
+</span></span><span style="display:flex;"><span><span style="color:#a2f">@click</span><span style="color:#666">.</span>option(<span style="color:#ba2121">&#39;--file-path&#39;</span>, required<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>, help<span style="color:#666">=</span><span style="color:#ba2121">&#39;Path to the audio file&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a2f">@click</span><span style="color:#666">.</span>option(<span style="color:#ba2121">&#39;--model-path&#39;</span>, required<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>, help<span style="color:#666">=</span><span style="color:#ba2121">&#39;Path to the model&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a2f">@click</span><span style="color:#666">.</span>option(
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#39;--save-path&#39;</span>,
+</span></span><span style="display:flex;"><span>    required<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>    default<span style="color:#666">=</span><span style="color:#ba2121">&#39;result.srt&#39;</span>,
+</span></span><span style="display:flex;"><span>    help<span style="color:#666">=</span><span style="color:#ba2121">&#39;Path to resulting SRT file&#39;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#a2f">@click</span><span style="color:#666">.</span>option(
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#39;--words-per-line&#39;</span>,
+</span></span><span style="display:flex;"><span>    required<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">type</span><span style="color:#666">=</span><span style="color:#008000">int</span>,
+</span></span><span style="display:flex;"><span>    default<span style="color:#666">=</span><span style="color:#666">14</span>,
+</span></span><span style="display:flex;"><span>    help<span style="color:#666">=</span><span style="color:#ba2121">&#39;Number of words per line&#39;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">transcribe</span>(file_path, model_path, save_path, words_per_line<span style="color:#666">=</span><span style="color:#666">7</span>):
+</span></span><span style="display:flex;"><span>    sample_rate <span style="color:#666">=</span> <span style="color:#666">16000</span>
+</span></span><span style="display:flex;"><span>    SetLogLevel(<span style="color:#666">-</span><span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    model <span style="color:#666">=</span> Model(model_path)
+</span></span><span style="display:flex;"><span>    rec <span style="color:#666">=</span> KaldiRecognizer(model, sample_rate)
+</span></span><span style="display:flex;"><span>    rec<span style="color:#666">.</span>SetWords(<span style="color:#008000;font-weight:bold">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    process <span style="color:#666">=</span> subprocess<span style="color:#666">.</span>Popen(
+</span></span><span style="display:flex;"><span>        [
+</span></span><span style="display:flex;"><span>            <span style="color:#ba2121">&#39;ffmpeg&#39;</span>, <span style="color:#ba2121">&#39;-loglevel&#39;</span>, <span style="color:#ba2121">&#39;quiet&#39;</span>, <span style="color:#ba2121">&#39;-i&#39;</span>, file_path, <span style="color:#ba2121">&#39;-ar&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">str</span>(sample_rate), <span style="color:#ba2121">&#39;-ac&#39;</span>, <span style="color:#ba2121">&#39;1&#39;</span>, <span style="color:#ba2121">&#39;-f&#39;</span>, <span style="color:#ba2121">&#39;s16le&#39;</span>, <span style="color:#ba2121">&#39;-&#39;</span>
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        stdout<span style="color:#666">=</span>subprocess<span style="color:#666">.</span>PIPE
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    results <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">while</span> <span style="color:#008000;font-weight:bold">True</span>:
+</span></span><span style="display:flex;"><span>        data <span style="color:#666">=</span> process<span style="color:#666">.</span>stdout<span style="color:#666">.</span>read(<span style="color:#666">4000</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">len</span>(data) <span style="color:#666">==</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> rec<span style="color:#666">.</span>AcceptWaveform(data):
+</span></span><span style="display:flex;"><span>            res <span style="color:#666">=</span> json<span style="color:#666">.</span>loads(rec<span style="color:#666">.</span>Result())
+</span></span><span style="display:flex;"><span>            results<span style="color:#666">.</span>append(res)
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">if</span> math<span style="color:#666">.</span>log2(<span style="color:#008000">len</span>(results)) <span style="color:#666">%</span> <span style="color:#666">2</span> <span style="color:#666">==</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;Progress: </span><span style="color:#b68;font-weight:bold">{</span><span style="color:#008000">len</span>(results)<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>)
+</span></span><span style="display:flex;"><span>    results<span style="color:#666">.</span>append(json<span style="color:#666">.</span>loads(rec<span style="color:#666">.</span>FinalResult()))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    subs <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> res <span style="color:#a2f;font-weight:bold">in</span> results:
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#a2f;font-weight:bold">not</span> <span style="color:#ba2121">&#39;result&#39;</span> <span style="color:#a2f;font-weight:bold">in</span> res:
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>        words <span style="color:#666">=</span> res[<span style="color:#ba2121">&#39;result&#39;</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">for</span> j <span style="color:#a2f;font-weight:bold">in</span> <span style="color:#008000">range</span>(<span style="color:#666">0</span>, <span style="color:#008000">len</span>(words), words_per_line):
+</span></span><span style="display:flex;"><span>            line <span style="color:#666">=</span> words[j:j <span style="color:#666">+</span> words_per_line]
+</span></span><span style="display:flex;"><span>            s <span style="color:#666">=</span> srt<span style="color:#666">.</span>Subtitle(
+</span></span><span style="display:flex;"><span>                index<span style="color:#666">=</span><span style="color:#008000">len</span>(subs),
+</span></span><span style="display:flex;"><span>                content<span style="color:#666">=</span><span style="color:#ba2121">&#34; &#34;</span><span style="color:#666">.</span>join([l[<span style="color:#ba2121">&#39;word&#39;</span>] <span style="color:#008000;font-weight:bold">for</span> l <span style="color:#a2f;font-weight:bold">in</span> line]),
+</span></span><span style="display:flex;"><span>                start<span style="color:#666">=</span>datetime<span style="color:#666">.</span>timedelta(seconds<span style="color:#666">=</span>line[<span style="color:#666">0</span>][<span style="color:#ba2121">&#39;start&#39;</span>]),
+</span></span><span style="display:flex;"><span>                end<span style="color:#666">=</span>datetime<span style="color:#666">.</span>timedelta(seconds<span style="color:#666">=</span>line[<span style="color:#666">-</span><span style="color:#666">1</span>][<span style="color:#ba2121">&#39;end&#39;</span>])
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            subs<span style="color:#666">.</span>append(s)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    srt_res <span style="color:#666">=</span> srt<span style="color:#666">.</span>compose(subs)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">with</span> <span style="color:#008000">open</span>(save_path, <span style="color:#ba2121">&#39;w&#39;</span>) <span style="color:#008000;font-weight:bold">as</span> f:
+</span></span><span style="display:flex;"><span>        f<span style="color:#666">.</span>write(srt_res)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> __name__ <span style="color:#666">==</span> <span style="color:#ba2121">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    transcribe()
+</span></span></code></pre></div><p>Here&rsquo;s the corresponding <code>requirements.txt</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>vosk
+</span></span><span style="display:flex;"><span>click
+</span></span><span style="display:flex;"><span>srt
+</span></span></code></pre></div><p>Another piece we need is a speech recognition model, some of which you can download <a href="https://alphacephei.com/vosk/models">on their website</a>. I chose a small English model called <code>vosk-model-small-en-us-0.15</code> because all my podcasts are in English and also because larger models are much slower.</p>
+<p>Now that we have the script and the model, we need to create a virtual environment. Somehow I couldn&rsquo;t install the <code>vosk</code> package with <a href="https://docs.conda.io/en/latest/">conda</a>, but the Guix version of Python with <code>virtualenv</code> worked just fine:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 -m virtualenv venv
+</span></span><span style="display:flex;"><span><span style="color:#008000">source</span> venv/bin/activate
+</span></span><span style="display:flex;"><span>pip install -r requirements.txt
+</span></span></code></pre></div><p>After which the script can be used as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python main.py --file-path &lt;path-to-file&gt; --model-path ./model-small --save-path &lt;path-to-subtitles-file&gt;.srt
+</span></span></code></pre></div><h2 id="running-it-from-emacs">Running it from Emacs</h2>
+<p>The next step is to run the script from Emacs. This is rather straightforward to do with <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html">asyncronous processes</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/vosk-script-path</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/Code/system-crafting/podcasts-vosk/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Path to the </span><span style="color:#19177c">`podcasts-vosk&#39;</span><span style="color:#ba2121"> script folder.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-vosk</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract subtitles from the audio file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">INPUT is the audio file, OUTPUT is the path to the resulting SRT file.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Input file: &#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;SRT file: &#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;vosk&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">default-directory</span> <span style="color:#19177c">my/vosk-script-path</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ba2121">&#34;vosk_api&#34;</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">concat</span> <span style="color:#19177c">my/vosk-script-path</span> <span style="color:#ba2121">&#34;venv/bin/python&#34;</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#ba2121">&#34;main.py&#34;</span> <span style="color:#ba2121">&#34;--file-path&#34;</span> <span style="color:#19177c">input</span> <span style="color:#ba2121">&#34;--model-path&#34;</span> <span style="color:#ba2121">&#34;./model-small&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ba2121">&#34;--save-path&#34;</span> <span style="color:#19177c">output</span> <span style="color:#ba2121">&#34;--words-per-line&#34;</span> <span style="color:#ba2121">&#34;14&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">notifications-notify</span> <span style="color:#008000">:body</span> <span style="color:#ba2121">&#34;SRT conversion completed&#34;</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Vosk API&#34;</span>))
+</span></span><span style="display:flex;"><span>               ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">let</span> ((<span style="color:#19177c">err</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">buffer-string</span>))))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in Vosk API: %s&#34;</span> <span style="color:#19177c">err</span>)))))))))
+</span></span></code></pre></div><p>If run interactively, the defined function prompts for paths to both files.</p>
+<p>The process sentinel sends a <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Desktop-Notifications.html">desktop notification</a> because it&rsquo;s a bit more noticeable than <code>message</code>, and the process is expected to take some time.</p>
+<h2 id="integrating-with-elfeed">Integrating with elfeed</h2>
+<p>To actually run the function from the section above, we need to download the file in question.</p>
+<p>So first, let&rsquo;s extract the file name from the URL:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-file-name-from-url</span> (<span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract file name from the URL.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">not</span> <span style="color:#ba2121">&#34;/&#34;</span>)) (<span style="color:#ba2121">? </span><span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#19177c">eos</span>) <span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span> <span style="color:#19177c">url</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">match</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No file name found.  Somehow&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Remove the first /</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">match</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">match</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Remove the trailing /</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">match</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">match</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">match</span> <span style="color:#666">0</span> (<span style="color:#00f">1-</span> (<span style="color:#00f">length</span> <span style="color:#19177c">match</span>)))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">match</span>))
+</span></span></code></pre></div><p>I use a library called <a href="https://github.com/tkf/emacs-request">request.el</a> to download files elsewhere, so I&rsquo;ll re-use it here. You can just as well invoke <code>curl</code> or <code>wget</code> via a asynchronous process.</p>
+<p>This function downloads the file to a non-temporary folder, which is <code>~/.elfeed/podcast-files/</code> if you didn&rsquo;t move the elfeed database. That is so because a permanently downloaded file works better for the next section.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;elfeed</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defvar</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span> <span style="color:#19177c">elfeed-db-directory</span> <span style="color:#ba2121">&#34;/podcast-files/&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-get-transcript-new</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">srt-path</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">file-name</span> (<span style="color:#19177c">my/get-file-name-from-url</span> <span style="color:#19177c">url</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">file-path</span> (<span style="color:#00f">expand-file-name</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#19177c">file-name</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:complete</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">write-region</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#19177c">file-path</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Conversion started&#34;</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">my/invoke-vosk</span> <span style="color:#19177c">file-path</span> <span style="color:#19177c">srt-path</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
+</span></span></code></pre></div><p>I also experimented with a bunch of options to write binary data in Emacs, of which the way with <code>write-region</code> (as implemented in <a href="https://github.com/rejeep/f.el">f.el</a>) seems to be the fastest. <a href="https://emacs.stackexchange.com/questions/59449/how-do-i-save-raw-bytes-into-a-file">This thread on StackExchange</a> suggests that it may screw some bytes towards the end, but whether or not this is the case, mp3 files survive the procedure. The proposed solution with <code>seq-doseq</code> takes at least a few seconds.</p>
+<p>Finally, we need a function to show the transcript if it exists or invoke <code>my/elfeed-vosk-get-transcript-new</code> if it doesn&rsquo;t. And this is the function that we&rsquo;ll call from an <code>elfeed-entry</code> buffer.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-get-transcript</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrieve transcript for the enclosure of the current elfeed ENTRY.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">enclosure</span> (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">enclosure</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No enclosure found!&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">srt-path</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-srt-dir</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
+</span></span><span style="display:flex;"><span>                            <span style="color:#ba2121">&#34;.srt&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">srt-path</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">find-file-other-window</span> <span style="color:#19177c">srt-path</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">setq-local</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">entry</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/elfeed-vosk-get-transcript-new</span> <span style="color:#19177c">enclosure</span> <span style="color:#19177c">srt-path</span>)))))
+</span></span></code></pre></div><h2 id="integrating-with-subed">Integrating with subed</h2>
+<p>Now that we&rsquo;ve produced a <code>.srt</code> file, we can use a package called <a href="https://github.com/sachac/subed">subed</a> to control the playback, like I had done in the previous post.</p>
+<p>By the way, this wasn&rsquo;t the most straightforward thing to figure out, because the MPV window doesn&rsquo;t show up for an audio file, and the player itself starts in the paused state. So I thought nothing was happening until I enabled the debug log.</p>
+<p>With that in mind, here&rsquo;s a function to launch MPV from the buffer generated by <code>my/elfeed-vosk-get-transcript</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-subed</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Run MPV for the current Vosk-generated subtitles file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ENTRY is an instance of </span><span style="color:#19177c">`elfeed-entry&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">entry</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No entry!&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;subed-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Not subed mode!&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">subed-mpv-video-file</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">expand-file-name</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">my/get-file-name-from-url</span>
+</span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
+</span></span></code></pre></div><p>After running <code>M-x my/elfeed-vosk-subed</code>, run <code>M-x subed-toggle-loop-over-current-subtitle</code> (<code>C-c C-l</code>), because somehow it&rsquo;s turned on by default, and <code>M-x subed-toggle-pause-while-typing</code> (<code>C-c C-p</code>), because sometimes this made my instance of MPV lag.</p>
+<p>After that, <code>M-x subed-mpv-toggle-pause</code> should start the playback, which you can control by moving the cursor in the buffer.</p>
+<p>You can also run <code>M-x subed-toggle-sync-point-to-player</code> (<code>C-c .</code>) to toggle syncing the point in the buffer to the currently played subtitle (this automatically gets disabled when you switch buffers).</p>
+<p>Running <code>M-x subed-toggle-sync-player-to-point</code> (<code>C-c ,</code>) does the opposite, i.e. sets the player position to the subtitle under point. These two functions are useful since the MPV window controls aren&rsquo;t available.</p>
+<h2 id="some-observations">Some observations</h2>
+<p>So, the functions above work for my purposes.</p>
+<p>I think it should be possible to get transcripts of better quality by using a better speech recognition model, adding a speaker detection model and a model to restore case &amp; punctuation. But it seems to be harder to implement, and this would take more time and resources. On my PC, the smallest Vosk model runs maybe 10 times faster than the playback time, which is still a few minutes for an hour-long podcast. Waiting longer is probably not worth it.</p>
+<p>Also, technically MPV can stream files without downloading them, and it&rsquo;s even possible to feed stream data into Vosk. But MPV isn&rsquo;t particularly good at seeking in streamed files, at least not with my Internet connection.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vosk-api">Vosk API</a></li>
+    <li><a href="#running-it-from-emacs">Running it from Emacs</a></li>
+    <li><a href="#integrating-with-elfeed">Integrating with elfeed</a></li>
+    <li><a href="#integrating-with-subed">Integrating with subed</a></li>
+    <li><a href="#some-observations">Some observations</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2022"><small>Pavel Korytov, 2022</small></a>
+        
+        <br>
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+    </div>
+    
+</div>
+</body>
+</html>
