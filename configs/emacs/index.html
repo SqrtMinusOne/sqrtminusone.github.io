@@ -3509,7 +3509,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span><span style="color:#19177c">project-files</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:level</span> <span style="color:#666">.</span> <span style="color:#666">1</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:level</span> <span style="color:#666">.</span> <span style="color:#666">2</span>)))
 </span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:tag</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
@@ -3612,7 +3612,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	(<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> <span style="color:#19177c">scheduled</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;log&#34;</span> <span style="color:#ba2121">&#34;log_here&#34;</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;log&#34;</span> <span style="color:#ba2121">&#34;log_here&#34;</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-custom-commands</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#ba2121">&#34;My outline&#34;</span>
@@ -5698,16 +5698,31 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
 </span></span></code></pre></div><p>Keep in mind that this function has to be launched inside the buffer opened by the <code>my/elfeed-youtube-subtitles</code> function.</p>
 <h4 id="podcast-transcripts">Podcast transcripts</h4>
-<p>Occasionally I want to have a text version of a podcast, for instance to take some notes.</p>
-<p>In order do do that, I&rsquo;ve made a <a href="https://github.com/SqrtMinusOne/podcasts-vosk">small script</a> that uses the <a href="https://alphacephei.com/vosk/">Vosk speech recognition toolkit</a> to extract subtitles from an audio file. Here&rsquo;s a function to invoke that script.</p>
+<p>In my experience, finding something in a podcast is particularly troublesome. For example, occasionally I want to refer to some line in the podcast to make an <a href="https://github.com/org-roam/org-roam">org-roam</a> node, e.g. I want to check that I got that part right.</p>
+<p>And I have no reasonable way to get there because audio files in themselves don&rsquo;t allow for <a href="https://en.wikipedia.org/wiki/Random_access">random access</a>, i.e. there are no &ldquo;landmarks&rdquo; that point to this or that portion of the file. At least if nothing like a transcript is available.</p>
+<p>For obvious reasons, podcasts rarely ship with transcripts. So in this post, I&rsquo;ll be using a speech recognition engine to make up for that. A generated transcript is not quite as good as a manually written one, but for the purpose of finding a fragment of a known podcast, it works well enough.</p>
+<p>The general idea is to get the podcast info from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/alphacep/vosk-api">vosk-api</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>.</p>
+<h5 id="vosk-api">Vosk API</h5>
+<p>After some search, I found <a href="https://github.com/alphacep/vosk-api">Vosk API</a>, an offline speech recognition toolkit.</p>
+<p>I want to make a program that receives an audio file and outputs an <a href="https://en.wikipedia.org/wiki/SubRip">SRT</a> file. Vosk provides bindings to different languages, of which I choose Python because&hellip; reasons.</p>
+<p>So, with the help of kindly provided <a href="https://github.com/alphacep/vosk-api/tree/master/python/example">examples</a> of how to use the Python API, the resulting script is <a href="https://github.com/SqrtMinusOne/podcasts-vosk">available here</a>. Except Vosk, the script uses <a href="https://click.palletsprojects.com/en/8.1.x/">click</a> to make a simple CLI, a library aptly called <a href="https://github.com/cdown/srt">srt</a> to make srt files, and <a href="https://ffmpeg.org/">ffmpeg</a>.</p>
+<p>Another piece we need is a speech recognition model, some of which you can download <a href="https://alphacephei.com/vosk/models">on their website</a>. I chose a small English model called <code>vosk-model-small-en-us-0.15</code> because all my podcasts are in English and also because larger models are much slower.</p>
+<p>Now that we have the script and the model, we need to create a virtual environment. Somehow I couldn&rsquo;t install the <code>vosk</code> package with <a href="https://docs.conda.io/en/latest/">conda</a>, but the Guix version of Python with <code>virtualenv</code> worked just fine:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 -m virtualenv venv
+</span></span><span style="display:flex;"><span><span style="color:#008000">source</span> venv/bin/activate
+</span></span><span style="display:flex;"><span>pip install -r requirements.txt
+</span></span></code></pre></div><p>After which the script can be used as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python main.py --file-path &lt;path-to-file&gt; --model-path ./model-small --save-path &lt;path-to-subtitles-file&gt;.srt
+</span></span></code></pre></div><h5 id="running-it-from-emacs">Running it from Emacs</h5>
+<p>The next step is to run the script from Emacs. This is rather straightforward to do with <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html">asyncronous processes</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/vosk-script-path</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/Code/system-crafting/podcasts-vosk/&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Path to the </span><span style="color:#19177c">`podcasts-vosk&#39;</span><span style="color:#ba2121"> script folder.&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-vosk</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract subtitles from audio file.
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract subtitles from the audio file.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">INPUT is the audio file, OUTPUT is the part to the resulting SRT file.&#34;</span>
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">INPUT is the audio file, OUTPUT is the path to the resulting SRT file.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Input file: &#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
@@ -5733,7 +5748,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>			     (<span style="color:#00f">buffer-string</span>))))
 </span></span><span style="display:flex;"><span>		  (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>))
 </span></span><span style="display:flex;"><span>		  (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in Vosk API: %s&#34;</span> <span style="color:#19177c">err</span>)))))))))
-</span></span></code></pre></div><p>In order to use that, we need to download the file first. So here&rsquo;s a function that extracts the file name from the URL:</p>
+</span></span></code></pre></div><p>If run interactively, the defined function prompts for paths to both files.</p>
+<p>The process sentinel sends a <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Desktop-Notifications.html">desktop notification</a> because it&rsquo;s a bit more noticeable than <code>message</code>, and the process is expected to take some time.</p>
+<h5 id="integrating-with-elfeed">Integrating with elfeed</h5>
+<p>To actually run the function from the section above, we need to download the file in question.</p>
+<p>So first, let&rsquo;s extract the file name from the URL:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-file-name-from-url</span> (<span style="color:#19177c">url</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract file name from the URL.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">not</span> <span style="color:#ba2121">&#34;/&#34;</span>)) (<span style="color:#ba2121">? </span><span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#19177c">eos</span>) <span style="color:#19177c">url</span>)
@@ -5746,7 +5765,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">match</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">match</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">match</span> <span style="color:#666">0</span> (<span style="color:#00f">1-</span> (<span style="color:#00f">length</span> <span style="color:#19177c">match</span>)))))
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">match</span>))
-</span></span></code></pre></div><p>Now can use that to save the file and invoke the <code>my/invoke-vosk</code> function.</p>
+</span></span></code></pre></div><p>I use a library called <a href="https://github.com/tkf/emacs-request">request.el</a> to download files elsewhere, so I&rsquo;ll re-use it here. You can just as well invoke <code>curl</code> or <code>wget</code> via a asynchronous process.</p>
+<p>This function downloads the file to a non-temporary folder, which is <code>~/.elfeed/podcast-files/</code> if you didn&rsquo;t move the elfeed database. That is so because a permanently downloaded file works better for the next section.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;elfeed</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">defvar</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span> <span style="color:#19177c">elfeed-db-directory</span> <span style="color:#ba2121">&#34;/podcast-files/&#34;</span>)))
@@ -5758,6 +5778,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		      <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#19177c">file-name</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">my/elfeed-vosk-podcast-files-directory</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
@@ -5774,9 +5796,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
-</span></span></code></pre></div><p>And the final entrypoint, that opens up the SRT file is it&rsquo;s available, and queues the download if it&rsquo;s not.</p>
+</span></span></code></pre></div><p>I also experimented with a bunch of options to write binary data in Emacs, of which the way with <code>write-region</code> (as implemented in <a href="https://github.com/rejeep/f.el">f.el</a>) seems to be the fastest. <a href="https://emacs.stackexchange.com/questions/59449/how-do-i-save-raw-bytes-into-a-file">This thread on StackExchange</a> suggests that it may screw some bytes towards the end, but whether or not this is the case, mp3 files survive the procedure. The proposed solution with <code>seq-doseq</code> takes at least a few seconds.</p>
+<p>Finally, we need a function to show the transcript if it exists or invoke <code>my/elfeed-vosk-get-transcript-new</code> if it doesn&rsquo;t. And this is the function that we&rsquo;ll call from an <code>elfeed-entry</code> buffer.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-get-transcript</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrieve transcript from the current elfeed ENTRY.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrieve transcript for the enclosure of the current elfeed ENTRY.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">enclosure</span> (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">enclosure</span>
@@ -5789,7 +5812,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
 </span></span><span style="display:flex;"><span>	      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">entry</span>)))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">my/elfeed-vosk-get-transcript-new</span> <span style="color:#19177c">enclosure</span> <span style="color:#19177c">srt-path</span>)))))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-subed</span> (<span style="color:#19177c">entry</span>)
+</span></span></code></pre></div><h5 id="integrating-with-subed">Integrating with subed</h5>
+<p>Now that we&rsquo;ve produced a <code>.srt</code> file, we can use a package called <a href="https://github.com/sachac/subed">subed</a> to control the playback, like I had done in the previous post.</p>
+<p>By the way, this wasn&rsquo;t the most straightforward thing to figure out, because the MPV window doesn&rsquo;t show up for an audio file, and the player itself starts in the paused state. So I thought nothing was happening until I enabled the debug log.</p>
+<p>With that in mind, here&rsquo;s a function to launch MPV from the buffer generated by <code>my/elfeed-vosk-get-transcript</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-vosk-subed</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Run MPV for the current Vosk-generated subtitles file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ENTRY is an instance of </span><span style="color:#19177c">`elfeed-entry&#39;</span><span style="color:#ba2121">.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">entry</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No entry!&#34;</span>))
@@ -5801,7 +5831,15 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">my/get-file-name-from-url</span>
 </span></span><span style="display:flex;"><span>			(<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
-</span></span></code></pre></div><h3 id="internet-and-multimedia">Internet &amp; Multimedia</h3>
+</span></span></code></pre></div><p>After running <code>M-x my/elfeed-vosk-subed</code>, run <code>M-x subed-toggle-loop-over-current-subtitle</code> (<code>C-c C-l</code>), because somehow it&rsquo;s turned on by default, and <code>M-x subed-toggle-pause-while-typing</code> (<code>C-c C-p</code>), because sometimes this made my instance of MPV lag.</p>
+<p>After that, <code>M-x subed-mpv-toggle-pause</code> should start the playback, which you can control by moving the cursor in the buffer.</p>
+<p>You can also run <code>M-x subed-toggle-sync-point-to-player</code> (<code>C-c .</code>) to toggle syncing the point in the buffer to the currently played subtitle (this automatically gets disabled when you switch buffers).</p>
+<p>Running <code>M-x subed-toggle-sync-player-to-point</code> (<code>C-c ,</code>) does the opposite, i.e. sets the player position to the subtitle under point. These two functions are useful since the MPV window controls aren&rsquo;t available.</p>
+<h5 id="some-observations">Some observations</h5>
+<p>So, the functions above work for my purposes.</p>
+<p>I think it should be possible to get transcripts of better quality by using a better speech recognition model, adding a speaker detection model and a model to restore case &amp; punctuation. But it seems to be harder to implement, and this would take more time and resources. On my PC, the smallest Vosk model runs maybe 10 times faster than the playback time, which is still a few minutes for an hour-long podcast. Waiting longer is probably not worth it.</p>
+<p>Also, technically MPV can stream files without downloading them, and it&rsquo;s even possible to feed stream data into Vosk. But MPV isn&rsquo;t particularly good at seeking in streamed files, at least not with my Internet connection.</p>
+<h3 id="internet-and-multimedia">Internet &amp; Multimedia</h3>
 <h4 id="notmuch">Notmuch</h4>
 <p>My notmuch config now resides in <a href="/configs/mail/">Mail.org</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#19177c">my/remote-server</span>)
@@ -6497,7 +6535,20 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">flycheck-hledger</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">hledger-mode</span>))
-</span></span></code></pre></div><h4 id="calendar">Calendar</h4>
+</span></span></code></pre></div><p>Here are some usage notes.</p>
+<p>The fastest way to enter new entiries to the journal is by running <code>hledger add</code></p>
+<p>Then, run <code>hledger bs</code> to check whether the balance sheet matches the ground truth (e.g. the bank UI).</p>
+<p>If it doesn&rsquo;t the simplest way to check for the differences is by running <code>hledger register &lt;item&gt;</code>.</p>
+<p>Here are some interesting commands to run:</p>
+<ul>
+<li><code>hledger incomestatement &lt;query&gt;</code>, where <code>&lt;query&gt;</code> is the account prefix. e.g. <code>expenses</code> or <code>revenues</code>.
+<ul>
+<li>add <code>--pivot=payee</code> to get grouping by transaction descriptions</li>
+<li>add <code>-B</code> to cast currencies</li>
+</ul>
+</li>
+</ul>
+<h4 id="calendar">Calendar</h4>
 <p>Emacs&rsquo; built-in calendar. Can even calculate sunrise and sunset times.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">calendar-date-style</span> <span style="color:#19177c">&#39;iso</span>) <span style="color:#408080;font-style:italic">;; YYYY/mm/dd</span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">calendar-week-start-day</span> <span style="color:#666">1</span>)
