@@ -491,7 +491,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">magit</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">prodigy</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">slime</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">forge</span>)))
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">forge</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">deadgrep</span>)))
 </span></span></code></pre></div><h4 id="avy">Avy</h4>
 <p><a href="https://github.com/abo-abo/avy">Avy</a> is a package that helps navigate Emacs in a tree-like manner.</p>
 <p>References:</p>
@@ -973,6 +974,20 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">recentf-mode</span> <span style="color:#666">1</span>)
 </span></span></code></pre></div><p>Save the last place visited in the file.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">save-place-mode</span> <span style="color:#666">1</span>)
+</span></span></code></pre></div><h4 id="deadgrep">Deadgrep</h4>
+<p><a href="https://github.com/Wilfred/deadgrep">deadgrep</a> is a nice Emacs for <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a>. Running <code>ivy-occur</code> in <code>counsel-rg</code> does something a bit similar, but the deadgrep is much more full-featured.</p>
+<p>Somehow I couldn&rsquo;t hook <code>toogle-truncate-lines</code> into the existing hooks, so I add advice.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/deadgrep-fix-buffer-advice</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buf</span> (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">toggle-truncate-lines</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">buf</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">deadgrep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">deadgrep</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deadgrep--buffer</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deadgrep-fix-buffer-advice</span>))
 </span></span></code></pre></div><h3 id="completion">Completion</h3>
 <h4 id="ivy-counsel-swiper">Ivy, counsel, swiper</h4>
 <p>Minibuffer completion tools for Emacs.</p>
@@ -1061,6 +1076,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#19177c">&#39;project-find-file</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;counsel-yank-pop</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#19177c">&#39;counsel-rg</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;deadgrep</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;A&#34;</span> <span style="color:#19177c">&#39;counsel-ag</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
@@ -6712,6 +6728,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#git-and-magit">Git &amp; Magit</a></li>
             <li><a href="#editorconfig">Editorconfig</a></li>
             <li><a href="#editing-files">Editing files</a></li>
+            <li><a href="#deadgrep">Deadgrep</a></li>
           </ul>
         </li>
         <li><a href="#completion">Completion</a>
