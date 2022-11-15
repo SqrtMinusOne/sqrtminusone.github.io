@@ -2044,7 +2044,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reformatter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="copilot">copilot</h4>
-<p><a href="https://copilot.github.com/">GitHub Copilot</a> is a project of GitHub and OpenAI that provides code completions. It&rsquo;s somewhat controversial in the Emacs community but I opt in using it for now.</p>
+<p><a href="https://copilot.github.com/">GitHub Copilot</a> is a project of GitHub and OpenAI that provides code completions. It&rsquo;s somewhat controversial in the Emacs community <del>but I opt in</del> so I opt out of using it for now.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/copilot-tab</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">copilot-accept-completion</span>)
@@ -2203,6 +2203,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h4 id="web-mode">web-mode</h4>
 <p><a href="https://web-mode.org/">web-mode.el</a> is a major mode to edit various web templates.</p>
 <p>Trying this one out instead of vue-mode and svelte-mode, because this one seems to have better support for tree-sitter and generally less problems.</p>
+<p>Set <code>web-mode-auto-pairs</code> not <code>nil</code> because smartparens already fulfills that role.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">web-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">web-mode</span>)
@@ -2212,7 +2213,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;web-mode-hook</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;web-mode-hook</span> <span style="color:#19177c">&#39;hs-minor-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;web-mode</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;web-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">web-mode-auto-pairs</span> <span style="color:#800">nil</span>))
 </span></span></code></pre></div><p>Hooking this up with lsp.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/web-mode-lsp-extensions</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(<span style="color:#666">,</span>(<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.svelte&#34;</span> <span style="color:#19177c">eos</span>)
@@ -4192,6 +4194,97 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">name</span> <span style="color:#ba2121">&#34;.csv&#34;</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;orgtbl-to-csv&#34;</span>)))))
 </span></span></code></pre></div><h4 id="copying-records">Copying records</h4>
+<p>I like to add numbers to repeating events, like meetings. E.g.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Job meeting 62
+</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
+</span></span><span style="display:flex;"><span>* Job meeting 63
+</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>Naturally, I want a way to copy such records. Org Mode already has a function called <code>org-clone-subtree-with-time-shift</code>, that does everything I want except for updating the numbers.</p>
+<p>Unfortunately, I see no way to advise the original function, so here&rsquo;s my version that makes use of <code>evil-numbers</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-clone-subtree-with-time-shift</span> (<span style="color:#19177c">n</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;nNumber of clones to produce: &#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">wholenump</span> <span style="color:#19177c">n</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid number of replications %s&#34;</span> <span style="color:#19177c">n</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">org-before-first-heading-p</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No subtree to clone&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">beg</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">end-of-tree</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-end-of-subtree</span> <span style="color:#800">t</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">or</span> <span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)))
+</span></span><span style="display:flex;"><span>			       (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#19177c">end-of-tree</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">read-from-minibuffer</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#ba2121">&#34;Date shift per clone (e.g. +1w, empty to copy unchanged): &#34;</span>)
+</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;&#34;</span>)))                   <span style="color:#408080;font-style:italic">;No time shift</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">and</span> (<span style="color:#19177c">org-string-nw-p</span> <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">or</span> (<span style="color:#00f">string-match</span> <span style="color:#ba2121">&#34;\\`[ \t]*\\([+-]?[0-9]+\\)\\([hdwmy]\\)[ \t]*\\&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid shift specification %s&#34;</span> <span style="color:#19177c">shift</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end-of-tree</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">bolp</span>) (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">end</span> (<span style="color:#00f">point</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">template</span> (<span style="color:#00f">buffer-substring</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-n</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">shift</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-what</span> (<span style="color:#008000">pcase</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span> <span style="color:#19177c">shift</span>))
+</span></span><span style="display:flex;"><span>				     (<span style="color:#666">`</span><span style="color:#800">nil</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;hour</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;w&#34;</span> (<span style="color:#008000">setq</span> <span style="color:#19177c">shift-n</span> (<span style="color:#00f">*</span> <span style="color:#666">7</span> <span style="color:#19177c">shift-n</span>)) <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;month</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#19177c">&#39;year</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">_</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Unsupported time unit&#34;</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmin</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmax</span> <span style="color:#19177c">n</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">n-no-remove</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">org-id-overriding-file-name</span> (<span style="color:#00f">buffer-file-name</span> (<span style="color:#00f">buffer-base-buffer</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">idprop</span> (<span style="color:#19177c">org-entry-get</span> <span style="color:#19177c">beg</span> <span style="color:#ba2121">&#34;ID&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+ [.+]?\\+[0-9]+[hdwmy][^&lt;&gt;\n]*&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">template</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">end</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmin</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmax</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">n-no-remove</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">n</span> <span style="color:#19177c">from</span> <span style="color:#19177c">nmin</span> <span style="color:#19177c">to</span> <span style="color:#19177c">nmax</span> <span style="color:#008000">do</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#408080;font-style:italic">;; Prepare clone.</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">insert</span> <span style="color:#19177c">template</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-mode</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-show-subtree</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">and</span> <span style="color:#19177c">idprop</span> (<span style="color:#008000">if</span> <span style="color:#19177c">org-clone-delete-id</span>
+</span></span><span style="display:flex;"><span>						  (<span style="color:#19177c">org-entry-delete</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ID&#34;</span>)
+</span></span><span style="display:flex;"><span>						(<span style="color:#19177c">org-id-get-create</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-clock-line-re</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">delete-region</span> (<span style="color:#00f">line-beginning-position</span>)
+</span></span><span style="display:flex;"><span>						     (<span style="color:#00f">line-beginning-position</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-drawer-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-remove-empty-drawer-at</span> (<span style="color:#00f">point</span>))))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> <span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>				    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>				      (<span style="color:#008000">when</span> (<span style="color:#00f">looking-at</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+\\( +[.+]?\\+[0-9]+[hdwmy]\\)&#34;</span>)
+</span></span><span style="display:flex;"><span>					(<span style="color:#00f">delete-region</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">1</span>) (<span style="color:#00f">match-end</span> <span style="color:#666">1</span>)))))))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
+</span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
 <h3 id="ui">UI</h3>
 <h4 id="off--instant-equations-preview"><span class="org-todo done OFF">OFF</span> (OFF) Instant equations preview</h4>
 <p>Instant math previews for org mode.</p>
@@ -5628,6 +5721,18 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <h4 id="youtube-transcripts">YouTube transcripts</h4>
 <h5 id="getting-subtitles">Getting subtitles</h5>
 <p>Finally, let&rsquo;s get to transcripts.</p>
+<table>
+<thead>
+<tr>
+<th>Guix package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python-youtube-transcript-api</td>
+</tr>
+</tbody>
+</table>
 <p>In principle, the YouTube API allows for downloading subtitles, but I&rsquo;ve found <a href="https://github.com/jdepoix/youtube-transcript-api">this awesome Python script</a> which does the same. You can install it from <code>pip</code>, or here&rsquo;s mine <a href="https://github.com/SqrtMinusOne/channel-q/blob/master/youtube-transcript-api.scm">Guix definition</a> once again.</p>
 <p>Much like the previous cases, we need to invoke the program and save the output. The <a href="https://en.wikipedia.org/wiki/WebVTT">WebVTT</a> format will work well enough for our purposes. Here comes the function:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">cl-defun</span> <span style="color:#19177c">my/youtube-subtitles-get</span> (<span style="color:#19177c">video-id</span> <span style="color:#19177c">callback</span> <span style="color:#008000">&amp;key</span> <span style="color:#19177c">file-name</span> <span style="color:#19177c">overwrite</span>)
