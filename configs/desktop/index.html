@@ -3730,10 +3730,6 @@
 </tr>
 <tr>
 <td>music</td>
-<td>mpd-watcher</td>
-</tr>
-<tr>
-<td>music</td>
 <td>mpd-mpc</td>
 </tr>
 <tr>
@@ -3758,11 +3754,11 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;mpd&#34;</span> <span style="color:#ba2121">&#34;--no-daemon&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
 </span></span></code></pre></div><p>MPD watcher</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">mpd-watcher</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">sqrt-data-agent-mpd</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mpd-watcher</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">sqrt-data-agent-mpd</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;mpd_watcher&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sqrt_data_agent_mpd&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:requires</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mpd</span>)))
 </span></span></code></pre></div><h3 id="gnu-mcron">GNU Mcron</h3>
@@ -3874,18 +3870,11 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/bin/davmail&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
-</span></span></code></pre></div><h3 id="sqrt-data">sqrt-data</h3>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">sqrt-data</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">sqrt-data</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sqrt_data&#34;</span> <span style="color:#ba2121">&#34;cron&#34;</span> <span style="color:#ba2121">&#34;run-client-cron&#34;</span>))
-</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
 </span></span></code></pre></div><h3 id="shepherd-config">Shepherd config</h3>
 <p>Register services</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">register-services</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">mpd</span>
-</span></span><span style="display:flex;"><span> <span style="color:#19177c">mpd-watcher</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">sqrt-data-agent-mpd</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">mcron</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">aw-server</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">aw-watcher-afk</span>
@@ -3897,8 +3886,7 @@
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">vpn</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">davmail</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">xmodmap</span>
-</span></span><span style="display:flex;"><span> <span style="color:#19177c">nm-applet</span>
-</span></span><span style="display:flex;"><span> <span style="color:#19177c">sqrt-data</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">nm-applet</span>)
 </span></span></code></pre></div><p>Daemonize shepherd</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">action</span> <span style="color:#19177c">&#39;shepherd</span> <span style="color:#19177c">&#39;daemonize</span>)
 </span></span></code></pre></div><p>Run services</p>
@@ -3916,20 +3904,7 @@
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">xmodmap</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">nm-applet</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">sqrt-data</span>))
-</span></span></code></pre></div><h3 id="sync">Sync</h3>
-<table>
-<thead>
-<tr>
-<th>Guix dependency</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>megacmd-1.4</td>
-</tr>
-</tbody>
-</table>
-<h2 id="guix-settings">Guix settings</h2>
+</span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <p>Other desktop programs I use are listed below.</p>
 <table>
 <thead>
@@ -4249,9 +4224,7 @@
         <li><a href="#xmodmap">Xmodmap</a></li>
         <li><a href="#vpn">VPN</a></li>
         <li><a href="#davmail">Davmail</a></li>
-        <li><a href="#sqrt-data">sqrt-data</a></li>
         <li><a href="#shepherd-config">Shepherd config</a></li>
-        <li><a href="#sync">Sync</a></li>
       </ul>
     </li>
     <li><a href="#guix-settings">Guix settings</a></li>
