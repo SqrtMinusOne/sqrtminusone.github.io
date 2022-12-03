@@ -75,6 +75,9 @@
         <blockquote>
 <p>One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn&rsquo;t today.</p>
 </blockquote>
+<ul>
+<li>Me, <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-05-27 Thu 17:35&gt; </span></span> in commit 93a0573 T_T</li>
+</ul>
 <h2 id="introduction">Introduction</h2>
 <p>My configuration of <a href="https://www.gnu.org/software/emacs/">GNU Emacs</a>, an awesome <del>text editor</del> program that can do almost anything.</p>
 <p>At the moment of this writing, this &ldquo;almost anything&rdquo; includes:</p>
@@ -5975,7 +5978,33 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p>After that, <code>M-x subed-mpv-toggle-pause</code> should start the playback, which you can control by moving the cursor in the buffer.</p>
 <p>You can also run <code>M-x subed-toggle-sync-point-to-player</code> (<code>C-c .</code>) to toggle syncing the point in the buffer to the currently played subtitle (this automatically gets disabled when you switch buffers).</p>
 <p>Running <code>M-x subed-toggle-sync-player-to-point</code> (<code>C-c ,</code>) does the opposite, i.e. sets the player position to the subtitle under point. These two functions are useful since the MPV window controls aren&rsquo;t available.</p>
-<h5 id="some-observations">Some observations</h5>
+<h5 id="running-it-for-random-files">Running it for random files</h5>
+<p>Apparently I also need to run whisper for random files from the Internet.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper-url</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">file-name</span> <span style="color:#19177c">output-dir</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#00f">read-from-minibuffer</span> <span style="color:#ba2121">&#34;URL: &#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">read-from-minibuffer</span> <span style="color:#ba2121">&#34;File name: &#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">read-directory-name</span> <span style="color:#ba2121">&#34;Output directory: &#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file-path</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">concat</span> <span style="color:#19177c">output-dir</span> <span style="color:#19177c">file-name</span> <span style="color:#ba2121">&#34;.&#34;</span> (<span style="color:#19177c">file-name-extension</span> <span style="color:#19177c">url</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:complete</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">let</span> ((<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">write-region</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#19177c">file-path</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Conversion started&#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">my/invoke-whisper</span> <span style="color:#19177c">file-path</span> <span style="color:#19177c">output-dir</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
+</span></span></code></pre></div><h5 id="some-observations">Some observations</h5>
 <p>So, the functions above work for my purposes.</p>
 <p>Vosk API works much faster than Whisper. The smallest Vosk model requires ~10 times less than the playback time, and even the <code>tiny.en</code> Whisper model on my PC requires maybe 1.2x playback time.</p>
 <p>However, the quality of the output for Whisper is just so much better so I consider it to be worth the wait. Even with the <code>tiny</code> model, the transcript is almost perfect, provided that the audio is of reasonable quality.</p>
