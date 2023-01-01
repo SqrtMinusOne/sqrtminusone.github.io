@@ -7,11 +7,16 @@
     </div>
     {{ with .Site.Params.footer }}
     <div class="container text-center">
-        <a href="{{ .url | absURL }}" title="{{ .text }}"><small>{{ .text | safeHTML }}</small></a>
-        {{ if .license }}
-        <br>
-        <a href="{{ .licenseURL }}" title="{{ .license }}"><small>{{ .license }}</small></a>
+        {{ if .links }}
+        {{ range $i, $item := .links }}
+        <a href="{{ $item.url }}" title="{{ $item.text }}"><small>{{ $item.text }}</small></a>
+        {{ if not (eq $i (sub (len $.Site.Params.footer.links) 1)) }}
+        |
         {{ end }}
+        {{ end }}
+        <br>
+        {{ end }}
+        <a href="{{ .url | absURL }}" title="{{ .text }}"><small>{{ .text | safeHTML }}</small></a>
     </div>
     {{ end }}
 </div>
