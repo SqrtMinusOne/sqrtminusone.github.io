@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Running Gource with Emacs</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">Running Gource with Emacs</h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen">Running Gource with Emacs</h1>
+        <figure><img src="/images/gource/gource.png"/>
+</figure>
+
+<p><a href="https://gource.io/">Gource</a> is a program that draws an animated graph of users changing the repository over time.</p>
+<p>Although it can work without extra effort (just run <code>gource</code> in a <a href="https://git-scm.com/">git</a> repo), there are some tweaks that can be done:</p>
+<ul>
+<li>Gource supports using custom pictures for users. <a href="https://en.gravatar.com/">Gravatar</a> is an obvious place to get these.</li>
+<li>Occasionally, the same people have different names and/or emails in history.<br />
+It may happen when people use forges like <a href="https://gitlab.com/">GitLab</a> or just have different settings on different machines. It would be nice to merge these names.</li>
+<li>Visualizing the history of multiple repositories (e.g. frontend and backend) requires combining multiple gource logs.</li>
+</ul>
+<p>So, why not try doing that with Emacs?</p>
+<h2 id="gravatars">Gravatars</h2>
+<p>Much to my surprise, Emacs turned out to have a built-in package called <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/image/gravatar.el">gravatar.el</a>.</p>
+<p>So, let&rsquo;s make a function to retrieve a gravatar and save it:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-retrieve-sync</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get gravatar for EMAIL and save it to FILE-NAME.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">gravatar-default-image</span> <span style="color:#ba2121">&#34;identicon&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">gravatar-size</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">write-region</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">image-property</span> (<span style="color:#19177c">gravatar-retrieve-synchronously</span> <span style="color:#19177c">email</span>) <span style="color:#008000">:data</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#800">nil</span> <span style="color:#19177c">file-name</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>)))
+</span></span></code></pre></div><p>To use these images, we need to save them to some folder and use usernames as file names. The folder:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#ba2121">&#34;/home/pavel/.cache/gravatars/&#34;</span>)
+</span></span></code></pre></div><p>And the function that downloads a gravatar if necessary:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">author</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Download gravatar for EMAIL.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHOR is the username.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file-name</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#19177c">author</span> <span style="color:#ba2121">&#34;.png&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Fetching gravatar for %s (%s)&#34;</span> <span style="color:#19177c">author</span> <span style="color:#19177c">email</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/gravatar-retrieve-sync</span> <span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>))))
+</span></span></code></pre></div><h2 id="merging-authors">Merging authors</h2>
+<p>Now to merging authors.</p>
+<p>Gource itself uses only usernames (without emails), but we can use <code>git log</code> to get both. The required information can be extracted like that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git log --pretty<span style="color:#666">=</span>format:<span style="color:#ba2121">&#34;%ae|%an&#34;</span> | sort | uniq -c | sed <span style="color:#ba2121">&#34;s/^[ \t]*//;s/ /|/&#34;</span>
+</span></span></code></pre></div><p>The output is a list of pipe-separated strings, where the values are:</p>
+<ul>
+<li>Number of occurrences for this combination of username and email</li>
+<li>Email</li>
+<li>Username</li>
+</ul>
+<p>Of course, that part would have to be changed appropriately for other version control systems if you happen to use one.</p>
+<p>So, below is one hell of a function that wraps this command and tries to merge emails and usernames belonging to one author:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/git-get-authors</span> (<span style="color:#19177c">repo</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">authors-init</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract and merge all combinations of authors &amp; emails from REPO.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPO is the path to a git repository.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHORS-INIT is the previous output of </span><span style="color:#19177c">`my/git-get-authors&#39;</span><span style="color:#ba2121">.  It can
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">be used to extract that information from multiple repositories.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The output is a list of alists with following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- emails: list of (&lt;email&gt; . &lt;count&gt;)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- authors: list of (&lt;username&gt; . &lt;count&gt;)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- email: the most popular email
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- author: the most popular username
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">I.e. one alist is all emails and usernames of one author.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">repo</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">data</span> (<span style="color:#19177c">shell-command-to-string</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ba2121">&#34;git log --pretty=format:\&#34;%ae|%an\&#34; | sort | uniq -c | sed \&#34;s/^[ \t]*//;s/ /|/\&#34;&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">authors</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#00f">string</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">data</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">if</span> (<span style="color:#00f">=</span> (<span style="color:#00f">length</span> (<span style="color:#19177c">split-string</span> <span style="color:#00f">string</span> <span style="color:#ba2121">&#34;|&#34;</span>)) <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>                   <span style="color:#19177c">collect</span> (<span style="color:#008000">let</span> ((<span style="color:#19177c">datum</span> (<span style="color:#19177c">split-string</span> <span style="color:#00f">string</span> <span style="color:#ba2121">&#34;|&#34;</span>)))
+</span></span><span style="display:flex;"><span>                             <span style="color:#666">`</span>((<span style="color:#19177c">count</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">string-to-number</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">datum</span>)))
+</span></span><span style="display:flex;"><span>                               (<span style="color:#19177c">email</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">downcase</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">datum</span>)))
+</span></span><span style="display:flex;"><span>                               (<span style="color:#19177c">author</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">datum</span>)))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;author</span> <span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">car</span> (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">author</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">author</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">author</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:initial-value</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span> <span style="color:#666">.</span> <span style="color:#666">-1</span>))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;email</span> <span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">car</span> (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">email</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">email</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">email</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:initial-value</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span> <span style="color:#666">.</span> <span style="color:#666">-1</span>))))
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">datum</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">val</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let*</span> ((<span style="color:#19177c">author</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;author</span> <span style="color:#19177c">val</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">email</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;email</span> <span style="color:#19177c">val</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">count</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;count</span> <span style="color:#19177c">val</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">saved-value</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">seq-find</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">cand</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">or</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">email</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">cand</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">author</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">cand</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">email</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">cand</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">author</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">cand</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)))
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">acc</span>)))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">if</span> <span style="color:#19177c">saved-value</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">if</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">email</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">saved-value</span>)
+</span></span><span style="display:flex;"><span>                               <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">cl-incf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">email</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">saved-value</span>)
+</span></span><span style="display:flex;"><span>                                        <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                             <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">email</span> <span style="color:#19177c">count</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;emails</span> <span style="color:#19177c">saved-value</span>)))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">if</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">author</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">saved-value</span>)
+</span></span><span style="display:flex;"><span>                               <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">cl-incf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">author</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">saved-value</span>)
+</span></span><span style="display:flex;"><span>                                        <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;string-equal</span>)
+</span></span><span style="display:flex;"><span>                             <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">author</span> <span style="color:#19177c">count</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">saved-value</span>))))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setq</span> <span style="color:#19177c">saved-value</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">push</span> <span style="color:#666">`</span>((<span style="color:#19177c">emails</span> <span style="color:#666">.</span> ((<span style="color:#666">,</span><span style="color:#19177c">email</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">count</span>)))
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">authors</span> <span style="color:#666">.</span> ((<span style="color:#666">,</span><span style="color:#19177c">author</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">count</span>))))
+</span></span><span style="display:flex;"><span>                        <span style="color:#19177c">acc</span>)))
+</span></span><span style="display:flex;"><span>          <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">authors</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:initial-value</span> <span style="color:#19177c">authors-init</span>))))
+</span></span></code></pre></div><p>Despite the probable we-enjoy-typing-ness of the implementation, it&rsquo;s actually pretty simple:</p>
+<ul>
+<li>The output of <code>git log</code> is parsed into a list of alists with <code>count</code>, <code>email</code> and <code>author</code> as keys.</li>
+<li>This list is reduced by <code>cl-reduce</code> into a list of alists with <code>emails</code> and <code>authors</code> as keys and the respective counts as values, e.g. <code>((&lt;email-1&gt; . 1) (&lt;email-2&gt; . 3))</code>.<br />
+I&rsquo;ve seen a couple of cases where people would swap their username and email (lol), so <code>seq-find</code> also looks for an email in the list of authors and vice versa.</li>
+<li>The <code>mapcar</code> call determines the most popular email and username for each authors.</li>
+</ul>
+<p>The output is another list of alists, now with the following keys:</p>
+<ul>
+<li><code>emails</code> - list of elements like <code>(&lt;email&gt; . &lt;count&gt;)</code></li>
+<li><code>authors</code> - list of elements like <code>(&lt;author-name&gt; . &lt;count&gt;)</code></li>
+<li><code>email</code> - the most popular email</li>
+<li><code>author</code> - the most popular username.</li>
+</ul>
+<h2 id="running-for-multiple-repos">Running for multiple repos</h2>
+<p>This section was mostly informed by <a href="https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories">this page</a> in the <a href="https://github.com/acaudwell/Gource/wiki">gource wiki</a>.</p>
+<p>As I said above, by default <code>gource</code> just creates a visualization for the current repo. To change something in it, we need to invoke the program like that: <code>gource --output-custom-log PATH</code>, where <code>PATH</code> is either the path to the log file or <code>-</code> for stdout.</p>
+<p>The log consists of lines of pipe-separated strings, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.dockerignore
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.editorconfig
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.flake8
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.gitignore
+</span></span></code></pre></div><p>where the values of one line are:</p>
+<ul>
+<li>UNIX timestamp</li>
+<li>Author name</li>
+<li><code>A</code> for add, <code>M</code> for modify, and <code>D</code> for delete</li>
+<li>Path to file</li>
+</ul>
+<p>The file has to be sorted by the timestamp in ascending order.</p>
+<p>So, the function that prepares the log for one repository:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-prepare-log</span> (<span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create gource log string for REPO.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHORS is the output of </span><span style="color:#19177c">`my/git-get-authors&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#00f">log</span> (<span style="color:#19177c">shell-command-to-string</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#ba2121">&#34;gource --output-custom-log - &#34;</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#19177c">repo</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">authors-mapping</span> (<span style="color:#00f">make-hash-table</span> <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;equal</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">prefix</span> (<span style="color:#19177c">file-name-base</span> <span style="color:#19177c">repo</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">author-datum</span> <span style="color:#19177c">in</span> <span style="color:#19177c">authors</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">author</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;author</span> <span style="color:#19177c">author-datum</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;email</span> <span style="color:#19177c">author-datum</span>) <span style="color:#19177c">author</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">other-author</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;authors</span> <span style="color:#19177c">author-datum</span>)
+</span></span><span style="display:flex;"><span>                         <span style="color:#008000">unless</span> (<span style="color:#00f">string-equal</span> (<span style="color:#00f">car</span> <span style="color:#19177c">other-author</span>) <span style="color:#19177c">author</span>)
+</span></span><span style="display:flex;"><span>                         <span style="color:#008000">do</span> (<span style="color:#00f">puthash</span> (<span style="color:#00f">car</span> <span style="color:#19177c">other-author</span>) <span style="color:#19177c">author</span>
+</span></span><span style="display:flex;"><span>                                     <span style="color:#19177c">authors-mapping</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">line</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">split-string</span> <span style="color:#00f">log</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#00f">concat</span> (<span style="color:#008000">let</span> ((<span style="color:#19177c">fragments</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;|&#34;</span>)))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#008000">when</span> (<span style="color:#00f">&gt;</span> (<span style="color:#00f">length</span> <span style="color:#19177c">fragments</span>) <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">mapped-author</span> (<span style="color:#00f">gethash</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">fragments</span>)
+</span></span><span style="display:flex;"><span>                                                          <span style="color:#19177c">authors-mapping</span>))
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">setf</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">fragments</span>) <span style="color:#19177c">mapped-author</span>))
+</span></span><span style="display:flex;"><span>                        (<span style="color:#008000">setf</span> (<span style="color:#00f">nth</span> <span style="color:#666">3</span> <span style="color:#19177c">fragments</span>)
+</span></span><span style="display:flex;"><span>                              (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">prefix</span> (<span style="color:#00f">nth</span> <span style="color:#666">3</span> <span style="color:#19177c">fragments</span>))))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">string-join</span> <span style="color:#19177c">fragments</span> <span style="color:#ba2121">&#34;|&#34;</span>))
+</span></span><span style="display:flex;"><span>             <span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span></code></pre></div><p>This function:</p>
+<ul>
+<li>Downloads a gravatar for each author</li>
+<li>Replaces all usernames of one author with the most frequent one</li>
+<li>Prepends the file path with the repository name.</li>
+</ul>
+<p>The output is a string in the gource log format as described above.</p>
+<p>Finally, as we need to invoke all of this for multiple repositories, why not do that with <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html">dired</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-dired-create-logs</span> (<span style="color:#19177c">repos</span> <span style="color:#19177c">log-name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create combined gource log for REPOS.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPOS is a list of strings, where a string is a path to a git repo.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">LOG-NAME is the path to the resulting log file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">This function is meant to be invoked from </span><span style="color:#19177c">`dired&#39;</span><span style="color:#ba2121">, where the required
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">repositories are marked.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">dired-get-marked-files</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;file-directory-p</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Select at least one directory&#34;</span>))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Log file name: &#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;combined.log&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">authors</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">repo</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">my/git-get-authors</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>          <span style="color:#19177c">repos</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">log-name</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">line</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">time</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;|&#34;</span>)))
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">string-to-number</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>          <span style="color:#00f">#&#39;&lt;</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">split-string</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">lambda</span> (<span style="color:#19177c">repo</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">my/gource-prepare-log</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">repos</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#34;\n&#34;</span>)))))
+</span></span></code></pre></div><p>This function extracts authors from each repository and merges the logs as required by gource, that is sorting the result by time in ascending order.</p>
+<h2 id="using-the-function">Using the function</h2>
+<p>To use the function above, mark the required repos in a dired buffer and run <code>M-x my/gource-dired-create-logs</code>. This also works nicely with <a href="https://github.com/Fuco1/dired-hacks">dired-subtree</a>, in case your repos are located in different folders.</p>
+<p>The function will create a combined log file (by default <code>combined.log</code>). To visualize the log, run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gource &lt;log-file&gt; --user-image-dir &lt;path-to-gravatars&gt;
+</span></span></code></pre></div><p>Check the <a href="https://github.com/acaudwell/Gource">README</a> for possible parameters, such as the speed of visualization, different elements, etc. That&rsquo;s it!</p>
+<p>I thought about making something like a <a href="https://github.com/magit/transient">transient.el</a> wrapper around the <code>gource</code> command but figured it wasn&rsquo;t worth the effort for something that I run just a handful of times in a year.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#gravatars">Gravatars</a></li>
+    <li><a href="#merging-authors">Merging authors</a></li>
+    <li><a href="#running-for-multiple-repos">Running for multiple repos</a></li>
+    <li><a href="#using-the-function">Using the function</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>
