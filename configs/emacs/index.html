@@ -6113,7 +6113,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p>It looks like YouTube has started to throttle youtube-dl, and yt-dlp has a workaround for that particular case. Just don&rsquo;t forget to add the following like to the mpv config:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">script-opts</span><span style="color:#666">=</span><span style="color:#ba2121">ytdl_hook-ytdl_path=yt-dlp</span>
 </span></span></code></pre></div><p>It seems a bit strange to keep the MPV config in this file, but I don&rsquo;t use the program outside Emacs.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;emms-player-list</span> <span style="color:#19177c">&#39;emms-player-mpv</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;emms-player-list</span> <span style="color:#19177c">&#39;emms-player-mpv</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>Also a custom regex. My demands for MPV include running <code>yt-dlp</code>, so there is a regex that matches youtube.com or some of the video formats.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">emms-player-set</span> <span style="color:#19177c">emms-player-mpv</span>
 </span></span><span style="display:flex;"><span>		 <span style="color:#19177c">&#39;regex</span>
@@ -6667,6 +6667,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;A dummy function.&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">defvar</span> <span style="color:#19177c">geiser-repl-company-p</span> <span style="color:#800">nil</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;A dummy variable.&#34;</span>))
+</span></span></code></pre></div><h4 id="atomic-chrome">Atomic Chrome</h4>
+<p><a href="https://github.com/alpha22jp/atomic-chrome">Atomic Chrome</a> is an extension that allows to edit browser text fields in Emacs. Despite its name, it also works for Firefox with <a href="https://ghosttext.fregante.com/welcome/">GhostText</a>, which is what I use.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">atomic-chrome</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">atomic-chrome-start-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="productivity">Productivity</h3>
 <h4 id="pomm">pomm</h4>
 <p>My package for doing Pomodoro timer.</p>
@@ -7345,6 +7351,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
             <li><a href="#screenshot-dot-el">screenshot.el</a></li>
             <li><a href="#proced">proced</a></li>
             <li><a href="#guix">Guix</a></li>
+            <li><a href="#atomic-chrome">Atomic Chrome</a></li>
           </ul>
         </li>
         <li><a href="#productivity">Productivity</a>
