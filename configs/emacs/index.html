@@ -6796,12 +6796,20 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		      (<span style="color:#008000">setq</span> <span style="color:#19177c">zone-programs</span> (<span style="color:#00f">vector</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">elem</span>)))
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">zone</span>))))
 </span></span></code></pre></div><h4 id="gource">Gource</h4>
-<p><a href="https://gource.io/">Gource</a> is a nice repository visualization tool.</p>
-<p>The goal of the functions below is to run the tool for multiple repos from Dired. Maybe I&rsquo;ll extract it into a separate package at some point, but I&rsquo;m fine with letting it live here for now.</p>
+<p><a href="https://gource.io/">Gource</a> is a program that draws an animated graph of users changing the repository over time.</p>
+<p>Although it can work without extra effort (just run <code>gource</code> in a <a href="https://git-scm.com/">git</a> repo), there are some tweaks that can be done:</p>
+<ul>
+<li>Gource supports using custom pictures for users. <a href="https://en.gravatar.com/">Gravatar</a> is an obvious place to get these.</li>
+<li>Occasionally, the same people have different names and/or emails in history.<br />
+It may happen when people use forges like <a href="https://gitlab.com/">GitLab</a> or just have different settings on different machines. It would be nice to merge these names.</li>
+<li>Visualizing the history of multiple repositories (e.g. frontend and backend) requires combining multiple gource logs.</li>
+</ul>
+<p>So, why not try doing that with Emacs?</p>
 <h5 id="gravatars">Gravatars</h5>
-<p>Gource can use pictures to visualize users, so I want to use gravatars. It&rsquo;s quite amazing that Emacs has a built-in gravatar package.</p>
-<p>First, retrieve a particular gravatar, with a fallback to identicon if necessary:</p>
+<p>Much to my surprise, Emacs turned out to have a built-in package called <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/image/gravatar.el">gravatar.el</a>.</p>
+<p>So, let&rsquo;s make a function to retrieve a gravatar and save it:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-retrieve-sync</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get gravatar for EMAIL and save it to FILE-NAME.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">gravatar-default-image</span> <span style="color:#ba2121">&#34;identicon&#34;</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">gravatar-size</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
@@ -6810,19 +6818,44 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">write-region</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">image-property</span> (<span style="color:#19177c">gravatar-retrieve-synchronously</span> <span style="color:#19177c">email</span>) <span style="color:#008000">:data</span>)
 </span></span><span style="display:flex;"><span>     <span style="color:#800">nil</span> <span style="color:#19177c">file-name</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>)))
-</span></span></code></pre></div><p>These images have to be saved to a folder, with the name corresponding to the git username.</p>
+</span></span></code></pre></div><p>To use these images, we need to save them to some folder and use usernames as file names. The folder:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#ba2121">&#34;/home/pavel/.cache/gravatars/&#34;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">author</span>)
+</span></span></code></pre></div><p>And the function that downloads a gravatar if necessary:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">author</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Download gravatar for EMAIL.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHOR is the username.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file-name</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#19177c">author</span> <span style="color:#ba2121">&#34;.png&#34;</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">file-name</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Fetching gravatar for %s (%s)&#34;</span> <span style="color:#19177c">author</span> <span style="color:#19177c">email</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/gravatar-retrieve-sync</span> <span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>))))
-</span></span></code></pre></div><h5 id="author-names">Author names</h5>
-<p>That&rsquo;s a hell of a function&hellip;</p>
-<p>The problem it tries to solve is that, at least in the repos I&rsquo;m working with, one person can have different commits signed by different emails with the same username, or by same username with different emails. So this function tries to extract and match all such users.</p>
+</span></span></code></pre></div><h5 id="merging-authors">Merging authors</h5>
+<p>Now to merging authors.</p>
+<p>Gource itself uses only usernames (without emails), but we can use <code>git log</code> to get both. The required information can be extracted like that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git log --pretty<span style="color:#666">=</span>format:<span style="color:#ba2121">&#34;%ae|%an&#34;</span> | sort | uniq -c | sed <span style="color:#ba2121">&#34;s/^[ \t]*//;s/ /|/&#34;</span>
+</span></span></code></pre></div><p>The output is a list of pipe-separated strings, where the values are:</p>
+<ul>
+<li>Number of occurrences for this combination of username and email</li>
+<li>Email</li>
+<li>Username</li>
+</ul>
+<p>Of course, that part would have to be changed appropriately for other version control systems if you happen to use one.</p>
+<p>So, below is one hell of a function that wraps this command and tries to merge emails and usernames belonging to one author:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/git-get-authors</span> (<span style="color:#19177c">repo</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">authors-init</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract and merge all combinations of authors &amp; emails from REPO.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPO is the path to a git repository.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHORS-INIT is the previous output of </span><span style="color:#19177c">`my/git-get-authors&#39;</span><span style="color:#ba2121">.  It can
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">be used to extract that information from multiple repositories.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The output is a list of alists with following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- emails: list of (&lt;email&gt; . &lt;count&gt;)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- authors: list of (&lt;username&gt; . &lt;count&gt;)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- email: the most popular email
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- author: the most popular username
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">I.e. one alist is all emails and usernames of one author.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">repo</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">data</span> (<span style="color:#19177c">shell-command-to-string</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;git log --pretty=format:\&#34;%ae|%an\&#34; | sort | uniq -c | sed \&#34;s/^[ \t]*//;s/ /|/\&#34;&#34;</span>))
@@ -6890,8 +6923,41 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	  <span style="color:#19177c">acc</span>))
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">authors</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#008000">:initial-value</span> <span style="color:#19177c">authors-init</span>))))
-</span></span></code></pre></div><h5 id="get-gource-log">Get Gource Log</h5>
+</span></span></code></pre></div><p>Despite the probable we-enjoy-typing-ness of the implementation, it&rsquo;s actually pretty simple:</p>
+<ul>
+<li>The output of <code>git log</code> is parsed into a list of alists with <code>count</code>, <code>email</code> and <code>author</code> as keys.</li>
+<li>This list is reduced by <code>cl-reduce</code> into a list of alists with <code>emails</code> and <code>authors</code> as keys and the respective counts as values, e.g. <code>((&lt;email-1&gt; . 1) (&lt;email-2&gt; . 3))</code>.<br />
+I&rsquo;ve seen a couple of cases where people would swap their username and email (lol), so <code>seq-find</code> also looks for an email in the list of authors and vice versa.</li>
+<li>The <code>mapcar</code> call determines the most popular email and username for each authors.</li>
+</ul>
+<p>The output is another list of alists, now with the following keys:</p>
+<ul>
+<li><code>emails</code> - list of elements like <code>(&lt;email&gt; . &lt;count&gt;)</code></li>
+<li><code>authors</code> - list of elements like <code>(&lt;author-name&gt; . &lt;count&gt;)</code></li>
+<li><code>email</code> - the most popular email</li>
+<li><code>author</code> - the most popular username.</li>
+</ul>
+<h5 id="running-for-multiple-repos">Running for multiple repos</h5>
+<p>This section was mostly informed by <a href="https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories">this page</a> in the <a href="https://github.com/acaudwell/Gource/wiki">gource wiki</a>.</p>
+<p>As I said above, by default <code>gource</code> just creates a visualization for the current repo. To change something in it, we need to invoke the program like that: <code>gource --output-custom-log PATH</code>, where <code>PATH</code> is either the path to the log file or <code>-</code> for stdout.</p>
+<p>The log consists of lines of pipe-separated strings, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.dockerignore
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.editorconfig
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.flake8
+</span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.gitignore
+</span></span></code></pre></div><p>where the values of one line are:</p>
+<ul>
+<li>UNIX timestamp</li>
+<li>Author name</li>
+<li><code>A</code> for add, <code>M</code> for modify, and <code>D</code> for delete</li>
+<li>Path to file</li>
+</ul>
+<p>The file has to be sorted by the timestamp in ascending order.</p>
+<p>So, the function that prepares the log for one repository:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-prepare-log</span> (<span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create gource log string for REPO.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHORS is the output of </span><span style="color:#19177c">`my/git-get-authors&#39;</span><span style="color:#ba2121">.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#00f">log</span> (<span style="color:#19177c">shell-command-to-string</span>
 </span></span><span style="display:flex;"><span>	      (<span style="color:#00f">concat</span>
 </span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34;gource --output-custom-log - &#34;</span>
@@ -6915,36 +6981,58 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>			      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">prefix</span> (<span style="color:#00f">nth</span> <span style="color:#666">3</span> <span style="color:#19177c">fragments</span>))))
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">string-join</span> <span style="color:#19177c">fragments</span> <span style="color:#ba2121">&#34;|&#34;</span>))
 </span></span><span style="display:flex;"><span>	     <span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-dired-create-logs</span> (<span style="color:#19177c">repos</span> <span style="color:#19177c">log-name</span>)
+</span></span></code></pre></div><p>This function:</p>
+<ul>
+<li>Downloads a gravatar for each author</li>
+<li>Replaces all usernames of one author with the most frequent one</li>
+<li>Prepends the file path with the repository name.</li>
+</ul>
+<p>The output is a string in the gource log format as described above.</p>
+<p>Finally, as we need to invoke all of this for multiple repositories, why not do that with <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html">dired</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-dired-create-logs</span> (<span style="color:#19177c">repos</span> <span style="color:#19177c">log-name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create combined gource log for REPOS.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPOS is a list of strings, where a string is a path to a git repo.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">LOG-NAME is the path to the resulting log file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">This function is meant to be invoked from </span><span style="color:#19177c">`dired&#39;</span><span style="color:#ba2121">, where the required
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">repositories are marked.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">dired-get-marked-files</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;file-directory-p</span>)
 </span></span><span style="display:flex;"><span>			 (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Select at least one directory&#34;</span>))
 </span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">read-file-name</span> <span style="color:#ba2121">&#34;Log file name: &#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;combined.log&#34;</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">authors</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">cl-reduce</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">repo</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">my/git-get-authors</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">acc</span>))
-</span></span><span style="display:flex;"><span>	   <span style="color:#19177c">repos</span>
-</span></span><span style="display:flex;"><span>	   <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">logs</span> (<span style="color:#19177c">string-join</span>
-</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">line</span>)))
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">seq-sort-by</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
-</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">time</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;|&#34;</span>)))
-</span></span><span style="display:flex;"><span>			(<span style="color:#00f">string-to-number</span> <span style="color:#19177c">time</span>)
-</span></span><span style="display:flex;"><span>		      <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>		  <span style="color:#00f">#&#39;&lt;</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">split-string</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">mapconcat</span>
-</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">repo</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">my/gource-prepare-log</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>))
-</span></span><span style="display:flex;"><span>		    <span style="color:#19177c">repos</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
-</span></span><span style="display:flex;"><span>		   <span style="color:#ba2121">&#34;\n&#34;</span>)))
-</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">authors</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">repo</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">my/git-get-authors</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">repos</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">log-name</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#19177c">logs</span>))))
-</span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">line</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">line</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">time</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">line</span> <span style="color:#ba2121">&#34;|&#34;</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">string-to-number</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>	      <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>	  <span style="color:#00f">#&#39;&lt;</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">split-string</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">repo</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">my/gource-prepare-log</span> <span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">repos</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;\n&#34;</span>)))))
+</span></span></code></pre></div><p>This function extracts authors from each repository and merges the logs as required by gource, that is sorting the result by time in ascending order.</p>
+<h5 id="using-the-function">Using the function</h5>
+<p>To use the function above, mark the required repos in a dired buffer and run <code>M-x my/gource-dired-create-logs</code>. This also works nicely with <a href="https://github.com/Fuco1/dired-hacks">dired-subtree</a>, in case your repos are located in different folders.</p>
+<p>The function will create a combined log file (by default <code>combined.log</code>). To visualize the log, run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gource &lt;log-file&gt; --user-image-dir &lt;path-to-gravatars&gt;
+</span></span></code></pre></div><p>Check the <a href="https://github.com/acaudwell/Gource">README</a> for possible parameters, such as the speed of visualization, different elements, etc. That&rsquo;s it!</p>
+<p>I thought about making something like a <a href="https://github.com/magit/transient">transient.el</a> wrapper around the <code>gource</code> command but figured it wasn&rsquo;t worth the effort for something that I run just a handful of times in a year.</p>
+<h2 id="guix-settings">Guix settings</h2>
 <table>
 <thead>
 <tr>
