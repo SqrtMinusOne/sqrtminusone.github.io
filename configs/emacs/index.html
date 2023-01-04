@@ -76,7 +76,7 @@
 <p>One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn&rsquo;t today.</p>
 </blockquote>
 <ul>
-<li>Me, <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-05-27 Thu 17:35&gt; </span></span> in commit 93a0573 T_T</li>
+<li>Me, <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-05-27 Thu 17:35&gt; </span></span> in commit 93a0573. Adapted from <a href="https://www.youtube.com/watch?v=pIdBinlW40E">The Dark Element - &ldquo;The Pallbearer Walks Alone&rdquo;</a>. T_T</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
 <p>My configuration of <a href="https://www.gnu.org/software/emacs/">GNU Emacs</a>, an awesome <del>text editor</del> program that can do almost anything.</p>
@@ -156,9 +156,13 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <td>elfeed-score</td>
 <td>8e591e0d2afd909ae5be00caf17f9b17c6cd8b61</td>
 </tr>
+<tr>
+<td>org-trello</td>
+<td>3f5967a5f63928ea9c8567d8d9f31e84cdbbc21f</td>
+</tr>
 </tbody>
 </table>
-<h2 id="bootstrap">Bootstrap</h2>
+<h2 id="initial-setup">Initial setup</h2>
 <p>Setting up the environment, performance tuning and a few basic settings.</p>
 <p>First things first, lexical binding.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;; -*- lexical-binding: t -*-</span>
@@ -2596,6 +2600,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#19177c">&#39;langtool-goto-next-error</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#19177c">&#39;langtool-goto-previous-error</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#19177c">&#39;langtool-correct-buffer</span>)
+</span></span></code></pre></div><h4 id="reverso">Reverso</h4>
+<p><a href="https://github.com/SqrtMinusOne/reverso.el">reverso.el</a> is a package of mine that provides Emacs interface for <a href="https://reverso.net">https://reverso.net</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/reverso.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">reverso</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>)))
 </span></span></code></pre></div><h3 id="lisp">Lisp</h3>
 <figure><img src="/ox-hugo/lisp_cycles.png"/>
 </figure>
@@ -2675,10 +2687,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;scheme-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">aggressive-indent-mode</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;scheme-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lispy-mode</span>)
 </span></span></code></pre></div><h4 id="clips">CLIPS</h4>
-<p>An honorary Lisp</p>
+<p>An honorary Lisp.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">clips-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.cl\\&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;clips-mode</span> <span style="color:#19177c">&#39;lispy-mode</span>))
 </span></span></code></pre></div><h3 id="python">Python</h3>
@@ -2939,6 +2952,35 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.fish\\&#39;&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;fish-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>))
+</span></span></code></pre></div><h3 id="query-languages">Query languages</h3>
+<h4 id="sql">SQL</h4>
+<p><a href="https://github.com/zeroturnaround/sql-formatter">sql-formatter</a> is a nice JavaScript package for pretty-printing SQL queries. It is not packaged for Emacs, so the easiest way to use it seems to be to define a custom formatter via <a href="https://github.com/purcell/emacs-reformatter">reformatter</a>.</p>
+<p>Also, I&rsquo;ve made a simple function to switch dialects because I often alternate between them.</p>
+<p>So far I didn&rsquo;t find a nice SQL client for Emacs, but I occasionally run SQL queries in Org Mode, so this quite package is handy.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect-choice</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;db2&#34;</span> <span style="color:#ba2121">&#34;mariadb&#34;</span> <span style="color:#ba2121">&#34;mysql&#34;</span> <span style="color:#ba2121">&#34;n1ql&#34;</span> <span style="color:#ba2121">&#34;plsql&#34;</span> <span style="color:#ba2121">&#34;postgresql&#34;</span> <span style="color:#ba2121">&#34;redshift&#34;</span> <span style="color:#ba2121">&#34;spark&#34;</span> <span style="color:#ba2121">&#34;sql&#34;</span> <span style="color:#ba2121">&#34;tsql&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect</span> <span style="color:#ba2121">&#34;postgresql&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/sqlformatter-set-dialect</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Set dialect for sql-formatter&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Dialect: &#34;</span> <span style="color:#19177c">my/sqlformatter-dialect-choice</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">reformatter-define</span> <span style="color:#19177c">sqlformat</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:program</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;sql-formatter&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:args</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;-l&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">my/sqlformatter-dialect</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">sql-mode-map</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;rr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">sqlformat-buffer</span>)
+</span></span></code></pre></div><h4 id="sparql">SPARQL</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sparql-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><h4 id="graphql">GraphQL</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">graphql-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="x509">x509</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">x509-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -3017,33 +3059,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">lua-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">smartparens-mode</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;lua-mode</span>)
-</span></span></code></pre></div><h3 id="sql">SQL</h3>
-<p><a href="https://github.com/zeroturnaround/sql-formatter">sql-formatter</a> is a nice JavaScript package for pretty-printing SQL queries. It is not packaged for Emacs, so the easiest way to use it seems to be to define a custom formatter via <a href="https://github.com/purcell/emacs-reformatter">reformatter</a>.</p>
-<p>Also, I&rsquo;ve made a simple function to switch dialects because I often alternate between them.</p>
-<p>So far I didn&rsquo;t find a nice SQL client for Emacs, but I occasionally run SQL queries in Org Mode, so this quite package is handy.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect-choice</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;db2&#34;</span> <span style="color:#ba2121">&#34;mariadb&#34;</span> <span style="color:#ba2121">&#34;mysql&#34;</span> <span style="color:#ba2121">&#34;n1ql&#34;</span> <span style="color:#ba2121">&#34;plsql&#34;</span> <span style="color:#ba2121">&#34;postgresql&#34;</span> <span style="color:#ba2121">&#34;redshift&#34;</span> <span style="color:#ba2121">&#34;spark&#34;</span> <span style="color:#ba2121">&#34;sql&#34;</span> <span style="color:#ba2121">&#34;tsql&#34;</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect</span> <span style="color:#ba2121">&#34;postgresql&#34;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/sqlformatter-set-dialect</span> ()
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Set dialect for sql-formatter&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/sqlformatter-dialect</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Dialect: &#34;</span> <span style="color:#19177c">my/sqlformatter-dialect-choice</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">reformatter-define</span> <span style="color:#19177c">sqlformat</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:program</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;sql-formatter&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:args</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;-l&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">my/sqlformatter-dialect</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">sql-mode-map</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;rr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">sqlformat-buffer</span>)
-</span></span></code></pre></div><h3 id="sparql">SPARQL</h3>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sparql-mode</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h2 id="org-mode">Org Mode</h2>
-<p><strong>Org mode</strong> is a tool that leverages plain-text files for various tasks like making notes, literate programming, task management, etc.</p>
+<p><strong>Org mode</strong> is a tool that leverages plain-text files for tasks like making notes, literate programming, task management, etc.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://orgmode.org/">Org Mode homepage</a></li>
@@ -3073,14 +3090,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">rainbow-delimiters-mode</span> <span style="color:#666">-1</span>))))
 </span></span></code></pre></div><h4 id="encryption">Encryption</h4>
-<p>Setting up <code>org-crypt</code> to encrypt a part of a file.</p>
+<p>Setting up <code>org-crypt</code> to encrypt parts of file.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-crypt</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-crypt-use-before-save-magic</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-tags-exclude-from-inheritance</span> (<span style="color:#008000">quote</span> (<span style="color:#ba2121">&#34;crypt&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-crypt-key</span> <span style="color:#ba2121">&#34;C1EC867E478472439CC82410DE004F32AFA00205&#34;</span>))
-</span></span></code></pre></div><p>This enables encryption for Org segments which are tagged <code>:crypt:</code>.</p>
-<p>Another way to encrypt org files is to save them with extension <code>.org.gpg</code>. That way by default epa always prompts for a key, which is not what I want when there is in fact only one key to select. So I make the following advice:</p>
+</span></span></code></pre></div><p>This enables encryption for Org segments tagged <code>:crypt:</code>.</p>
+<p>Another way to encrypt Org files is to save them with the extension <code>.org.gpg</code>. However, by default <a href="https://www.gnu.org/software/emacs/manual/html_mono/epa.html">EPA</a> always prompts for the key, which is not what I want when there is only one key to select. Hence the following advice:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/epa--select-keys-around</span> (<span style="color:#19177c">fun</span> <span style="color:#19177c">prompt</span> <span style="color:#19177c">keys</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">=</span> (<span style="color:#19177c">seq-length</span> <span style="color:#19177c">keys</span>) <span style="color:#666">1</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">keys</span>
@@ -3096,7 +3113,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <ul>
 <li><code>ox-extra</code> - extensions for org export</li>
 </ul>
-<p>This used to have <code>org-contacts</code> and <code>ol-notmuch</code> at some point, but they&rsquo;ve been migrated to separate repos since.</p>
+<p>This used to have <code>org-contacts</code> and <code>ol-notmuch</code> at some point, but they have since been migrated to separate repos.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contrib</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">org-contrib</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
@@ -3403,8 +3420,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC b&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;org-babel&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC b&#34;</span> <span style="color:#19177c">org-babel-map</span>))
 </span></span></code></pre></div><h4 id="managing-a-literate-programming-project">Managing a literate programming project</h4>
-<p>A few tricks to do literate programming.</p>
-<p>I prefer to put the org files to a separate directory (e.g. <code>org</code>). So I&rsquo;ve come up with the following solution to avoid manually prefixing the <code>:tangle</code> arguments.</p>
+<p>A few tricks to do literate programming. I actually have only one (<a href="https://github.com/SqrtMinusOne/sqrt-data">sqrt-data</a>), and I&rsquo;m not convinced in the benefits of the approach&hellip;</p>
+<p>Anyway, Org files are better off in a separated directory (e.g. <code>org</code>). So I&rsquo;ve come up with the following solution to avoid manually prefixing the <code>:tangle</code> arguments.</p>
 <p>Set up the following argument with the path to the project root:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>#+PROPERTY: PRJ-DIR ..
 </span></span></code></pre></div><p>A function to do the prefixing:</p>
@@ -3510,16 +3527,47 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c t a&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-transclusion-add</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c t A&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-transclusion-add-all</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c t t&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-transclusion-mode</span>))
+</span></span></code></pre></div><h4 id="managing-tables">Managing tables</h4>
+<p>I use Org to manage some small tables which I want to process further. So here is a function that saves each table to a CSV file.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/export-org-tables-to-csv</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-table-map-tables</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">when-let</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">name</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">plist-get</span> (<span style="color:#19177c">cadr</span> (<span style="color:#19177c">org-element-at-point</span>)) <span style="color:#008000">:name</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-table-export</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">file-name-directory</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">buffer-file-name</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">name</span> <span style="color:#ba2121">&#34;.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;orgtbl-to-csv&#34;</span>)))))
 </span></span></code></pre></div><h3 id="productivity-and-knowledge-management">Productivity &amp; Knowledge management</h3>
-<p>My ongoing effort to get a productivity setup in Org.</p>
-<p>Some inspiration:</p>
+<p>My ongoing effort to <del>get a productivity setup</del> manage something in my life in Org.</p>
+<p>Initial inspirations (<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-30 Wed&gt;</span></span>):</p>
 <ul>
 <li><a href="https://www.labri.fr/perso/nrougier/GTD/index.html">Nicolas P. Rougier. Get Things Done with Emacs</a></li>
 <li><a href="https://blog.jethro.dev/posts/org_mode_workflow_preview/">Jetro Kuan. Org-mode Workflow</a></li>
 <li><a href="https://www.alexeyshmalko.com/how-i-note/">Alexey Shmalko: How I note</a></li>
 <li><a href="https://rgoswami.me/posts/org-note-workflow/">Rohit Goswami: An Orgmode Note Workflow</a></li>
 </ul>
-<p>Used files:</p>
+<p>Some later reflections (<span class="timestamp-wrapper"><span class="timestamp">&lt;2023-01-04 Wed&gt;</span></span>): so, it&rsquo;s been one year and a half&hellip; I&rsquo;ve tried some things since writing the initial inspiration list.</p>
+<p><a href="#org-journal">Org Journal</a> and <a href="#org-roam">Org Roam</a> are probably the most relevant packages in my workflow now.</p>
+<p>For I&rsquo;ve ended up doing more or less plain Org files &amp; Org Agenda. I don&rsquo;t feel I&rsquo;d extract much benefit from a more &ldquo;advanced&rdquo; system, with effort estimation, atomic tasks, etc. Less is more, I guess. Besided, I&rsquo;m not particularly excited about the part of my life that may require such management.</p>
+<p>Neither I felt I was doing anything meaningful with my attempts at regular <a href="#review-workflow">review workflow</a>. I&rsquo;ll think what to do with the section a bit latet.</p>
+<h4 id="org-agenda-and-project-management">Org Agenda &amp; Project Management</h4>
+<p>I tried some things for generic project management, including:</p>
+<ul>
+<li>Managing projects in Org Roam</li>
+<li>Syncing with Trello</li>
+<li>Effort estimation &amp; more atomic tasks</li>
+<li>Writing down progress on projects with <code>org-journal-tags</code></li>
+<li>&hellip;</li>
+</ul>
+<p>But for now stopped on one <code>.org</code> file for one large project / a few smaller related projects and rather high-level tasks. Don&rsquo;t feel the need to do more yet.</p>
+<h5 id="agenda-and-refile-files">Agenda &amp; refile files</h5>
+<p>All my project files live in the <code>/projects</code> directory, so here&rsquo;s a function to set up <code>org-agenda-files</code> and <code>org-refile-targets</code> accordingly.</p>
+<p>Also, my project structure is somewhat chaotic, so I have an <code>.el</code> file in the org directory that defines some of the refile targets.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/update-org-agenda</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">project-files</span>
@@ -3536,27 +3584,21 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span><span style="color:#19177c">project-files</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:maxlevel</span> <span style="color:#666">.</span> <span style="color:#666">2</span>)))
-</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)
-</span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:tag</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
-</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)))))
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">project-files</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/scripts/refile.el&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">load-file</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/scripts/refile.el&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">run-hooks</span> <span style="color:#19177c">&#39;my/org-refile-hooks</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-roam-directory</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/roam&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/update-org-agenda</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq org-default-notes-file (concat org-directory &#34;/notes.org&#34;))</span>
 </span></span><span style="display:flex;"><span>  )
-</span></span></code></pre></div><p>Hotkeys</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;org-mode&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;org-capture</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#19177c">&#39;org-agenda</span>)
-</span></span></code></pre></div><p>Refile targets</p>
+</span></span></code></pre></div><p>Refile settings</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-outline-path-complete-in-steps</span> <span style="color:#800">nil</span>)
-</span></span></code></pre></div><h4 id="capture-templates-and-various-settings">Capture templates &amp; various settings</h4>
+</span></span></code></pre></div><h5 id="capture-templates-and-various-settings">Capture templates &amp; various settings</h5>
 <p>Settings for Org capture mode. The goal here is to have a non-disruptive process to capture various ideas.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/generate-inbox-note-name</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">format</span>
@@ -3580,73 +3622,32 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	(<span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#ba2121">&#34;note&#34;</span> <span style="color:#19177c">entry</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">my/generate-inbox-note-name</span>)
 </span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;* %?\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;/Entered on/ %U&#34;</span>))))
-</span></span></code></pre></div><p>Effort estimation</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-global-properties</span>
-</span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Effort_ALL&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>)))
-</span></span></code></pre></div><p>Log DONE time</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-log-done</span> <span style="color:#19177c">&#39;time</span>)
-</span></span></code></pre></div><h4 id="off--trello-sync"><span class="org-todo done OFF">OFF</span> (OFF) Trello sync</h4>
-<p>UPD <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-03-27 Sun&gt;</span></span>: disabling this for now.</p>
-<p>Some of the projects I&rsquo;m participating in are managed via Trello, so I use <a href="http://org-trello.github.io/">org-trello</a> to keep track of them. The package has a remarkably awkward keybindings setup, so my effort to call <code>my-leader-def</code> to set keybindings I like is no less awkward.</p>
-<p>Also, trello files are huge and have a lot of information and tasks which do not concern me, so I don&rsquo;t add them to <code>org-agenda-files</code>.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/trello&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">mkdir</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/trello&#34;</span>) <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-trello-files</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">thread-last</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/trello&#34;</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">directory-files</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">f</span>)))
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/trello/&#34;</span> <span style="color:#19177c">f</span>)))))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-trello</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">native-compile</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-trello-mode</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-trello-current-prefix-keybinding</span> <span style="color:#ba2121">&#34;C-c o&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-trello-add-tags</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;trello&#34;</span>) (<span style="color:#008000">or</span> (<span style="color:#00f">buffer-file-name</span>) <span style="color:#ba2121">&#34;&#34;</span>))
-</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">org-trello-mode</span>))))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#00f">eval</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#666">`</span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o t&#34;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">org-trello-mode-map</span>)
-</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;trello&#34;</span>)
-</span></span><span style="display:flex;"><span>      <span style="color:#666">,@</span>(<span style="color:#19177c">mapcan</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">b</span>) (<span style="color:#00f">list</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">b</span>) (<span style="color:#19177c">macroexp-quote</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">b</span>))))
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">org-trello-interactive-command-binding-couples</span>))))
-</span></span></code></pre></div><h4 id="org-ql">org-ql</h4>
-<p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;m using it in my review workflow and for custom agenda views.</p>
+</span></span></code></pre></div><h5 id="org-ql">org-ql</h5>
+<p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;ve tried using it for:</p>
+<ul>
+<li>Grabbing done tasks / meetings / etc for review workflow</li>
+<li>Adding Trello tasks into Agenga</li>
+</ul>
+<p>None of that worked out, but I&rsquo;ll keep the package here in case I have some more ideas.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ql</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:fetcher</span> <span style="color:#19177c">github</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/org-ql&#34;</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;helm-org-ql.el&#34;</span>))))
-</span></span></code></pre></div><h4 id="custom-agendas">Custom agendas</h4>
+</span></span></code></pre></div><h5 id="custom-agendas">Custom agendas</h5>
 <p>Some custom agendas to fit my workflow.</p>
-<p><del>Despite the fact that I don&rsquo;t add <code>org-trello-files</code> to <code>org-agenda-files</code> I still want to see them in agenda, so I use <code>org-ql-block</code> from <code>org-ql</code>.</del></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-scheduled-get-time</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">scheduled</span> (<span style="color:#19177c">org-get-scheduled-time</span> (<span style="color:#00f">point</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">scheduled</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> <span style="color:#19177c">scheduled</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;log&#34;</span> <span style="color:#ba2121">&#34;log_here&#34;</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-custom-commands</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#ba2121">&#34;My outline&#34;</span>
 </span></span><span style="display:flex;"><span>	 ((<span style="color:#19177c">agenda</span> <span style="color:#ba2121">&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;NEXT&#34;</span>
-</span></span><span style="display:flex;"><span>		((<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34;  %i %-12:c [%e] &#34;</span>)
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Next tasks&#34;</span>)))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">tags-todo</span> <span style="color:#ba2121">&#34;inbox&#34;</span>
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Inbox&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c&#34;</span>)
@@ -3655,49 +3656,118 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Waitlist&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-hide-tags-regexp</span> <span style="color:#ba2121">&#34;waitlist&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c %-12(my/org-scheduled-get-time)&#34;</span>)))))))
-</span></span></code></pre></div><h4 id="bibliography">Bibliography</h4>
-<p>I&rsquo;m currently trying to use <a href="https://www.zotero.org/">Zotero</a> to manage my bibliograhy.</p>
-<p>There is a Zotero extension called <a href="https://retorque.re/zotero-better-bibtex/">better bibtex</a>, which allows for having one bibtex file that is always syncronized with the library. That comes quite handy for Emacs integration.</p>
-<h5 id="org-ref">org-ref</h5>
-<p><a href="https://github.com/jkitchin/org-ref">org-ref</a> is an excellent package by John Kitchin that provides support for managing citations and references in Org Mode.</p>
-<p>It may have become less relevant since <code>org-cite</code> was merged into plain Org, but <code>org-ref</code> is still just as usable.</p>
-<p>As of now, this package loads Helm on start. To avoid this, I have to exclude Helm from the <code>Package-requires</code> in the <a href=".emacs.d/straight/repos/org-ref/org-ref.el">org-ref.el</a> file. I haven&rsquo;t found a way to do this without modifying the package source yet.</p>
-<p>There&rsquo;s a package called <a href="https://github.com/org-roam/org-roam-bibtex">org-roam-bibtex</a> that allows to keep literature notes in <a href="https://github.com/org-roam/org-roam">org-roam</a> and access them from <code>org-ref</code>, but as for now I store literature notes separately, as advised by Ahrens Sönke in his excellent book &ldquo;How to take smart notes&rdquo;.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ref</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;*helm*&#34;</span>)))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-dialect</span> <span style="color:#19177c">&#39;biblatex</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-bibliography</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/org-mode/library.bib&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-library-path</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/library&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-notes-path</span> <span style="color:#ba2121">&#34;~/Documents/org-mode/literature-notes&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-display-formats</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;${author:36} ${title:*} ${note:10} ${year:4} ${=has-pdf=:1}${=type=:7}&#34;</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-pdf-open-function</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;dired-open&#34;</span> <span style="color:#800">nil</span>
-</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;xdg-open&#34;</span> (<span style="color:#19177c">file-truename</span> <span style="color:#19177c">file</span>))))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-ref-ivy</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ref-insert-link-hydra/body</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;bibtex-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#19177c">&#39;org-ref-bibtex-hydra/body</span>))
-</span></span></code></pre></div><h5 id="ivy-bibtex">ivy-bibtex</h5>
-<p><a href="https://github.com/tmalsburg/helm-bibtex">ivy-bibtex</a> is an Ivy interface to bibtex. It uses the same configuration variables as <code>org-ref</code>, or rather, both packages use variables from the built-in <code>bibtex.el</code></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-bibtex</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ivy-bibtex</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;fB&#34;</span> <span style="color:#19177c">&#39;ivy-bibtex</span>))
+</span></span></code></pre></div><h5 id="other-settings">Other settings</h5>
+<p>Hotkeys</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;org-mode&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#19177c">&#39;org-capture</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#19177c">&#39;org-agenda</span>)
+</span></span></code></pre></div><p>Effort estimation</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-global-properties</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Effort_ALL&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;0 0:05 0:10 0:15 0:30 0:45 1:00 2:00 4:00&#34;</span>)))
+</span></span></code></pre></div><p>Log DONE time</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-log-done</span> <span style="color:#19177c">&#39;time</span>)
+</span></span></code></pre></div><h5 id="copying-records">Copying records</h5>
+<p>I like to add numbers to repeating events, like meetings. E.g.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Job meeting 62
+</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
+</span></span><span style="display:flex;"><span>* Job meeting 63
+</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>Naturally, I want a way to copy such records. Org Mode already has a function called <code>org-clone-subtree-with-time-shift</code>, that does everything I want except for updating the numbers.</p>
+<p>Unfortunately, I see no way to advise the original function, so here&rsquo;s my version that makes use of <code>evil-numbers</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-clone-subtree-with-time-shift</span> (<span style="color:#19177c">n</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;nNumber of clones to produce: &#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">wholenump</span> <span style="color:#19177c">n</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid number of replications %s&#34;</span> <span style="color:#19177c">n</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">org-before-first-heading-p</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No subtree to clone&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">beg</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">end-of-tree</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-end-of-subtree</span> <span style="color:#800">t</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">or</span> <span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)))
+</span></span><span style="display:flex;"><span>			       (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#19177c">end-of-tree</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">read-from-minibuffer</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#ba2121">&#34;Date shift per clone (e.g. +1w, empty to copy unchanged): &#34;</span>)
+</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;&#34;</span>)))                   <span style="color:#408080;font-style:italic">;No time shift</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">and</span> (<span style="color:#19177c">org-string-nw-p</span> <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">or</span> (<span style="color:#00f">string-match</span> <span style="color:#ba2121">&#34;\\`[ \t]*\\([+-]?[0-9]+\\)\\([hdwmy]\\)[ \t]*\\&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid shift specification %s&#34;</span> <span style="color:#19177c">shift</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end-of-tree</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">bolp</span>) (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">end</span> (<span style="color:#00f">point</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">template</span> (<span style="color:#00f">buffer-substring</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-n</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">shift</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-what</span> (<span style="color:#008000">pcase</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span> <span style="color:#19177c">shift</span>))
+</span></span><span style="display:flex;"><span>				     (<span style="color:#666">`</span><span style="color:#800">nil</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;hour</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;w&#34;</span> (<span style="color:#008000">setq</span> <span style="color:#19177c">shift-n</span> (<span style="color:#00f">*</span> <span style="color:#666">7</span> <span style="color:#19177c">shift-n</span>)) <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;month</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#19177c">&#39;year</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">_</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Unsupported time unit&#34;</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmin</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmax</span> <span style="color:#19177c">n</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">n-no-remove</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">org-id-overriding-file-name</span> (<span style="color:#00f">buffer-file-name</span> (<span style="color:#00f">buffer-base-buffer</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">idprop</span> (<span style="color:#19177c">org-entry-get</span> <span style="color:#19177c">beg</span> <span style="color:#ba2121">&#34;ID&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+ [.+]?\\+[0-9]+[hdwmy][^&lt;&gt;\n]*&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">template</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">end</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmin</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmax</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">n-no-remove</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">n</span> <span style="color:#19177c">from</span> <span style="color:#19177c">nmin</span> <span style="color:#19177c">to</span> <span style="color:#19177c">nmax</span> <span style="color:#008000">do</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#408080;font-style:italic">;; Prepare clone.</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">insert</span> <span style="color:#19177c">template</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-mode</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-show-subtree</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">and</span> <span style="color:#19177c">idprop</span> (<span style="color:#008000">if</span> <span style="color:#19177c">org-clone-delete-id</span>
+</span></span><span style="display:flex;"><span>						  (<span style="color:#19177c">org-entry-delete</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ID&#34;</span>)
+</span></span><span style="display:flex;"><span>						(<span style="color:#19177c">org-id-get-create</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-clock-line-re</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">delete-region</span> (<span style="color:#00f">line-beginning-position</span>)
+</span></span><span style="display:flex;"><span>						     (<span style="color:#00f">line-beginning-position</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-drawer-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-remove-empty-drawer-at</span> (<span style="color:#00f">point</span>))))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;bibtex-mode</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
-</span></span></code></pre></div><h4 id="org-journal">Org Journal</h4>
-<p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a plugin for maintaining a journal in org mode. I want(ed) to have its entries separate from my knowledge base.</p>
-<p>I&rsquo;ve tried switching to Org Roam Dailies, but in the end decided that org-journal fits my workflow better.</p>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> <span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
+</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>			      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>				    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>				      (<span style="color:#008000">when</span> (<span style="color:#00f">looking-at</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+\\( +[.+]?\\+[0-9]+[hdwmy]\\)&#34;</span>)
+</span></span><span style="display:flex;"><span>					(<span style="color:#00f">delete-region</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">1</span>) (<span style="color:#00f">match-end</span> <span style="color:#666">1</span>)))))))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
+</span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
+<h4 id="org-journal-1">Org Journal</h4>
+<p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a package for maintaining a journal in org mode.</p>
+<p>This part turned out to be great. I even consulted the journal a few times to check if something actually happened, which makes me uneasy now that I think about it&hellip;</p>
+<p>One issue I found is that it&rsquo;s kinda hard to find anything in the journal, and I&rsquo;m not eager to open the journal for a random date anyway. So I&rsquo;ve made a package called <a href="https://github.com/SqrtMinusOne/org-journal-tags">org-journal-tags</a>.</p>
+<p>My initial desire was to be able to query the journal for my thoughts on a particular subject or theme, for progress on some project, or for records related to some person&hellip; Which is kinda useful, although not quite as much as I expected it to be. Relatively fast querying of the journal is also nice.</p>
+<p>The section I named &ldquo;on this day&rdquo; turned out to be particularly interesting, as it kinda allowed me to connect with past versions of myself.</p>
+<p>And it was interesting to find the reinforcement effect of checked dates on the calendar.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-journal</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
@@ -3715,7 +3785,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-file-format</span> <span style="color:#ba2121">&#34;%Y-%m-%d.org&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-date-format</span> <span style="color:#ba2121">&#34;%A, %Y-%m-%d&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-enable-encryption</span> <span style="color:#800">t</span>))
-</span></span></code></pre></div><p><a href="https://github.com/SqrtMinusOne/org-journal-tags">org-journal-tags</a> is my package that implements a tagging system for org-journal.</p>
+</span></span></code></pre></div><p>So, <a href="https://github.com/SqrtMinusOne/org-journal-tags">org-journal-tags</a> is my package that implements a tagging system for org-journal.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-journal-tags</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/org-journal-tags&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org-journal</span>)
@@ -3786,12 +3856,60 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-journal-after-entry-create-hook</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/set-journal-header</span>)
-</span></span></code></pre></div><h4 id="org-roam">Org Roam</h4>
+</span></span></code></pre></div><h4 id="bibliography">Bibliography</h4>
+<p>I use <a href="https://www.zotero.org/">Zotero</a> to manage my bibliograhy.</p>
+<p>There is a Zotero extension called <a href="https://retorque.re/zotero-better-bibtex/">better bibtex</a>, which allows for having one bibtex file that is always syncronized with the library. That comes quite handy for Emacs integration.</p>
+<h5 id="org-ref">org-ref</h5>
+<p><a href="https://github.com/jkitchin/org-ref">org-ref</a> is an excellent package by John Kitchin that provides support for managing citations and references in Org Mode.</p>
+<p>It may have become less relevant since <code>org-cite</code> was merged into plain Org, but <code>org-ref</code> is still just as usable.</p>
+<p>As of now, this package loads Helm on start. To avoid this, I have to exclude Helm from the <code>Package-requires</code> in the <a href=".emacs.d/straight/repos/org-ref/org-ref.el">org-ref.el</a> file. I haven&rsquo;t found a way to do this without modifying the package source yet.</p>
+<p>There&rsquo;s a package called <a href="https://github.com/org-roam/org-roam-bibtex">org-roam-bibtex</a> that allows to keep literature notes in <a href="https://github.com/org-roam/org-roam">org-roam</a> and access them from <code>org-ref</code>, but as for now I store literature notes separately.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ref</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;*helm*&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-dialect</span> <span style="color:#19177c">&#39;biblatex</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-bibliography</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/org-mode/library.bib&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-library-path</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Documents/library&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-notes-path</span> <span style="color:#ba2121">&#34;~/Documents/org-mode/literature-notes&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-display-formats</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;${author:36} ${title:*} ${note:10} ${year:4} ${=has-pdf=:1}${=type=:7}&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">bibtex-completion-pdf-open-function</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;dired-open&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;xdg-open&#34;</span> (<span style="color:#19177c">file-truename</span> <span style="color:#19177c">file</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-ref-ivy</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ref-insert-link-hydra/body</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;bibtex-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#19177c">&#39;org-ref-bibtex-hydra/body</span>))
+</span></span></code></pre></div><h5 id="ivy-bibtex">ivy-bibtex</h5>
+<p><a href="https://github.com/tmalsburg/helm-bibtex">ivy-bibtex</a> is an Ivy interface to bibtex. It uses the same configuration variables as <code>org-ref</code>, or rather, both packages use variables from the built-in <code>bibtex.el</code></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-bibtex</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ivy-bibtex</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;fB&#34;</span> <span style="color:#19177c">&#39;ivy-bibtex</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;bibtex-mode</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
+</span></span></code></pre></div><h4 id="org-roam-1">Org Roam</h4>
 <p><a href="https://github.com/org-roam/org-roam">org-roam</a> is a plain-text knowledge database.</p>
 <p>Things I tried with Org Roam:</p>
 <ul>
 <li>Managing projects. Ended up preferring plain Org.</li>
-<li>Writing journal. <code>org-journal</code> and <code>org-journal-tags</code> seem to be a better fit for my workflow.</li>
+<li>Writing a journal with <code>org-roam-dailies</code>.
+Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</code> after I understood better what I want.</li>
+</ul>
+<p>Regardless, it turned out to be great for managing Zettelkasten, which is the original purpose of the package anyway. I didn&rsquo;t expect to ever get into something like this, but I guess I was wrong.</p>
+<p>Some resources that helped me along the way (and still help):</p>
+<ul>
+<li>Sönke Ahrens&rsquo; book &ldquo;How to take smart notes&rdquo;</li>
+<li><a href="https://zettelkasten.de/">https://zettelkasten.de/</a> - a lot of useful stuff here, especially in the &ldquo;Getting Started&rdquo; section.</li>
+<li><a href="https://www.youtube.com/watch?v=-TpWahIzueg">System Crafters Live! - Can You Apply Zettelkasten in Emacs?</a></li>
 </ul>
 <h5 id="basic-package-configuration">Basic package configuration</h5>
 <table>
@@ -3848,9 +3966,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	 <span style="color:#008000">:unnarrowed</span> <span style="color:#800">t</span>)))
 </span></span></code></pre></div><h5 id="keybindings-3">Keybindings</h5>
 <p>A set of keybindings to quickly access things in Org Roam.</p>
-<p>I used to have multiple categories of nodes in Org Roam (projects, dailies, etc), but as of now, only Zettelkasten remains.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-roam</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-roam</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;or&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;org-roam&#34;</span>)
@@ -3880,7 +3996,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c i&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>))
 </span></span></code></pre></div><h5 id="org-roam-ui">Org Roam UI</h5>
-<p>A browser frontend to visualize a Roam directory in a form of a graph.</p>
+<p>A browser frontend to visualize the Roam database as a graph.</p>
+<p>Actually, I don&rsquo;t find this quite as useful as structure nodes, because over time my graph grew somewhat convoluted. But it looks impressive.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-roam-ui</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;org-roam/org-roam-ui&#34;</span> <span style="color:#008000">:branch</span> <span style="color:#ba2121">&#34;main&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;*.el&#34;</span> <span style="color:#ba2121">&#34;out&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
@@ -3900,7 +4017,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><p>Don&rsquo;t forget to run the following after setup:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 </span></span></code></pre></div><h5 id="deft">Deft</h5>
-<p><a href="https://github.com/jrblevin/deft">Deft</a> is an Emacs package to quickly find notes. It seems quite useful to look for <code>org-roam</code> notes based on their contents.</p>
+<p><a href="https://github.com/jrblevin/deft">Deft</a> is an Emacs package to quickly find notes. I use it as a full-text search engine for <code>org-roam</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">deft</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
@@ -3951,7 +4068,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;deft</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-parse-title</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deft-parse-title-around</span>))
-</span></span></code></pre></div><h4 id="review-workflow">Review workflow</h4>
+</span></span></code></pre></div><h4 id="review-workflow-1">Review workflow</h4>
 <p>UPD <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-03-27 Sun&gt;</span></span>. Out of action for now</p>
 <p>My take on a review workflow. As a baseline, I want to have a template that lists the important changes since the last review and other basic information. I&rsquo;m doing reviews regularly, but the time intervals still may vary, hence this flexibility.</p>
 <p>This section has seen some updates over time.</p>
@@ -4182,114 +4299,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>:EMAIL+:   pvkorytov@etu.ru
 </span></span><span style="display:flex;"><span>:BIRTHDAY: [1998-08-14]
 </span></span><span style="display:flex;"><span>:END:
-</span></span></code></pre></div><h4 id="managing-tables">Managing tables</h4>
-<p>I use Org to manage some small tables which I want to process further. So here is a function that saves each table to a CSV file.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/export-org-tables-to-csv</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-table-map-tables</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">when-let</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">name</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">plist-get</span> (<span style="color:#19177c">cadr</span> (<span style="color:#19177c">org-element-at-point</span>)) <span style="color:#008000">:name</span>))
-</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-table-export</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">file-name-directory</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">buffer-file-name</span>))
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">name</span> <span style="color:#ba2121">&#34;.csv&#34;</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;orgtbl-to-csv&#34;</span>)))))
-</span></span></code></pre></div><h4 id="copying-records">Copying records</h4>
-<p>I like to add numbers to repeating events, like meetings. E.g.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Job meeting 62
-</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
-</span></span><span style="display:flex;"><span>* Job meeting 63
-</span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
-</span></span><span style="display:flex;"><span>...
-</span></span></code></pre></div><p>Naturally, I want a way to copy such records. Org Mode already has a function called <code>org-clone-subtree-with-time-shift</code>, that does everything I want except for updating the numbers.</p>
-<p>Unfortunately, I see no way to advise the original function, so here&rsquo;s my version that makes use of <code>evil-numbers</code>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-clone-subtree-with-time-shift</span> (<span style="color:#19177c">n</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">shift</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;nNumber of clones to produce: &#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">wholenump</span> <span style="color:#19177c">n</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid number of replications %s&#34;</span> <span style="color:#19177c">n</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">org-before-first-heading-p</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No subtree to clone&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">beg</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">end-of-tree</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-end-of-subtree</span> <span style="color:#800">t</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">shift</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">or</span> <span style="color:#19177c">shift</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)))
-</span></span><span style="display:flex;"><span>			       (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#19177c">end-of-tree</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">read-from-minibuffer</span>
-</span></span><span style="display:flex;"><span>			   <span style="color:#ba2121">&#34;Date shift per clone (e.g. +1w, empty to copy unchanged): &#34;</span>)
-</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;&#34;</span>)))                   <span style="color:#408080;font-style:italic">;No time shift</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">and</span> (<span style="color:#19177c">org-string-nw-p</span> <span style="color:#19177c">shift</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">or</span> (<span style="color:#00f">string-match</span> <span style="color:#ba2121">&#34;\\`[ \t]*\\([+-]?[0-9]+\\)\\([hdwmy]\\)[ \t]*\\&#39;&#34;</span>
-</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">shift</span>)
-</span></span><span style="display:flex;"><span>			   (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid shift specification %s&#34;</span> <span style="color:#19177c">shift</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end-of-tree</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">bolp</span>) (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">end</span> (<span style="color:#00f">point</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">template</span> (<span style="color:#00f">buffer-substring</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-n</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">shift</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-what</span> (<span style="color:#008000">pcase</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span> <span style="color:#19177c">shift</span>))
-</span></span><span style="display:flex;"><span>				     (<span style="color:#666">`</span><span style="color:#800">nil</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;hour</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;day</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;w&#34;</span> (<span style="color:#008000">setq</span> <span style="color:#19177c">shift-n</span> (<span style="color:#00f">*</span> <span style="color:#666">7</span> <span style="color:#19177c">shift-n</span>)) <span style="color:#19177c">&#39;day</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;month</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#19177c">&#39;year</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">_</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Unsupported time unit&#34;</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmin</span> <span style="color:#666">1</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmax</span> <span style="color:#19177c">n</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">n-no-remove</span> <span style="color:#666">-1</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">org-id-overriding-file-name</span> (<span style="color:#00f">buffer-file-name</span> (<span style="color:#00f">buffer-base-buffer</span>)))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">idprop</span> (<span style="color:#19177c">org-entry-get</span> <span style="color:#19177c">beg</span> <span style="color:#ba2121">&#34;ID&#34;</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+ [.+]?\\+[0-9]+[hdwmy][^&lt;&gt;\n]*&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">template</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">end</span> <span style="color:#19177c">beg</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmin</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmax</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">nmax</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">n-no-remove</span> <span style="color:#19177c">nmax</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">n</span> <span style="color:#19177c">from</span> <span style="color:#19177c">nmin</span> <span style="color:#19177c">to</span> <span style="color:#19177c">nmax</span> <span style="color:#008000">do</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">insert</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#408080;font-style:italic">;; Prepare clone.</span>
-</span></span><span style="display:flex;"><span>			(<span style="color:#008000">with-temp-buffer</span>
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">insert</span> <span style="color:#19177c">template</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-mode</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-show-subtree</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">and</span> <span style="color:#19177c">idprop</span> (<span style="color:#008000">if</span> <span style="color:#19177c">org-clone-delete-id</span>
-</span></span><span style="display:flex;"><span>						  (<span style="color:#19177c">org-entry-delete</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ID&#34;</span>)
-</span></span><span style="display:flex;"><span>						(<span style="color:#19177c">org-id-get-create</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-clock-line-re</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">delete-region</span> (<span style="color:#00f">line-beginning-position</span>)
-</span></span><span style="display:flex;"><span>						     (<span style="color:#00f">line-beginning-position</span> <span style="color:#666">2</span>)))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-drawer-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-remove-empty-drawer-at</span> (<span style="color:#00f">point</span>))))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> <span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
-</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) (<span style="color:#00f">point-min</span>)))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>				    (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>				      (<span style="color:#008000">when</span> (<span style="color:#00f">looking-at</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+\\( +[.+]?\\+[0-9]+[hdwmy]\\)&#34;</span>)
-</span></span><span style="display:flex;"><span>					(<span style="color:#00f">delete-region</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">1</span>) (<span style="color:#00f">match-end</span> <span style="color:#666">1</span>)))))))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
-</span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
-<h3 id="ui">UI</h3>
+</span></span></code></pre></div><h3 id="ui">UI</h3>
 <h4 id="off--instant-equations-preview"><span class="org-todo done OFF">OFF</span> (OFF) Instant equations preview</h4>
 <p>Instant math previews for org mode.</p>
 <p>References:</p>
@@ -6444,13 +6454,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate-reverse</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">&#39;google-translate-smooth-translate</span>)
-</span></span></code></pre></div><h4 id="reverso">Reverso</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/reverso.el&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">reverso</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>)))
 </span></span></code></pre></div><h3 id="reading-documentation">Reading documentation</h3>
 <h4 id="tldr">tldr</h4>
 <p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.</p>
@@ -7070,7 +7073,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
   <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#some-remarks">Some remarks</a></li>
-    <li><a href="#bootstrap">Bootstrap</a>
+    <li><a href="#initial-setup">Initial setup</a>
       <ul>
         <li><a href="#packages">Packages</a>
           <ul>
@@ -7224,6 +7227,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#plantuml">PlantUML</a></li>
             <li><a href="#subtitles">Subtitles</a></li>
             <li><a href="#languagetool">LanguageTool</a></li>
+            <li><a href="#reverso">Reverso</a></li>
           </ul>
         </li>
         <li><a href="#lisp">Lisp</a>
@@ -7273,6 +7277,13 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#fish">fish</a></li>
           </ul>
         </li>
+        <li><a href="#query-languages">Query languages</a>
+          <ul>
+            <li><a href="#sql">SQL</a></li>
+            <li><a href="#sparql">SPARQL</a></li>
+            <li><a href="#graphql">GraphQL</a></li>
+          </ul>
+        </li>
         <li><a href="#x509">x509</a></li>
         <li><a href="#java">Java</a></li>
         <li><a href="#go">Go</a></li>
@@ -7285,8 +7296,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         <li><a href="#haskell">Haskell</a></li>
         <li><a href="#nix">nix</a></li>
         <li><a href="#lua">Lua</a></li>
-        <li><a href="#sql">SQL</a></li>
-        <li><a href="#sparql">SPARQL</a></li>
       </ul>
     </li>
     <li><a href="#org-mode">Org Mode</a>
@@ -7320,21 +7329,17 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#toc">TOC</a></li>
             <li><a href="#screenshots">Screenshots</a></li>
             <li><a href="#transclusion">Transclusion</a></li>
+            <li><a href="#managing-tables">Managing tables</a></li>
           </ul>
         </li>
         <li><a href="#productivity-and-knowledge-management">Productivity &amp; Knowledge management</a>
           <ul>
-            <li><a href="#capture-templates-and-various-settings">Capture templates &amp; various settings</a></li>
-            <li><a href="#off--trello-sync"><span class="org-todo done OFF">OFF</span> (OFF) Trello sync</a></li>
-            <li><a href="#org-ql">org-ql</a></li>
-            <li><a href="#custom-agendas">Custom agendas</a></li>
+            <li><a href="#org-agenda-and-project-management">Org Agenda &amp; Project Management</a></li>
+            <li><a href="#org-journal-1">Org Journal</a></li>
             <li><a href="#bibliography">Bibliography</a></li>
-            <li><a href="#org-journal">Org Journal</a></li>
-            <li><a href="#org-roam">Org Roam</a></li>
-            <li><a href="#review-workflow">Review workflow</a></li>
+            <li><a href="#org-roam-1">Org Roam</a></li>
+            <li><a href="#review-workflow-1">Review workflow</a></li>
             <li><a href="#org-contacts">org-contacts</a></li>
-            <li><a href="#managing-tables">Managing tables</a></li>
-            <li><a href="#copying-records">Copying records</a></li>
           </ul>
         </li>
         <li><a href="#ui">UI</a>
@@ -7420,7 +7425,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
-            <li><a href="#reverso">Reverso</a></li>
           </ul>
         </li>
         <li><a href="#reading-documentation">Reading documentation</a>
