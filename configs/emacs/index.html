@@ -503,7 +503,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">slime</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">forge</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">deadgrep</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">vc-annonate</span>)))
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">vc-annonate</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">telega</span>)))
 </span></span></code></pre></div><h4 id="avy">Avy</h4>
 <p><a href="https://github.com/abo-abo/avy">Avy</a> is a package that helps navigate Emacs in a tree-like manner.</p>
 <p>References:</p>
@@ -3581,6 +3582,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	    (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects&#34;</span>))))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#ba2121">&#34;misc/habit.org&#34;</span>
 </span></span><span style="display:flex;"><span>	    <span style="color:#666">,@</span><span style="color:#19177c">project-files</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
@@ -3619,8 +3621,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;* TODO %:elfeed-entry-title\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;/Entered on/ %U\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;%a\n&#34;</span>))
-</span></span><span style="display:flex;"><span>	(<span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#ba2121">&#34;note&#34;</span> <span style="color:#19177c">entry</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">my/generate-inbox-note-name</span>)
-</span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;* %?\n&#34;</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#ba2121">&#34;note&#34;</span> <span style="color:#19177c">plain</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">my/generate-inbox-note-name</span>)
+</span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;#+TODO: PROCESSED(p)\n&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;\n&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;* %?\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;/Entered on/ %U&#34;</span>))))
 </span></span></code></pre></div><h5 id="org-ql">org-ql</h5>
 <p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;ve tried using it for:</p>
@@ -3635,19 +3639,68 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:fetcher</span> <span style="color:#19177c">github</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/org-ql&#34;</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;helm-org-ql.el&#34;</span>))))
+</span></span></code></pre></div><h5 id="tracking-habits">Tracking habits</h5>
+<p>Let&rsquo;s see how this goes.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://orgmode.org/manual/Tracking-your-habits.html">https://orgmode.org/manual/Tracking-your-habits.html</a></li>
+</ul>
+<p><a href="https://github.com/ml729/org-habit-stats">org-habit-stats</a> is a pretty nice package. Using my fork until my PR is merged.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-habit-stats</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;ml729/org-habit-stats&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">org-habit-stats-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-exit</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-calendar-scroll-left</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-calendar-scroll-right</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-scroll-graph-left</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-scroll-graph-right</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;{&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-scroll-graph-left-big</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;}&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-scroll-graph-right-big</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-view-next-habit</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;,&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-view-previous-habit</span>))
 </span></span></code></pre></div><h5 id="custom-agendas">Custom agendas</h5>
 <p>Some custom agendas to fit my workflow.</p>
+<p>See <a href="https://emacs.stackexchange.com/questions/18179/org-agenda-command-with-org-agenda-filter-by-tag-not-working">this answer</a> at Emacs StackExchange for filtering the <code>agenda</code> block by tag:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-match-at-point-p</span> (<span style="color:#19177c">match</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return non-nil if headline at point matches MATCH.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Here MATCH is a match string of the same format used by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`org-tags-view&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">funcall</span> (<span style="color:#00f">cdr</span> (<span style="color:#19177c">org-make-tags-matcher</span> <span style="color:#19177c">match</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">org-get-todo-state</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">org-get-tags-at</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">org-reduced-level</span> (<span style="color:#19177c">org-current-level</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-agenda-skip-without-match</span> (<span style="color:#19177c">match</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Skip current headline unless it matches MATCH.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return nil if headline containing point matches MATCH (which
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">should be a match string of the same format used by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`org-tags-view&#39;</span><span style="color:#ba2121">).  If headline does not match, return the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">position of the next headline in current buffer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Intended for use with </span><span style="color:#19177c">`org-agenda-skip-function&#39;</span><span style="color:#ba2121">, where this will
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">skip exactly those headlines that do not match.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#19177c">org-at-heading-p</span>) (<span style="color:#19177c">org-back-to-heading</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">next-headline</span> (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>			   (<span style="color:#008000">or</span> (<span style="color:#19177c">outline-next-heading</span>) (<span style="color:#00f">point-max</span>)))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#19177c">my/org-match-at-point-p</span> <span style="color:#19177c">match</span>) <span style="color:#800">nil</span> <span style="color:#19177c">next-headline</span>))))
+</span></span></code></pre></div><p>And the agendas themselves:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-scheduled-get-time</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">scheduled</span> (<span style="color:#19177c">org-get-scheduled-time</span> (<span style="color:#00f">point</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">scheduled</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> <span style="color:#19177c">scheduled</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-hide-tags-regexp</span> (<span style="color:#008000">rx</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;org&#34;</span> <span style="color:#ba2121">&#34;refile&#34;</span> <span style="color:#ba2121">&#34;habit&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-custom-commands</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#ba2121">&#34;My outline&#34;</span>
-</span></span><span style="display:flex;"><span>	 ((<span style="color:#19177c">agenda</span> <span style="color:#ba2121">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>	 ((<span style="color:#19177c">agenda</span> <span style="color:#ba2121">&#34;&#34;</span> ((<span style="color:#19177c">org-agenda-skip-function</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">my/org-agenda-skip-without-match</span> <span style="color:#ba2121">&#34;-habit&#34;</span>))))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">tags-todo</span> <span style="color:#ba2121">&#34;inbox&#34;</span>
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Inbox&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c&#34;</span>)
@@ -3655,7 +3708,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">tags-todo</span> <span style="color:#ba2121">&#34;+waitlist+SCHEDULED&lt;=\&#34;&lt;+14d&gt;\&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Waitlist&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-hide-tags-regexp</span> <span style="color:#ba2121">&#34;waitlist&#34;</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c %-12(my/org-scheduled-get-time)&#34;</span>)))))))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c %-12(my/org-scheduled-get-time)&#34;</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">tags-todo</span> <span style="color:#ba2121">&#34;habit+SCHEDULED&lt;=\&#34;&lt;+0d&gt;\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Habits&#34;</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c&#34;</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-hide-tags-regexp</span> <span style="color:#ba2121">&#34;.&#34;</span>)))))))
 </span></span></code></pre></div><h5 id="other-settings">Other settings</h5>
 <p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
@@ -4283,7 +4340,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		     <span style="color:#008000">:templates</span> <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">my/org-review-capture-template</span>)))
 </span></span></code></pre></div><h4 id="org-contacts">org-contacts</h4>
 <p><code>org-contacts</code> is a package to store contacts in an org file.</p>
-<p>It seems like the package has been somewhat revived in the recent months. It used things like <code>lexical-let</code> when I first found it.</p>
+<p>It seems the package has been somewhat revived in the recent months. It used things like <code>lexical-let</code> when I first found it.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contacts</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">git</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://repo.or.cz/org-contacts.git&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
@@ -4550,14 +4607,15 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-file-open</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">append</span>
-</span></span><span style="display:flex;"><span>	   <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;projects/&#34;</span> <span style="color:#19177c">f</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">f</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;..&#34;</span>))))
-</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">directory-files</span>
-</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects&#34;</span>)))))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>))))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;append</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">string-replace</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">file</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
 </span></span><span style="display:flex;"><span>	     (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
@@ -6179,6 +6237,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">emacs</span> <span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;emms-browser-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-browse-by-artist</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gl&#34;</span> <span style="color:#19177c">&#39;lyrics-fetcher-emms-browser-show-at-point</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gC&#34;</span> <span style="color:#19177c">&#39;lyrics-fetcher-emms-browser-fetch-covers-at-point</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;go&#34;</span> <span style="color:#19177c">&#39;lyrics-fetcher-emms-browser-open-large-cover-at-point</span>)
@@ -6404,6 +6463,90 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ement</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/ement.el&#34;</span>))
+</span></span></code></pre></div><h4 id="telega">Telega</h4>
+<p><a href="https://github.com/zevlg/telega.el/">telega.el</a> is a Telegam client for Emacs.</p>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tdlib-1.8.10</td>
+</tr>
+<tr>
+<td>font-gnu-unifont</td>
+</tr>
+<tr>
+<td>font-gnu-freefont</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">telega</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">telega</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;a l&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#666">3</span> (<span style="color:#19177c">telega</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-doom-colors</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">telega-button-active</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base0</span>)
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;cyan</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">telega-webpage-chat-link</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base0</span>)
+</span></span><span style="display:flex;"><span>			     <span style="color:#008000">:background</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;fg</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-root-mode-map</span> <span style="color:#19177c">telega-chat-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gp&#34;</span> <span style="color:#19177c">telega-prefix-map</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-msg-button-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;SPC&gt;&#34;</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-chat-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-&lt;return&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">newline</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-root-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-chat-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-image-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-webpage-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>))
+</span></span></code></pre></div><p>Building <code>telega-server</code> can create problems. It requires the latest version of <code>tdlib</code>, which isn&rsquo;t available anywhere, but I can inherit the Guix package definition.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-server-build</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-server-libs-prefix</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;guix build tdlib-1.8.10&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">telega-server-build</span> <span style="color:#ba2121">&#34;CC=gcc&#34;</span>))
+</span></span></code></pre></div><p>Setting up the modeline. The default mode string doesn&rsquo;t look great with my other modeline modules, so I override that.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-load-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">telega-mode-line-mode</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">telega-mode-line-string-format</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;[&#34;</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">:eval</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">telega-mode-line-online-status</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">:eval</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">when</span> <span style="color:#19177c">telega-use-tracking-for</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">telega-mode-line-tracking</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">:eval</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">telega-mode-line-unread-unmuted</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">:eval</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">telega-mode-line-mentions</span> <span style="color:#19177c">&#39;messages</span>))
+</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;]&#34;</span>))
+</span></span></code></pre></div><p>Configuring company backends for the chat buffer, as recommended in the manual:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-chat-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">set</span> (<span style="color:#00f">make-local-variable</span> <span style="color:#19177c">&#39;company-backends</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">append</span> (<span style="color:#00f">list</span> <span style="color:#19177c">telega-emoji-company-backend</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-username</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-hashtag</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-markdown-precode</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">when</span> (<span style="color:#19177c">telega-chat-bot-p</span> <span style="color:#19177c">telega-chatbuf--chat</span>)
+</span></span><span style="display:flex;"><span>		 <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-company-botcmd</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">company-mode</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-chat-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-chat-setup</span>)
+</span></span></code></pre></div><p>And custom online status. By default it marks you online when the Emacs frame is active, but I use EXWM, so I change that to when <code>telega.el</code> buffer is active. Otherwise, I&rsquo;m online all the time.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-online-status</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;telega-root-mode</span> <span style="color:#19177c">&#39;telega-chat-mode</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">&#39;telega-image-mode</span> <span style="color:#19177c">&#39;telega-webpage-mode</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">telega-online-status-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-online-status</span>)
 </span></span></code></pre></div><h4 id="off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">srv</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -6749,6 +6892,11 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&lt;ORG-JOURNAL&gt;&#34;</span>)
 </span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;EXWM&#34;</span>) <span style="color:#19177c">name</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&lt;EXWM&gt;&#34;</span>)
+</span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;*Org-Habit&#34;</span>) <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&lt;ORG&gt;&#34;</span>)
+</span></span><span style="display:flex;"><span>   ((<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">get-buffer</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;telega-root-mode</span> <span style="color:#19177c">&#39;telega-chat-mode</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&lt;TELEGA&gt;&#34;</span>)
 </span></span><span style="display:flex;"><span>   (<span style="color:#800">t</span> <span style="color:#19177c">name</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elcord-buffer-details-format-functions</span> ()
@@ -6767,6 +6915,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elcord-buffer-details-format-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elcord-buffer-details-format-functions</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;elcord--try-update-presence</span> <span style="color:#008000">:filter-args</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elcord-update-presence-mask-advice</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;elcord-mode-text-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-chat-mode</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Telega Chat&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;elcord-mode-text-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-root-mode</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Telega Root&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">elcord-mode</span>))
 </span></span></code></pre></div><h4 id="snow">Snow</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">snow</span>
@@ -7423,6 +7573,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#eww">EWW</a></li>
             <li><a href="#erc">ERC</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
+            <li><a href="#telega">Telega</a></li>
             <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
           </ul>
