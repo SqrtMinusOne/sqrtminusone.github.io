@@ -504,7 +504,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">forge</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">deadgrep</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">vc-annonate</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">telega</span>)))
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">telega</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">doc-view</span>)))
 </span></span></code></pre></div><h4 id="avy">Avy</h4>
 <p><a href="https://github.com/abo-abo/avy">Avy</a> is a package that helps navigate Emacs in a tree-like manner.</p>
 <p>References:</p>
@@ -2982,6 +2983,24 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><h4 id="graphql">GraphQL</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">graphql-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><h3 id="documents">Documents</h3>
+<h4 id="docview">DocView</h4>
+<p>Don&rsquo;t know about this.</p>
+<p><code>doc-view</code> doesn&rsquo;t look great with the default <code>doc-view-resolution</code> of 100. 300 is fine, but then it becomes slow.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/doc-view-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">undo-tree-mode</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">doc-view</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">built-in</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doc-view-resolution</span> <span style="color:#666">300</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;doc-view-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/doc-view-setup</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">doc-view-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doc-view-next-line-or-next-page</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doc-view-previous-line-or-previous-page</span>))
 </span></span></code></pre></div><h3 id="x509">x509</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">x509-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -7432,6 +7451,11 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#sql">SQL</a></li>
             <li><a href="#sparql">SPARQL</a></li>
             <li><a href="#graphql">GraphQL</a></li>
+          </ul>
+        </li>
+        <li><a href="#documents">Documents</a>
+          <ul>
+            <li><a href="#docview">DocView</a></li>
           </ul>
         </li>
         <li><a href="#x509">x509</a></li>
