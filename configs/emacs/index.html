@@ -2054,11 +2054,11 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reformatter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="copilot">copilot</h4>
-<p><a href="https://copilot.github.com/">GitHub Copilot</a> is a project of GitHub and OpenAI that provides code completions. It&rsquo;s somewhat controversial in the Emacs community <del>but I opt in</del> so I opt out of using it for now.</p>
+<p><a href="https://copilot.github.com/">GitHub Copilot</a> is a project of GitHub and OpenAI that provides code completions. It&rsquo;s somewhat controversial in the Emacs community but I opt in for now.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/copilot-tab</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">copilot-accept-completion</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">copilot-accept-completion</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">evil-state</span> <span style="color:#19177c">&#39;normal</span>)
 </span></span><span style="display:flex;"><span>		 (<span style="color:#008000">or</span> <span style="color:#19177c">hs-minor-mode</span> <span style="color:#19177c">outline-minor-mode</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">evil-toggle-fold</span>)
@@ -2069,10 +2069,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/copilot.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;dist&#34;</span> <span style="color:#ba2121">&#34;*.el&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">copilot-node-executable</span> <span style="color:#ba2121">&#34;/home/pavel/.conda/envs/general/bin/node&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;company-active-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;backtab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>)
@@ -2242,7 +2242,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.vue&#34;</span> <span style="color:#19177c">eos</span>) (<span style="color:#00f">buffer-name</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-script-padding</span> <span style="color:#666">0</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-style-padding</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">create-lockfiles</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">create-lockfiles</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-enable-auto-pairing</span> <span style="color:#800">nil</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;web-mode-hook</span> <span style="color:#19177c">&#39;my/web-mode-vue-setup</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;editorconfig-after-apply-functions</span> <span style="color:#19177c">&#39;my/web-mode-vue-setup</span>)
@@ -2747,7 +2748,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">pipenv-projectile-after-switch-function</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#00f">#&#39;</span><span style="color:#19177c">pipenv-projectile-after-switch-extended</span>))
-</span></span></code></pre></div><h4 id="yapf">yapf</h4>
+</span></span></code></pre></div><h4 id="off--yapf"><span class="org-todo done OFF">OFF</span> (OFF) yapf</h4>
 <p><a href="https://github.com/google/yapf">yapf</a> is a formatter for Python files.</p>
 <table>
 <thead>
@@ -2769,6 +2770,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">yapfify</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;JorisE/yapfify&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">yapfify-region</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">yapfify-buffer</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">yapfify-region-or-buffer</span>
@@ -2777,6 +2779,25 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[style]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">based_on_style</span> <span style="color:#666">=</span> <span style="color:#ba2121">facebook</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">column_limit</span> <span style="color:#666">=</span> <span style="color:#ba2121">80</span>
+</span></span></code></pre></div><h4 id="black">black</h4>
+<p><a href="https://github.com/psf/black">black</a> is a formatter for Python files.</p>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python-black</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">python-black</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">python-black-buffer</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">python-black-command</span> <span style="color:#ba2121">&#34;black&#34;</span>))
 </span></span></code></pre></div><h4 id="isort">isort</h4>
 <p><a href="https://github.com/PyCQA/isort">isort</a> is a Python package to sort Python imports.</p>
 <table>
@@ -2805,9 +2826,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;python-mode-map</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;rr&#34;</span> (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-src-edit-buffer-p</span>) (<span style="color:#19177c">org-src-edit-buffer-p</span>))
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">py-isort-buffer</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">yapfify-buffer</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-src-edit-buffer-p</span>) (<span style="color:#19177c">org-src-edit-buffer-p</span>))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">py-isort-buffer</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">python-black-buffer</span>))))
 </span></span></code></pre></div><h4 id="sphinx-doc">sphinx-doc</h4>
 <p>A package to generate sphinx-compatible docstrings.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sphinx-doc</span>
@@ -2881,9 +2903,21 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">set-process-sentinel</span> <span style="color:#19177c">process</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">python-pytest--process-sentinel</span>))))
 </span></span></code></pre></div><h4 id="code-cells">code-cells</h4>
 <p>Support for text with magic comments.</p>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python-jupytext</td>
+</tr>
+</tbody>
+</table>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">code-cells</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">code-cells-mode</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">code-cells-mode</span> <span style="color:#19177c">code-cells-convert-ipynb</span>))
 </span></span></code></pre></div><h4 id="tensorboard">tensorboard</h4>
 <p>A function to start up <a href="https://www.tensorflow.org/tensorboard">TensorBoard</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/tensorboard-buffer</span> <span style="color:#ba2121">&#34;TensorBoard-out&#34;</span>)
@@ -7438,7 +7472,8 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#ein">ein</a></li>
             <li><a href="#pyright">pyright</a></li>
             <li><a href="#pipenv">pipenv</a></li>
-            <li><a href="#yapf">yapf</a></li>
+            <li><a href="#off--yapf"><span class="org-todo done OFF">OFF</span> (OFF) yapf</a></li>
+            <li><a href="#black">black</a></li>
             <li><a href="#isort">isort</a></li>
             <li><a href="#sphinx-doc">sphinx-doc</a></li>
             <li><a href="#pytest">pytest</a></li>
