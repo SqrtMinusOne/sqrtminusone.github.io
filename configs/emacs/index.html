@@ -4856,7 +4856,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><p>I have added this line to yadm&rsquo;s <code>post_alt</code> hook, so tangle is run after <code>yadm alt</code></p>
 <h2 id="applications">Applications</h2>
 <h3 id="dired-1">Dired</h3>
-<p>Dired is a built-in file manager. I currently use it as my primary file manager.</p>
+<p>Dired is a built-in file manager. It&rsquo;s so good that it&rsquo;s strange that, to my knowledge, no one tried to replicate it outside of Emacs.</p>
+<p>I currently use it as my primary file manager.</p>
 <h4 id="basic-config-and-keybindings">Basic config &amp; keybindings</h4>
 <p>My config mostly follows ranger&rsquo;s and vifm&rsquo;s keybindings which I&rsquo;m used to.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">dired</span>
@@ -5191,6 +5192,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-j&#34;</span> <span style="color:#19177c">&#39;vterm-send-down</span>))
 </span></span></code></pre></div><h5 id="subterminal">Subterminal</h5>
 <p>Open a terminal in the lower third of the frame with the <code>`</code> key.</p>
+<p>I guess that&rsquo;s the first Emacs function I wrote!</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;display-buffer-alist</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#ba2121">&#34;vterm-subterminal.*&#34;</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">display-buffer-reuse-window</span>
@@ -5220,7 +5222,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#19177c">&#39;my/toggle-vterm-subteminal</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#19177c">&#39;vterm</span>))
 </span></span></code></pre></div><h5 id="dired-integration">Dired integration</h5>
-<p>A function to get pwd for vterm. Couldn&rsquo;t find a built-in function for some reason, but this seems to be working fine:</p>
+<p>A function to get pwd for vterm. Couldn&rsquo;t find a built-in function for some reason, but this seems work fine:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/vterm-get-pwd</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">vterm--process</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">file-truename</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;/proc/%d/cwd&#34;</span> (<span style="color:#00f">process-id</span> <span style="color:#19177c">vterm--process</span>)))
@@ -5253,7 +5255,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">vterm</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;vterm-mode-hook</span> <span style="color:#19177c">&#39;with-editor-export-editor</span>))
-</span></span></code></pre></div><h4 id="eshell">Eshell</h4>
+</span></span></code></pre></div><h4 id="eshell">eshell</h4>
 <p>A shell written in Emacs lisp. I don&rsquo;t use it as of now, but keep the config just in case.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/configure-eshell</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-pre-command-hook</span> <span style="color:#19177c">&#39;eshell-save-some-history</span>)
@@ -5316,7 +5318,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/slow-ssh</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#19177c">&#39;aweshell-dedicated-toggle</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#19177c">&#39;eshell</span>))
-</span></span></code></pre></div><h4 id="shell-1">Shell</h4>
+</span></span></code></pre></div><h4 id="shell-1">shell</h4>
 <p>Interactive subshell (<code>M-x shell</code>) is a way to run commands with input and output through an Emacs buffer.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/setup-shell</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">comint-use-prompt-regexp</span> <span style="color:#800">t</span>)
@@ -5566,7 +5568,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </tr>
 </tbody>
 </table>
-<p>It seems like the tool <a href="https://repology.org/project/rdrview/versions">isn&rsquo;t available</a> in a whole lot of package repositories, but it&rsquo;s pretty easy to compile. I&rsquo;ve put together a <a href="https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm">Guix definition</a>, which <em>one day</em> I&rsquo;ll submit to upstream.</p>
+<p>It seems like the tool <a href="https://repology.org/project/rdrview/versions">isn&rsquo;t available</a> in a whole lot of package repositories, but it&rsquo;s pretty easy to compile. I&rsquo;ve put together a <a href="https://github.com/SqrtMinusOne/channel-q/blob/master/rdrview.scm">Guix definition</a>, which <em>one day</em> I&rsquo;ll submit to the upstream.</p>
 <h5 id="integrating-rdrview-with-emacs">Integrating rdrview with Emacs</h5>
 <p>Let&rsquo;s start by integrating <code>rdrview</code> with Emacs. In the general case, we want to fetch both metadata and the actual content from the page.</p>
 <p>However, the interface of <code>rdrview</code> is a bit awkward in this part, so we have the following options:</p>
@@ -6405,12 +6407,13 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">alists</span>)))
 </span></span></code></pre></div><h4 id="ytel">ytel</h4>
 <p><a href="https://github.com/gRastello/ytel">ytel</a> is a YouTube (actually Invidious) frontend, which lets one search YouTube (whereas the setup with elfeed just lets one view the pre-defined subscriptions).</p>
+<h5 id="package-config">Package config</h5>
 <p>The package doesn&rsquo;t provide evil bindings, so I define my own.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ytel</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ytel</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ytel-invidious-api-url</span> <span style="color:#ba2121">&#34;https://watch.thekitty.zone/&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ytel-invidious-api-url</span> <span style="color:#ba2121">&#34;https://invidio.xamh.de/&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;ytel-mode-map</span>
@@ -6419,7 +6422,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel-search-next-page</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel-search-previous-page</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ytel-add-emms</span>))
-</span></span></code></pre></div><p>And here is the same kind of integration with EMMS as in the elfeed setup:</p>
+</span></span></code></pre></div><h5 id="emms-integration">EMMS integration</h5>
+<p>And here is the same kind of integration with EMMS as in the elfeed setup:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;emms</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">define-emms-source</span> <span style="color:#19177c">ytel</span> (<span style="color:#19177c">video</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">track</span> (<span style="color:#19177c">emms-track</span>
@@ -6432,17 +6436,93 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-add-emms</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">emms-add-ytel</span> (<span style="color:#19177c">ytel-get-current-video</span>)))
-</span></span></code></pre></div><p>Also, a function to copy a URL to the video under cursor.</p>
+</span></span></code></pre></div><h5 id="choosing-instances">Choosing instances</h5>
+<p>Invidious instances aren&rsquo;t particularly reliable, but there plenty of them, and there&rsquo;s an API at <code>invidious.io</code> that returns the available instances and their health, so we can use that.</p>
+<p>Inspired by <a href="https://github.com/grastello/ytel/issues/17#issuecomment-801745429">this comment</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/invidious-instances-url</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;https://api.invidious.io/instances.json?pretty=1&amp;sort_by=health&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-instances-fetch-json</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Fetch list of invidious instances as json, sorted by health.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span>
+</span></span><span style="display:flex;"><span>      ((<span style="color:#19177c">url-request-method</span> <span style="color:#ba2121">&#34;GET&#34;</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">url-request-extra-headers</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;Accept&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;application/json&#34;</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">url-retrieve-synchronously</span> <span style="color:#19177c">invidious-instances-url</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">re-search-forward</span> <span style="color:#ba2121">&#34;^$&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">json-object-type</span> <span style="color:#19177c">&#39;alist</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">json-array-type</span> <span style="color:#19177c">&#39;list</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">json-key-type</span> <span style="color:#19177c">&#39;string</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">json-read</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-instances-alist-from-json</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Make the json of invidious instances into an alist.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">jsonlist</span> (<span style="color:#19177c">my/ytel-instances-fetch-json</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">inst</span> ()))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> <span style="color:#19177c">jsonlist</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">push</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;https://&#34;</span> (<span style="color:#19177c">caar</span> <span style="color:#19177c">jsonlist</span>)) <span style="color:#19177c">inst</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">jsonlist</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">jsonlist</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">nreverse</span> <span style="color:#19177c">inst</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-choose-instance</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Prompt user to choose an invidious instance to use.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ytel-invidious-api-url</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">or</span> (<span style="color:#008000">condition-case</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Using instance: &#34;</span>
+</span></span><span style="display:flex;"><span>				 (<span style="color:#19177c">cl-subseq</span> (<span style="color:#19177c">my/ytel-instances-alist-from-json</span>) <span style="color:#666">0</span> <span style="color:#666">11</span>) <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;confirm&#34;</span> <span style="color:#ba2121">&#34;https://&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	    <span style="color:#ba2121">&#34;https://invidious.synopyta.org&#34;</span>)))
+</span></span></code></pre></div><h5 id="some-fixes">Some fixes</h5>
+<p>At some point in the last 2 years, Invidious started to return videos with <code>null</code> fields. I have no idea what causes that, but I suspect it&rsquo;s related to YouTube Music.</p>
+<p><code>ytel</code> hasn&rsquo;t been updated in these two years, so it doesn&rsquo;t account for that change.</p>
+<p>So, let&rsquo;s skip videos with null titles.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-draw--buffer-nil-videos-fix</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">current-line</span>      (<span style="color:#19177c">line-number-at-pos</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">erase-buffer</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setf</span> <span style="color:#19177c">header-line-format</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;Search results for &#34;</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">propertize</span> <span style="color:#19177c">ytel-search-term</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;ytel-video-published-face</span>)
+</span></span><span style="display:flex;"><span>				  <span style="color:#ba2121">&#34;, page &#34;</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">ytel-current-page</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">seq-do</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">v</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">ytel--insert-video</span> <span style="color:#19177c">v</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">v</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">ytel-video-title</span> <span style="color:#19177c">v</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">ytel-videos</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ytel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel--draw-buffer</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ytel-draw--buffer-nil-videos-fix</span>))
+</span></span></code></pre></div><p>And render other potentially <code>null</code> fields as &ldquo;unknown&rdquo;.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel--format-unknown-fix</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">car</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;unknown   &#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ytel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel--format-video-length</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ytel--format-unknown-fix</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel--format-video-published</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ytel--format-unknown-fix</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ytel--format-video-views</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ytel--format-unknown-fix</span>))
+</span></span></code></pre></div><h5 id="some-functions">Some functions</h5>
+<p>Also, a function to copy a URL to the video under cursor.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-kill-url</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">kill-new</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;https://www.youtube.com/watch?v=&#34;</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">ytel-video-id</span> (<span style="color:#19177c">ytel-get-current-video</span>)))))
-</span></span></code></pre></div><h4 id="wallabag">wallabag</h4>
+</span></span></code></pre></div><h4 id="wallabag"><span class="org-todo done OFF">OFF</span> wallabag</h4>
 <p><a href="https://github.com/wallabag/wallabag">Wallabag</a> is a self-hosted read-it-later project. I&rsquo;m not yet sold on integrating it in my workflow, but let&rsquo;s keep it here for now.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-01-24 Tue&gt;</span></span>: well, that didn&rsquo;t work out. Running Tiny Tiny RSS &amp; syncing it with elfeed seems to cover most of my read-it-later use cases.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">wallabag</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;chenyanming/wallabag.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> <span style="color:#ba2121">&#34;default.css&#34;</span> <span style="color:#ba2121">&#34;emojis.alist&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">wallabag</span> <span style="color:#19177c">wallabag-add-entry</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-host</span> <span style="color:#ba2121">&#34;https://wallabag.sqrtminusone.xyz&#34;</span>)
@@ -7621,8 +7701,8 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         <li><a href="#shells">Shells</a>
           <ul>
             <li><a href="#vterm">vterm</a></li>
-            <li><a href="#eshell">Eshell</a></li>
-            <li><a href="#shell-1">Shell</a></li>
+            <li><a href="#eshell">eshell</a></li>
+            <li><a href="#shell-1">shell</a></li>
           </ul>
         </li>
         <li><a href="#managing-dotfiles">Managing dotfiles</a>
@@ -7651,7 +7731,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#notmuch">Notmuch</a></li>
             <li><a href="#emms">EMMS</a></li>
             <li><a href="#ytel">ytel</a></li>
-            <li><a href="#wallabag">wallabag</a></li>
+            <li><a href="#wallabag"><span class="org-todo done OFF">OFF</span> wallabag</a></li>
             <li><a href="#eww">EWW</a></li>
             <li><a href="#erc">ERC</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
