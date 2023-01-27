@@ -2057,8 +2057,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p><a href="https://copilot.github.com/">GitHub Copilot</a> is a project of GitHub and OpenAI that provides code completions. It&rsquo;s somewhat controversial in the Emacs community but I opt in for now.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/copilot-tab</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">copilot-accept-completion</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">copilot-accept-completion</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">evil-state</span> <span style="color:#19177c">&#39;normal</span>)
 </span></span><span style="display:flex;"><span>		 (<span style="color:#008000">or</span> <span style="color:#19177c">hs-minor-mode</span> <span style="color:#19177c">outline-minor-mode</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">evil-toggle-fold</span>)
@@ -3865,7 +3865,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
 </span></span><span style="display:flex;"><span>		    (<span style="color:#008000">save-excursion</span>
 </span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> <span style="color:#19177c">n</span> (<span style="color:#00f">point-min</span>)))
 </span></span><span style="display:flex;"><span>			    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
 </span></span><span style="display:flex;"><span>			      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>			      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
