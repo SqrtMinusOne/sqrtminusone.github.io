@@ -4881,6 +4881,9 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>	      (<span style="color:#008000">setq</span> <span style="color:#19177c">truncate-lines</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">visual-line-mode</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">my/is-termux</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;dired-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-hide-details-mode</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;dired-mode-map</span>
@@ -6986,6 +6989,21 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">atomic-chrome-start-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><h4 id="pinentry">Pinentry</h4>
+<p>Emacs-based pinentry works great on Termux.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">pinentry</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> <span style="color:#19177c">my/is-termux</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;GPG_AGENT_INFO&#34;</span> <span style="color:#800">nil</span>) <span style="color:#408080;font-style:italic">;; use emacs pinentry</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">auth-source-debug</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epg-gpg-program</span> <span style="color:#ba2121">&#34;gpg2&#34;</span>) <span style="color:#408080;font-style:italic">;; not necessary</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;epa-file</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">epa-file-enable</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epa-pinentry-mode</span> <span style="color:#19177c">&#39;loopback</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epg-pinentry-mode</span> <span style="color:#19177c">&#39;loopback</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">pinentry-start</span>))
 </span></span></code></pre></div><h3 id="productivity">Productivity</h3>
 <h4 id="pomm">pomm</h4>
 <p>My package for doing Pomodoro timer.</p>
@@ -7768,6 +7786,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#proced">proced</a></li>
             <li><a href="#guix">Guix</a></li>
             <li><a href="#atomic-chrome">Atomic Chrome</a></li>
+            <li><a href="#pinentry">Pinentry</a></li>
           </ul>
         </li>
         <li><a href="#productivity">Productivity</a>
