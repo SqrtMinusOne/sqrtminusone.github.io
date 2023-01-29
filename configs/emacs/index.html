@@ -1205,6 +1205,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">tool-bar-mode</span> <span style="color:#666">-1</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">menu-bar-mode</span> <span style="color:#666">-1</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">scroll-bar-mode</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">when</span> <span style="color:#19177c">my/is-termux</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">menu-bar-mode</span> <span style="color:#666">-1</span>))
 </span></span></code></pre></div><p>Transparency. Not setting it now, as I&rsquo;m using <a href="/configs/desktop/#picom">picom</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (set-frame-parameter (selected-frame) &#39;alpha &#39;(90 . 90))</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-to-list &#39;default-frame-alist &#39;(alpha . (90 . 90)))</span>
@@ -1261,6 +1264,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p><a href="https://github.com/rnkn/olivetti">Olivetti</a> is a package that limits the current text body width. It&rsquo;s pretty nice to use when writing texts.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">olivetti</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">display-graphic-p</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-default</span> <span style="color:#19177c">olivetti-body-width</span> <span style="color:#666">86</span>))
 </span></span></code></pre></div><h4 id="keycast">Keycast</h4>
@@ -1282,7 +1286,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p>My colorscheme of choice.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">doom-themes</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-themes-enable-bold</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#19177c">doom-themes-enable-italic</span> <span style="color:#800">t</span>)
@@ -1764,7 +1767,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">tree-sitter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> ((<span style="color:#19177c">typescript-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">my/tree-sitter-if-not-mmm</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">js-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">my/tree-sitter-if-not-mmm</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">tree-sitter-mode</span>)
@@ -1784,6 +1787,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">dap-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">dap-debug</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-enable-dap-auto-configure</span> <span style="color:#800">nil</span>)
@@ -2068,7 +2072,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">copilot</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/copilot.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;dist&#34;</span> <span style="color:#ba2121">&#34;*.el&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">copilot-mode</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -3136,7 +3140,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">org-directory</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">org-directory</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-startup-indented</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-startup-indented</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-return-follows-link</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-src-tab-acts-natively</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
@@ -3185,9 +3189,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ox-extras-activate</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">latex-header-blocks</span> <span style="color:#19177c">ignore-headlines</span>)))
 </span></span></code></pre></div><h4 id="ol-notmuch">ol-notmuch</h4>
 <p><a href="https://git.sr.ht/~tarsius/ol-notmuch">ol-notmuch</a> is a package that adds Org links to notmuch messages.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ol-notmuch</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">use-package</span> <span style="color:#19177c">ol-notmuch</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span> <span style="color:#19177c">notmuch</span>)))
 </span></span></code></pre></div><h4 id="org-tempo">org-tempo</h4>
 <p><code>org-tempo</code> is a convinient package that provides snippets for various org blocks.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
@@ -3219,7 +3224,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jupyter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>)))
 </span></span></code></pre></div><p>Refresh kernelspecs.</p>
 <p>Kernelspecs by default are hashed, so even switching Anaconda environments doesn&rsquo;t change the kernel (i.e. kernel from the first environment is run after the switch to the second one).</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/jupyter-refresh-kernelspecs</span> ()
@@ -3282,7 +3287,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-do-load-languages</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">&#39;org-babel-load-languages</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#666">&#39;</span>((<span style="color:#19177c">emacs-lisp</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#666">`</span>((<span style="color:#19177c">emacs-lisp</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">python</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">sql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; (typescript .t)</span>
@@ -3290,7 +3295,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">shell</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">plantuml</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">octave</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#666">,@</span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#666">&#39;</span>((<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">sparql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-babel-after-execute-hook</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>))
@@ -5138,9 +5143,11 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <li><a href="https://github.com/akermu/emacs-libvterm">emacs-libvterm repo</a></li>
 </ul>
 <h5 id="configuration-1">Configuration</h5>
-<p>I use the package from the Guix repository to avoid building libvterm.</p>
+<p>On Guix it makes more sense to use the Guix package to avoid building the vterm module, but obviously not an option on termux, hence this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> <span style="color:#19177c">my/is-termux</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">straight-use-package</span> <span style="color:#19177c">&#39;vterm</span>))
+</span></span></code></pre></div><p>The actual config:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">vterm</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; :straight t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">vterm</span> <span style="color:#19177c">vterm-other-window</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">vterm-kill-buffer-on-exit</span> <span style="color:#800">t</span>)
@@ -5385,7 +5392,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>Using my own fork until the modifications are merged into master.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/elfeed&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#19177c">my/remote-server</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">elfeed</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ae&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">elfeed-summary</span>)
@@ -5511,6 +5518,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p><a href="https://github.com/SqrtMinusOne/elfeed-sync">elfeed-sync</a> is my package to sync elfeed with <a href="https://tt-rss.org/">tt-rss</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed-sync</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/elfeed-sync&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">elfeed</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">elfeed-sync-mode</span>)
@@ -6174,13 +6182,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emms</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">emms-smart-browse</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">emms-browser</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">emms-add-url</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">emms-add-file</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">emms-add-find</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;as&#34;</span>
@@ -6642,6 +6649,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </table>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">telega</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">telega</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;a l&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#666">3</span> (<span style="color:#19177c">telega</span>)))
@@ -6880,6 +6888,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>A package to manage docker containers from Emacs.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">docker</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">docker</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ao&#34;</span> <span style="color:#19177c">&#39;docker</span>))
@@ -6963,6 +6972,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>An Emacs package to help managing GNU Guix.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">guix</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">guix</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ag&#34;</span> <span style="color:#19177c">&#39;guix</span>)
@@ -6973,7 +6983,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><h4 id="atomic-chrome">Atomic Chrome</h4>
 <p><a href="https://github.com/alpha22jp/atomic-chrome">Atomic Chrome</a> is an extension that allows to edit browser text fields in Emacs. Despite its name, it also works for Firefox with <a href="https://ghosttext.fregante.com/welcome/">GhostText</a>, which is what I use.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">atomic-chrome</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">atomic-chrome-start-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="productivity">Productivity</h3>
