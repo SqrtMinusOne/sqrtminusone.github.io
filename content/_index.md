@@ -12,7 +12,7 @@ Graduate student of Saint-Petersurg State Electrotechnical University, Russia.
 ### Links
 * [e-mail](mailto:thexcloud@gmail.com)
 * [GitHub](https://github.com/SqrtMinusOne)
-* [Mastodon](https://emacs.ch/@sqrtminusone)
+* <a rel="me" href="https://emacs.ch/@sqrtminusone">Mastodon</a>
 * [Telegram](https://t.me/SqrtMinusTwo)
 * [Reddit](https://www.reddit.com/user/XCapitan_1)
 * [Twitter](https://twitter.com/SqrtMinusTwo)
