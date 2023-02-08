@@ -846,6 +846,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">global-undo-tree-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">undo-tree-visualizer-diff</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">undo-tree-visualizer-timestamps</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">undo-tree-auto-save-history</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#19177c">&#39;undo-tree-visualize</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">fset</span> <span style="color:#19177c">&#39;undo-auto-amalgamate</span> <span style="color:#19177c">&#39;ignore</span>)
@@ -4426,7 +4427,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-contacts</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">git</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;https://repo.or.cz/org-contacts.git&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-contacts</span> <span style="color:#19177c">org-contacts-db</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-contacts-files</span> (<span style="color:#00f">list</span>
 </span></span><span style="display:flex;"><span>			    (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/contacts.org&#34;</span>))))
@@ -4438,6 +4439,19 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>:EMAIL+:   pvkorytov@etu.ru
 </span></span><span style="display:flex;"><span>:BIRTHDAY: [1998-08-14]
 </span></span><span style="display:flex;"><span>:END:
+</span></span></code></pre></div><h4 id="calendar-view">Calendar view</h4>
+<p><a href="https://github.com/kiwanami/emacs-calfw">calfw</a> is a nice package that displays calendars in Emacs.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/calfw-setup-buffer</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">calfw</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;cfw:calendar-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/calfw-setup-buffer</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">calfw-org</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">calfw</span> <span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="ui">UI</h3>
 <h4 id="off--instant-equations-preview"><span class="org-todo done OFF">OFF</span> (OFF) Instant equations preview</h4>
 <p>Instant math previews for org mode.</p>
@@ -7681,6 +7695,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#org-roam-1">Org Roam</a></li>
             <li><a href="#review-workflow-1">Review workflow</a></li>
             <li><a href="#contacts">Contacts</a></li>
+            <li><a href="#calendar-view">Calendar view</a></li>
           </ul>
         </li>
         <li><a href="#ui">UI</a>
