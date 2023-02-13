@@ -2588,6 +2588,38 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">subed-mode-map</span> <span style="color:#19177c">subed-vtt-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gp&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">subed-mpv-toggle-pause</span>))
+</span></span></code></pre></div><h4 id="ltex">LTeX</h4>
+<p><a href="https://github.com/valentjn/ltex-ls">ltex-ls</a> is a tool that wraps LanguageTool into a language server.</p>
+<p>It takes maybe 10 seconds to run on my Master&rsquo;s thesis file (<code>M-x count words</code>: 13453 words and 117566 characters), but it&rsquo;s totally worth it. And it&rsquo;s much faster on smaller files. The good thing is that it supports markup syntaxes like Org and Markdown, whereas LanguageTool by itself produces a lot of false positives on these files.</p>
+<p>It shouldn&rsquo;t be too hard to package that for guix, but I&rsquo;ve installed the nix version for now.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lsp-ltex</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">lsp</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-version</span> <span style="color:#ba2121">&#34;15.2.0&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-check-frequency</span> <span style="color:#ba2121">&#34;save&#34;</span>))
+</span></span></code></pre></div><p>A function to switch the current language.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ltex-lang</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-language</span> (<span style="color:#00f">completing-read</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#ba2121">&#34;Language: &#34;</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;en-US&#34;</span> <span style="color:#ba2121">&#34;ru-RU&#34;</span> <span style="color:#ba2121">&#34;de-DE&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">lsp-workspace-restart</span> (<span style="color:#19177c">lsp--read-workspace</span>)))
+</span></span></code></pre></div><p>Check whether it&rsquo;s necessary to run LTeX:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ltex-need-p</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file-name</span> (<span style="color:#00f">buffer-file-name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">null</span> <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/home/pavel/&#34;</span> (<span style="color:#00f">+</span> <span style="color:#19177c">alnum</span>) <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">literal</span> <span style="color:#19177c">org-directory</span>) <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;roam&#34;</span> <span style="color:#ba2121">&#34;inbox-notes&#34;</span> <span style="color:#ba2121">&#34;literature-notes&#34;</span> <span style="color:#ba2121">&#34;journal&#34;</span>)) <span style="color:#19177c">file-name</span>) <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">literal</span> <span style="color:#19177c">org-directory</span>)) <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#800">t</span> <span style="color:#800">t</span>))))
+</span></span></code></pre></div><p>To use it in <code>text-mode-hook</code></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/text-mode-lsp-maybe</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/ltex-need-p</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">lsp</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;text-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/text-mode-lsp-maybe</span>)
 </span></span></code></pre></div><h4 id="languagetool">LanguageTool</h4>
 <p>LanguageTool is a great offline spell checker. For some reason, the download link is nowhere to be found on the home page, so it is listed in the references as well.</p>
 <p>References:</p>
@@ -3158,7 +3190,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-crypt</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-crypt-use-before-save-magic</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-tags-exclude-from-inheritance</span> (<span style="color:#008000">quote</span> (<span style="color:#ba2121">&#34;crypt&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-tags-exclude-from-inheritance</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;crypt&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-crypt-key</span> <span style="color:#ba2121">&#34;C1EC867E478472439CC82410DE004F32AFA00205&#34;</span>))
 </span></span></code></pre></div><p>This enables encryption for Org segments tagged <code>:crypt:</code>.</p>
 <p>Another way to encrypt Org files is to save them with the extension <code>.org.gpg</code>. However, by default <a href="https://www.gnu.org/software/emacs/manual/html_mono/epa.html">EPA</a> always prompts for the key, which is not what I want when there is only one key to select. Hence the following advice:</p>
@@ -4135,6 +4167,71 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c i&#34;</span> <span style="color:#19177c">&#39;org-roam-node-insert</span>))
+</span></span></code></pre></div><h5 id="backlinks-count-display">Backlinks count display</h5>
+<p>Occasionally I want to see how much backlinks does a particular page have.</p>
+<p>This idea came to my mind because I occasionally write a note in the following form:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>According to &lt;This Person&gt;, &lt;some opinion&gt;
+</span></span></code></pre></div><p>And I have a note called <code>#Personalities</code>, which looks like that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Philosophers:
+</span></span><span style="display:flex;"><span>- &lt;This Person&gt;
+</span></span><span style="display:flex;"><span>- &lt;That Person&gt;
+</span></span><span style="display:flex;"><span>- &lt;Another Person&gt;
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>So I&rsquo;m curious to see how many notes do I have linked to each:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Philosophers:
+</span></span><span style="display:flex;"><span>- &lt;This Person&gt; [30]
+</span></span><span style="display:flex;"><span>- &lt;That Person&gt; [40]
+</span></span><span style="display:flex;"><span>- &lt;Another Person&gt; [20]
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>The obvious way to implement that is via <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html">overlays</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defface</span> <span style="color:#19177c">my/org-roam-count-overlay-face</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>((<span style="color:#800">t</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">tooltip</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Face for Org Roam count overlay.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-roam--count-overlay-make</span> (<span style="color:#19177c">pos</span> <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">overlay-value</span> (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">propertize</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%d&#34;</span> <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>			  <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;my/org-roam-count-overlay-face</span>)
+</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34; &#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">ov</span> (<span style="color:#00f">make-overlay</span> <span style="color:#19177c">pos</span> <span style="color:#19177c">pos</span> (<span style="color:#00f">current-buffer</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">overlay-put</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;roam-backlinks-count</span> <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">overlay-put</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;priority</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">overlay-put</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;after-string</span> <span style="color:#19177c">overlay-value</span>)))
+</span></span></code></pre></div><p>Also a function to remove them:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-roam--count-overlay-remove-all</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">ov</span> (<span style="color:#00f">overlays-in</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">overlay-get</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;roam-backlinks-count</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">delete-overlay</span> <span style="color:#19177c">ov</span>))))
+</span></span></code></pre></div><p>Now we can iterate over all roam links in the buffer, count the number of backlinks via <code>org-roam-db-query</code> and invoke <code>my/org-roam--count-overlay-make</code> if that number is greater than zero:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-roam--count-overlay-make-all</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/org-roam--count-overlay-remove-all</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-element-map</span> (<span style="color:#19177c">org-element-parse-buffer</span>) <span style="color:#19177c">&#39;link</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">string-equal</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;id&#34;</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">let*</span> ((<span style="color:#19177c">id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">count</span> (<span style="color:#19177c">caar</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">org-roam-db-query</span>
+</span></span><span style="display:flex;"><span>			[<span style="color:#008000">:select</span> (<span style="color:#00f">funcall</span> <span style="color:#19177c">count</span> <span style="color:#19177c">source</span>)
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:from</span> <span style="color:#19177c">links</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:where</span> (<span style="color:#00f">=</span> <span style="color:#19177c">dest</span> <span style="color:#19177c">$s1</span>)
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:and</span> (<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#ba2121">&#34;id&#34;</span>)]
+</span></span><span style="display:flex;"><span>			<span style="color:#19177c">id</span>))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">when</span> (<span style="color:#00f">&lt;</span> <span style="color:#666">0</span> <span style="color:#19177c">count</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">my/org-roam--count-overlay-make</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:end</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">count</span>)))))))
+</span></span></code></pre></div><p>And a minor mode to toggle the display in a particular <code>org-roam</code> buffer.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">define-minor-mode</span> <span style="color:#19177c">my/org-roam-count-overlay-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Display backlink count for org-roam links.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after-hook</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">my/org-roam-count-overlay-mode</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">my/org-roam--count-overlay-make-all</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-save-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-roam--count-overlay-make-all</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-roam--count-overlay-remove-all</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;after-save-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-roam--count-overlay-remove-all</span> <span style="color:#800">t</span>)))
 </span></span></code></pre></div><h5 id="org-roam-ui">Org Roam UI</h5>
 <p>A browser frontend to visualize the Roam database as a graph.</p>
 <p>Actually, I don&rsquo;t find this quite as useful as structure nodes, because over time my graph grew somewhat convoluted. But it looks impressive.</p>
@@ -7575,6 +7672,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#markdown">Markdown</a></li>
             <li><a href="#plantuml">PlantUML</a></li>
             <li><a href="#subtitles">Subtitles</a></li>
+            <li><a href="#ltex">LTeX</a></li>
             <li><a href="#languagetool">LanguageTool</a></li>
             <li><a href="#reverso">Reverso</a></li>
           </ul>
