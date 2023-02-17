@@ -205,7 +205,7 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>*background: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>*foreground: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>)&gt;&gt;<span style="">
 </span></span></span></code></pre></div><p>So, whenever a program is capable of reading <code>.Xresources</code>, it will get colors from there, otherwise, it will get colors from noweb expressions in the literate config. Thus, in both cases, the color is set in a single Org Mode table.</p>
-<h4 id="fonts"><span class="org-todo done OFF">OFF</span> Fonts</h4>
+<h4 id="fonts">Fonts</h4>
 <p>Also, Xresources are used to set <code>Xft</code> settings. Unfortunately, the DPI setting has to be unique for each machine, which means I cannot commit <code>Xresources</code> to the repo.</p>
 <p><a id="code-snippet--get-dpi"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">hostname</span> (<span style="color:#00f">system-name</span>)))
@@ -213,7 +213,7 @@
 </span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;eminence&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;indigo&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#800">t</span> <span style="color:#666">96</span>)))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>! Xft.dpi: &lt;&lt;get-dpi()&gt;&gt;<span style="">
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Xft.dpi: &lt;&lt;get-dpi()&gt;&gt;<span style="">
 </span></span></span></code></pre></div><h3 id="themes">Themes</h3>
 <p>A few programs I use to customize the apperance are listed below.</p>
 <table>
@@ -250,37 +250,13 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Net/ThemeName <span style="color:#ba2121">&#34;Matcha-dark-azul&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Net/IconThemeName <span style="color:#ba2121">&#34;Papirus-Dark&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/DecorationLayout <span style="color:#ba2121">&#34;menu:minimize,maximize,close&#34;</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/FontName <span style="color:#ba2121">&#34;Sans 14&#34;</span><span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/FontName <span style="color:#ba2121">&#34;Sans 10&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/MonospaceFontName <span style="color:#ba2121">&#34;JetBrainsMono Nerd Mono 12&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/CursorThemeName <span style="color:#ba2121">&#34;Adwaita&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/Antialias <span style="color:#666">1</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/Hinting <span style="color:#666">0</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Xft/HintStyle <span style="color:#ba2121">&#34;hintnone&#34;</span><span style="">
-</span></span></span></code></pre></div><h3 id="fontconfig">Fontconfig</h3>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#bc7a00">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#bc7a00">&lt;!DOCTYPE fontconfig SYSTEM &#34;fonts.dtd&#34;&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;fontconfig&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;match&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;edit</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#34;pixelsize&#34;</span><span style="color:#008000;font-weight:bold">&gt;&lt;double&gt;</span>16<span style="color:#008000;font-weight:bold">&lt;/double&gt;&lt;/edit&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;/match&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;match</span> <span style="color:#7d9029">target=</span><span style="color:#ba2121">&#34;pattern&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;test</span> <span style="color:#7d9029">qual=</span><span style="color:#ba2121">&#34;any&#34;</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#34;family&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000;font-weight:bold">&lt;string&gt;</span>monospace<span style="color:#008000;font-weight:bold">&lt;/string&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;/test&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;edit</span> <span style="color:#7d9029">binding=</span><span style="color:#ba2121">&#34;strong&#34;</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#34;family&#34;</span> <span style="color:#7d9029">mode=</span><span style="color:#ba2121">&#34;assign&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000;font-weight:bold">&lt;string&gt;</span>DejaVu Sans Mono<span style="color:#008000;font-weight:bold">&lt;/string&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;/edit&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;/match&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;match</span> <span style="color:#7d9029">target=</span><span style="color:#ba2121">&#34;pattern&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;test</span> <span style="color:#7d9029">qual=</span><span style="color:#ba2121">&#34;any&#34;</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#34;family&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000;font-weight:bold">&lt;string&gt;</span>sans-serif<span style="color:#008000;font-weight:bold">&lt;/string&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;/test&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;edit</span> <span style="color:#7d9029">binding=</span><span style="color:#ba2121">&#34;strong&#34;</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#34;family&#34;</span> <span style="color:#7d9029">mode=</span><span style="color:#ba2121">&#34;assign&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000;font-weight:bold">&lt;string&gt;</span>DejaVu Sans<span style="color:#008000;font-weight:bold">&lt;/string&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;/edit&gt;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;/match&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;/fontconfig&gt;</span>
-</span></span></code></pre></div><h3 id="mime">MIME</h3>
+</span></span></span></code></pre></div><h3 id="mime">MIME</h3>
 <p>Setting the default MIME types</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Default Applications]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">text/html</span><span style="color:#666">=</span><span style="color:#ba2121">firefox.desktop</span>
@@ -4075,11 +4051,10 @@
         <li><a href="#xresources">Xresources</a>
           <ul>
             <li><a href="#colors-in-xresources">Colors in Xresources</a></li>
-            <li><a href="#fonts"><span class="org-todo done OFF">OFF</span> Fonts</a></li>
+            <li><a href="#fonts">Fonts</a></li>
           </ul>
         </li>
         <li><a href="#themes">Themes</a></li>
-        <li><a href="#fontconfig">Fontconfig</a></li>
         <li><a href="#mime">MIME</a></li>
         <li><a href="#device-specific-settings">Device-specific settings</a></li>
       </ul>
