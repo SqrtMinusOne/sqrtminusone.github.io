@@ -1421,7 +1421,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">x-list-fonts</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font&#34;</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">set-frame-font</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font 10&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">set-frame-font</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font 13&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Install JetBrainsMono Nerd Font!&#34;</span>)))
 </span></span></code></pre></div><p>To make the icons work (e.g. in the Doom Modeline), run <code>M-x all-the-icons-install-fonts</code>. The package definition is somewhere later in the config.</p>
 <h4 id="ligatures">Ligatures</h4>
@@ -6315,7 +6315,9 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-player-mpd-connect</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;ww&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wb&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics-toggle-display-on-minibuffer</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wm&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics-toggle-display-on-modeline</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;wm&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-lyrics-toggle-display-on-modeline</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-volume-raise</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">emms-volume-lower</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">emms-browser-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;EMMS&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">emms-playlist-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;EMMS&#34;</span>)
@@ -6472,6 +6474,15 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;emms-playlist-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;quit-window</span>))
+</span></span></code></pre></div><h5 id="setting-volume">Setting volume</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/set-volume</span> (<span style="color:#19177c">value</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;ponymix&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ponymix&#34;</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">if</span> (<span style="color:#00f">&lt;</span> <span style="color:#666">0</span> <span style="color:#19177c">value</span>) <span style="color:#ba2121">&#34;increase&#34;</span> <span style="color:#ba2121">&#34;decrease&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">number-to-string</span> (<span style="color:#00f">abs</span> <span style="color:#19177c">value</span>))
+</span></span><span style="display:flex;"><span>		 <span style="color:#ba2121">&#34;--max-volume&#34;</span> <span style="color:#ba2121">&#34;150&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">emms-volume-change-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/set-volume</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">emms-volume-change-amount</span> <span style="color:#666">5</span>)
 </span></span></code></pre></div><h5 id="emms-and-mpd-fixes">EMMS &amp; mpd Fixes</h5>
 <p><del>Some fixes until I submit a patch.</del> I&rsquo;ve submitted a patch for with these fixes, so I&rsquo;ll remove this section eventually.</p>
 <p>For some reason EMMS doesn&rsquo;t fetch <code>albumartist</code> from MPD. Overriding this function fixes that.</p>
