@@ -2597,6 +2597,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">lsp</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-version</span> <span style="color:#ba2121">&#34;15.2.0&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-check-frequency</span> <span style="color:#ba2121">&#34;save&#34;</span>))
 </span></span></code></pre></div><p>A function to switch the current language.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ltex-lang</span> ()
@@ -2613,6 +2614,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/home/pavel/&#34;</span> (<span style="color:#00f">+</span> <span style="color:#19177c">alnum</span>) <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">literal</span> <span style="color:#19177c">org-directory</span>) <span style="color:#ba2121">&#34;/&#34;</span> (<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;roam&#34;</span> <span style="color:#ba2121">&#34;inbox-notes&#34;</span> <span style="color:#ba2121">&#34;literature-notes&#34;</span> <span style="color:#ba2121">&#34;journal&#34;</span>)) <span style="color:#19177c">file-name</span>) <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">literal</span> <span style="color:#19177c">org-directory</span>)) <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">literal</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">user-emacs-directory</span>))) <span style="color:#19177c">file-name</span>) <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#800">t</span> <span style="color:#800">t</span>))))
 </span></span></code></pre></div><p>To use it in <code>text-mode-hook</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/text-mode-lsp-maybe</span> ()
@@ -3735,7 +3737,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:fetcher</span> <span style="color:#19177c">github</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/org-ql&#34;</span>
-</span></span><span style="display:flex;"><span>		      <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;helm-org-ql.el&#34;</span>))))
+</span></span><span style="display:flex;"><span>		      <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;helm-org-ql.el&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; See https://github.com/alphapapa/org-ql/pull/237</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-ql-regexp-part-ts-time</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">optional</span> <span style="color:#ba2121">&#34;-&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>)))))
 </span></span></code></pre></div><h5 id="tracking-habits">Tracking habits</h5>
 <p>Let&rsquo;s see how this goes.</p>
 <p>References:</p>
@@ -3810,6 +3817,98 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">org-agenda-overriding-header</span> <span style="color:#ba2121">&#34;Habits&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-prefix-format</span> <span style="color:#ba2121">&#34; %i %-12:c&#34;</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-agenda-hide-tags-regexp</span> <span style="color:#ba2121">&#34;.&#34;</span>)))))))
+</span></span></code></pre></div><h5 id="alerts">Alerts</h5>
+<ul>
+<li>Me at 10:00: <em>Open Org Agenga</em> oh, there&rsquo;s a meeting at 15:00</li>
+<li>Me at 14:00: <em>Open Org Agenda</em> oh, there&rsquo;s a meeting at 15:00</li>
+<li>Me at 14:45: Gotta remember to join in 15 minutes</li>
+<li>Me at 14:55: Gotta remember to join in 5 minutes</li>
+<li>Me at 15:05: Sh*t</li>
+</ul>
+<p>Okay, I will set up <del>org-alert</del> some custom alert system.</p>
+<p>I want to have multiple warnings, let it be 10 minutes in advance and 1 minute in advance for now.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert-notify-times</span> <span style="color:#666">&#39;</span>(<span style="color:#666">600</span> <span style="color:#666">60</span>))
+</span></span></code></pre></div><p>And IDK if that makes much sense, but I&rsquo;ll try to avoid re-creating timers. So, here are functions to schedule showing some label at some time and to check whether the label is scheduled:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert--alerts</span> (<span style="color:#00f">make-hash-table</span> <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;equal</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-alert--is-scheduled</span> (<span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Check if LABEL is scheduled to be shown an TIME.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">gethash</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#19177c">my/org-alert--alerts</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-alert--schedule</span> (<span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Schedule LABEL to be shown at TIME, unless it&#39;s already scheduled.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">my/org-alert--is-scheduled</span> <span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">puthash</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">run-at-time</span> <span style="color:#19177c">time</span>
+</span></span><span style="display:flex;"><span>			  <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>			    (<span style="color:#19177c">alert</span> <span style="color:#19177c">label</span>
+</span></span><span style="display:flex;"><span>				   <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;PROXIMITY ALERT&#34;</span>)))
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">my/org-alert--alerts</span>)))
+</span></span></code></pre></div><p>And unschedule items that need to be unscheduled:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-alert-cleanup</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">keys</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Unschedule items that do not appear in KEYS.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">KEYS is a list of cons cells like (&lt;label&gt; . &lt;time&gt;).&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">existing-hash</span> (<span style="color:#00f">make-hash-table</span> <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;equal</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">key</span> <span style="color:#19177c">in</span> <span style="color:#19177c">keys</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">do</span> (<span style="color:#00f">puthash</span> <span style="color:#19177c">key</span> <span style="color:#800">t</span> <span style="color:#19177c">existing-hash</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">key</span> <span style="color:#19177c">being</span> <span style="color:#19177c">the</span> <span style="color:#19177c">hash-keys</span> <span style="color:#19177c">of</span> <span style="color:#19177c">my/org-alert--alerts</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">unless</span> (<span style="color:#00f">gethash</span> <span style="color:#19177c">key</span> <span style="color:#19177c">existing-hash</span>)
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">do</span> (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">cancel-timer</span> (<span style="color:#00f">gethash</span> <span style="color:#19177c">key</span> <span style="color:#19177c">my/org-alert--alerts</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">remhash</span> <span style="color:#19177c">key</span> <span style="color:#19177c">my/org-alert--alerts</span>)))))
+</span></span></code></pre></div><p>And a function to extract the required items with <code>org-ql-query</code> and schedule them:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-alert--update-today-alerts</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">items</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">:select</span> <span style="color:#19177c">&#39;element</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">:from</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#008000">and</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;FUTURE&#34;</span>)
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">ts-active</span> <span style="color:#008000">:from</span> <span style="color:#666">,</span>(<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d %H:%M&#34;</span>)
+</span></span><span style="display:flex;"><span>			       <span style="color:#008000">:to</span> <span style="color:#666">,</span>(<span style="color:#00f">format-time-string</span>
+</span></span><span style="display:flex;"><span>				     <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">time-add</span>
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">current-time</span>)
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span>)))
+</span></span><span style="display:flex;"><span>			       <span style="color:#008000">:with-time</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">:order-by</span> <span style="color:#19177c">&#39;date</span>))
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">scheduled-keys</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">for</span> <span style="color:#19177c">item</span> <span style="color:#19177c">in</span> <span style="color:#19177c">items</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">for</span> <span style="color:#19177c">scheduled</span> <span style="color:#00f">=</span> (<span style="color:#19177c">org-timestamp-to-time</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:scheduled</span> <span style="color:#19177c">item</span>))
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">do</span> (<span style="color:#008000">cl-loop</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">for</span> <span style="color:#19177c">before-time</span> <span style="color:#19177c">in</span> <span style="color:#19177c">my/org-alert-notify-times</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">for</span> <span style="color:#19177c">label</span> <span style="color:#00f">=</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s at %s [%s min. remaining]&#34;</span>
+</span></span><span style="display:flex;"><span>			     (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%H:%M&#34;</span> <span style="color:#19177c">scheduled</span>)
+</span></span><span style="display:flex;"><span>			     (<span style="color:#00f">number-to-string</span> (<span style="color:#00f">/</span> <span style="color:#19177c">before-time</span> <span style="color:#666">60</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">for</span> <span style="color:#19177c">time</span> <span style="color:#00f">=</span> (<span style="color:#19177c">time-convert</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">+</span> (<span style="color:#19177c">time-convert</span> <span style="color:#19177c">scheduled</span> <span style="color:#19177c">&#39;integer</span>) (<span style="color:#00f">-</span> <span style="color:#19177c">before-time</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#008000">do</span> (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">my/org-alert--schedule</span> <span style="color:#19177c">label</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">label</span> <span style="color:#19177c">time</span>) <span style="color:#19177c">scheduled-keys</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-alert-cleanup</span> <span style="color:#19177c">scheduled-keys</span>)))
+</span></span></code></pre></div><p>Let&rsquo;s wrap it into a minor mode:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert--timer</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">define-minor-mode</span> <span style="color:#19177c">my/org-alert-mode</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:global</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after-hook</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">my/org-alert-mode</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">my/org-alert--update-today-alerts</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#19177c">timerp</span> <span style="color:#19177c">my/org-alert--timer</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">cancel-timer</span> <span style="color:#19177c">my/org-alert--timer</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert--timer</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">run-at-time</span> <span style="color:#666">600</span> <span style="color:#800">t</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-alert--update-today-alerts</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">timerp</span> <span style="color:#19177c">my/org-alert--timer</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cancel-timer</span> <span style="color:#19177c">my/org-alert--timer</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-alert-cleanup</span>)))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/org-alert-mode</span>))
 </span></span></code></pre></div><h5 id="other-settings">Other settings</h5>
 <p>Hotkeys</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
