@@ -524,10 +524,14 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#800">nil</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;--&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-char-2</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-=&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-symbol-1</span>))
+</span></span></code></pre></div><p><a href="https://github.com/abo-abo/ace-link">ace-link</a> is a package to jump to links with avy.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ace-link</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ace-link-info</span> <span style="color:#19177c">ace-link-help</span> <span style="color:#19177c">ace-link-woman</span> <span style="color:#19177c">ace-link-eww</span>))
 </span></span></code></pre></div><h4 id="my-keybindings">My keybindings</h4>
 <p>Various keybinding settings that I can&rsquo;t put anywhere else.</p>
 <h5 id="escape-key">Escape key</h5>
-<p>Use the escape key instead of <code>C-g</code> whenever possible.</p>
+<p><del>Use the escape key instead of <code>C-g</code> whenever possible</del> No, not really after 2 years&hellip; But I&rsquo;ll keep this fragment.</p>
 <p>I must have copied it from somewhere, but as I googled to find out the source, I discovered quite a number of variations of the following code over time. I wonder if Richard Dawkins was inspired by something like this a few decades ago.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">minibuffer-keyboard-quit</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Abort recursive edit.
@@ -984,10 +988,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <p>A minor mode to remember recently edited files.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">recentf-mode</span> <span style="color:#666">1</span>)
 </span></span></code></pre></div><p>Save the last place visited in the file.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">save-place-mode</span> <span style="color:#666">1</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">save-place-mode</span> <span style="color:#800">nil</span>)
 </span></span></code></pre></div><h4 id="deadgrep">Deadgrep</h4>
-<p><a href="https://github.com/Wilfred/deadgrep">deadgrep</a> is a nice Emacs for <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a>. Running <code>ivy-occur</code> in <code>counsel-rg</code> does something a bit similar, but the deadgrep is much more full-featured.</p>
-<p>Somehow I couldn&rsquo;t hook <code>toogle-truncate-lines</code> into the existing hooks, so I add advice.</p>
+<p><a href="https://github.com/Wilfred/deadgrep">deadgrep</a> is a nice Emacs interface for <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a>. Running <code>ivy-occur</code> in <code>counsel-rg</code> does something a bit similar, but the deadgrep is more full-featured.</p>
+<p>Somehow I couldn&rsquo;t hook <code>toogle-truncate-lines</code> into the existing hooks, so here goes advice.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/deadgrep-fix-buffer-advice</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buf</span> (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
@@ -1251,7 +1255,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">word-wrap</span> <span style="color:#666">1</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">global-visual-line-mode</span> <span style="color:#666">1</span>)
 </span></span></code></pre></div><h4 id="custom-frame-format">Custom frame format</h4>
-<p>Title format, which looks something like <code>emacs:project@hostname</code>.</p>
+<p>Title format, which used to look something like <code>emacs:project@hostname</code>. Now it&rsquo;s just <code>emacs</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq-default</span> <span style="color:#19177c">frame-title-format</span>
 </span></span><span style="display:flex;"><span>	      <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;emacs&#34;</span>
@@ -1424,7 +1428,10 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">set-frame-font</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font 10&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Install JetBrainsMono Nerd Font!&#34;</span>)))
 </span></span></code></pre></div><p>To make the icons work (e.g. in the Doom Modeline), run <code>M-x all-the-icons-install-fonts</code>. The package definition is somewhere later in the config.</p>
-<h4 id="ligatures">Ligatures</h4>
+<h4 id="other-fonts">Other fonts</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;variable-pitch</span> <span style="color:#800">nil</span> <span style="color:#008000">:family</span> <span style="color:#ba2121">&#34;Cantarell&#34;</span> <span style="color:#008000">:height</span> <span style="color:#666">120</span>))
+</span></span></code></pre></div><h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ligature</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;mickeynp/ligature.el&#34;</span>)
@@ -1513,9 +1520,9 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-buffer-state-icon</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">doom-modeline-mode</span> <span style="color:#666">1</span>))
 </span></span></code></pre></div><h3 id="perspective-dot-el">perspective.el</h3>
-<p><a href="https://github.com/nex3/perspective-el">perspective.el</a> is a package that provides gives Emacs capacities to group buffers into &ldquo;perspectives&rdquo;, which are like workspaces in tiling WMs.</p>
-<p>An advantage over <code>tab-bar.el</code> is that <code>perspective.el</code> has better capacities for managing buffers, e.g. gives an ibuffer-like interface inside a perspective.</p>
-<p>However, I don&rsquo;t like that list of workspaces is displayed inside the modeline rather than in an actual bar on the top of the frame. I may look into that later.</p>
+<p><a href="https://github.com/nex3/perspective-el">perspective.el</a> is a package that groups buffers in &ldquo;perspectives&rdquo;.</p>
+<p><code>tab-bar.el</code> can be configured to behave in a similar way, but I&rsquo;m too invested in this package already.</p>
+<p>One thing I don&rsquo;t like is that the list perspectives is displayed in the modeline, but I&rsquo;ll probably look how to move them to the bar at the top of the frame at some point.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">perspective</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
@@ -1572,8 +1579,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/persp-move-window-and-switch</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/persp-copy-window-and-switch</span>))
 </span></span></code></pre></div><h4 id="automating-perspectives">Automating perspectives</h4>
-<p>One thing I don&rsquo;t like about <code>perspective.el</code> is that it doesn&rsquo;t feature much (or any) capacity for automation. So out-of-the-box we&rsquo;re supposed to manually assign buffers to perspectives we want.</p>
-<p>But we can cook some automation ourselves. First, let&rsquo;s define a variable with &ldquo;rules&rdquo;:</p>
+<p>Out-of-the-box, <code>perspective.el</code> doesn&rsquo;t feature much (or any) capacity for automation. We&rsquo;re supposed to manually assign buffers to perspectives, which kinda makes sense&hellip; But I still want automation.</p>
+<p>First, let&rsquo;s define a variable with &ldquo;rules&rdquo;:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/perspective-assign-alist</span> <span style="color:#666">&#39;</span>())
 </span></span></code></pre></div><p>One rule looks as follows:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>(major-mode workspace-index persp-name)
@@ -1595,7 +1602,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">with-perspective</span> <span style="color:#19177c">persp-name</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">persp-set-buffer</span> <span style="color:#19177c">buffer</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">persp-switch-to-buffer</span> <span style="color:#19177c">buffer</span>)))))
-</span></span></code></pre></div><p>If EXWM is available, then so is mine <code>perspective-exwm</code> package that features a convenient procedure called <code>perspective-exwm-assign-window</code>. If not, we just work with perspectives.</p>
+</span></span></code></pre></div><p>If EXWM is available, then so is mine <code>perspective-exwm</code> package, which features a convenient procedure called <code>perspective-exwm-assign-window</code>. Otherwise, we just work with perspectives.</p>
 <p>Now, we have to put this function somewhere, and <code>after-change-major-mode-hook</code> seems like a perfect place for it.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-major-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign</span>)
 </span></span></code></pre></div><p>And here is a simple macro to add rules to the list.</p>
@@ -1614,7 +1621,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">result</span>)))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#008000">progn</span>
 </span></span><span style="display:flex;"><span>       <span style="color:#666">,@</span><span style="color:#19177c">result</span>)))
-</span></span></code></pre></div><p>Also, the logic above works only for cases when the buffer is created. Occasionally, the packages themselves run <code>switch-to-buffer</code>, which screws both EXWM workspaces and perspectives; to work around that, I define a macro that runs a command in a given perspective and workspace.</p>
+</span></span></code></pre></div><p>Also, the logic above works only for cases when the buffer is created. Occasionally, packages run <code>switch-to-buffer</code>, which screws both EXWM workspaces and perspectives; to work around that, I define a macro that runs a command in the context of a given perspective and workspace.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/command-in-persp</span> (<span style="color:#19177c">command-name</span> <span style="color:#19177c">persp-name</span> <span style="color:#19177c">workspace-index</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#666">`&#39;</span>((<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">interactive</span>)
@@ -2519,7 +2526,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">yas-define-snippets</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">&#39;latex-mode</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">my/latex-section-snippets</span>)
-</span></span></code></pre></div><h3 id="other-markup-and-natural-languages">Other markup &amp; natural languages</h3>
+</span></span></code></pre></div><h3 id="markup-and-natural-languages">Markup &amp; natural languages</h3>
 <h4 id="markdown">Markdown</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">markdown-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -2597,7 +2604,6 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">lsp</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-version</span> <span style="color:#ba2121">&#34;15.2.0&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ltex-check-frequency</span> <span style="color:#ba2121">&#34;save&#34;</span>))
 </span></span></code></pre></div><p>A function to switch the current language.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ltex-lang</span> ()
@@ -2683,6 +2689,12 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">aggressive-indent-mode</span>)
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-hook &#39;emacs-lisp-mode-hook #&#39;smartparens-strict-mode)</span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lispy-mode</span>)
+</span></span></code></pre></div><h5 id="helper-functions-1">Helper functions</h5>
+<p>Remove all advice from function. Source: <a href="https://emacs.stackexchange.com/questions/24657/unadvise-a-function-remove-all-advice-from-it">https://emacs.stackexchange.com/questions/24657/unadvise-a-function-remove-all-advice-from-it</a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">advice-unadvice</span> (<span style="color:#19177c">sym</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Remove all advices from symbol SYM.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;aFunction symbol: &#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-mapc</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">advice</span> <span style="color:#19177c">_props</span>) (<span style="color:#19177c">advice-remove</span> <span style="color:#19177c">sym</span> <span style="color:#19177c">advice</span>)) <span style="color:#19177c">sym</span>))
 </span></span></code></pre></div><h4 id="common-lisp">Common lisp</h4>
 <h5 id="slime">SLIME</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">slime</span>
@@ -5072,7 +5084,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><p>I have added this line to yadm&rsquo;s <code>post_alt</code> hook, so tangle is run after <code>yadm alt</code></p>
 <h2 id="applications">Applications</h2>
 <h3 id="dired-1">Dired</h3>
-<p>Dired is a built-in file manager. It&rsquo;s so good that it&rsquo;s strange that, to my knowledge, no one tried to replicate it outside of Emacs.</p>
+<p>Dired is the built-in Emacs file manager. It&rsquo;s so good that it&rsquo;s strange that, to my knowledge, no one tried to replicate it outside of Emacs.</p>
 <p>I currently use it as my primary file manager.</p>
 <h4 id="basic-config-and-keybindings">Basic config &amp; keybindings</h4>
 <p>My config mostly follows ranger&rsquo;s and vifm&rsquo;s keybindings which I&rsquo;m used to.</p>
@@ -5617,11 +5629,11 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-db-directory</span> <span style="color:#ba2121">&#34;~/.elfeed&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-enclosure-default-dir</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/Downloads&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">elfeed-insert-html</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">r</span>)
-</span></span><span style="display:flex;"><span>		(<span style="color:#008000">let</span> ((<span style="color:#19177c">shr-use-fonts</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">r</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (advice-add #&#39;elfeed-insert-html</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;             :around</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;             (lambda (fun &amp;rest r)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;               (let ((shr-use-fonts nil))</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;                 (apply fun r))))</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;elfeed-search-mode-map</span>
@@ -6782,11 +6794,16 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">shr-use-fonts</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">shr-use-fonts</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aw&#34;</span> <span style="color:#19177c">&#39;eww</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">eww-mode</span> <span style="color:#666">2</span> <span style="color:#ba2121">&#34;browser&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;eww-mode-map</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;+&#34;</span> <span style="color:#19177c">&#39;text-scale-increase</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#19177c">&#39;text-scale-decrease</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;eww</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">eww-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ace-link-eww</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;+&#34;</span> <span style="color:#19177c">&#39;text-scale-increase</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#19177c">&#39;text-scale-decrease</span>))
 </span></span></code></pre></div><h4 id="erc">ERC</h4>
 <p>ERC is a built-it Emacs IRC client.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">erc</span>
@@ -7009,7 +7026,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><h4 id="man-and-info">man &amp; info</h4>
 <p>Of course, Emacs can also display man and info pages.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">Man-width-max</span> <span style="color:#666">180</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;hM&#34;</span> <span style="color:#19177c">&#39;man</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;hM&#34;</span> <span style="color:#19177c">&#39;woman</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">woman-fill-column</span> <span style="color:#666">90</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -7103,7 +7121,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ak&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">pass</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">pass-show-keybindings</span> <span style="color:#800">nil</span>))
-</span></span></code></pre></div><p>Also I use <code>password-store-get</code> in a few places in my config, and by default it returns <code>nil</code> if I make an error in the password, which is not too convinient. So:</p>
+</span></span></code></pre></div><p>Also I use <code>password-store-get</code> in a few places in my config, and by default it returns <code>nil</code> if I make an error in the password, which inconvinient if I want to run the command in <code>setq</code>. So:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/password-store-get</span> (<span style="color:#19177c">entry</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">res</span> (<span style="color:#19177c">password-store-get</span> <span style="color:#19177c">entry</span>)))
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">res</span>
@@ -7730,6 +7748,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         <li><a href="#fonts">Fonts</a>
           <ul>
             <li><a href="#frame-font">Frame font</a></li>
+            <li><a href="#other-fonts">Other fonts</a></li>
             <li><a href="#ligatures">Ligatures</a></li>
             <li><a href="#icons">Icons</a></li>
           </ul>
@@ -7777,7 +7796,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#snippets-1">Snippets</a></li>
           </ul>
         </li>
-        <li><a href="#other-markup-and-natural-languages">Other markup &amp; natural languages</a>
+        <li><a href="#markup-and-natural-languages">Markup &amp; natural languages</a>
           <ul>
             <li><a href="#markdown">Markdown</a></li>
             <li><a href="#plantuml">PlantUML</a></li>
