@@ -1162,7 +1162,8 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#19177c">&#39;helpful-function</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#19177c">&#39;helpful-key</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;v&#34;</span> <span style="color:#19177c">&#39;helpful-variable</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#19177c">&#39;helpful-symbol</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#19177c">&#39;helpful-symbol</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#19177c">&#39;info</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;help-map</span>
@@ -1430,7 +1431,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span></code></pre></div><p>To make the icons work (e.g. in the Doom Modeline), run <code>M-x all-the-icons-install-fonts</code>. The package definition is somewhere later in the config.</p>
 <h4 id="other-fonts">Other fonts</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;variable-pitch</span> <span style="color:#800">nil</span> <span style="color:#008000">:family</span> <span style="color:#ba2121">&#34;Cantarell&#34;</span> <span style="color:#008000">:height</span> <span style="color:#666">120</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;variable-pitch</span> <span style="color:#800">nil</span> <span style="color:#008000">:family</span> <span style="color:#ba2121">&#34;Cantarell&#34;</span> <span style="color:#008000">:height</span> <span style="color:#666">1.0</span>))
 </span></span></code></pre></div><h4 id="ligatures">Ligatures</h4>
 <p>Ligature setup for the JetBrainsMono font.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ligature</span>
@@ -2084,7 +2085,7 @@ Emacs is also particularly good at writing Lisp code, e.g. Clojure, Common Lisp,
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">copilot-node-executable</span> <span style="color:#ba2121">&#34;/home/pavel/.conda/envs/general/bin/node&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">copilot-node-executable</span> <span style="color:#ba2121">&#34;/home/pavel/.conda/envs/traject/bin/node&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;company-active-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;backtab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>)
@@ -6788,12 +6789,24 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><h4 id="eww">EWW</h4>
 <p>Emacs built-in web browser. <del>I wonder if anyone actually uses it.</del></p>
 <p>I use it occasionally to open links in elfeed.</p>
+<p>Toggle using fonts in buffer:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/toggle-shr-use-fonts</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Toggle the shr-use-fonts variable in buffer&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">shr-use-fonts</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">shr-use-fonts</span>)))
+</span></span></code></pre></div><p>Setting the default font.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defface</span> <span style="color:#19177c">my/shr-face</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">`</span>((<span style="color:#800">t</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">variable-pitch</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#008000">:foreground</span> <span style="color:#666">,</span>(<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;dark-blue</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Default face for shr rendering.&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aw&#34;</span> <span style="color:#19177c">&#39;eww</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/shr-insert-around</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">shr-current-font</span> (<span style="color:#008000">or</span> <span style="color:#19177c">shr-current-font</span> <span style="color:#19177c">&#39;my/shr-face</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;shr</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">shr-insert</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/shr-insert-around</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aw&#34;</span> <span style="color:#19177c">&#39;eww</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/persp-add-rule</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">eww-mode</span> <span style="color:#666">2</span> <span style="color:#ba2121">&#34;browser&#34;</span>)
 </span></span><span style="display:flex;"><span>
@@ -7040,23 +7053,21 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">Man-update-manpage</span> <span style="color:#008000">:before</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/man-fix-width</span>)
 </span></span></code></pre></div><h4 id="devdocs-dot-io">devdocs.io</h4>
-<p>Finally, there is also an Emacs plugin for <a href="https://devdocs.io">devdocs.io</a>.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">devdocs</span>
+<p>There is a package called <code>devdocs</code> that does more or less the same, but I like <code>devdocs-browser</code> more because it uses <code>eww</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">devdocs-browser</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">devdocs-install</span> <span style="color:#19177c">devdocs-lookup</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;devdocs-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-go-back</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-go-forward</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-lookup</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-previous-page</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-next-page</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;he&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-lookup</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;hE&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-install</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;hd&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;devdocs&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-open</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-open-in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-install-doc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-uninstall-doc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-download-offline-data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;O&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-remove-offline-data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-upgrade-all-docs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">devdocs-browser-update-docs</span>))
 </span></span></code></pre></div><h4 id="stackexchange">StackExchange</h4>
 <p><a href="https://github.com/vermiculus/sx.el">sx.el</a> is a StackExchange client for Emacs.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sx</span>
