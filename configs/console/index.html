@@ -215,11 +215,11 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#666">[[</span> -f ~/.bashrc <span style="color:#666">]]</span> <span style="color:#666">&amp;&amp;</span> . ~/.bashrc
 </span></span></code></pre></div><h3 id="dot-bashrc"><code>.bashrc</code></h3>
-<p>My <code>.bashrc</code>, which has pieces from the default ones in Guix &amp; Manjaro, as well some mine settings.</p>
+<p>My <code>.bashrc</code>, which has pieces from the default one in Guix &amp; Manjaro, as well some mine settings.</p>
 <h4 id="startup-and-environment">Startup &amp; environment</h4>
 <p>Export &lsquo;SHELL&rsquo; to child processes.  Programs such as &lsquo;screen&rsquo; honor it and otherwise use /bin/sh.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> SHELL
-</span></span></code></pre></div><p>We are being invoked from a non-interactive shell.  If this is an SSH session (as in &ldquo;ssh host command&rdquo;), source /etc/profile so we get PATH and other essential variables.</p>
+</span></span></code></pre></div><p>We are being invoked from a non-interactive shell.  If this is an SSH session (as in &ldquo;ssh host command&rdquo;), source /etc/profile, so we get PATH and other essential variables.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#19177c">$-</span> !<span style="color:#666">=</span> *i* <span style="color:#666">]]</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[[</span> -n <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSH_CLIENT</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">&amp;&amp;</span> -f <span style="color:#ba2121">&#34;/etc/bashrc&#34;</span> <span style="color:#666">]]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">source</span> /etc/profile
@@ -437,7 +437,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#00f">conda</span> activate <span style="color:#19177c">$EMACS_CONDA_ENV</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
 </span></span></code></pre></div><h3 id="colors-1">Colors</h3>
-<p>Fish seems to have hardcoded colorcodes in some color settings. I set these to base16 colors so they would match Xresources.</p>
+<p>Fish seems to have hardcoded colorcodes in some color settings. I set these to base16 colors, so they would match Xresources.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_command</span> cyan
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_comment</span> green
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_end</span> white
@@ -588,7 +588,7 @@
 <p><a href="https://github.com/tmux/tmux">tmux</a> is my terminal multiplexer of choice.</p>
 <p>It provides pretty sane defaults, so the config is not too large. I rebind the prefix to <code>C-a</code> though.</p>
 <h3 id="term-settings">Term settings</h3>
-<p>I have no idea how and why these two work.</p>
+<p>I have no idea how and why these statements work.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>set -g default-terminal <span style="color:#ba2121">&#34;screen-256color&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set -ga terminal-overrides <span style="color:#ba2121">&#34;,*256col*:Tc&#34;</span><span style="">
 </span></span></span></code></pre></div><p>History limit.</p>
@@ -630,7 +630,7 @@
 </tr>
 </tbody>
 </table>
-<p>Make tmux copying copy to clipboard as well</p>
+<p>Make tmux copy to clipboard as well</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel <span style="color:#ba2121">&#34;xclip -selection clipboard -i&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel <span style="color:#ba2121">&#34;xclip -selection clipboard -i&#34;</span><span style="">
 </span></span></span></code></pre></div><h3 id="ui">UI</h3>
@@ -671,7 +671,7 @@
 </tr>
 </tbody>
 </table>
-<p><a href="https://github.com/alacritty/alacritty">Alacritty</a> is a GPU-accelerated terminal emulator. I haven&rsquo;t found it to be an inch faster than st, but configuration the in yml format is way more convinient than patches.</p>
+<p><a href="https://github.com/alacritty/alacritty">Alacritty</a> is a GPU-accelerated terminal emulator. I haven&rsquo;t found it to be an inch faster than st, but configuration the in yml format is way more convenient than patches.</p>
 <p>Once again, we have an application which doesn&rsquo;t support reading Xresources, so here goes noweb.</p>
 <p><a id="code-snippet--get-xrdb"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xrdb -query all | grep <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$color</span><span style="color:#ba2121">:&#34;</span> | cut -f <span style="color:#666">2</span>
@@ -843,9 +843,9 @@
 <h3 id="ripgrep-config">ripgrep config</h3>
 <p>Occasionally I can&rsquo;t exclude certain files from ripgrep via the VCS settings, so here is a simple config to ignore certain files globally.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>--ignore-file=/home/pavel/.config/ripgrep/ripgrepignore
-</span></span></code></pre></div><p>The corresponding ignore file:</p>
+</span></span></code></pre></div><p>The ignore file:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>*.ts.snap
-</span></span></code></pre></div><p>By default ripgrep doesn&rsquo;t read any configs, so it is necessary to set the <code>RIPGREP_CONFIG_PATH</code> variable in the <a href="#environment-1">.profile.</a></p>
+</span></span></code></pre></div><p>By default, ripgrep doesn&rsquo;t read any configs, so it is necessary to set the <code>RIPGREP_CONFIG_PATH</code> variable in the <a href="#environment-1">.profile.</a></p>
 <h2 id="misc-scripts">Misc scripts</h2>
 <h3 id="nt-exec-command-with-a-finished-notification"><code>nt</code> - exec command with a finished notification</h3>
 <p>Usage:</p>
@@ -886,8 +886,8 @@
 <li>If there is a merge conflict, notify</li>
 <li>If there are changed files in the last <code>TIMEOUT_MIN</code> minutes, commit</li>
 <li>Fetch</li>
-<li>If there are were changes in the last <code>TTMEOUT_MIN</code>, merge (usually the merge has to be fast-forward)</li>
-<li>If fetch was successful &amp; merge was successful or delayed because of changes in the last <code>TIMEOUT_MIN</code>, push</li>
+<li>If there are were changes in the last <code>TTMEOUT_MIN</code>, merge (usually the merge has to be fast-forwarded)</li>
+<li>If the fetch was successful &amp; the merge was either successful or delayed because of changes in the last <code>TIMEOUT_MIN</code>, push</li>
 <li>Send a notification about the events above</li>
 <li>Send a separate notification if there is a merge conflict</li>
 </ul>
