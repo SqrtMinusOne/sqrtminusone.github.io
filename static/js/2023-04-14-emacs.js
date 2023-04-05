@@ -504,6 +504,7 @@ async function configsChart() {
         x: {
           type: "time",
           min: new Date("2020-10-01"),
+          max: TODAY,
         },
         y: {
           title: {
