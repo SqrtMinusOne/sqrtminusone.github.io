@@ -290,8 +290,8 @@ function emacsChart() {
           text: "Everything goes into Emacs",
           color: "black",
           font: {
-            size: 15
-          }
+            size: 15,
+          },
         },
         datalabels: {
           formatter: function (value, context) {
@@ -321,10 +321,299 @@ function emacsChart() {
   });
 }
 
+async function emacsTimeChart() {
+  const response = await fetch(
+    "/data/2023-03-14-emacs/emacs-related-time-per-month.json"
+  );
+  const rawData = await response.json();
+  const labels = [
+    ["config_hours", "Config", "#A989C5"],
+    ["package_hours", "Emacs Packages", "#7172AD"],
+    ["orgmode_hours", "Org Mode", "#509EE3"],
+    ["sqrt_hours", "sqrtminusone.xyz", "#51528D"],
+    ["other_code_hours", "Other Code", "#F2A86F"],
+    ["misc_hours", "Misc", "#F9D45C"],
+  ];
+  const data = {
+    labels: rawData.map((d) => new Date(d["period"])),
+    datasets: labels.map(([key, label, color]) => ({
+      label,
+      data: rawData.map((d) => ({
+        period: new Date(d["period"]),
+        value: d[key],
+      })),
+      backgroundColor: color,
+    })),
+  };
+
+  const ctx = document.getElementById("chart-emacs-time");
+  new Chart(ctx, {
+    type: "bar",
+    data,
+    options: {
+      parsing: {
+        xAxisKey: "period",
+        yAxisKey: "value",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: data.labels[0],
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          title: {
+            display: true,
+            text: "Hours",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Emacs-related time per month",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+
+  const rawStackedData = rawData.map((d) => {
+    let sum = 0;
+    for (const [key] of labels) {
+      sum += d[key];
+    }
+    for (const [key] of labels) {
+      d[key] /= sum;
+    }
+    return d;
+  });
+  const stackedData = {
+    labels: rawData.map((d) => new Date(d["period"])),
+    datasets: labels.map(([key, label, color]) => ({
+      label,
+      data: rawStackedData.map((d) => ({
+        period: new Date(d["period"]),
+        value: d[key],
+      })),
+      backgroundColor: color,
+    })),
+  };
+
+  const stackedCtx = document.getElementById("chart-emacs-time-stacked");
+  new Chart(stackedCtx, {
+    type: "bar",
+    data: stackedData,
+    options: {
+      parsing: {
+        xAxisKey: "period",
+        yAxisKey: "value",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: data.labels[0],
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          min: 0,
+          max: 1,
+          title: {
+            display: true,
+            text: "Hours (%)",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Emacs-related time per month (stacked)",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+}
+
+async function configsChart() {
+  const response = await fetch("/data/2023-03-14-emacs/lengths.csv");
+  const csv = await response.text();
+  const lines = csv.split("\n");
+  const labels = lines[0].split(",");
+  const rawData = lines
+    .slice(1)
+    .reverse()
+    .map((line) => {
+      const values = line.split(",");
+      return Object.fromEntries(
+        values.map((value, i) => {
+          const key = labels[i];
+          switch (key) {
+            case "date":
+              value = new Date(value);
+              break;
+            case "commit":
+              break;
+            default:
+              value = Number(value);
+              break;
+          }
+          return [key, value];
+        })
+      );
+    });
+  const data = {
+    labels: rawData.map((d) => d.date),
+    datasets: [
+      {
+        label: "Emacs.org",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["Emacs.org"],
+        })),
+      },
+      {
+        label: "init.el",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["init.el"],
+        })),
+      },
+    ],
+  };
+  const ctx = document.getElementById("chart-emacs-config-size");
+  new Chart(ctx, {
+    type: "line",
+    data,
+    options: {
+      pointRadius: 0,
+      tension: 0.1,
+      parsing: {
+        xAxisKey: "x",
+        yAxisKey: "y",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: new Date("2020-10-01"),
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Lines of code",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Emacs.org and init.el lengths",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+
+  const emacsVimData = {
+    datasets: [
+      {
+        label: "Emacs.org",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["Emacs.org"],
+        })),
+        xAxisID: "xAxis1",
+      },
+      {
+        label: "init.el",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["init.el"],
+        })),
+        xAxisID: "xAxis1",
+      },
+      {
+        label: "init.vim",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["init.vim"],
+        })),
+        xAxisID: "xAxis2",
+      },
+    ],
+  };
+  const ctxEmacsVim = document.getElementById("chart-emacs-vim-config-size");
+  new Chart(ctxEmacsVim, {
+    type: "line",
+    data: emacsVimData,
+    options: {
+      pointRadius: 0,
+      tension: 0.1,
+      parsing: {
+        xAxisKey: "x",
+        yAxisKey: "y",
+      },
+      scales: {
+        xAxis1: {
+          type: "time",
+          min: new Date("2020-10-12"),
+          max: new Date(
+            new Date("2020-10-12").getTime() + 450 * (1000 * 60 * 60 * 24)
+          ),
+          display: false,
+        },
+        xAxis2: {
+          type: "time",
+          min: new Date("2019-03-30"),
+          max: new Date(
+            new Date("2019-03-30").getTime() + 450 * (1000 * 60 * 60 * 24)
+          ),
+          title: {
+            display: true,
+            text: "Days into",
+          },
+          ticks: {
+            display: false,
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Lines of code",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Emacs vs. Vim config size",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+}
+
 document.addEventListener(
   "DOMContentLoaded",
   function () {
     emacsChart();
+    emacsTimeChart();
+    configsChart();
   },
   false
 );
