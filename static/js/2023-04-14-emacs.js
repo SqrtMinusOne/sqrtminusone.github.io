@@ -15,7 +15,7 @@ const EMACS_ITEM = {
 const COLORS = [
   "#77bceb",
   "#ff6384",
-  "#77c0c0",
+  "#73d9d9",
   "#ff9f40",
   "#ffcd56",
   "#c9cbcf",
@@ -74,6 +74,16 @@ const EMACS_DATA = {
       ],
       yAxisID: "yAxis1",
       ...EMACS_ITEM,
+    },
+    {
+      label: "ranger",
+      data: [
+        {
+          name: "File manager",
+          span: [new Date("2019-04-03"), new Date("2020-02-17")],
+        },
+      ],
+      yAxisID: "yAxis2",
     },
     {
       label: "vifm",
@@ -170,6 +180,16 @@ const EMACS_DATA = {
       yAxisID: "yAxis5",
     },
     {
+      label: "Google Play Music",
+      data: [
+        {
+          name: "Multimedia",
+          span: [new Date("2019-05-12"), new Date("2020-07-26")],
+        },
+      ],
+      yAxisID: "yAxis6",
+    },
+    {
       label: "MPD",
       data: [
         {
@@ -250,6 +270,15 @@ const EMACS_DATA = {
   }),
 };
 
+function replaceNumbers(data) {
+  for (const [key, value] of Object.entries(data)) {
+    const items = document.querySelectorAll(`[data-num="${key}"]`);
+    for (const item of items) {
+      item.innerHTML = value;
+    }
+  }
+}
+
 function emacsChart() {
   const ctx = document.getElementById("chart-emacs-history");
   new Chart(ctx, {
@@ -259,7 +288,7 @@ function emacsChart() {
     options: {
       indexAxis: "y",
       grouped: true,
-      aspectRatio: 1.2,
+      aspectRatio: 1.1,
       parsing: {
         yAxisKey: "name",
         xAxisKey: "span",
@@ -345,6 +374,26 @@ async function emacsTimeChart() {
       backgroundColor: color,
     })),
   };
+  const replaceData = {};
+  for (const [key] of labels) {
+    replaceData[`${key}_total`] = 0;
+    replaceData[`${key}_percent`] = 0;
+  }
+  let total = 0;
+  for (const rawDatum of rawData) {
+    for (const [key] of labels) {
+      replaceData[`${key}_total`] += rawDatum[key] || 0;
+      total += rawDatum[key] || 0;
+    }
+  }
+  for (const [key] of labels) {
+    replaceData[`${key}_total`] = replaceData[`${key}_total`].toFixed(1);
+    replaceData[`${key}_percent`] = (
+      (replaceData[`${key}_total`] / total) *
+      100
+    ).toFixed(1);
+  }
+  replaceNumbers(replaceData);
 
   const ctx = document.getElementById("chart-emacs-time");
   new Chart(ctx, {
@@ -609,12 +658,135 @@ async function configsChart() {
   });
 }
 
+async function packagesChart() {
+  const response = await fetch("/data/2023-03-14-emacs/emacs-packages.json");
+  const rawData = await response.json();
+
+  const data = [
+    ...rawData.slice(0, 15),
+    {
+      name: "Other",
+      hours: rawData.slice(15).reduce((acc, d) => acc + d.hours, 0),
+    },
+  ];
+
+  const replaceData = {};
+  for (const datum of data) {
+    replaceData[`${datum.name}_total`] = datum.hours.toFixed(1);
+  }
+  replaceNumbers(replaceData);
+
+  const ctx = document.getElementById("chart-emacs-packages");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: data.map((d) => d.name),
+      datasets: [
+        {
+          data,
+        },
+      ],
+    },
+    options: {
+      aspectRatio: 1.3,
+      parsing: {
+        yAxisKey: "name",
+        xAxisKey: "hours",
+      },
+      indexAxis: "y",
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Hours",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Time per Emacs packages",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+        legend: {
+          display: false,
+        },
+      },
+    },
+  });
+}
+
+async function emacsVimSwitchChart() {
+  const response = await fetch("/data/2023-03-14-emacs/emacs-vim-switch.json");
+  const rawData = await response.json();
+  const labels = [
+    ["config_hours", "Config", "#A989C5"],
+    ["package_hours", "Emacs Packages", "#7172AD"],
+    ["orgmode_hours", "Org Mode", "#509EE3"],
+    ["emacs_other_code_hours", "Other Code (Emacs)", "#F2A86F"],
+    ["vim_other_code_hours", "Other Code (Vim)", "#59c26e"],
+    ["misc_emacs_hours", "Misc (Emacs)", "#F9D45C"],
+  ];
+  const data = {
+    labels: rawData.map((d) => new Date(d["period"])),
+    datasets: labels.map(([key, label, color]) => ({
+      label,
+      data: rawData.map((d) => ({
+        period: new Date(d["period"]),
+        value: d[key],
+      })),
+      backgroundColor: color,
+    })),
+  };
+
+  const ctx = document.getElementById("chart-emacs-vim-switch");
+  new Chart(ctx, {
+    type: "bar",
+    data,
+    options: {
+      parsing: {
+        xAxisKey: "period",
+        yAxisKey: "value",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: data.labels[0],
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          title: {
+            display: true,
+            text: "Hours",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Switch from Emacs to Vim",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+}
+
 document.addEventListener(
   "DOMContentLoaded",
-  function () {
+  async function () {
     emacsChart();
     emacsTimeChart();
     configsChart();
+    packagesChart();
+    emacsVimSwitchChart();
   },
   false
 );
