@@ -1,25 +1,78 @@
 #+HUGO_SECTION: posts
 #+HUGO_BASE_DIR: ../
-#+TITLE: Charts test
+#+TITLE: 900 days of Emacs
 #+DATE: 2023-02-02
 #+HUGO_TAGS: emacs
 #+HUGO_DRAFT: true
 #+HUGO_CUSTOM_FRONT_MATTER: :scripts '("/js/chart.js" "/js/chartjs-adapter-date-fns.bundle.min.js" "/js/chartjs-plugin-datalabels.js" "/js/2023-04-14-emacs.js")
 
-Hello world
+#+begin_export html
+<style>
+  .quote-title {
+    margin-left: 24px;
+  }
+</style>
+#+end_export
 
-* Numbers
-- Total time on Config: @@html:<span data-num="config_hours_total">[REDACTED]</span>@@
-- Total time on Packages: @@html:<span data-num="package_hours_total">[REDACTED]</span>@@
-- % time on Config: @@html:<span data-num="config_hours_percent">[REDACTED]</span>@@
-- Hours on =org-journal-tags=: @@html:<span data-num="org-journal-tags_total">[REDACTED]</span>@@
-- Total time on Vim config: 39 hours
+#+begin_quote
+Poof I made my free-time disappear
+#+end_quote
 
-* Charts
+@@html:<p class="quote-title">- <a href="https://elken.dev">Ellis Kenyő</a>, on being called an "elisp mage"@@
+
+Little did I know when on the fateful day of *[2020-10-09 Fri]* I had installed [[https://www.gnu.org/software/emacs/][GNU Emacs]]. I wasn't thinking about the [[https://www.gnu.org/philosophy/philosophy.html][ethical aspects]] of free software, [[https://www.webofstories.com/play/marvin.minsky/44][aesthetics of Lisp]], or these other things with which an occasional layperson explains to him or herself how an almost [[https://www.jwz.org/doc/emacs-timeline.html][half a century old]] program can still be in [[https://emacsconf.org/2022/talks/survey/][active use]].
+
+In fact, when considering using software X for anything, the most important question to me was: can X provide a better user experience? For Emacs, the answer to most of these questions turned out to be yes.
+
+So, over that time, Emacs has become my programming environment, email client, window manager, knowledge base [[https://sqrtminusone.xyz/configs/emacs/][and a lot more]]. I think I ended up using Emacs for almost as many things as possible; I have even authored a few packages that implement certain parts of my workflows that weren't readily available.
+
+Among other things, the Emacs community is responsible for my introduction to [[https://zettelkasten.de/][Zettelkasten]], RSS, Lisps... Perhaps even my English became slightly less broken because Emacs is so text-centered. Indeed, a lot has changed over the course of these short 2.5 years.
+
+Anyway, I am writing this document because I happen to have a lot of data about how I use Emacs, mostly from projects called [[https://activitywatch.net/][ActivityWatch]] and [[https://wakatime.com/][WakaTime]]. So, primarily I am curious myself --- how much time did all of that actually take?
+
+Also, every now and then I see Emacs people discussing their journeys through the Elisp-land, or a potential newcomer wondering whether this rabbit hole is worth investigating. If this applies to you, then you might find something interesting in the structure of my effort.
+
+#+begin_export html
+<noscript>
+Also, I use a lot of JavaScript here, but it's all open source. The only 3rd party library is the MIT-licensed <a href="https://www.chartjs.org/">chart.js</a>. So you need to enable JavaScript if you want to see the charts and some of the numbers that are dynamically calculated.
+</noscript>
+#+end_export
+
+* Everything goes into Emacs
+It makes sense to begin with the evolution of the place of Emacs in my PC usage. Fig. 1 shows that as a Gantt chart.
 
 #+begin_export html
 <canvas id="chart-emacs-history"></canvas>
 #+end_export
+
+As you can see, I used Neovim for a bit more than a year. We'll get into some numbers on that later.
+
+And it took me about 13 months to move from knowing nothing about Emacs to using EXWM.
+
+Fig. 2 shows the dynamics of the direct screen time ratio spent in Emacs per each month, i.e. how many non-AFK seconds the Emacs window was active on average.
+
+#+begin_export html
+<canvas id="chart-emacs-screen-time"></canvas>
+#+end_export
+
+It's hard to distinguish any general trend here. It seems like the ratio started at 0.2 in October 2020, was oscillating around 0.3 for about 7 months, then moved closer to 0.4 until January 2023, after which jumped to 0.45-0.5.
+
+The three peaks in September 2021 (0.526), January 2022 (0.532) and August 2022 (0.568) may match my vacations, in which I didn't have to spend time in Chrome DevTools (I do web development as my "main" job), but I'm not sure about that.
+
+The jump is January 2023 definitely matches my adoption of [[https://github.com/zevlg/telega.el][telega.el]] instead of the official desktop client. The time redistributes rather cleanly in the detailed ActivityWatch data.
+
+It's also interesting that switch from [[https://i3wm.org/][i3]] to [[https://github.com/ch11ng/exwm][EXWM]] didn't seem to have any particularly distinguishable effects.
+
+The mean Emacs screen time ratios are 0.39 since October 2020 and 0.47 since January 2023. So... that's a lot.
+
+* Time spent in Emacs
+Now let's turn to the structure of time spent in Emacs. Fig. 3 shows how many Emacs-hours per month I spent on what, Fig. 4 shows the same in the stacked form.
+
+Contrary to Fig. 2, the time here is calculated with a 15-minute timeout preference, like [[https://wakatime.com/faq#timeout][it's done in WakaTime]]. For instance, if I do something in a project in Emacs for 10 minutes, then switch to something else for 10 minutes (i.e. no [[https://wakatime.com/developers/#heartbeats][heartbeats]] in that time), then switch back to the project for 10 more minutes, this will be accounted as 30 minutes in that project.
+
+This is mostly so because that's the default format of the [[https://wakatime.com/faq#exporting][WakaTime export]], but I also think that's reasonable, because I may open package documentation during configuration, experiment in scratch buffers while working on a package, etc. This time really has to be included in the final tally.
+
+Of course, this will also include all the times I was distracted to the [[https://wiki.systemcrafters.net/community/chat-with-us/][System Crafters]] Discord server, [[https://emacs.ch/][emacs.ch]] (a Mastodon instance), or whatever else. So treat the numbers below as an upper bound.
 
 #+begin_export html
 <canvas id="chart-emacs-time"></canvas>
@@ -28,6 +81,30 @@ Hello world
 #+begin_export html
 <canvas id="chart-emacs-time-stacked"></canvas>
 #+end_export
+
+The categories are as follows:
+
+- *Config* (@@html:<span data-num="config_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="config_hours_percent">[REDACTED]</span>@@% of all time)\\
+  Time spent on the actual Emacs configuration.
+- *Emacs Packages* (@@html:<span data-num="package_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="package_hours_percent">[REDACTED]</span>@@% of all time)\\
+  Time spent in other Emacs Lisp files, i.e. writing my packages or debugging other packages. See the packages section.
+- *Org Mode* (@@html:<span data-num="orgmode_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="orgmode_hours_percent">[REDACTED]</span>@@% of all time)\\
+  Time spent in my =org-mode= project, which is mostly [[https://github.com/bastibe/org-journal][org-journal]], [[https://www.orgroam.com/][org-roam]] and project management. By the way, guess the month in which I read [[https://www.soenkeahrens.de/en/takesmartnotes][Sönke Ahrens' book]] about Zettelkasten.
+- *sqrtminusone.xyz* (@@html:<span data-num="sqrt_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="sqrt_hours_percent">[REDACTED]</span>@@% of all time)\\
+  Time spent doing something with this strage website.
+- *Other Code* (@@html:<span data-num="other_code_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="other_code_hours_percent">[REDACTED]</span>@@% of all time)\\
+  Doing something marginally useful in Emacs, which is mostly work, education and a few personal projects that aren't related to Emacs.
+- *Misc* (@@html:<span data-num="misc_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="misc_hours_percent">[REDACTED]</span>@@% of all time)
+  Time spent in Emacs but not in an actual project (i.e. accounted by the [[https://github.com/ActivityWatch/aw-watcher-window][window watcher]] of ActivityWatch but not WakaTime, which watches for projects). These are things like reading RSS, writing emails, using messengers, doing some idle experimentation in scratch buffers, etc.
+
+* Numbers
+- Total time on Config:
+- Total time on Packages: @@html:<span data-num="package_hours_total">[REDACTED]</span>@@
+- % time on Config: @@html:<span data-num="config_hours_percent">[REDACTED]</span>@@
+- Hours on =org-journal-tags=: @@html:<span data-num="org-journal-tags_total">[REDACTED]</span>@@
+- Total time on Vim config: 39 hours
+
+* Charts
 
 #+begin_export html
 <canvas id="chart-emacs-config-size"></canvas>

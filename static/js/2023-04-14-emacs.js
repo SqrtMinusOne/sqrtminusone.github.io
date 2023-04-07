@@ -32,6 +32,7 @@ const EMACS_DATA = {
     "Passwords",
     "Multimedia",
     "WM",
+    "Messenger",
   ],
   datasets: [
     {
@@ -178,6 +179,7 @@ const EMACS_DATA = {
         },
       ],
       yAxisID: "yAxis5",
+      ...EMACS_ITEM,
     },
     {
       label: "Google Play Music",
@@ -261,6 +263,27 @@ const EMACS_DATA = {
       yAxisID: "yAxis7",
       ...EMACS_ITEM,
     },
+    {
+      label: "Telegram Desktop",
+      data: [
+        {
+          name: "Messenger",
+          span: [new Date("2022-03-22"), new Date("2023-01-07")],
+        },
+      ],
+      yAxisID: "yAxis8",
+    },
+    {
+      label: "telega.el",
+      data: [
+        {
+          name: "Messenger",
+          span: [new Date("2023-01-07"), TODAY],
+        },
+      ],
+      yAxisID: "yAxis8",
+      ...EMACS_ITEM,
+    },
   ].map((d) => {
     if (!d.backgroundColor) {
       d.backgroundColor = COLORS[i];
@@ -302,7 +325,7 @@ function emacsChart() {
           min: new Date("2018-09"),
         },
         ...Object.fromEntries(
-          [1, 2, 3, 4, 5, 6].map((i) => [
+          [1, 2, 3, 4, 5, 6, 7].map((i) => [
             `yAxis${i}`,
             {
               display: false,
@@ -316,7 +339,7 @@ function emacsChart() {
         },
         title: {
           display: true,
-          text: "Everything goes into Emacs",
+          text: "Figure 1. Everything goes into Emacs",
           color: "black",
           font: {
             size: 15,
@@ -343,6 +366,59 @@ function emacsChart() {
               const label = context.dataset.label;
               return `${label}: ${startDate} - ${endDate}`;
             },
+          },
+        },
+      },
+    },
+  });
+}
+
+async function emacsScreenTimeChart() {
+  const response = await fetch("/data/2023-03-14-emacs/emacs-screen-time.json");
+  const rawData = await response.json();
+  const data = {
+    labels: rawData.map((d) => new Date(d["date_trunc"])),
+    datasets: [
+      {
+        data: rawData.map((d) => ({
+          period: new Date(d["date_trunc"]),
+          value: d["percent"],
+        })),
+      },
+    ],
+  };
+
+  const ctx = document.getElementById("chart-emacs-screen-time");
+  new Chart(ctx, {
+    type: "bar",
+    data,
+    options: {
+      parsing: {
+        xAxisKey: "period",
+        yAxisKey: "value",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: data.labels[0],
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Ratio of direct screen time",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "Figure 2. Emacs direct screen time ratio over time",
+          color: "black",
+          font: {
+            size: 15,
           },
         },
       },
@@ -421,7 +497,7 @@ async function emacsTimeChart() {
       plugins: {
         title: {
           display: true,
-          text: "Emacs-related time per month",
+          text: "Figure 3. Structure of Emacs usage per month",
           color: "black",
           font: {
             size: 15,
@@ -481,7 +557,7 @@ async function emacsTimeChart() {
       plugins: {
         title: {
           display: true,
-          text: "Emacs-related time per month (stacked)",
+          text: "Figure 4. Structure of Emacs usage per month (stacked)",
           color: "black",
           font: {
             size: 15,
@@ -783,6 +859,7 @@ document.addEventListener(
   "DOMContentLoaded",
   async function () {
     emacsChart();
+    emacsScreenTimeChart();
     emacsTimeChart();
     configsChart();
     packagesChart();
