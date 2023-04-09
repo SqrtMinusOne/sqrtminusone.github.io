@@ -79,33 +79,37 @@
 <li>Me, <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-05-27 Thu 17:35&gt; </span></span> in commit 93a0573. Adapted from <a href="https://www.youtube.com/watch?v=pIdBinlW40E">The Dark Element - &ldquo;The Pallbearer Walks Alone&rdquo;</a>. T_T</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>My configuration of <a href="https://www.gnu.org/software/emacs/">GNU Emacs</a>, an awesome <del>text editor</del> program that can do almost anything.</p>
-<p>At the moment of this writing, this &ldquo;almost anything&rdquo; includes:</p>
+<p>My configuration of <a href="https://www.gnu.org/software/emacs/">GNU Emacs</a>, an awesome <del>text editor</del> piece of software that can do almost anything.</p>
+<p>At the moment of writing this, that &ldquo;almost anything&rdquo; includes:</p>
 <ul>
-<li><strong>Writing code</strong>. With LSP &amp; Co Emacs is as good as many IDEs, and is certainly on par with editors like VS Code.<br />
-Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp, and, of course, Emacs Lisp.</li>
-<li><strong>Literate programming</strong> with Org Mode. That includes:
+<li><strong>Programming environment</strong>. With LSP &amp; Co, Emacs is as good as many IDEs and is certainly on par with editors like VS Code.<br />
+Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp, and of course, Emacs Lisp.</li>
+<li><strong>Org Mode</strong> is useful for a lot of things. My use cases include:
 <ul>
-<li>Configuring the entirety of my software, that can be configured with text files.</li>
-<li>Interactive programming like one provided by Jupyter Notebook.</li>
+<li><strong><a href="https://leanpub.com/lit-config/read">Literate configuration</a></strong></li>
+<li><strong>Interactive programming</strong> à la Jupyter Notebook</li>
+<li><strong>Task / project management</strong></li>
+<li><strong>Formatting documents</strong>. I&rsquo;ve written my Master&rsquo;s Thesis in Org Mode.</li>
+<li><strong>Notetaking</strong>, mostly with org-roam and org-journal</li>
 </ul>
 </li>
 <li><strong>File management</strong>. Dired is my primary file manager.</li>
 <li><strong>Email</strong>, with notmuch.</li>
 <li><strong>Multimedia management</strong>, with EMMS.</li>
 <li><strong>RSS feed reader</strong>, with elfeed.</li>
-<li><strong>Task management</strong>, with Org Mode.</li>
 <li><strong>Managing passwords</strong>, with pass.</li>
+<li><strong>Messengers</strong>:
+<ul>
 <li><strong>IRC</strong>, with ERC.</li>
-<li><strong>Formatting documents</strong>, also with Org Mode. I&rsquo;ve written my Master&rsquo;s Thesis in Org Mode.</li>
+<li><strong>Telegram</strong>, with telega.el</li>
+</ul>
+</li>
 <li><strong>X Window management</strong>, with EXWM. I literally live in Emacs.</li>
 <li>&hellip;</li>
 </ul>
-<p>As I have hinted above, this file is a piece of literate configuration, where the actual code is interweaved with (occasionally semi-broken) English-language commentary. One could argue that the commentary, and not the code, is the primary citizen of the file.</p>
-<p>But at the same time, the configuration is personal, so the primary benefactor of the literate structure is me. The commentary is primarily meant to capture my state of mind at the moment of writing the code, which is immensely helpful for maintaining the code in the future. So the quality and quantity of the commentary are&hellip; varying.</p>
-<p>Occasionally I save some promising experimentations from scratch buffers without much comment. Or I may not have enough time to describe things in substantial detail. Or, as it is at the moment when I&rsquo;m writing this, I have the time to write down whatever I consider necessary. Plus I usually incorporate my blog posts back into the config.</p>
-<p>Of course, human minds share many similarities, so if you are an avid Emacs user, you have a chance to extract something of value from this document.</p>
-<p>If however, by some twist of fate, this document is one of the first things you see about Emacs, it won&rsquo;t be a good resource for you. And you definitely shouldn&rsquo;t try to launch this config as it is. If I could suggest only one resource, I&rsquo;d advise David Wilson&rsquo;s <a href="https://www.youtube.com/c/SystemCrafters">System Crafters</a> YouTube channel.</p>
+<p>As I mentioned above, this document is a piece of literate configuration, i.e. program code interwoven with (occasionally semi-broken) English-language commentary.</p>
+<p>I find that approach helpful for maintaining the configuration, but the quality and quantity of comments may vary. I also usually incorporate my Emacs-related blog posts back into this config.</p>
+<p>So, you might extract something of value from here if you&rsquo;re an avid Emacs user, but probably not if you&rsquo;re a newcomer to the Elisp wonderland. If the latter applies to you, I&rsquo;d advise checking out David Wilson&rsquo;s <a href="https://www.youtube.com/c/SystemCrafters">System Crafters</a> YouTube channel.</p>
 <h2 id="some-remarks">Some remarks</h2>
 <p>I decided not to keep configs for features that I do not use anymore because this config is already huge. But here are the last commits that had these features presented.</p>
 <table>
@@ -5452,8 +5456,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/toggle-vterm-subteminal</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Toogle subteminal.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span>
-</span></span><span style="display:flex;"><span>      ((<span style="color:#19177c">vterm-window</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">vterm-window</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-find</span>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">window</span>)
 </span></span><span style="display:flex;"><span>	   (<span style="color:#00f">string-match</span>
