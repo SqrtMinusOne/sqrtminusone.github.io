@@ -374,7 +374,7 @@ function emacsChart() {
 }
 
 async function emacsScreenTimeChart() {
-  const response = await fetch("/data/2023-03-14-emacs/emacs-screen-time.json");
+  const response = await fetch("/data/2023-03-13-emacs/emacs-screen-time.json");
   const rawData = await response.json();
   const data = {
     labels: rawData.map((d) => new Date(d["date_trunc"])),
@@ -428,7 +428,7 @@ async function emacsScreenTimeChart() {
 
 async function emacsTimeChart() {
   const response = await fetch(
-    "/data/2023-03-14-emacs/emacs-related-time-per-month.json"
+    "/data/2023-03-13-emacs/emacs-related-time-per-month.json"
   );
   const rawData = await response.json();
   const labels = [
@@ -569,7 +569,7 @@ async function emacsTimeChart() {
 }
 
 async function configsChart() {
-  const response = await fetch("/data/2023-03-14-emacs/lengths.csv");
+  const response = await fetch("/data/2023-03-13-emacs/lengths.csv");
   const csv = await response.text();
   const lines = csv.split("\n");
   const labels = lines[0].split(",");
@@ -743,7 +743,7 @@ async function configsChart() {
 }
 
 async function packagesChart() {
-  const response = await fetch("/data/2023-03-14-emacs/emacs-packages.json");
+  const response = await fetch("/data/2023-03-13-emacs/emacs-packages.json");
   const rawData = await response.json();
 
   const data = [
@@ -804,7 +804,7 @@ async function packagesChart() {
 }
 
 async function emacsVimSwitchChart() {
-  const response = await fetch("/data/2023-03-14-emacs/emacs-vim-switch.json");
+  const response = await fetch("/data/2023-03-13-emacs/emacs-vim-switch.json");
   const rawData = await response.json();
   const labels = [
     ["config_hours", "Config", "#A989C5"],
@@ -864,7 +864,7 @@ async function emacsVimSwitchChart() {
 }
 
 async function zkChart() {
-  const response = await fetch("/data/2023-03-14-emacs/roam-stats.csv");
+  const response = await fetch("/data/2023-03-13-emacs/roam-stats.csv");
   const csv = await response.text();
   const lines = csv.split("\n");
   const labels = lines[0].split(",");
