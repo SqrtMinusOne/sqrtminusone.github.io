@@ -14,6 +14,8 @@
 </style>
 #+end_export
 
+#+MACRO: num @@html:<span data-num=$1>[REDACTED]</span>@@
+
 #+begin_quote
 Poof I made my free-time disappear
 #+end_quote
@@ -28,9 +30,9 @@ So, over that time, Emacs has become my programming environment, email client, w
 
 Among other things, the Emacs community is responsible for my introduction to [[https://zettelkasten.de/][Zettelkasten]], RSS, Lisps... Perhaps even my English became slightly less broken because Emacs is so text-centered. Indeed, a lot has changed over the course of these short 2.5 years.
 
-Anyway, I am writing this document because I happen to have a lot of data about how I use Emacs, mostly from projects called [[https://activitywatch.net/][ActivityWatch]] and [[https://wakatime.com/][WakaTime]]. So, primarily I am curious myself --- how much time did all of that actually take?
+Anyway, this post is an attempt at quantifying some aspects of that story. The numbers mostly come from projects called [[https://activitywatch.net/][ActivityWatch]] and [[https://wakatime.com/][WakaTime]].
 
-Also, every now and then I see Emacs people discussing their journeys through the Elisp-land, or a potential newcomer wondering whether this rabbit hole is worth investigating. If this applies to you, then you might find something interesting in the structure of my effort.
+Mostly I'm curious myself, but also every now and then I see Emacs people discussing their journeys through the Elisp-land, or a potential convert wondering whether this rabbit hole is worth investigating. If any of this applies to you, you might find something interesting in this document.
 
 #+begin_export html
 <noscript>
@@ -39,10 +41,14 @@ Also, I use a lot of JavaScript here, but it's all open source. The only 3rd par
 #+end_export
 
 * Everything goes into Emacs
-It makes sense to begin with the evolution of the place of Emacs in my PC usage. Fig. 1 shows that as a Gantt chart.
+As I said, I use Emacs for a lot of things, which is described in my [[https://sqrtminusone.xyz/configs/emacs/#introduction][Emacs config]] in more detail. Fig. 1 shows how Emacs was replacing various programs over time.
 
 #+begin_export html
-<canvas id="chart-emacs-history"></canvas>
+<canvas id="chart-emacs-history">
+  <p>Also, unfortunately this post turned out to be rather inaccessible for those reading that with a screen-reader. I guess, if that applies to you, just mentally skip the figure references.</p>
+
+  <p>I did try to describe what's going on in these in the post body.</p>
+</canvas>
 #+end_export
 
 As you can see, I used Neovim for a bit more than a year. We'll get into some numbers on that later.
@@ -63,7 +69,7 @@ The jump is January 2023 definitely matches my adoption of [[https://github.com/
 
 It's also interesting that switch from [[https://i3wm.org/][i3]] to [[https://github.com/ch11ng/exwm][EXWM]] didn't seem to have any particularly distinguishable effects.
 
-The mean Emacs screen time ratios are 0.39 since October 2020 and 0.47 since January 2023. So... that's a lot.
+The mean Emacs screen time ratios are 0.39 since October 2020 and 0.47 since January 2023. So, as you might infer, Emacs is quite prominent in my PC usage.
 
 * Time spent in Emacs
 Now let's turn to the structure of time spent in Emacs. Fig. 3 shows how many Emacs-hours per month I spent on what, Fig. 4 shows the same in the stacked form.
@@ -84,40 +90,90 @@ Of course, this will also include all the times I was distracted to the [[https:
 
 The categories are as follows:
 
-- *Config* (@@html:<span data-num="config_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="config_hours_percent">[REDACTED]</span>@@% of all time)\\
+- *Config* ({{{num("config_hours_total")}}} total hours, {{{num("config_hours_percent")}}}% of all time)\\
   Time spent on the actual Emacs configuration.
-- *Emacs Packages* (@@html:<span data-num="package_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="package_hours_percent">[REDACTED]</span>@@% of all time)\\
+- *Emacs Packages* ({{{num("package_hours_total")}}} total hours, {{{num("package_hours_percent")}}}% of all time)\\
   Time spent in other Emacs Lisp files, i.e. writing my packages or debugging other packages. See the packages section.
-- *Org Mode* (@@html:<span data-num="orgmode_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="orgmode_hours_percent">[REDACTED]</span>@@% of all time)\\
+- *Org Mode* ({{{num("orgmode_hours_total")}}} total hours, {{{num("orgmode_hours_percent")}}}% of all time)\\
   Time spent in my =org-mode= project, which is mostly [[https://github.com/bastibe/org-journal][org-journal]], [[https://www.orgroam.com/][org-roam]] and project management. By the way, guess the month in which I read [[https://www.soenkeahrens.de/en/takesmartnotes][Sönke Ahrens' book]] about Zettelkasten.
-- *sqrtminusone.xyz* (@@html:<span data-num="sqrt_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="sqrt_hours_percent">[REDACTED]</span>@@% of all time)\\
-  Time spent doing something with this strage website.
-- *Other Code* (@@html:<span data-num="other_code_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="other_code_hours_percent">[REDACTED]</span>@@% of all time)\\
+- *sqrtminusone.xyz* ({{{num("sqrt_hours_total")}}} total hours, {{{num("sqrt_hours_percent")}}}% of all time)\\
+  Working with this strange little website.
+- *Other Code* ({{{num("other_code_hours_total")}}} total hours, {{{num("other_code_hours_percent")}}}% of all time)\\
   Doing something marginally useful in Emacs, which is mostly work, education and a few personal projects that aren't related to Emacs.
-- *Misc* (@@html:<span data-num="misc_hours_total">[REDACTED]</span>@@ total hours, @@html:<span data-num="misc_hours_percent">[REDACTED]</span>@@% of all time)
-  Time spent in Emacs but not in an actual project (i.e. accounted by the [[https://github.com/ActivityWatch/aw-watcher-window][window watcher]] of ActivityWatch but not WakaTime, which watches for projects). These are things like reading RSS, writing emails, using messengers, doing some idle experimentation in scratch buffers, etc.
+- *Misc* ({{{num("misc_hours_total")}}} total hours, {{{num("misc_hours_percent")}}}% of all time)
+  Time spent in Emacs but not in an actual project (i.e. accounted by the [[https://github.com/ActivityWatch/aw-watcher-window][window watcher]] of ActivityWatch but not WakaTime, which watches for files). These are things like reading RSS, writing emails, using messengers, doing some idle experimentation in scratch buffers, etc.
 
-* Numbers
-- Total time on Config:
-- Total time on Packages: @@html:<span data-num="package_hours_total">[REDACTED]</span>@@
-- % time on Config: @@html:<span data-num="config_hours_percent">[REDACTED]</span>@@
-- Hours on =org-journal-tags=: @@html:<span data-num="org-journal-tags_total">[REDACTED]</span>@@
-- Total time on Vim config: 39 hours
+{{{num("config_hours_percent")}}}% of time spent to configuration is actually less than I expected. Unsurprisingly, the first month has the highest value of about 20% (I used Emacs without WakaTime for a few days).
 
-* Charts
+By the way, I spent just 39.0 hours configuring Neovim, although the number is probably not representative anymore because Neovim changed a lot over these 2 years.
+
+* Switching from Neovim
+The period of my switching from Neovim to Emacs seems particularly interesting. Fig 5 zooms in on that; the switch is represented by "Other Code (Emacs)" replacing "Other Code (Vim)".
+
+#+begin_export html
+<canvas id="chart-emacs-vim-switch"></canvas>
+#+end_export
+
+It seems like getting from zero to somewhat productive took me about 11.1 hours over 4 days of just playing with Emacs, and one day with 3.8 hours on configuring and 4.4 hours on coding, apparently alternating between the two.
+
+* Configuration
+Now, let's see where these {{{num("config_hours_total")}}} hours went into.
+
+Configuration sizes are a fairly common topic in Emacs discussions. I'd guess mine falls into the category of the longest, although maybe I'll do some research on that one day. Fig. 6 shows how my config size changed over time.
 
 #+begin_export html
 <canvas id="chart-emacs-config-size"></canvas>
 #+end_export
 
+So, my Emacs.org is {{{num("emacs_org_length")}}} lines long, and the resulting init.el is {{{num("init_el_length")}}} lines long.
+
+As you can see, I switched to [[https://leanpub.com/lit-config][literate configuration]] pretty early on; so far I didn't regret it. It's also interesting how the two sizes diverged as I was writing more elaborate commentary.
+
+I also never had any substantial issues with maintaining that configuration. Perhaps [[https://www.emacswiki.org/emacs/DotEmacsBankruptcy][Emacs Bankruptcies]] are just not that common nowadays.
+
+For the sake of completeness, let's compare that to my Neovim usage. Fig. 7 shows the config size dynamics for the first 400 days of using both programs.
+
 #+begin_export html
 <canvas id="chart-emacs-vim-config-size"></canvas>
 #+end_export
+
+As I said, Neovim seems to have changed a lot since the last time I was using it, so my number of {{{num("init_vim_length")}}} init.vim lines may no longer be relevant. Still, it's pretty interesting.
+
+* Emacs packages
+Working with Emacs packages was an interesting experience, not least because it was my first experience with Lisp. Fig. 8 shows the structure of the {{{num("package_hours_total")}}} hours I spent on that.
 
 #+begin_export html
 <canvas id="chart-emacs-packages"></canvas>
 #+end_export
 
+Unsurprisingly to me, my [[https://github.com/SqrtMinusOne/org-journal-tags][org-journal-tags]] tops the chart with {{{num("org-journal-tags_total")}}} hours. The most interesting part was implementing set logic on the [[https://github.com/bastibe/org-journal][org-journal]] entities in order to make a kind of query engine. But I use that package all the time.
+
+The second place, "Unknown project", stands for Emacs Lisp files that didn't belong to any project, which should be mostly built-in Emacs files.
+
+My [[https://github.com/SqrtMinusOne/elfeed-summary][elfeed-summary]] ({{{num("elfeed-summary_total")}}} hours), [[https://github.com/SqrtMinusOne/lyrics-fetcher.el][lyrics-fetcher]] ({{{num("lyrics-fetcher_total")}}} hours) and [[https://github.com/SqrtMinusOne/reverso.el][reverso]] ({{{num("reverso_total")}}} hours) are also among the packages that I use almost daily. So I don't regret investing time in developing any of those.
+
+* =org-roam=
+It's not directly related to Emacs, but I include it here because it's highly unlikely that I would have heard the term "Zettelkasten" outside the Emacs space.
+
+And although I mentioned [[https://www.soenkeahrens.de/en/takesmartnotes][Sönke Ahrens' book]], I think the website called [[https://zettelkasten.de/posts/overview/][zettelkasten.de]] would be a better resource if you're curious what it's all about. And I was initially made curious by [[https://www.youtube.com/watch?v=-TpWahIzueg][this stream]] of David Wilson.
+
+Fig. 9 shows the dynamics of my [[https://github.com/org-roam/org-roam][org-roam]] nodes count over time.
+
 #+begin_export html
-<canvas id="chart-emacs-vim-switch"></canvas>
+<canvas id="chart-roam-nodes"></canvas>
 #+end_export
+
+A significant fraction of my {{{num("orgmode_hours_total")}}} hours spent on Org Mode went there.
+
+* Some observations
+Let's see where all of that leads us.
+
+As I said, I started from the point of zero experience with Lisp. I had a Bachelor's degree (now Master's) in software engineering, but I don't feel like it has helped me in any direct sense. At most, it exposed me to different kinds and concepts of programming, but I am confident that it's anything but a prerequisite, as also shown by the story of [[https://protesilaos.com/][Protesilaos]].
+
+The number of {{{num("config_hours_total")}}} total hours of configuration may seem huge, but I don't think it's that much over 2.5 years and in comparison to the alternatives. For instance, it would take 6th place from the top if placed among my job projects. Also, my [[https://antennapod.org/][AntennaPod]] shows 196.9 hours of podcasts played since December 2021, and some of my friends report having spent thousands of hours on video games.
+
+And keep in mind that I use Emacs almost as extensively as it gets. You might as well spend much less time figuring it out for a more limited or minimal use case. So, at least in my view, this weighs against describing Emacs usage in terms of sunk cost fallacy.
+
+However, my story is consistent with the perception of a [[https://stackoverflow.com/questions/10942008/what-does-emacs-learning-curve-actually-look-like][steep learning curve]] in the Emacs community. 19.3 hours over 5 days to get started is definitely a lot.
+
+So, my final opinion is that it was worth it, and would have been worth it even if it went half as good, at least inasmuch as it's possible to compare slices of personal experience against actually unknown counterfactuals.

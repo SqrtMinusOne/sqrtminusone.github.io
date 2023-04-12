@@ -614,6 +614,14 @@ async function configsChart() {
       },
     ],
   };
+
+  const numbers = {
+    emacs_org_length: rawData[rawData.length - 1]["Emacs.org"],
+    init_el_length: rawData[rawData.length - 1]["init.el"],
+    init_vim_length: rawData[rawData.length - 1]["init.vim"],
+  };
+  replaceNumbers(numbers);
+
   const ctx = document.getElementById("chart-emacs-config-size");
   new Chart(ctx, {
     type: "line",
@@ -641,7 +649,7 @@ async function configsChart() {
       plugins: {
         title: {
           display: true,
-          text: "Emacs.org and init.el lengths",
+          text: "Figure 6. Emacs.org and init.el lengths",
           color: "black",
           font: {
             size: 15,
@@ -723,7 +731,7 @@ async function configsChart() {
       plugins: {
         title: {
           display: true,
-          text: "Emacs vs. Vim config size",
+          text: "Figure 7. Emacs vs. Vim config size",
           color: "black",
           font: {
             size: 15,
@@ -781,7 +789,7 @@ async function packagesChart() {
       plugins: {
         title: {
           display: true,
-          text: "Time per Emacs packages",
+          text: "Figure 8. Time spent on Emacs packages",
           color: "black",
           font: {
             size: 15,
@@ -844,7 +852,86 @@ async function emacsVimSwitchChart() {
       plugins: {
         title: {
           display: true,
-          text: "Switch from Emacs to Vim",
+          text: "Figure 5. Switch from Neovim to Emacs",
+          color: "black",
+          font: {
+            size: 15,
+          },
+        },
+      },
+    },
+  });
+}
+
+async function zkChart() {
+  const response = await fetch("/data/2023-03-14-emacs/roam-stats.csv");
+  const csv = await response.text();
+  const lines = csv.split("\n");
+  const labels = lines[0].split(",");
+  const rawData = lines
+    .slice(1)
+    .reverse()
+    .map((line) => {
+      const values = line.split(",");
+      return Object.fromEntries(
+        values.map((value, i) => {
+          const key = labels[i];
+          switch (key) {
+            case "date":
+              value = new Date(value);
+              break;
+            case "commit":
+              break;
+            default:
+              value = Number(value);
+              break;
+          }
+          return [key, value];
+        })
+      );
+    });
+  const data = {
+    labels: rawData.map((d) => d.date),
+    datasets: [
+      {
+        label: "Roam Nodes",
+        data: rawData.map((d) => ({
+          x: d.date,
+          y: d["nodes"],
+        })),
+      },
+    ],
+  };
+  console.log(data)
+
+  const ctx = document.getElementById("chart-roam-nodes");
+  new Chart(ctx, {
+    type: "line",
+    data,
+    options: {
+      pointRadius: 0,
+      tension: 0.1,
+      parsing: {
+        xAxisKey: "x",
+        yAxisKey: "y",
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: data.labels[1],
+          max: TODAY,
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Roam Nodes",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Figure 9. Roam Nodes",
           color: "black",
           font: {
             size: 15,
@@ -864,6 +951,7 @@ document.addEventListener(
     configsChart();
     packagesChart();
     emacsVimSwitchChart();
+    zkChart();
   },
   false
 );
