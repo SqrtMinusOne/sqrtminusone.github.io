@@ -239,19 +239,19 @@
 <p>Use the full Linux kernel. I hope I&rsquo;ll be able to use Libre kernel somewhere later.</p>
 <p>Inferior in the kernel is used to avoid recompilation. It looks like I can pin these to different commits than in my <code>channels.scm</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">kernel</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#00f">let*</span>
-</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">channels</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">list </span>(<span style="color:#00f">channel</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;nonguix</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;393b8e0405f44835c498d7735a8ae9ff4682b07f&#34;</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">channel</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;guix</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://git.savannah.gnu.org/git/guix.git&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;4c812db049d5c9f2c438748e180f9486ad221b0a&#34;</span>))))
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">inferior</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">inferior-for-channels</span> <span style="color:#19177c">channels</span>)))
-</span></span><span style="display:flex;"><span>   (<span style="color:#00f">first</span> (<span style="color:#00f">lookup-inferior-packages</span> <span style="color:#19177c">inferior</span> <span style="color:#ba2121">&#34;linux&#34;</span> <span style="color:#ba2121">&#34;5.15.12&#34;</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">let*</span>
+</span></span><span style="display:flex;"><span>      ((<span style="color:#00f">channels</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">list </span>(<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;nonguix</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://gitlab.com/nonguix/nonguix&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;213be7ee6676fc4a3db0e3ac9ce5cd79e2ed209e&#34;</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">channel</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;guix</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://git.savannah.gnu.org/git/guix.git&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">commit</span> <span style="color:#ba2121">&#34;6311493d7a6271bfbc51f4693857f9a12fe9965d&#34;</span>))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">inferior</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">inferior-for-channels</span> <span style="color:#19177c">channels</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">first</span> (<span style="color:#00f">lookup-inferior-packages</span> <span style="color:#19177c">inferior</span> <span style="color:#ba2121">&#34;linux&#34;</span> <span style="color:#ba2121">&#34;6.2.9&#34;</span>))))
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (kernel linux)</span>
 </span></span><span style="display:flex;"><span>(<span style="color:#00f">initrd</span> <span style="color:#19177c">microcode-initrd</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#00f">firmware</span> (<span style="color:#008000">list </span><span style="color:#19177c">linux-firmware</span>))
@@ -319,7 +319,17 @@
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
 </span></span><span style="display:flex;"><span>		     (<span style="color:#00f">network-manager-configuration</span>
 </span></span><span style="display:flex;"><span>		      (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">vpn-plugins</span> (<span style="color:#008000">list </span><span style="color:#19177c">network-manager-openvpn</span>)))))))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">vpn-plugins</span> (<span style="color:#008000">list </span><span style="color:#19177c">network-manager-openvpn</span>))))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">guix-service-type</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">config</span> <span style="color:#19177c">=&gt;</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">guix-configuration</span>
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">inherit</span> <span style="color:#19177c">config</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">substitute-urls</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">append </span>(<span style="color:#008000">list </span><span style="color:#ba2121">&#34;https://substitutes.nonguix.org&#34;</span>)
+</span></span><span style="display:flex;"><span>			       <span style="color:#19177c">%default-substitute-urls</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">authorized-keys</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">append </span>(<span style="color:#008000">list </span>(<span style="color:#00f">local-file</span> <span style="color:#ba2121">&#34;./signing-key.pub&#34;</span>))
+</span></span><span style="display:flex;"><span>			       <span style="color:#19177c">%default-authorized-guix-keys</span>)))))))
 </span></span></code></pre></div><h3 id="indigo">indigo</h3>
 <p><code>indigo</code> is my desktop PC.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;system-common&gt;&gt;</span>
@@ -459,6 +469,43 @@
 </span></span><span style="display:flex;"><span>	      (<span style="color:#00f">device</span> <span style="color:#ba2121">&#34;/dev/sda1&#34;</span>)
 </span></span><span style="display:flex;"><span>	      (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;vfat&#34;</span>))
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">%base-file-systems</span>)))
+</span></span></code></pre></div><h3 id="iris">iris</h3>
+<p><code>iris</code> is my work machine.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;system-common&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#00f">operating-system</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">&lt;&lt;system-base&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">host-name</span> <span style="color:#ba2121">&#34;iris&#34;</span>)
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">services</span> (<span style="color:#00f">cons*</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">xorg-configuration</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">%my-base-services</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">bootloader</span> (<span style="color:#00f">bootloader-configuration</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">bootloader</span> <span style="color:#19177c">grub-bootloader</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">targets</span> (<span style="color:#008000">list </span><span style="color:#ba2121">&#34;/dev/sdb&#34;</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">keyboard-layout</span> <span style="color:#19177c">keyboard-layout</span>)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">swap-devices</span> (<span style="color:#008000">list </span>(<span style="color:#00f">swap-space</span>
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">target</span> (<span style="color:#00f">uuid</span>
+</span></span><span style="display:flex;"><span>			       <span style="color:#ba2121">&#34;bc284384-ff00-4fbc-abda-1c46f69c0505&#34;</span>)))))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">mapped-devices</span> (<span style="color:#008000">list </span>(<span style="color:#00f">mapped-device</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">source</span> (<span style="color:#00f">uuid</span>
+</span></span><span style="display:flex;"><span>				 <span style="color:#ba2121">&#34;21876acb-e05a-4731-8df0-ba5761910ca8&#34;</span>))
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">target</span> <span style="color:#ba2121">&#34;cryptroot&#34;</span>)
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">type</span> <span style="color:#19177c">luks-device-mapping</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">file-systems</span> (<span style="color:#00f">cons*</span> (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">device</span> <span style="color:#ba2121">&#34;/dev/mapper/cryptroot&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;ext4&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">dependencies</span> <span style="color:#19177c">mapped-devices</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">file-system</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">mount-point</span> <span style="color:#ba2121">&#34;/boot/efi&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">device</span> (<span style="color:#00f">uuid</span> <span style="color:#ba2121">&#34;782E-F6D3&#34;</span>
+</span></span><span style="display:flex;"><span>				     <span style="color:#19177c">&#39;fat32</span>))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">type</span> <span style="color:#ba2121">&#34;vfat&#34;</span>)) <span style="color:#19177c">%base-file-systems</span>)))
 </span></span></code></pre></div><h2 id="system-installation">System installation</h2>
 <h3 id="preparation">Preparation</h3>
 <p>In my case, the provided ISO doesn&rsquo;t work because of the Libre kernel.</p>
@@ -727,6 +774,7 @@ Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn
         <li><a href="#indigo">indigo</a></li>
         <li><a href="#eminence">eminence</a></li>
         <li><a href="#azure">azure</a></li>
+        <li><a href="#iris">iris</a></li>
       </ul>
     </li>
     <li><a href="#system-installation">System installation</a>
