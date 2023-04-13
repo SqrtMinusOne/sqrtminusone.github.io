@@ -14,7 +14,7 @@ Graduate student of Saint-Petersburg State Electrotechnical University, Russia.
 * [GitHub](https://github.com/SqrtMinusOne)
 * <a rel="me" href="https://emacs.ch/@sqrtminusone">Mastodon</a>
 * [Reddit](https://www.reddit.com/user/XCapitan_1)
-* [Twitter](https://twitter.com/SqrtMinusTwo)
+* [Telegram](https://t.me/SqrtMinusTwo)
 
 ### Also
 * [My instance of Gitea](https://sqrtminusone.xyz/git/)
