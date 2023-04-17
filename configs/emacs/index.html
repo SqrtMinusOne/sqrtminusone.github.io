@@ -6907,6 +6907,99 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		(<span style="color:#008000">when</span> (<span style="color:#19177c">erc-server-process-alive</span>)
 </span></span><span style="display:flex;"><span>		  (<span style="color:#008000">let</span> ((<span style="color:#19177c">tgt</span> (<span style="color:#19177c">erc-default-target</span>)))
 </span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">erc-server-send</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;DETACH %s&#34;</span> <span style="color:#19177c">tgt</span>) <span style="color:#800">nil</span> <span style="color:#19177c">tgt</span>))))))
+</span></span></code></pre></div><h4 id="mastodon">Mastodon</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">mastodon</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-instance-url</span> <span style="color:#ba2121">&#34;https://emacs.ch&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-active-user</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;an&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span> <span style="color:#19177c">mastodon-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mastodon&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--symbols</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">reply</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;R&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">boost</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;B&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">favourite</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;F&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">bookmark</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;K&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">media</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[media]&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">verified</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;V&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">locked</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[locked]&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">private</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[followers]&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">direct</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[direct]&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">edited</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[edited]&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">mastodon-alt</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;rougier/mastodon-alt&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">mastodon</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">mastodon-alt-tl-activate</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">transient</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-configure</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;mastodon-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon-configure</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mastodon-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;J&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--goto-next-toot</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;K&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--goto-prev-toot</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--next-tab-item</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--prev-tab-item</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--next-tab-item</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;backtab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--previous-tab-item</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon-toot</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mastodon-tl--update</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--toggle-spoiler-text-in-toot</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">kill-current-buffer</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;transient</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">transient-define-prefix</span> <span style="color:#19177c">my/mastodon</span> ()
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Mastodon.&#34;</span>
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Various views&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#ba2121">&#34;Mastodon&#34;</span> <span style="color:#19177c">mastodon</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;n&#34;</span> <span style="color:#ba2121">&#34;Notifications&#34;</span> <span style="color:#19177c">mastodon-notifications-get</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;:&#34;</span> <span style="color:#ba2121">&#34;Followed tags&#34;</span> <span style="color:#19177c">mastodon-tl--list-followed-tags</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#ba2121">&#34;Search query&#34;</span> <span style="color:#19177c">mastodon-search--search-query</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Timelines&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tt&#34;</span> <span style="color:#ba2121">&#34;Home&#34;</span> <span style="color:#19177c">mastodon-tl--get-home-timeline</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tl&#34;</span> <span style="color:#ba2121">&#34;Local&#34;</span> <span style="color:#19177c">mastodon-tl--get-local-timeline</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tf&#34;</span> <span style="color:#ba2121">&#34;Federated&#34;</span> <span style="color:#19177c">mastodon-tl--get-federated-timeline</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tg&#34;</span> <span style="color:#ba2121">&#34;One tag&#34;</span> <span style="color:#19177c">mastodon-tl--get-tag-timeline</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ta&#34;</span> <span style="color:#ba2121">&#34;Followed tags&#34;</span> <span style="color:#19177c">mastodon-tl--followed-tags-timeline</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Own profile&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#ba2121">&#34;My profile&#34;</span> <span style="color:#19177c">mastodon-profile--my-profile</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#ba2121">&#34;Update profile note&#34;</span> <span style="color:#19177c">mastodon-profile--update-user-profile-note</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#ba2121">&#34;Favourites&#34;</span> <span style="color:#19177c">mastodon-profile--view-favourites</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#ba2121">&#34;Bookmarks&#34;</span> <span style="color:#19177c">mastodon-profile--view-bookmarks</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Minor views&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;F&#34;</span> <span style="color:#ba2121">&#34;Follow requests&#34;</span> <span style="color:#19177c">mastodon-views--view-follow-requests</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;S&#34;</span> <span style="color:#ba2121">&#34;Scheduled toots&#34;</span> <span style="color:#19177c">mastodon-views--view-scheduled-toots</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;I&#34;</span> <span style="color:#ba2121">&#34;Filters&#34;</span> <span style="color:#19177c">mastodon-views--view-filters</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;G&#34;</span> <span style="color:#ba2121">&#34;Follow suggestions&#34;</span> <span style="color:#19177c">mastodon-views--view-follow-suggestions</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#ba2121">&#34;Lists&#34;</span> <span style="color:#19177c">mastodon-views--view-lists</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Misc&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#ba2121">&#34;Switch to buffer&#34;</span> <span style="color:#19177c">mastodon-switch-to-buffer</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#ba2121">&#34;Kill all buffers&#34;</span> <span style="color:#19177c">mastodon-kill-all-buffers</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;Quit&#34;</span> <span style="color:#19177c">transient-quit-one</span>)])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">transient-define-prefix</span> <span style="color:#19177c">my/mastodon-toot</span> ()
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Mastodon toot actions.&#34;</span>
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;View&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#ba2121">&#34;Profile&#34;</span> <span style="color:#19177c">mastodon-profile--show-user</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Misc&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;Quit&#34;</span> <span style="color:#19177c">transient-quit-one</span>)]))
 </span></span></code></pre></div><h4 id="ement-dot-el">ement.el</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">plz</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/plz.el&#34;</span>)
@@ -8051,6 +8144,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#wallabag"><span class="org-todo done OFF">OFF</span> wallabag</a></li>
             <li><a href="#eww">EWW</a></li>
             <li><a href="#erc">ERC</a></li>
+            <li><a href="#mastodon">Mastodon</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#telega">Telega</a></li>
             <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
