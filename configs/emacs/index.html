@@ -6908,6 +6908,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		  (<span style="color:#008000">let</span> ((<span style="color:#19177c">tgt</span> (<span style="color:#19177c">erc-default-target</span>)))
 </span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">erc-server-send</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;DETACH %s&#34;</span> <span style="color:#19177c">tgt</span>) <span style="color:#800">nil</span> <span style="color:#19177c">tgt</span>))))))
 </span></span></code></pre></div><h4 id="mastodon">Mastodon</h4>
+<p>Mastodon is a decentralized social media network. I use an instance called <a href="https://emacs.ch/">emacs.ch</a></p>
+<h5 id="package-configuration">Package configuration</h5>
+<p><a href="https://codeberg.org/martianh/mastodon.el">mastodon.el</a> is an Emacs client for Mastodon.</p>
+<p>The default UI is a bit rough, but Nicolas Rougier&rsquo;s <a href="https://github.com/rougier/mastodon-alt">mastodon-alt</a> package makes things a bit more how I would like to see them.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">mastodon</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -6915,7 +6919,11 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-active-user</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;an&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span> <span style="color:#19177c">mastodon-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mastodon&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Hide spoilers by default</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-default</span> <span style="color:#19177c">mastodon-toot--content-warning</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-media--avatar-height</span> <span style="color:#666">40</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--show-avatars</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; The default emojis take two characters for me</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--symbols</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">reply</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;R&#34;</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">boost</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;B&#34;</span>)
@@ -6929,7 +6937,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">edited</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;[edited]&#34;</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">mastodon-alt</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;rougier/mastodon-alt&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/mastodon-alt&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">mastodon</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">mastodon-alt-tl-activate</span>))
@@ -6937,11 +6945,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">transient</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-configure</span> ()
+</span></span></code></pre></div><h5 id="ui-and-keymaps">UI and keymaps</h5>
+<p><code>display-line-numbers-mode</code> screws the UI for some reason.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-configure</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;mastodon-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon-configure</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
+</span></span></code></pre></div><p>The package also doesn&rsquo;t have evil bindings. I implement a few basic bindings here:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">mastodon-mode-map</span>)
@@ -6955,7 +6966,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#19177c">&#39;mastodon-tl--update</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--toggle-spoiler-text-in-toot</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">kill-current-buffer</span>))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
+</span></span></code></pre></div><h5 id="main-transient">Main Transient</h5>
+<p>Also, there are so many commands that it&rsquo;s hard to remember all of them. So I define two transient prefixes.</p>
+<p>The first dispatches &ldquo;general&rdquo; actions:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;transient</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">transient-define-prefix</span> <span style="color:#19177c">my/mastodon</span> ()
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Mastodon.&#34;</span>
@@ -6968,12 +6982,22 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Timelines&#34;</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tt&#34;</span> <span style="color:#ba2121">&#34;Home&#34;</span> <span style="color:#19177c">mastodon-tl--get-home-timeline</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tT&#34;</span> <span style="color:#ba2121">&#34;Home (no replies)&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>				 (<span style="color:#19177c">mastodon-tl--get-home-timeline</span> <span style="color:#666">4</span>)))
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tl&#34;</span> <span style="color:#ba2121">&#34;Local&#34;</span> <span style="color:#19177c">mastodon-tl--get-local-timeline</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tf&#34;</span> <span style="color:#ba2121">&#34;Federated&#34;</span> <span style="color:#19177c">mastodon-tl--get-federated-timeline</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;tg&#34;</span> <span style="color:#ba2121">&#34;One tag&#34;</span> <span style="color:#19177c">mastodon-tl--get-tag-timeline</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ta&#34;</span> <span style="color:#ba2121">&#34;Followed tags&#34;</span> <span style="color:#19177c">mastodon-tl--followed-tags-timeline</span>)]
 </span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Own profile&#34;</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#ba2121">&#34;Toot&#34;</span> <span style="color:#19177c">mastodon-toot</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#ba2121">&#34;My profile&#34;</span> <span style="color:#19177c">mastodon-profile--my-profile</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#ba2121">&#34;Update profile note&#34;</span> <span style="color:#19177c">mastodon-profile--update-user-profile-note</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#ba2121">&#34;Favourites&#34;</span> <span style="color:#19177c">mastodon-profile--view-favourites</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;b&#34;</span> <span style="color:#ba2121">&#34;Bookmarks&#34;</span> <span style="color:#19177c">mastodon-profile--view-bookmarks</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Own profile&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#ba2121">&#34;Toot&#34;</span> <span style="color:#19177c">mastodon-toot</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#ba2121">&#34;My profile&#34;</span> <span style="color:#19177c">mastodon-profile--my-profile</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#ba2121">&#34;Update profile note&#34;</span> <span style="color:#19177c">mastodon-profile--update-user-profile-note</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#ba2121">&#34;Favourites&#34;</span> <span style="color:#19177c">mastodon-profile--view-favourites</span>)
@@ -6990,13 +7014,16 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#ba2121">&#34;Switch to buffer&#34;</span> <span style="color:#19177c">mastodon-switch-to-buffer</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#ba2121">&#34;Kill all buffers&#34;</span> <span style="color:#19177c">mastodon-kill-all-buffers</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;Quit&#34;</span> <span style="color:#19177c">transient-quit-one</span>)]))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/def-confirmer</span> (<span style="color:#19177c">func</span> <span style="color:#19177c">text</span>)
+</span></span></code></pre></div><h5 id="toot-transient">Toot Transient</h5>
+<p>And the second one dispatches actions related to particular toot / profile.</p>
+<p>Also, some actions don&rsquo;t have any confirmations, so here&rsquo;s a macro that wraps a function with <code>y-or-n-p</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/def-confirmer</span> (<span style="color:#19177c">func</span> <span style="color:#19177c">text</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#666">`</span>(<span style="color:#008000">defun</span> <span style="color:#666">,</span>(<span style="color:#00f">intern</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;my/&#34;</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">func</span>) <span style="color:#ba2121">&#34;-confirm&#34;</span>)) ()
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">when</span> (<span style="color:#19177c">y-or-n-p</span> <span style="color:#666">,</span><span style="color:#19177c">text</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">call-interactively</span> <span style="color:#00f">#&#39;</span><span style="color:#666">,</span><span style="color:#19177c">func</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-toot--browse</span> ()
+</span></span></code></pre></div><p>A function to open the toot in browser:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-toot--browse</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Copy URL of toot at point.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If the toot is a fave/boost notification, copy the URLof the
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">base toot.&#34;</span>
@@ -7007,8 +7034,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;url</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;reblog</span> <span style="color:#19177c">toot</span>))
 </span></span><span style="display:flex;"><span>		(<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;url</span> <span style="color:#19177c">toot</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">browse-url</span> <span style="color:#19177c">url</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
+</span></span></code></pre></div><p>And the prefix itself:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/def-confirmer</span> <span style="color:#19177c">mastodon-toot--toggle-boost</span> <span style="color:#ba2121">&#34;Toggle boost for this post? &#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/def-confirmer</span> <span style="color:#19177c">mastodon-toot--toggle-favourite</span> <span style="color:#ba2121">&#34;Toggle favourite this post? &#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/def-confirmer</span> <span style="color:#19177c">mastodon-toot--toggle-bookmark</span> <span style="color:#ba2121">&#34;Toggle bookmark this post? &#34;</span>)
@@ -7024,9 +7051,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Mastodon toot actions.&#34;</span>
 </span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;View&#34;</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#ba2121">&#34;Profile&#34;</span> <span style="color:#19177c">mastodon-profile--show-user</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#ba2121">&#34;Browser&#34;</span> <span style="color:#19177c">my/mastodon-toot--browse</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#ba2121">&#34;Thread&#34;</span> <span style="color:#19177c">mastodon-tl--thread</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#ba2121">&#34;Thread&#34;</span> <span style="color:#19177c">mastodon-tl--thread</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;w&#34;</span> <span style="color:#ba2121">&#34;Browser&#34;</span> <span style="color:#19177c">my/mastodon-toot--browse</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;le&#34;</span> <span style="color:#ba2121">&#34;List edits&#34;</span> <span style="color:#19177c">mastodon-toot--view-toot-edits</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;lf&#34;</span> <span style="color:#ba2121">&#34;List favouriters&#34;</span> <span style="color:#19177c">mastodon-toot--list-toot-favouriters</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;lb&#34;</span> <span style="color:#ba2121">&#34;List boosters&#34;</span> <span style="color:#19177c">mastodon-toot--list-toot-boosters</span>)]
@@ -7043,6 +7069,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;mD&#34;</span> <span style="color:#ba2121">&#34;Delete and redraft&#34;</span> <span style="color:#19177c">mastodon-toot--delete-and-redraft-toot</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;mp&#34;</span> <span style="color:#ba2121">&#34;Pin&#34;</span> <span style="color:#19177c">mastodon-toot--pin-toot-toggle</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;me&#34;</span> <span style="color:#ba2121">&#34;Edit&#34;</span> <span style="color:#19177c">mastodon-toot--edit-toot-at-point</span>)]
+</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Profile Actions&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;pp&#34;</span> <span style="color:#ba2121">&#34;Profile&#34;</span> <span style="color:#19177c">mastodon-profile--show-user</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;pf&#34;</span> <span style="color:#ba2121">&#34;List followers&#34;</span> <span style="color:#19177c">mastodon-profile--open-followers</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;pF&#34;</span> <span style="color:#ba2121">&#34;List following&#34;</span> <span style="color:#19177c">mastodon-profile--open-following</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ps&#34;</span> <span style="color:#ba2121">&#34;List statues (no reblogs)&#34;</span> <span style="color:#19177c">mastodon-profile--open-statuses-no-reblogs</span>)]
 </span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;User Actions&#34;</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;uf&#34;</span> <span style="color:#ba2121">&#34;Follow user&#34;</span> <span style="color:#19177c">my/mastodon-tl--follow-user-confirm</span>)
