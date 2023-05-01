@@ -6227,10 +6227,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
 </span></span></code></pre></div><p>Keep in mind that this function has to be launched inside the buffer opened by the <code>my/elfeed-youtube-subtitles</code> function.</p>
 <h4 id="podcast-transcripts">Podcast transcripts</h4>
-<p>In my experience, finding something in a podcast is particularly troublesome. For example, occasionally I want to refer to some line in the podcast to make an <a href="https://github.com/org-roam/org-roam">org-roam</a> node, e.g. I want to check that I got that part right.</p>
-<p>And I have no reasonable way to get there because audio files in themselves don&rsquo;t allow for <a href="https://en.wikipedia.org/wiki/Random_access">random access</a>, i.e. there are no &ldquo;landmarks&rdquo; that point to this or that portion of the file. At least if nothing like a transcript is available.</p>
-<p>For obvious reasons, podcasts rarely ship with transcripts. So in this post, I&rsquo;ll be using a speech recognition engine to make up for that. A generated transcript is not quite as good as a manually written one, but for the purpose of finding a fragment of a known podcast, it works well enough.</p>
-<p>The general idea is to get the podcast info from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/openai/whisper">OpenAI Whisper</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>.</p>
+<p>In my experience, finding something in a podcast can be particularly troublesome. For instance, at times, I want to refer to a specific line in the podcast to make an <a href="https://github.com/org-roam/org-roam">org-roam</a> node, and I need to check if I got that part right. And I have no reasonable way to get there because audio files, in themselves, don&rsquo;t allow for <a href="https://en.wikipedia.org/wiki/Random_access">random access</a>, i.e. there are no &ldquo;landmarks&rdquo; that point to a particular portion of the file. At least if nothing like a transcript is available.</p>
+<p>For obvious reasons, podcasts rarely ship with transcripts. So in this <del>post</del> section I&rsquo;ll be using a speech recognition engine to make up for that. The general idea is to obtain the podcast information from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/openai/whisper">OpenAI Whisper</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-10-08 Sat&gt;</span></span>: Changed <a href="https://github.com/alphacep/vosk-api">vosk-api</a> to OpenAI Whisper.</p>
 <h5 id="whisper">Whisper</h5>
 <p><a href="https://github.com/openai/whisper">OpenAI Whisper</a> is an amazing speech recognition toolkit. It&rsquo;s pretty slow on my PC (compared to <a href="https://github.com/alphacep/vosk-api">vosk-api</a> which I&rsquo;ve been using before), but the quality is so much better so I think it&rsquo;s completely worth it.</p>
@@ -6969,6 +6967,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">mastodon-tl--toggle-spoiler-text-in-toot</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">kill-current-buffer</span>))
 </span></span></code></pre></div><h5 id="modeline-segment">Modeline segment</h5>
+<p>This is my attempt to make a modeline indicator for new mastodon notifications.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/mastodon-mode-string</span> <span style="color:#ba2121">&#34;&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/mastodon-mode-line-unread-ids</span> <span style="color:#800">nil</span>)
@@ -7309,18 +7308,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">&#39;telega-image-mode</span> <span style="color:#19177c">&#39;telega-webpage-mode</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">telega-online-status-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-online-status</span>)
-</span></span></code></pre></div><h4 id="off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">srv</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">fsm</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emacs-jabber</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">jabber</span> <span style="color:#008000">:host</span> <span style="color:#800">nil</span> <span style="color:#008000">:repo</span>
-</span></span><span style="display:flex;"><span>		    <span style="color:#ba2121">&#34;https://tildegit.org/wgreenhouse/emacs-jabber&#34;</span>))
+</span></span></code></pre></div><h4 id="reddit">Reddit</h4>
+<p><a href="https://github.com/thanhvg/emacs-reddigg">reddigg</a> allows to view reddit in org-mode.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reddigg</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="google-translate">Google Translate</h4>
 <p>Emacs interface to Google Translate.</p>
 <p>Can&rsquo;t make it load lazily for some strange reason.</p>
@@ -7359,6 +7350,18 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate-reverse</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">&#39;google-translate-smooth-translate</span>)
+</span></span></code></pre></div><h4 id="off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">srv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">fsm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emacs-jabber</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">jabber</span> <span style="color:#008000">:host</span> <span style="color:#800">nil</span> <span style="color:#008000">:repo</span>
+</span></span><span style="display:flex;"><span>		    <span style="color:#ba2121">&#34;https://tildegit.org/wgreenhouse/emacs-jabber&#34;</span>))
 </span></span></code></pre></div><h3 id="reading-documentation">Reading documentation</h3>
 <h4 id="tldr">tldr</h4>
 <p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.</p>
@@ -8364,8 +8367,9 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#mastodon">Mastodon</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#telega">Telega</a></li>
-            <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
+            <li><a href="#reddit">Reddit</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
+            <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
           </ul>
         </li>
         <li><a href="#reading-documentation">Reading documentation</a>

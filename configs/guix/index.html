@@ -653,7 +653,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     pkexec nmcli con modify &#34;$CONN&#34; ipv6.method ignore</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     nmcli connection up &#34;$CONN&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># fi</span>
-</span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/sqrtminusone-<span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">hostname</span><span style="color:#b68;font-weight:bold">}</span>.ovpn
+</span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/sqrtminusone-<span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span>.ovpn
 </span></span></code></pre></div><h4 id="377cab"><del>vpn-stop</del></h4>
 <p><del>Also a script to reverse the changes</del>
 Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn</code>.</p>
@@ -746,7 +746,11 @@ Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn
 <li>Run <code>go build</code></li>
 <li>Copy the binary to the <code>~/bin</code> folder</li>
 </ul>
-<h3 id="manifest">Manifest</h3>
+<h3 id="docker">Docker</h3>
+<p>Docker Compose plugin v2 isn&rsquo;t yet available on Guix, but can be installed as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 -o <span style="color:#19177c">$HOME</span>/.docker/cli-plugins/docker-compose
+</span></span><span style="display:flex;"><span>sudo chmod +x <span style="color:#19177c">$HOME</span>/.docker/cli-plugins/docker-compose
+</span></span></code></pre></div><h3 id="manifest">Manifest</h3>
 <p><a id="code-snippet--packages"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-guix-dependencies</span> <span style="color:#19177c">category</span>)
 </span></span></code></pre></div><p>System</p>
@@ -797,6 +801,7 @@ Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn
         <li><a href="#slack">Slack</a></li>
         <li><a href="#virt-manager">virt-manager</a></li>
         <li><a href="#wakatime-cli">wakatime-cli</a></li>
+        <li><a href="#docker">Docker</a></li>
         <li><a href="#manifest">Manifest</a></li>
       </ul>
     </li>
