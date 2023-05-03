@@ -653,7 +653,12 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     pkexec nmcli con modify &#34;$CONN&#34; ipv6.method ignore</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">#     nmcli connection up &#34;$CONN&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># fi</span>
-</span></span><span style="display:flex;"><span>pkexec openvpn --config ~/.vpn/sqrtminusone-<span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span>.ovpn
+</span></span><span style="display:flex;"><span><span style="color:#19177c">VPN_FILE</span><span style="color:#666">=</span>~/.vpn/sqrtminusone-<span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span>.ovpn
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span> <span style="color:#666">==</span> <span style="color:#ba2121">&#39;iris&#39;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">VPN_FILE</span><span style="color:#666">=</span>~/.vpn/mullvad_openvpn_linux_se_all/mullvad_se_all.conf
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#19177c">$VPN_FILE</span>
+</span></span><span style="display:flex;"><span>pkexec openvpn --config <span style="color:#19177c">$VPN_FILE</span>
 </span></span></code></pre></div><h4 id="377cab"><del>vpn-stop</del></h4>
 <p><del>Also a script to reverse the changes</del>
 Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn</code>.</p>
