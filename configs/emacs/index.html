@@ -1590,8 +1590,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><p>One rule looks as follows:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>(major-mode workspace-index persp-name)
 </span></span></code></pre></div><p>And a function to act on these rules.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/perspective-assign</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">rule</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">my/perspective-assign-alist</span>)))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/perspective-assign-ignore</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;If non-nil, ignore </span><span style="color:#19177c">`my/perspective-assign&#39;</span><span style="color:#ba2121">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/perspective-assign</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">_</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/perspective-assign-ignore</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">rule</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">my/perspective-assign-alist</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">workspace-index</span> (<span style="color:#00f">car</span> <span style="color:#19177c">rule</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">persp-name</span> (<span style="color:#19177c">cadr</span> <span style="color:#19177c">rule</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">buffer</span> (<span style="color:#00f">current-buffer</span>)))
@@ -1607,6 +1611,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">with-perspective</span> <span style="color:#19177c">persp-name</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">persp-set-buffer</span> <span style="color:#19177c">buffer</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">persp-switch-to-buffer</span> <span style="color:#19177c">buffer</span>)))))
+</span></span></code></pre></div><p>Also advise to ignore the assignment:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/perspective-assign-ignore-advice</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">my/perspective-assign-ignore</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
 </span></span></code></pre></div><p>If EXWM is available, then so is mine <code>perspective-exwm</code> package, which features a convenient procedure called <code>perspective-exwm-assign-window</code>. Otherwise, we just work with perspectives.</p>
 <p>Now, we have to put this function somewhere, and <code>after-change-major-mode-hook</code> seems like a perfect place for it.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-major-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign</span>)
@@ -6862,7 +6870,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">erc-update-modules</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">erc-autojoin-channels-alist</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>((<span style="color:#666">,</span>(<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;libera.chat&#34;</span>)
-</span></span><span style="display:flex;"><span>	   <span style="color:#ba2121">&#34;#systemcrafters&#34;</span>)))
+</span></span><span style="display:flex;"><span>	   <span style="color:#ba2121">&#34;#systemcrafters&#34;</span> <span style="color:#ba2121">&#34;#systemcrafters-emacs&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">erc-kill-buffer-on-part</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">erc-track-shorten-start</span> <span style="color:#666">8</span>))
 </span></span></code></pre></div><p>Exclude everything but actual messages from notifications.</p>
@@ -6886,7 +6894,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">znc-erc</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">znc-erc</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (my-leader-def &#34;ai&#34; #&#39;znc-erc)</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">erc-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ERC&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -6949,6 +6957,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;mastodon-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon-configure</span>)
+</span></span></code></pre></div><p>Kill processes. Useful when the package stops working due to unstable connection.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-reset</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">process</span> <span style="color:#19177c">in</span> (<span style="color:#00f">process-list</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">if</span> (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;emacs.ch&#34;</span> (<span style="color:#00f">process-name</span> <span style="color:#19177c">process</span>))
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">do</span> (<span style="color:#00f">delete-process</span> <span style="color:#19177c">process</span>)))
 </span></span></code></pre></div><p>The package also doesn&rsquo;t have evil bindings. I implement a few basic bindings here:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;mastodon</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
@@ -7219,8 +7233,59 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/plz.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ement-connect</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:user-id</span> <span style="color:#ba2121">&#34;@sqrtminusone:matrix.org&#34;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:password</span> (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;My_Online/Accounts/matrix&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-room-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ement</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/ement.el&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/ement.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-list-auto-update</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-mark-rooms-read</span> <span style="color:#19177c">&#39;send</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-message-format-spec</span> <span style="color:#ba2121">&#34;%S&gt; %W%B%r%R[%t]&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-left-margin-width</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-right-margin-width</span> <span style="color:#666">10</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-in-left-margin</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-headers</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-in-headers</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-reactions</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-reactions-key</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-timestamp</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;font-lock-function-name-face</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-membership</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#666">0.9</span>
+</span></span><span style="display:flex;"><span>		      <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;font-lock-warning-face</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-wrap-prefix</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;unspecified</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-timestamp-header</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-wrap-prefix</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;unspecified</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-wrap-prefix</span> <span style="color:#ba2121">&#34;-&gt; &#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-notify-notification-predicates</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-notify--event-mentions-session-user-p</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">ement-notify--event-mentions-room-p</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">ement-notify--room-unread-p</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-revert</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign-ignore-advice</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ement-room-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement-room-setup</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-describe-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-occur-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-list-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>))
+</span></span></code></pre></div><p>Some custom keymaps:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement-room-list</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-room-list-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">magit-section-toggle</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">magit-section-forward</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">magit-section-backward</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">revert-buffer</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-RET</span>))
 </span></span></code></pre></div><h4 id="telega">Telega</h4>
 <p><a href="https://github.com/zevlg/telega.el/">telega.el</a> is a Telegam client for Emacs.</p>
 <table>
@@ -7306,7 +7371,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">&#39;telega-image-mode</span> <span style="color:#19177c">&#39;telega-webpage-mode</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">telega-online-status-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-online-status</span>)
-</span></span></code></pre></div><h4 id="reddit">Reddit</h4>
+</span></span></code></pre></div><h4 id="reddit"><span class="org-todo done OFF">OFF</span> Reddit</h4>
 <p><a href="https://github.com/thanhvg/emacs-reddigg">reddigg</a> allows to view reddit in org-mode.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reddigg</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -8366,7 +8431,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#mastodon">Mastodon</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#telega">Telega</a></li>
-            <li><a href="#reddit">Reddit</a></li>
+            <li><a href="#reddit"><span class="org-todo done OFF">OFF</span> Reddit</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
             <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
           </ul>
