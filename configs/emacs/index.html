@@ -164,6 +164,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <td>org-trello</td>
 <td>3f5967a5f63928ea9c8567d8d9f31e84cdbbc21f</td>
 </tr>
+<tr>
+<td>jabber</td>
+<td>9b0e73a4703ff35a2d30fd704200052888191217</td>
+</tr>
+<tr>
+<td>wallabag</td>
+<td>9b0e73a4703ff35a2d30fd704200052888191217</td>
+</tr>
 </tbody>
 </table>
 <h2 id="initial-setup">Initial setup</h2>
@@ -6785,30 +6793,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;https://www.youtube.com/watch?v=&#34;</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">ytel-video-id</span> (<span style="color:#19177c">ytel-get-current-video</span>)))))
-</span></span></code></pre></div><h4 id="wallabag"><span class="org-todo done OFF">OFF</span> wallabag</h4>
-<p><a href="https://github.com/wallabag/wallabag">Wallabag</a> is a self-hosted read-it-later project. I&rsquo;m not yet sold on integrating it in my workflow, but let&rsquo;s keep it here for now.</p>
-<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-01-24 Tue&gt;</span></span>: well, that didn&rsquo;t work out. Running Tiny Tiny RSS &amp; syncing it with elfeed seems to cover most of my read-it-later use cases.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">wallabag</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;chenyanming/wallabag.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> <span style="color:#ba2121">&#34;default.css&#34;</span> <span style="color:#ba2121">&#34;emojis.alist&#34;</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">wallabag</span> <span style="color:#19177c">wallabag-add-entry</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-host</span> <span style="color:#ba2121">&#34;https://wallabag.sqrtminusone.xyz&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-username</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-password</span> (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-clientid</span> (<span style="color:#19177c">password-store-get-field</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span> <span style="color:#ba2121">&#34;client_id&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-secret</span> (<span style="color:#19177c">password-store-get-field</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span> <span style="color:#ba2121">&#34;client_secret&#34;</span>)))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-wallabag</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">wallabag-add-entry</span> (<span style="color:#19177c">elfeed-entry-link</span> <span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">mapconcat</span> <span style="color:#00f">#&#39;symbol-name</span> (<span style="color:#19177c">elfeed-entry-tags</span> <span style="color:#19177c">entry</span>) <span style="color:#ba2121">&#34;,&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">elfeed-recommender--rate-current</span> <span style="color:#666">2</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;elfeed</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">elfeed-show-mode-map</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gw&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elfeed-wallabag</span>))
 </span></span></code></pre></div><h4 id="eww">EWW</h4>
 <p>Emacs built-in web browser. <del>I wonder if anyone actually uses it.</del></p>
 <p>I use it occasionally to open links in elfeed.</p>
@@ -7229,6 +7213,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;Quit&#34;</span> <span style="color:#19177c">transient-quit-one</span>)]))
 </span></span></code></pre></div><h4 id="ement-dot-el">ement.el</h4>
+<p><a href="https://github.com/alphapapa/ement.el">ement.el</a> is a Matrix client for Emacs. This package turned out to be somewhat complicated to setup.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">plz</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/plz.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
@@ -7239,22 +7224,28 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:user-id</span> <span style="color:#ba2121">&#34;@sqrtminusone:matrix.org&#34;</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:password</span> (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;My_Online/Accounts/matrix&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-room-setup</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">1</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ement</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/ement.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ement-connect</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-list-auto-update</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-mark-rooms-read</span> <span style="color:#19177c">&#39;send</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-describe-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-occur-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-list-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Room UI</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-message-format-spec</span> <span style="color:#ba2121">&#34;%S&gt; %W%B%r%R[%t]&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-left-margin-width</span> <span style="color:#666">0</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-right-margin-width</span> <span style="color:#666">10</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-in-left-margin</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-headers</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-sender-in-headers</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-wrap-prefix</span> <span style="color:#ba2121">&#34;-&gt; &#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Changing some default faces</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-reactions</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-reactions-key</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-timestamp</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;font-lock-function-name-face</span>)
@@ -7263,19 +7254,15 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-wrap-prefix</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;unspecified</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-timestamp-header</span> <span style="color:#800">nil</span> <span style="color:#008000">:height</span> <span style="color:#19177c">&#39;unspecified</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;ement-room-wrap-prefix</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;unspecified</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-wrap-prefix</span> <span style="color:#ba2121">&#34;-&gt; &#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Notify only on mentions</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-notify-notification-predicates</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-notify--event-mentions-session-user-p</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#19177c">ement-notify--event-mentions-room-p</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#19177c">ement-notify--room-unread-p</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-revert</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign-ignore-advice</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ement-room-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement-room-setup</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-describe-room-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-occur-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ement-room-list-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;ement&#34;</span>))
-</span></span></code></pre></div><p>Some custom keymaps:</p>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Fix the anti-synergy with major mode re-activation in `ement-room-list-revert&#39;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-revert</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign-ignore-advice</span>))
+</span></span></code></pre></div><p>Some custom keymaps for room lists:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement-room-list</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
@@ -7286,8 +7273,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">revert-buffer</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-RET</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement-tabulated-room-list</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-tabulated-room-list-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>))
 </span></span></code></pre></div><p>Also a keymap for room mode:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement-room-mode</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-room-mode-map</span>)
@@ -7445,18 +7438,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#19177c">&#39;google-translate-query-translate-reverse</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">&#39;google-translate-smooth-translate</span>)
-</span></span></code></pre></div><h4 id="off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">srv</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">fsm</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">emacs-jabber</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">jabber</span> <span style="color:#008000">:host</span> <span style="color:#800">nil</span> <span style="color:#008000">:repo</span>
-</span></span><span style="display:flex;"><span>		    <span style="color:#ba2121">&#34;https://tildegit.org/wgreenhouse/emacs-jabber&#34;</span>))
 </span></span></code></pre></div><h3 id="reading-documentation">Reading documentation</h3>
 <h4 id="tldr">tldr</h4>
 <p><a href="https://tldr.sh/">tldr</a> is a collaborative project providing cheatsheets for various console commands. For some reason, the built-in download in the package is broken, so I use my own function.</p>
@@ -8457,7 +8438,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#notmuch">Notmuch</a></li>
             <li><a href="#emms">EMMS</a></li>
             <li><a href="#ytel">ytel</a></li>
-            <li><a href="#wallabag"><span class="org-todo done OFF">OFF</span> wallabag</a></li>
             <li><a href="#eww">EWW</a></li>
             <li><a href="#erc">ERC</a></li>
             <li><a href="#mastodon">Mastodon</a></li>
@@ -8465,7 +8445,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#telega">Telega</a></li>
             <li><a href="#reddit"><span class="org-todo done OFF">OFF</span> Reddit</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
-            <li><a href="#off--jabber"><span class="org-todo done OFF">OFF</span> (OFF) jabber</a></li>
           </ul>
         </li>
         <li><a href="#reading-documentation">Reading documentation</a>
