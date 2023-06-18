@@ -5117,7 +5117,11 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><p>To launch from CLI, run:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>emacs -Q --batch -l run-tangle.el
 </span></span></code></pre></div><p>I have added this line to yadm&rsquo;s <code>post_alt</code> hook, so to run tangle after <code>yadm alt</code></p>
-<h2 id="applications">Applications</h2>
+<h4 id="folders">Folders</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">folders-file</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;folders.el&#34;</span> <span style="color:#19177c">user-emacs-directory</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">folders-file</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">load-file</span> <span style="color:#19177c">folders-file</span>)))
+</span></span></code></pre></div><h2 id="applications">Applications</h2>
 <h3 id="dired-1">Dired</h3>
 <p>Dired is the built-in Emacs file manager. It&rsquo;s so good that it&rsquo;s strange that, to my knowledge, no one tried to replicate it outside of Emacs.</p>
 <p>I currently use it as my primary file manager.</p>
@@ -6251,14 +6255,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>All we need to do is install Whisper in a virtual environment:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m virtualenv venv
 </span></span><span style="display:flex;"><span><span style="color:#008000">source</span> venv/bin/activate
-</span></span><span style="display:flex;"><span>pip install whisper
+</span></span><span style="display:flex;"><span>pip install openai-whisper
 </span></span></code></pre></div><p>After which the program can be used as follows:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whisper &lt;path-to-file&gt; --output-dir &lt;path-to-output-dir&gt;
 </span></span></code></pre></div><h5 id="running-it-from-emacs">Running it from Emacs</h5>
 <p>Running the program from Emacs is rather straightforward with <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html">asyncronous processes</a>.</p>
 <p>I&rsquo;m using an English-language-only model because that&rsquo;s the only language I need at the moment.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/whisper-env-path</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/Code/system-crafting/whisper-test/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/10-19 Code/13 Other Projects/13.01 whisper-test/&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Path to the folder with </span><span style="color:#19177c">`whisper&#39;</span><span style="color:#ba2121"> environment.&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-whisper</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output-dir</span>)
@@ -6724,7 +6728,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>       (<span style="color:#19177c">url-request-extra-headers</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;Accept&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;application/json&#34;</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">url-retrieve-synchronously</span> <span style="color:#19177c">invidious-instances-url</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">url-retrieve-synchronously</span> <span style="color:#19177c">my/invidious-instances-url</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">re-search-forward</span> <span style="color:#ba2121">&#34;^$&#34;</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">json-object-type</span> <span style="color:#19177c">&#39;alist</span>)
@@ -7279,6 +7283,29 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-tabulated-room-list-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-room-send-reaction</span> (<span style="color:#19177c">key</span> <span style="color:#19177c">position</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Add reaction: &#34;</span> (<span style="color:#00f">append</span> <span style="color:#19177c">telega-emoji-reaction-list</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;👋&#34;</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ement-room-send-reaction</span> <span style="color:#19177c">key</span> <span style="color:#19177c">position</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-room-compose-quit</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">buffer-string</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;Quit compose? &#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">quit-window</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-room-compose-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ement-room-compose-org</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">company-backends</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-company-emoji</span> <span style="color:#19177c">company-capf</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;local</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement-room-compose-quit</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c C-k&#34;</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">interactive</span>) (<span style="color:#19177c">quit-window</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c C-c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-compose-send</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ement-room-compose-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement-room-compose-setup</span>)
 </span></span></code></pre></div><p>Also a keymap for room mode:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
@@ -7288,24 +7315,27 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;?&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-transient</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-u&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-scroll-down-command</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-scroll-up-mark-read</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-write-reply</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-message</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-message</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-&lt;RET&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-compose-message</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;RET&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-message</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;RET&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-write-reply</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;K&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-goto-prev</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;J&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-goto-next</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-sync</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;rT&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-tag-room</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;rd&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-describe-room</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;rm&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-list-members</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;rn&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-set-notification-state</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;rt&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-set-topic</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;se&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-emote</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;sf&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-file</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;sr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-reaction</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;sd&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-view-event</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;uI&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-ignore-user</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;U &lt;RET&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-send-direct-message</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;g?&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-describe-room</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;R?&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-describe-room</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Rm&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-list-members</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Rn&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-set-notification-state</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Rt&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-set-topic</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;!&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement-room-send-reaction</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;m?&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-view-event</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Zf&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-send-file</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;ui&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-invite-user</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-describe-room-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">motion</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ement-room-mode-map</span>)
@@ -8390,6 +8420,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#tables-for-guix-dependencies">Tables for Guix Dependencies</a></li>
             <li><a href="#noweb-evaluations">Noweb evaluations</a></li>
             <li><a href="#yadm-hook">yadm hook</a></li>
+            <li><a href="#folders">Folders</a></li>
           </ul>
         </li>
       </ul>
