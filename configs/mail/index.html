@@ -254,6 +254,10 @@
 <td>job.digital.applicants</td>
 <td>Job_Digital.Applicants</td>
 </tr>
+<tr>
+<td>etu</td>
+<td>Etu</td>
+</tr>
 </tbody>
 </table>
 <p>And below is a noweb function, which generates the following commands for notmuch to execute:</p>
@@ -477,13 +481,11 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-hello-mode-hook</span>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
 </span></span></code></pre></div><p>The file is read in <code>init.el</code>.</p>
-<h3 id="saved-filters-and-keybindings">Saved filters and keybindings</h3>
-<p>I want to have the saved filters available in both notmuch interface as as keybindings. So a bit more of abusing org tables.</p>
+<h3 id="keybindings">Keybindings</h3>
+<p>I used to have a more complicated keybinding system here, but that seemed to go against the Dao.</p>
 <p>Root keybindings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;am&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:which-key</span> <span style="color:#ba2121">&#34;notmuch&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;m&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;notmuch&#34;</span> <span style="color:#ba2121">&#34;mail&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">notmuch</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;am&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;notmuch&#34;</span> <span style="color:#ba2121">&#34;mail&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">notmuch</span>)))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/persp-add-rule</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-hello-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-search-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
@@ -564,34 +566,9 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>)))))
 </span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">searches</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
-</span></span></code></pre></div><p>And the following does the same for my general.el definer:</p>
-<p><a id="code-snippet--format-notmuch-keybindings"></a></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">bindings</span> <span style="color:#666">&#39;</span>()))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">root_tag</span> <span style="color:#19177c">root_tags</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-to-list</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">&#39;bindings</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\&#34;%s\&#34; &#39;(:which-key \&#34;%s\&#34;)&#34;</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">root_tag</span>))
-</span></span><span style="display:flex;"><span>     <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">tag</span> <span style="color:#19177c">filter_tags</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">add-to-list</span>
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">&#39;bindings</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\&#34;%s\&#34; (my/command-in-persp \&#34;%s\&#34; \&#34;mail\&#34; 0 (notmuch-search \&#34;%s\&#34;))&#34;</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">bindings</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-saved-searches</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;am&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;format-notmuch-keybindings</span>()<span style="color:#19177c">&gt;&gt;</span>)
 </span></span></code></pre></div><h3 id="signing-messages">Signing messages</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;message-setup-hook</span> <span style="color:#19177c">&#39;mml-secure-sign-pgpmime</span>))
@@ -647,6 +624,13 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch-mua</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">notmuch-mua-reply</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-maybe-fix-signature</span>))
+</span></span></code></pre></div><h3 id="warn-if-no-subject">Warn if no subject</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-ensure-subject</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">message-field-value</span> <span style="color:#ba2121">&#34;Subject&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;No subject. Send? &#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Aborting.&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-subject</span>)
 </span></span></code></pre></div><h2 id="mailcap">mailcap</h2>
 <p>mailcap file is a file which defines how to read to different MIME types. Notmuch also uses it, so why not keep it here.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>audio/*; mpc add %s
@@ -689,9 +673,10 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
     <li><a href="#msmtp">MSMTP</a></li>
     <li><a href="#emacs">Emacs</a>
       <ul>
-        <li><a href="#saved-filters-and-keybindings">Saved filters and keybindings</a></li>
+        <li><a href="#keybindings">Keybindings</a></li>
         <li><a href="#signing-messages">Signing messages</a></li>
         <li><a href="#tuning-signature">Tuning signature</a></li>
+        <li><a href="#warn-if-no-subject">Warn if no subject</a></li>
       </ul>
     </li>
     <li><a href="#mailcap">mailcap</a></li>

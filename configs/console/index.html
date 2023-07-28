@@ -85,7 +85,7 @@
 </span></span></code></pre></div><p>Set ripgrep config path</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">RIPGREP_CONFIG_PATH</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.config/ripgrep/ripgreprc
 </span></span></code></pre></div><p>hledger path</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">LEDGER_FILE</span><span style="color:#666">=</span>~/Documents/org-mode/ledger/ledger.journal
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">LEDGER_FILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$HOME</span><span style="color:#ba2121">/30-39 Life/32 org-mode/ledger/ledger.journal&#34;</span>
 </span></span></code></pre></div><p>Checking if running inside termux</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v termux-setup-storage &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">IS_ANDROID</span><span style="color:#666">=</span><span style="color:#008000">true</span>
@@ -154,7 +154,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#7d9029">prefix</span><span style="color:#666">=</span><span style="color:#ba2121">/home/pavel/.npm-packages</span>
 </span></span></code></pre></div><p>But I also want to use node from conda occasionally, where prefix is already set correctly. So instead of tangling the above to the <code>~/.npmrc</code> directly, I set an environment variable in the profile:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">NPM_CONFIG_USERCONFIG</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/._npmrc
-</span></span></code></pre></div><p>The variable is unset in a script in <a href="/configs/guix/#conda">Guix.org</a>.</p>
+</span></span></code></pre></div><p>The variable is unset in a script in <a href="/configs/guix/#micromamba">Guix.org</a>.</p>
 <p>Set PATH &amp; MANPATH</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#19177c">NPM_PACKAGES</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">HOME</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">/.npm-packages&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -251,6 +251,8 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xhost +local:root &gt; /dev/null 2&gt;&amp;<span style="color:#666">1</span>
 </span></span></code></pre></div><p>Set manpager to bat</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">MANPAGER</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;sh -c &#39;sed -e s/.\\\\x08//g | bat -l man -p&#39;&#34;</span>
+</span></span></code></pre></div><p><a href="https://codeberg.org/akib/emacs-eat">eat</a> integration</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#666">[</span> -n <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$EAT_SHELL_INTEGRATION_DIR</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">source</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$EAT_SHELL_INTEGRATION_DIR</span><span style="color:#ba2121">/bash&#34;</span>
 </span></span></code></pre></div><h4 id="launch-fish">Launch fish</h4>
 <p>Launch fish shell unless bash itself is launched from fish.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">use_fish</span><span style="color:#666">=</span><span style="color:#008000">true</span>
@@ -333,40 +335,45 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h4 id="aliases">Aliases</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">v</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;vim&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">gg</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;lazygit&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ls</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa --icons&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa -lah --icons&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v exa &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">ls</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa --icons&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa -lah --icons&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;ls -lah&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">q</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exit&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">c</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;clear&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ci</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;init_conda&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ca</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;conda activate&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">cii</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;export INIT_CONDA=true &amp;&amp; init_conda&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ci</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;init_mamba&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">ca</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;micromamba activate&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias</span> <span style="color:#19177c">cii</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;export INIT_MAMBA=true &amp;&amp; init_mamba&#34;</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SIMPLE</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">unalias</span> ls
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;ls -lah&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span></code></pre></div><h4 id="anaconda">Anaconda</h4>
+</span></span></code></pre></div><h4 id="micromamba">Micromamba</h4>
+<p>I&rsquo;ve moved from conda to <a href="https://github.com/mamba-org/mamba">micromamba</a> because it&rsquo;s faster.</p>
 <blockquote>
-<p>managed by &lsquo;conda init&rsquo; !!!</p>
+<p>managed by &lsquo;mamba init&rsquo; !!!</p>
 </blockquote>
 <p>Yeah, tell this to yourself</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>init_conda <span style="color:#666">()</span> <span style="color:#666">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">__conda_setup</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">$(</span><span style="color:#ba2121">&#39;/home/pavel/.guix-extra-profiles/dev/dev/bin/conda&#39;</span> <span style="color:#ba2121">&#39;shell.bash&#39;</span> <span style="color:#ba2121">&#39;hook&#39;</span> 2&gt; /dev/null<span style="color:#008000;font-weight:bold">)</span><span style="color:#ba2121">&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>init_mamba <span style="color:#666">()</span> <span style="color:#666">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">MAMBA_EXE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/gnu/store/w0rrglxs2247nr4wawrh5dylisjra1q4-micromamba-bin-1.4.4-0/bin/micromamba&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">MAMBA_ROOT_PREFIX</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/micromamba&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">__mamba_setup</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">$(</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$MAMBA_EXE</span><span style="color:#ba2121">&#34;</span> shell hook --shell bash --prefix <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$MAMBA_ROOT_PREFIX</span><span style="color:#ba2121">&#34;</span> 2&gt; /dev/null<span style="color:#008000;font-weight:bold">)</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#19177c">$?</span> -eq <span style="color:#666">0</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">eval</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$__conda_setup</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000">eval</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$__mamba_setup</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/dev/dev/etc/profile.d/conda.sh&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    . <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/dev/dev/etc/profile.d/conda.sh&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>	    . <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic"># export PATH=&#34;/home/pavel/Programs/miniconda3/bin:$PATH&#34;</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;what&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#008000">export</span>  <span style="color:#19177c">PATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/micromamba/bin:</span><span style="color:#19177c">$PATH</span><span style="color:#ba2121">&#34;</span>  <span style="color:#408080;font-style:italic"># extra space after export prevents interference from conda init</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">unset</span> __conda_setup
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">unset</span> __mamba_setup
 </span></span><span style="display:flex;"><span><span style="color:#666">}</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$INIT_CONDA</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>    init_conda
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$INIT_MAMBA</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    init_mamba
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h4 id="starship">Starship</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SIMPLE</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$TERM</span><span style="color:#ba2121">&#34;</span> !<span style="color:#666">=</span> <span style="color:#ba2121">&#34;dumb&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
@@ -403,8 +410,14 @@
 </span></span></code></pre></div><p>Enable vi keybindings &amp; aliases. The alias syntax is the same as in bash, so it&rsquo;s just a noweb reference to <code>.bashrc</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#00f">fish_vi_key_bindings</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;shell-alias</span>es<span style="color:#666">&gt;&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">cad</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;conda activate (basename (pwd))&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">q</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exit&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">c</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;clear&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">type</span> <span style="color:#7d9029">-q</span> exa
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias </span><span style="color:#19177c">ls</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa --icons&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias </span><span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;exa -lah --icons&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">alias </span><span style="color:#19177c">ll</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;ls -h&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
 </span></span></code></pre></div><table>
 <thead>
 <tr>
@@ -423,20 +436,26 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#008000"></span><span style="color:#008000;font-weight:bold">end</span>
 </span></span></code></pre></div><p>Suppress fish greeting</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#008000">fish_greeting</span>
-</span></span></code></pre></div><h3 id="anaconda-1">Anaconda</h3>
-<p>First, a function to initialize anaconda.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">function</span> <span style="color:#00f">init_conda</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">eval</span> /home/pavel/.guix-extra-profiles/dev/dev/bin/conda <span style="color:#ba2121">&#34;shell.fish&#34;</span> <span style="color:#ba2121">&#34;hook&#34;</span> <span style="color:#19177c">$argv</span> <span style="color:#666">|</span> <span style="color:#008000">source
+</span></span></code></pre></div><h3 id="micromamba-1">Micromamba</h3>
+<p>First, a function to initialize micromamba.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">function</span> <span style="color:#00f">init_mamba</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">set</span> <span style="color:#7d9029">-gx</span> <span style="color:#19177c">MAMBA_EXE</span> <span style="color:#ba2121">&#34;/gnu/store/w0rrglxs2247nr4wawrh5dylisjra1q4-micromamba-bin-1.4.4-0/bin/micromamba&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">set</span> <span style="color:#7d9029">-gx</span> <span style="color:#19177c">MAMBA_ROOT_PREFIX</span> <span style="color:#ba2121">&#34;/home/pavel/micromamba&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">$MAMBA_EXE</span> shell hook <span style="color:#7d9029">--shell</span> <span style="color:#008000">fish</span> <span style="color:#7d9029">--prefix</span> <span style="color:#19177c">$MAMBA_ROOT_PREFIX</span> <span style="color:#666">|</span> <span style="color:#008000">source
 </span></span></span><span style="display:flex;"><span><span style="color:#008000"></span><span style="color:#008000;font-weight:bold">end</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000;font-weight:bold">test</span> <span style="color:#7d9029">-n</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$INIT_CONDA</span><span style="color:#ba2121">&#34;</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#00f">init_conda</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000;font-weight:bold">test</span> <span style="color:#7d9029">-n</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$INIT_MAMBA</span><span style="color:#ba2121">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#00f">init_mamba</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">ca</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;micromamba activate&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">ci</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;init_mamba&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">alias </span><span style="color:#19177c">cii</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;export INIT_MAMBA=true &amp;&amp; init_mamba&#34;</span>
 </span></span></code></pre></div><p>Then, check if launched from Emacs with environment activated.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000;font-weight:bold">test</span> <span style="color:#7d9029">-n</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$EMACS_CONDA_ENV</span><span style="color:#ba2121">&#34;</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#00f">conda</span> activate <span style="color:#19177c">$EMACS_CONDA_ENV</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
-</span></span></code></pre></div><h3 id="colors-1">Colors</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># if test -n &#34;$EMACS_CONDA_ENV&#34;;
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>    <span style="color:#408080;font-style:italic"># conda activate $EMACS_CONDA_ENV
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># end
+</span></span></span></code></pre></div><h3 id="colors-1">Colors</h3>
 <p>Fish seems to have hardcoded colorcodes in some color settings. I set these to base16 colors, so they would match Xresources.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_command</span> cyan
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_comment</span> green
@@ -716,13 +735,12 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#008000;font-weight:bold">Cyan</span>:<span style="color:#bbb"> </span><span style="color:#ba2121">&#39;&lt;&lt;get-xrdb(color=&#34;color14&#34;)&gt;&gt;&#39;</span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#008000;font-weight:bold">White</span>:<span style="color:#bbb"> </span><span style="color:#ba2121">&#39;&lt;&lt;get-xrdb(color=&#34;color15&#34;)&gt;&gt;&#39;</span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">
-</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#008000;font-weight:bold">background_opacity</span>:<span style="color:#bbb"> </span><span style="color:#666">0.80</span><span style="color:#bbb">
-</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#008000;font-weight:bold">window</span>:<span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#008000;font-weight:bold">padding</span>:<span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#008000;font-weight:bold">x</span>:<span style="color:#bbb"> </span><span style="color:#666">0</span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#008000;font-weight:bold">y</span>:<span style="color:#bbb"> </span><span style="color:#666">0</span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#008000;font-weight:bold">dynamic_padding</span>:<span style="color:#bbb"> </span><span style="color:#008000;font-weight:bold">true</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#008000;font-weight:bold">opacity</span>:<span style="color:#bbb"> </span><span style="color:#666">0.80</span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#008000;font-weight:bold">key_bindings</span>:<span style="color:#bbb">
 </span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>- {<span style="color:#bbb"> </span><span style="color:#008000;font-weight:bold">key: Paste,                                       action</span>:<span style="color:#bbb"> </span>Paste          }<span style="color:#bbb">
@@ -831,12 +849,20 @@
 <td></td>
 </tr>
 <tr>
-<td>jless</td>
+<td>jless-bin</td>
 <td>JSON viewer</td>
 </tr>
 <tr>
 <td>megacmd</td>
 <td>mega.nz client</td>
+</tr>
+<tr>
+<td>ncdu</td>
+<td>disk usage analyzer</td>
+</tr>
+<tr>
+<td>openssl</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -1053,7 +1079,7 @@
             <li><a href="#colors">Colors</a></li>
             <li><a href="#settings">Settings</a></li>
             <li><a href="#aliases">Aliases</a></li>
-            <li><a href="#anaconda">Anaconda</a></li>
+            <li><a href="#micromamba">Micromamba</a></li>
             <li><a href="#starship">Starship</a></li>
             <li><a href="#yandex-cloud">Yandex Cloud</a></li>
           </ul>
@@ -1062,7 +1088,7 @@
     </li>
     <li><a href="#fish">Fish</a>
       <ul>
-        <li><a href="#anaconda-1">Anaconda</a></li>
+        <li><a href="#micromamba-1">Micromamba</a></li>
         <li><a href="#colors-1">Colors</a></li>
         <li><a href="#keybindings">Keybindings</a></li>
         <li><a href="#functions">Functions</a></li>

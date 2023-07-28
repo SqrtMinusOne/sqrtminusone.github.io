@@ -174,7 +174,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">cons*</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;channel-q</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;file:///home/pavel/Code/channel-q&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;file:///home/pavel/_channel-q&#34;</span>))
 </span></span><span style="display:flex;"><span> (<span style="color:#00f">channel</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">name</span> <span style="color:#19177c">&#39;flat</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">url</span> <span style="color:#ba2121">&#34;https://github.com/flatwhatson/guix-channel.git&#34;</span>)
@@ -554,7 +554,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="vpn">VPN</h3>
+<h3 id="openvpn">OpenVPN</h3>
 <table>
 <thead>
 <tr>
@@ -581,6 +581,7 @@
 </tr>
 </tbody>
 </table>
+<p>Update <span class="timestamp-wrapper"><span class="timestamp">[2023-06-29 Thu]</span></span>: My censors seem to be putting sticks in the wheels of OpenVPN&hellip; Switched to Wireguard for now. It can be configured with Network Manager.</p>
 <p>I&rsquo;m not sure how to properly spin up VPN on Guix, so here is what ended I&rsquo;m doing after some trial and error.</p>
 <p>I&rsquo;m using Mullvad VPN. The <code>~/.vpn</code> folder stores its OpenVPN config (<code>openvpn.ovpn</code>), modified as follows:</p>
 <ul>
@@ -667,21 +668,39 @@ Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>pkexec nmcli con modify <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span> ipv6.method auto
 </span></span><span style="display:flex;"><span>nmcli connection up <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CONN</span><span style="color:#ba2121">&#34;</span>
-</span></span></code></pre></div><h3 id="flatpak">flatpak</h3>
+</span></span></code></pre></div><h3 id="wireguard">Wireguard</h3>
+<p>So, yeah, wireguard can be configured with <code>NetworkManager</code> just fine.</p>
+<p>The issue with DNS leaks remains, but fortunately <code>NetworkManager</code> runs all scripts in <code>/etc/NetworkManager/dispatcher.d/</code> when a connection changes, provided that scripts are:</p>
+<ul>
+<li>owned by root</li>
+<li>exectuable</li>
+<li>not readable by other users</li>
+<li>not setuid.</li>
+</ul>
+<p>See <a href="https://askubuntu.com/questions/13963/call-script-after-connecting-to-a-wireless-network">this answer</a> on StackExchange, and <a href="https://networkmanager.dev/docs/api/latest/NetworkManager-dispatcher.html">NetworkManager-dispatcher man page</a>.</p>
+<p><a id="code-snippet--get-nmcli"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#008000;font-weight:bold">$(</span>guix build network-manager | grep -ve <span style="color:#ba2121">&#39;-doc$&#39;</span><span style="color:#008000;font-weight:bold">)</span>/bin/nmcli
+</span></span></code></pre></div><p>So, here&rsquo;s the script:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#bc7a00">#!/bin/sh
+</span></span></span><span style="display:flex;"><span><span style="color:#bc7a00"></span><span style="color:#19177c">GREP</span><span style="color:#666">=</span>/run/current-system/profile/bin/grep
+</span></span><span style="display:flex;"><span><span style="color:#19177c">NMCLI</span><span style="color:#666">=</span><span style="color:#ba2121">&lt;&lt;get-nmcli()&gt;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"># Run only if wireg</span>uard is active
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#19177c">$NMCLI</span> connection show --active | <span style="color:#19177c">$GREP</span> -q wireguard; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;nameserver 8.8.8.8&#34;</span> &gt; /etc/resolv.conf
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span></code></pre></div><p>Expand the noweb with <code>C-c C-v v</code>, put it in <code>dispatcher.d</code> and run <code>chmod 700</code>.</p>
+<h3 id="flatpak">flatpak</h3>
 <p>As for now, the easiest way to install most of proprietary software is via flatpak. See the relevant section in <a href="/configs/desktop/">Desktop.org</a>.</p>
-<h3 id="conda">conda</h3>
-<p><a href="https://docs.conda.io/en/latest/">conda</a> is a package manager, which I use for managing various versions of Python &amp; Node.js.</p>
-<p>It is packaged for GNU Guix, although the definition has its fair share of workarounds. It is almost surprising to see it work with all the C libraries and stuff. But there are still some problems.</p>
-<p>First, it&rsquo;s impossible to perform <code>conda init</code> to patch files like <code>.bashrc</code>, because the command is hell-bent on modifying <code>/gnu/store/</code>. So I do this manually, look for the <code>init_conda</code> procedures in <a href="/configs/console/">Console.org</a>.</p>
-<p>Second, the base environment has <code>/gnu/store/...</code> as a root, so don&rsquo;t install anything there (and don&rsquo;t run <code>conda</code> with superuser rights!).</p>
-<p>Third, by default it tries to create envronments in <code>/gnu/store</code>. It&rsquo;s enough to create one environment like this to fix it:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p ~/.conda/envs
-</span></span><span style="display:flex;"><span>conda create -p ~/.conda/envs/test
-</span></span></code></pre></div><p>Fourth, you may need to unset <code>$PYTHONPATH</code> if you have any global packages installed, otherwise Python from anaconda will try to import them instead of the conda versions.</p>
-<p>Finally, I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
+<h3 id="micromamba">micromamba</h3>
+<p><del><a href="https://docs.conda.io/en/latest/">conda</a></del> <a href="https://github.com/mamba-org/mamba">mamba</a> is a package manager that I use for managing various versions of Python &amp; Node.js.</p>
+<p><code>mamba</code> is a reimplementation of <code>conda</code> in C++. <code>mamba</code> is notably much faster and mostly compatible with <code>conda</code>, and <code>micromamba</code> is a tiny version of <code>mamba</code> that is contained in one statically linked exectuable. I&rsquo;ve migrated to <code>micromamba</code> mostly because of speed.</p>
+<p><code>conda</code> is packaged for Guix with its fair share of quirks, mostly concerning the impossibility of changing the base environment in <code>/gnu/store/</code>. <code>micromamba</code> has none of that because it doesn&rsquo;t ship with a base environment. It&rsquo;s not packaged for Guix yet, so I&rsquo;ve made a definition with <code>binary-build-system</code> in my channel.</p>
+<p>You may need to unset <code>$PYTHONPATH</code> if you have any global packages installed, otherwise Python from the environemnt will try to import them instead of the conda versions.</p>
+<p>I also want to have an ability to use global npm. Some settings for that are located in <a href="Console">Console.org</a>. Here we want to unset <code>NPM_CONFIG_USERCONFIG</code> if there is npm available in the environment.</p>
 <p>So here is a script to set up conda hooks:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Get writable conda envs with npm &amp; without it</span>
-</span></span><span style="display:flex;"><span>readarray -t CONDA_ENVS_ALL <span style="color:#666">&lt;&lt;&lt;</span> <span style="color:#008000;font-weight:bold">$(</span>conda env list --json | jq <span style="color:#ba2121">&#39;.envs[]&#39;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>readarray -t CONDA_ENVS_ALL <span style="color:#666">&lt;&lt;&lt;</span> <span style="color:#008000;font-weight:bold">$(</span>micromamba env list --json | jq <span style="color:#ba2121">&#39;.envs[]&#39;</span><span style="color:#008000;font-weight:bold">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">CONDA_ENVS_NPM</span><span style="color:#666">=()</span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">CONDA_ENVS_NO_NPM</span><span style="color:#666">=()</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">for</span> env in <span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">CONDA_ENVS_ALL</span>[@]<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#34;</span>; <span style="color:#008000;font-weight:bold">do</span>
@@ -795,14 +814,15 @@ Also not necessary now. Just <code>herd stop vpn</code> and <code>sudo pkill vpn
     </li>
     <li><a href="#misc-software-and-notes">Misc software &amp; notes</a>
       <ul>
-        <li><a href="#vpn">VPN</a>
+        <li><a href="#openvpn">OpenVPN</a>
           <ul>
             <li><a href="#vpn-start">vpn-start</a></li>
             <li><a href="#377cab">vpn-stop</a></li>
           </ul>
         </li>
+        <li><a href="#wireguard">Wireguard</a></li>
         <li><a href="#flatpak">flatpak</a></li>
-        <li><a href="#conda">conda</a></li>
+        <li><a href="#micromamba">micromamba</a></li>
         <li><a href="#slack">Slack</a></li>
         <li><a href="#virt-manager">virt-manager</a></li>
         <li><a href="#wakatime-cli">wakatime-cli</a></li>

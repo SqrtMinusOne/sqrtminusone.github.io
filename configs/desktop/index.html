@@ -417,7 +417,9 @@
 </ul>
 <p>I can&rsquo;t say it&rsquo;s better or worse than the built-in functionality or one provided by evil, but I&rsquo;m used to it and I think it fits better for managing a lot of windows.</p>
 <p>So, first, we need a predicate that checks whether there is space in the given direction:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-direction-exists-p</span> (<span style="color:#19177c">dir</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;windmove</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-direction-exists-p</span> (<span style="color:#19177c">dir</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Check if there is space in the direction DIR.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Does not take the minibuffer into account.&#34;</span>
@@ -978,6 +980,191 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">focus-follows-mouse</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-floating-setup-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-exwm-floating-windows</span>)
+</span></span></code></pre></div><h4 id="fix-exwm-on-clientmessage">Fix exwm&ndash;on-ClientMessage</h4>
+<p>It seems like this strange commit: <a href="https://github.com/ch11ng/exwm/commit/ce2191c444ae29edf669790a1002238b8fc90ac4">c90ac4</a> breaks focusing on an X frame when switching to a workspace, at least on Emacs &lt;= 28. This reverts to the previous version.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">exwm--on-ClientMessage-old</span> (<span style="color:#19177c">raw-data</span> <span style="color:#19177c">_synthetic</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Handle ClientMessage event.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">obj</span> (<span style="color:#19177c">make-instance</span> <span style="color:#19177c">&#39;xcb:ClientMessage</span>))
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">type</span> <span style="color:#19177c">id</span> <span style="color:#19177c">data</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">xcb:unmarshal</span> <span style="color:#19177c">obj</span> <span style="color:#19177c">raw-data</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">type</span> (<span style="color:#19177c">slot-value</span> <span style="color:#19177c">obj</span> <span style="color:#19177c">&#39;type</span>)
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">id</span> (<span style="color:#19177c">slot-value</span> <span style="color:#19177c">obj</span> <span style="color:#19177c">&#39;window</span>)
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">data</span> (<span style="color:#19177c">slot-value</span> (<span style="color:#19177c">slot-value</span> <span style="color:#19177c">obj</span> <span style="color:#19177c">&#39;data</span>) <span style="color:#19177c">&#39;data32</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">exwm--log</span> <span style="color:#ba2121">&#34;atom=%s(%s)&#34;</span> (<span style="color:#00f">x-get-atom-name</span> <span style="color:#19177c">type</span> <span style="color:#19177c">exwm-workspace--current</span>)
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">type</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_NUMBER_OF_DESKTOPS.</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_NUMBER_OF_DESKTOPS</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">current</span> (<span style="color:#19177c">exwm-workspace--count</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">requested</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; Only allow increasing/decreasing the workspace number by 1.</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>	 ((<span style="color:#00f">&lt;</span> <span style="color:#19177c">current</span> <span style="color:#19177c">requested</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">make-frame</span>))
+</span></span><span style="display:flex;"><span>	 ((<span style="color:#008000">and</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">current</span> <span style="color:#19177c">requested</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">&gt;</span> <span style="color:#19177c">current</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let</span> ((<span style="color:#19177c">frame</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">last</span> <span style="color:#19177c">exwm-workspace--list</span>))))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">exwm-workspace--get-remove-frame-next-workspace</span> <span style="color:#19177c">frame</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-frame</span> <span style="color:#19177c">frame</span>))))))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_CURRENT_DESKTOP.</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_CURRENT_DESKTOP</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">exwm-workspace-switch</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_ACTIVE_WINDOW.</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_ACTIVE_WINDOW</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">iconic</span> <span style="color:#19177c">window</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">exwm--frame</span> <span style="color:#19177c">exwm-workspace--current</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">if</span> <span style="color:#19177c">exwm--floating-frame</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">select-frame</span> <span style="color:#19177c">exwm--floating-frame</span>)
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">setq</span> <span style="color:#19177c">iconic</span> (<span style="color:#19177c">exwm-layout--iconic-state-p</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">when</span> <span style="color:#19177c">iconic</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#408080;font-style:italic">;; State change: iconic =&gt; normal.</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">set-window-buffer</span> (<span style="color:#00f">frame-selected-window</span> <span style="color:#19177c">exwm--frame</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">current-buffer</span>)))
+</span></span><span style="display:flex;"><span>		<span style="color:#408080;font-style:italic">;; Focus transfer.</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">setq</span> <span style="color:#19177c">window</span> (<span style="color:#00f">get-buffer-window</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">iconic</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">not</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">window</span> (<span style="color:#00f">selected-window</span>))))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">select-window</span> <span style="color:#19177c">window</span>))))))))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_CLOSE_WINDOW.</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_CLOSE_WINDOW</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">exwm--defer</span> <span style="color:#666">0</span> <span style="color:#00f">#&#39;kill-buffer</span> <span style="color:#19177c">buffer</span>))))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_WM_MOVERESIZE</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_WM_MOVERESIZE</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">direction</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">2</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">not</span> (<span style="color:#00f">buffer-local-value</span> <span style="color:#19177c">&#39;exwm--floating-frame</span> <span style="color:#19177c">buffer</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> <span style="color:#19177c">direction</span>
+</span></span><span style="display:flex;"><span>		    <span style="color:#19177c">xcb:ewmh:_NET_WM_MOVERESIZE_SIZE_KEYBOARD</span>)
+</span></span><span style="display:flex;"><span>		 <span style="color:#408080;font-style:italic">;; FIXME</span>
+</span></span><span style="display:flex;"><span>		 )
+</span></span><span style="display:flex;"><span>		((<span style="color:#00f">=</span> <span style="color:#19177c">direction</span>
+</span></span><span style="display:flex;"><span>		    <span style="color:#19177c">xcb:ewmh:_NET_WM_MOVERESIZE_MOVE_KEYBOARD</span>)
+</span></span><span style="display:flex;"><span>		 <span style="color:#408080;font-style:italic">;; FIXME</span>
+</span></span><span style="display:flex;"><span>		 )
+</span></span><span style="display:flex;"><span>		((<span style="color:#00f">=</span> <span style="color:#19177c">direction</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_MOVERESIZE_CANCEL</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">exwm-floating--stop-moveresize</span>))
+</span></span><span style="display:flex;"><span>		<span style="color:#408080;font-style:italic">;; In case it&#39;s a workspace frame.</span>
+</span></span><span style="display:flex;"><span>		((<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#008000">catch</span> <span style="color:#19177c">&#39;break</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#008000">dolist</span> (<span style="color:#19177c">f</span> <span style="color:#19177c">exwm-workspace--list</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">id</span> (<span style="color:#00f">frame-parameter</span> <span style="color:#19177c">f</span> <span style="color:#19177c">&#39;exwm-outer-id</span>))
+</span></span><span style="display:flex;"><span>				    (<span style="color:#00f">eq</span> <span style="color:#19177c">id</span> (<span style="color:#00f">frame-parameter</span> <span style="color:#19177c">f</span> <span style="color:#19177c">&#39;exwm-id</span>)))
+</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">throw</span> <span style="color:#19177c">&#39;break</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>			<span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#408080;font-style:italic">;; In case it&#39;s a floating frame,</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#408080;font-style:italic">;; move the corresponding X window instead.</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">unless</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">catch</span> <span style="color:#19177c">&#39;break</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">dolist</span> (<span style="color:#19177c">pair</span> <span style="color:#19177c">exwm--id-buffer-alist</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">pair</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#008000">when</span>
+</span></span><span style="display:flex;"><span>			     (<span style="color:#008000">and</span> <span style="color:#19177c">exwm--floating-frame</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>					  (<span style="color:#00f">frame-parameter</span> <span style="color:#19177c">exwm--floating-frame</span>
+</span></span><span style="display:flex;"><span>							   <span style="color:#19177c">&#39;exwm-outer-id</span>))
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">eq</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>					  (<span style="color:#00f">frame-parameter</span> <span style="color:#19177c">exwm--floating-frame</span>
+</span></span><span style="display:flex;"><span>							   <span style="color:#19177c">&#39;exwm-id</span>))))
+</span></span><span style="display:flex;"><span>			   (<span style="color:#008000">setq</span> <span style="color:#19177c">id</span> <span style="color:#19177c">exwm--id</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#008000">throw</span> <span style="color:#19177c">&#39;break</span> <span style="color:#800">nil</span>))))))
+</span></span><span style="display:flex;"><span>		 <span style="color:#408080;font-style:italic">;; Start to move it.</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">exwm-floating--start-moveresize</span> <span style="color:#19177c">id</span> <span style="color:#19177c">direction</span>))))))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_REQUEST_FRAME_EXTENTS</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_REQUEST_FRAME_EXTENTS</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">top</span> <span style="color:#19177c">btm</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">not</span> (<span style="color:#00f">buffer-local-value</span> <span style="color:#19177c">&#39;exwm--floating-frame</span> <span style="color:#19177c">buffer</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">top</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">btm</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">setq</span> <span style="color:#19177c">top</span> (<span style="color:#00f">window-header-line-height</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#19177c">btm</span> (<span style="color:#00f">window-mode-line-height</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">xcb:+request</span> <span style="color:#19177c">exwm--connection</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">make-instance</span> <span style="color:#19177c">&#39;xcb:ewmh:set-_NET_FRAME_EXTENTS</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:window</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:left</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:right</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:top</span> <span style="color:#19177c">top</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:bottom</span> <span style="color:#19177c">btm</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">xcb:flush</span> <span style="color:#19177c">exwm--connection</span>))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_WM_DESKTOP.</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_WM_DESKTOP</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">exwm-workspace-move-window</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>) <span style="color:#19177c">id</span>))))
+</span></span><span style="display:flex;"><span>     <span style="color:#408080;font-style:italic">;; _NET_WM_STATE</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">action</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">props</span> (<span style="color:#00f">list</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">1</span>) (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">props-new</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; only support _NET_WM_STATE_FULLSCREEN / _NET_WM_STATE_ADD for frames</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">memq</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_FULLSCREEN</span> <span style="color:#19177c">props</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">=</span> <span style="color:#19177c">action</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_STATE_ADD</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">xcb:+request</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">exwm--connection</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">make-instance</span> <span style="color:#19177c">&#39;xcb:ewmh:set-_NET_WM_STATE</span>
+</span></span><span style="display:flex;"><span>			     <span style="color:#008000">:window</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>			     <span style="color:#008000">:data</span> (<span style="color:#00f">vector</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_FULLSCREEN</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">xcb:flush</span> <span style="color:#19177c">exwm--connection</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> <span style="color:#19177c">buffer</span>                    <span style="color:#408080;font-style:italic">;ensure it&#39;s managed</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; _NET_WM_STATE_FULLSCREEN</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">when</span> (<span style="color:#008000">or</span> (<span style="color:#00f">memq</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_FULLSCREEN</span> <span style="color:#19177c">props</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">memq</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_ABOVE</span> <span style="color:#19177c">props</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> <span style="color:#19177c">action</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_STATE_ADD</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">unless</span> (<span style="color:#19177c">exwm-layout--fullscreen-p</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">exwm-layout-set-fullscreen</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">push</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_FULLSCREEN</span> <span style="color:#19177c">props-new</span>))
+</span></span><span style="display:flex;"><span>		    ((<span style="color:#00f">=</span> <span style="color:#19177c">action</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_STATE_REMOVE</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">when</span> (<span style="color:#19177c">exwm-layout--fullscreen-p</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">exwm-layout-unset-fullscreen</span> <span style="color:#19177c">id</span>)))
+</span></span><span style="display:flex;"><span>		    ((<span style="color:#00f">=</span> <span style="color:#19177c">action</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_STATE_TOGGLE</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">if</span> (<span style="color:#19177c">exwm-layout--fullscreen-p</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">exwm-layout-unset-fullscreen</span> <span style="color:#19177c">id</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">exwm-layout-set-fullscreen</span> <span style="color:#19177c">id</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">push</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_FULLSCREEN</span> <span style="color:#19177c">props-new</span>)))))
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; _NET_WM_STATE_DEMANDS_ATTENTION</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; FIXME: check (may require other properties set)</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">when</span> (<span style="color:#00f">memq</span> <span style="color:#19177c">xcb:Atom:_NET_WM_STATE_DEMANDS_ATTENTION</span> <span style="color:#19177c">props</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">when</span> (<span style="color:#00f">=</span> <span style="color:#19177c">action</span> <span style="color:#19177c">xcb:ewmh:_NET_WM_STATE_ADD</span>)
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">unless</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">exwm--frame</span> <span style="color:#19177c">exwm-workspace--current</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">set-frame-parameter</span> <span style="color:#19177c">exwm--frame</span> <span style="color:#19177c">&#39;exwm-urgency</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-workspace--switch-history-outdated</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>	      <span style="color:#408080;font-style:italic">;; xcb:ewmh:_NET_WM_STATE_REMOVE?</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#408080;font-style:italic">;; xcb:ewmh:_NET_WM_STATE_TOGGLE?</span>
+</span></span><span style="display:flex;"><span>	      )
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">xcb:+request</span> <span style="color:#19177c">exwm--connection</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">make-instance</span> <span style="color:#19177c">&#39;xcb:ewmh:set-_NET_WM_STATE</span>
+</span></span><span style="display:flex;"><span>			       <span style="color:#008000">:window</span> <span style="color:#19177c">id</span> <span style="color:#008000">:data</span> (<span style="color:#00f">vconcat</span> <span style="color:#19177c">props-new</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">xcb:flush</span> <span style="color:#19177c">exwm--connection</span>)))))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:WM_PROTOCOLS</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">type</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:_NET_WM_PING</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-manage--ping-lock</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#800">t</span> (<span style="color:#19177c">exwm--log</span> <span style="color:#ba2121">&#34;Unhandled WM_PROTOCOLS of type: %d&#34;</span> <span style="color:#19177c">type</span>)))))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">=</span> <span style="color:#19177c">type</span> <span style="color:#19177c">xcb:Atom:WM_CHANGE_STATE</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">exwm--id-&gt;buffer</span> <span style="color:#19177c">id</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">=</span> (<span style="color:#00f">elt</span> <span style="color:#19177c">data</span> <span style="color:#666">0</span>) <span style="color:#19177c">xcb:icccm:WM_STATE:IconicState</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> <span style="color:#19177c">exwm--floating-frame</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">call-interactively</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm-floating-hide</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">bury-buffer</span>))))))
+</span></span><span style="display:flex;"><span>     (<span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">exwm--log</span> <span style="color:#ba2121">&#34;Unhandled: %s(%d)&#34;</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">x-get-atom-name</span> <span style="color:#19177c">type</span> <span style="color:#19177c">exwm-workspace--current</span>) <span style="color:#19177c">type</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;exwm</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;exwm--on-ClientMessage</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm--on-ClientMessage-old</span>))
 </span></span></code></pre></div><h3 id="application-specific-settings">Application-specific settings</h3>
 <p>Start Nyxt in <code>char-mode</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-manage-configurations</span>
@@ -3499,7 +3686,7 @@
 <tbody>
 <tr>
 <td>dev</td>
-<td>conda</td>
+<td>micromamba-bin</td>
 <td></td>
 </tr>
 <tr>
@@ -3882,7 +4069,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:one-shot?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-system-constructor</span> <span style="color:#ba2121">&#34;xmodmap /home/pavel/.Xmodmap&#34;</span>)))
 </span></span></code></pre></div><h3 id="vpn">VPN</h3>
-<p>Run my <a href="/configs/guix/#vpn">OpenVPN setup</a>. Not lauching this automatially, as it requires an active connection.</p>
+<p>Run my <a href="/configs/guix/#openvpn">OpenVPN setup</a>. Not lauching this automatially, as it requires an active connection.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">vpn</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">vpn</span>)
@@ -4055,6 +4242,11 @@
 <td>font-google-noto-emoji</td>
 <td></td>
 </tr>
+<tr>
+<td>desktop-misc</td>
+<td>remmina</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <p><a id="code-snippet--packages"></a></p>
@@ -4129,6 +4321,7 @@
           <ul>
             <li><a href="#catch-and-report-all-errors-raised-when-invoking-command-hooks">Catch and report all errors raised when invoking command hooks</a></li>
             <li><a href="#improve-floating-windows-behavior">Improve floating windows behavior</a></li>
+            <li><a href="#fix-exwm-on-clientmessage">Fix exwm&ndash;on-ClientMessage</a></li>
           </ul>
         </li>
         <li><a href="#application-specific-settings">Application-specific settings</a></li>
