@@ -1283,7 +1283,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;pre-command-hook</span> <span style="color:#19177c">&#39;keycast--update</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">global-mode-string</span> (<span style="color:#00f">delete</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">keycast-mode-line</span> <span style="color:#ba2121">&#34; &#34;</span>) <span style="color:#19177c">global-mode-string</span>)))))
 </span></span></code></pre></div><h3 id="themes-and-colors">Themes and colors</h3>
-<h4 id="doom-themes">Doom themes</h4>
+<h4 id="theme-packages">Theme packages</h4>
 <p>My colorschemes of choice.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">doom-themes</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -1298,41 +1298,127 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">doom-themes-treemacs-config</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">modus-themes</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
-</span></span></code></pre></div><h4 id="custom-theme">Custom theme</h4>
-<p>Here I define a custom theme dependent on colors from the current theme.</p>
-<p>A custom theme is necessary because if one calls <code>custom-set-faces</code> and <code>custom-set-variables</code> in code, whenever a variable is changed and saved in a customize buffer, data from all calls of these functions is saved as well.</p>
-<p>First, here&rsquo;s a great package with various color tools:</p>
+</span></span></code></pre></div><h4 id="custom-theme-1">Custom theme</h4>
+<p>Here I define a few things on the top of Emacs theme, because:</p>
+<ul>
+<li>Occasionally I want to have more theme-derived faces</li>
+<li>I also want Emacs theme to be applied to the rest of the system (see the <a href="/configs/desktop/">Desktop</a> config on that)</li>
+</ul>
+<p>Theme-derived faces have to placed in a custom theme, because if one calls <code>custom-set-faces</code> and <code>custom-set-variables</code> in code, whenever a variable is changed and saved in a customize buffer, data from all calls of these functions is saved as well.</p>
+<h5 id="get-color-values">Get color values</h5>
+<p>Here&rsquo;s a great package with various color tools:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ct</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
-</span></span></code></pre></div><p>A function to get a color value from the current theme. Supports both <code>doom-themes</code> and <code>modus-themes</code>&hellip; Sort of.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/modus-get-base</span> (<span style="color:#19177c">color</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">base-value</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">substring</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>) <span style="color:#666">4</span> <span style="color:#666">5</span>)))
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">base-start</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-main</span> (<span style="color:#19177c">modus-themes--current-theme-palette</span>))))
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">base-end</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;fg-dim</span> (<span style="color:#19177c">modus-themes--current-theme-palette</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">nth</span> <span style="color:#19177c">base-value</span> (<span style="color:#19177c">ct-gradient</span> <span style="color:#666">9</span> <span style="color:#19177c">base-start</span> <span style="color:#19177c">base-end</span> <span style="color:#800">t</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/doom-p</span> ()
+</span></span></code></pre></div><p>As of now I want this to support <code>doom-themes</code> and <code>modus-themes</code>. So, let&rsquo;s get which one is enabled:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/doom-p</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-find</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;doom&#34;</span>) (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">x</span>)))
 </span></span><span style="display:flex;"><span>	    <span style="color:#19177c">custom-enabled-themes</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/modus-p</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-find</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;modus&#34;</span>) (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">x</span>)))
 </span></span><span style="display:flex;"><span>	    <span style="color:#19177c">custom-enabled-themes</span>))
+</span></span></code></pre></div><p>I also want to know if the current theme is light or not:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/light-p</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">and</span> (<span style="color:#19177c">seq-intersection</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">custom-enabled-themes</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">doom-one-light</span> <span style="color:#19177c">modus-operandi</span>))
+</span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/color-value</span> (<span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dark-p</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">not</span> (<span style="color:#19177c">my/light-p</span>)))
+</span></span></code></pre></div><p>Now, let&rsquo;s get the current color from <code>doom</code>. <code>doom-themes</code> provide <code>doom-color</code>, but it&rsquo;s not enough to populate <code>Xresources</code> and the format doesn&rsquo;t quite match.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/theme-string-override</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>((<span style="color:#19177c">doom-palenight</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;#f07178&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/doom-color</span> (<span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">stringp</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">override</span> (<span style="color:#19177c">alist-get</span> (<span style="color:#19177c">my/doom-p</span>) <span style="color:#19177c">my/theme-string-override</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">color</span> <span style="color:#19177c">override</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">pcase</span> <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>	   ((<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#ba2121">&#34;green&#34;</span> <span style="color:#ba2121">&#34;yellow&#34;</span> <span style="color:#ba2121">&#34;blue&#34;</span> <span style="color:#ba2121">&#34;magenta&#34;</span> <span style="color:#ba2121">&#34;cyan&#34;</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">doom-color</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">color</span>)))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#ba2121">&#34;black&#34;</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base0</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#ba2121">&#34;white&#34;</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base8</span>))
+</span></span><span style="display:flex;"><span>	   ((<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;light-&#34;</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">ct-edit-lab-l-inc</span> (<span style="color:#19177c">my/doom-color</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">color</span> <span style="color:#666">6</span>)) <span style="color:#666">10</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">color</span>)))
+</span></span></code></pre></div><p>And the same for <code>modus-themes</code>. <code>my/modus-color</code> has to accept the same arguments as <code>my/doom-color</code> for backward compatibility.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/modus-get-base</span> (<span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">base-value</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">substring</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>) <span style="color:#666">4</span> <span style="color:#666">5</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">base-start</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-main</span> (<span style="color:#19177c">modus-themes--current-theme-palette</span>))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">base-end</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;fg-dim</span> (<span style="color:#19177c">modus-themes--current-theme-palette</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">nth</span> <span style="color:#19177c">base-value</span> (<span style="color:#19177c">ct-gradient</span> <span style="color:#666">9</span> <span style="color:#19177c">base-start</span> <span style="color:#19177c">base-end</span> <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/modus-color</span> (<span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">palette</span> (<span style="color:#19177c">modus-themes--current-theme-palette</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">member</span> <span style="color:#19177c">color</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;black&#34;</span> <span style="color:#ba2121">&#34;white&#34;</span> <span style="color:#ba2121">&#34;light-black&#34;</span> <span style="color:#ba2121">&#34;light-white&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">bg-main</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-main</span> <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">fg-main</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;fg-main</span> <span style="color:#19177c">palette</span>))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">pcase</span> <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;black&#34;</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">bg-main</span>) <span style="color:#19177c">fg-main</span> <span style="color:#19177c">bg-main</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;white&#34;</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">bg-main</span>) <span style="color:#19177c">bg-main</span> <span style="color:#19177c">fg-main</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;light-black&#34;</span> (<span style="color:#19177c">ct-edit-lab-l-inc</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">bg-main</span>) <span style="color:#19177c">fg-main</span> <span style="color:#19177c">bg-main</span>)
+</span></span><span style="display:flex;"><span>			  <span style="color:#666">15</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;light-white&#34;</span> (<span style="color:#19177c">ct-edit-lab-l-inc</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">bg-main</span>) <span style="color:#19177c">bg-main</span> <span style="color:#19177c">fg-main</span>)
+</span></span><span style="display:flex;"><span>			  <span style="color:#666">15</span>)))))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-main</span> <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;fg</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;fg-main</span> <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;violet</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;magenta-cooler</span> <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">symbolp</span> <span style="color:#19177c">color</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;base&#34;</span> <span style="color:#19177c">digit</span>) (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/modus-get-base</span> <span style="color:#19177c">color</span>))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">symbolp</span> <span style="color:#19177c">color</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;dark-&#34;</span>) (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s-cooler&#34;</span> (<span style="color:#00f">substring</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>) <span style="color:#666">5</span>)))
+</span></span><span style="display:flex;"><span>		   <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;grey</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/modus-get-base</span> <span style="color:#19177c">&#39;base5</span>))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">member</span> <span style="color:#19177c">color</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#ba2121">&#34;green&#34;</span> <span style="color:#ba2121">&#34;yellow&#34;</span> <span style="color:#ba2121">&#34;blue&#34;</span> <span style="color:#ba2121">&#34;magenta&#34;</span> <span style="color:#ba2121">&#34;cyan&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">color</span>) <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">stringp</span> <span style="color:#19177c">color</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;light-&#34;</span>) <span style="color:#19177c">color</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s-intense&#34;</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">color</span> <span style="color:#666">6</span>))) <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     (<span style="color:#800">t</span> (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">color</span> <span style="color:#19177c">palette</span>))))))
+</span></span></code></pre></div><p>Test the two functions.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/test-colors-list</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;black&#34;</span> <span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#ba2121">&#34;green&#34;</span> <span style="color:#ba2121">&#34;yellow&#34;</span> <span style="color:#ba2121">&#34;blue&#34;</span> <span style="color:#ba2121">&#34;magenta&#34;</span> <span style="color:#ba2121">&#34;cyan&#34;</span> <span style="color:#ba2121">&#34;white&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;light-black&#34;</span> <span style="color:#ba2121">&#34;light-red&#34;</span> <span style="color:#ba2121">&#34;light-green&#34;</span> <span style="color:#ba2121">&#34;light-yellow&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;light-blue&#34;</span> <span style="color:#ba2121">&#34;light-magenta&#34;</span> <span style="color:#ba2121">&#34;light-cyan&#34;</span> <span style="color:#ba2121">&#34;light-white&#34;</span> <span style="color:#19177c">bg</span> <span style="color:#19177c">fg</span> <span style="color:#19177c">red</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">green</span> <span style="color:#19177c">yellow</span> <span style="color:#19177c">blue</span> <span style="color:#19177c">magenta</span> <span style="color:#19177c">cyan</span> <span style="color:#19177c">dark-blue</span> <span style="color:#19177c">dark-cyan</span> <span style="color:#19177c">violet</span> <span style="color:#19177c">grey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">base0</span> <span style="color:#19177c">base1</span> <span style="color:#19177c">base2</span> <span style="color:#19177c">base3</span> <span style="color:#19177c">base4</span> <span style="color:#19177c">base5</span> <span style="color:#19177c">base6</span> <span style="color:#19177c">base7</span> <span style="color:#19177c">base8</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/test-colors</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buf</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*colors-test*&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-20s %-10s %-10s&#34;</span> <span style="color:#ba2121">&#34;Color&#34;</span> <span style="color:#ba2121">&#34;Doom&#34;</span> <span style="color:#ba2121">&#34;Modus&#34;</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">color</span> <span style="color:#19177c">in</span> <span style="color:#19177c">my/test-colors-list</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#008000">do</span> (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-20s %-10s %-10s\n&#34;</span>
+</span></span><span style="display:flex;"><span>			   (<span style="color:#00f">prin1-to-string</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#19177c">my/doom-color</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#19177c">my/modus-color</span> <span style="color:#19177c">color</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">special-mode</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">rainbow-mode</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">switch-to-buffer</span> <span style="color:#19177c">buf</span>)))
+</span></span></code></pre></div><p>Finally, one function to get the value of a color in the current theme.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/color-value</span> (<span style="color:#19177c">color</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">cond</span>
-</span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/doom-p</span>) (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">color</span>))
-</span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/modus-p</span>) (<span style="color:#19177c">cadr</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">assoc</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">cond</span>
-</span></span><span style="display:flex;"><span>		     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#19177c">&#39;bg-main</span>)
-</span></span><span style="display:flex;"><span>		     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;fg</span>) <span style="color:#19177c">&#39;fg-main</span>)
-</span></span><span style="display:flex;"><span>		     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;base&#34;</span> <span style="color:#19177c">digit</span>)
-</span></span><span style="display:flex;"><span>					    (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>))
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">my/modus-get-base</span> <span style="color:#19177c">color</span>))
-</span></span><span style="display:flex;"><span>		     (<span style="color:#800">t</span> <span style="color:#19177c">color</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">modus-themes--current-theme-palette</span>))))))
-</span></span></code></pre></div><p>Defining the theme itself.</p>
+</span></span><span style="display:flex;"><span>   ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg-other</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">ct-edit-lab-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">ct-edit-lab-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>))))
+</span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/doom-p</span>) (<span style="color:#19177c">my/doom-color</span> <span style="color:#19177c">color</span>))
+</span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/modus-p</span>) (<span style="color:#19177c">my/modus-color</span> <span style="color:#19177c">color</span>))))
+</span></span></code></pre></div><p>And a few more functions</p>
+<h5 id="custom-theme">Custom theme</h5>
+<p>So, the custom theme:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">deftheme</span> <span style="color:#19177c">my-theme-1</span>)
 </span></span></code></pre></div><p>A macro to simplify defining custom colors.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/my-theme-update-color-params</span> <span style="color:#800">nil</span>)
@@ -1347,6 +1433,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>       (<span style="color:#19177c">my/update-my-theme</span>))))
 </span></span></code></pre></div><p>This macro puts lambdas to <code>my/my-theme-update-colors-hook</code> that updates faces in <code>my-theme-1</code>. Now I have to call this hook:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/update-my-theme</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">face</span> <span style="color:#666">.</span> <span style="color:#19177c">values</span>) <span style="color:#19177c">in</span> <span style="color:#19177c">my/my-theme-update-color-params</span>
 </span></span><span style="display:flex;"><span>	   <span style="color:#008000">do</span> (<span style="color:#19177c">custom-theme-set-faces</span>
 </span></span><span style="display:flex;"><span>	       <span style="color:#19177c">&#39;my-theme-1</span>
@@ -1357,8 +1444,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/is-termux</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;load-theme</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/update-my-theme</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (when (fboundp &#39;doom-color)</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;   (my/update-my-theme))</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-startup-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/update-my-theme</span>))
 </span></span></code></pre></div><p>Defining colors for <code>tab-bar.el</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-colors</span>
@@ -1366,6 +1451,18 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	      <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;yellow</span>)
 </span></span><span style="display:flex;"><span>	      <span style="color:#008000">:underline</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;yellow</span>))
 </span></span><span style="display:flex;"><span> (<span style="color:#19177c">tab-bar</span> <span style="color:#008000">:background</span> <span style="color:#800">nil</span> <span style="color:#008000">:foreground</span> <span style="color:#800">nil</span>))
+</span></span></code></pre></div><h5 id="switch-theme">Switch theme</h5>
+<p>The built-in <code>load-theme</code> does not deactivate the previous theme, so here&rsquo;s a function that does that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/switch-theme</span> (<span style="color:#19177c">theme</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Load custom theme: &#34;</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;symbol-name</span>
+</span></span><span style="display:flex;"><span>							  (<span style="color:#19177c">custom-available-themes</span>))))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">in</span> <span style="color:#19177c">custom-enabled-themes</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">&#39;my-theme-1</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">theme</span>)))
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">do</span> (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">enabled-theme</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">theme</span> <span style="color:#800">t</span>))
 </span></span></code></pre></div><h4 id="dim-inactive-buffers">Dim inactive buffers</h4>
 <p>Dim inactive buffers.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">auto-dim-other-buffers</span>
@@ -1375,17 +1472,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">auto-dim-other-buffers-mode</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">auto-dim-other-buffers-face</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">:background</span> (<span style="color:#19177c">ct-greaten</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>))))
-</span></span></code></pre></div><h4 id="toggle-light-dark">Toggle light/dark</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/toggle-dark-light-theme</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">is-dark</span> (<span style="color:#00f">member</span> <span style="color:#19177c">&#39;doom-palenight</span> <span style="color:#19177c">custom-enabled-themes</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">is-dark</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">progn</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">&#39;doom-one-light</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">&#39;doom-palenight</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">&#39;doom-palenight</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">&#39;doom-one-light</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>))))
 </span></span></code></pre></div><h4 id="ansi-colors">ANSI colors</h4>
 <p><code>ansi-color.el</code> is a built-in Emacs package that translates ANSI color escape codes into faces.</p>
 <p>It is used by many other packages but doesn&rsquo;t seem to have an integration with <code>doom-themes</code>, so here is one.</p>
@@ -4793,8 +4880,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)))
 </span></span></code></pre></div><h4 id="override-colors">Override colors</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-colors</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">ct-greaten</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>))
-</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block-begin-line</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">ct-greaten</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>))
+</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block-begin-line</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>)
 </span></span><span style="display:flex;"><span>		       <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;grey</span>)))
 </span></span></code></pre></div><h3 id="export">Export</h3>
 <h4 id="hugo">Hugo</h4>
@@ -8389,10 +8476,9 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         </li>
         <li><a href="#themes-and-colors">Themes and colors</a>
           <ul>
-            <li><a href="#doom-themes">Doom themes</a></li>
-            <li><a href="#custom-theme">Custom theme</a></li>
+            <li><a href="#theme-packages">Theme packages</a></li>
+            <li><a href="#custom-theme-1">Custom theme</a></li>
             <li><a href="#dim-inactive-buffers">Dim inactive buffers</a></li>
-            <li><a href="#toggle-light-dark">Toggle light/dark</a></li>
             <li><a href="#ansi-colors">ANSI colors</a></li>
           </ul>
         </li>

@@ -80,121 +80,99 @@
 </ul>
 <h2 id="global-customization">Global customization</h2>
 <h3 id="colors">Colors</h3>
-<p>My favorite color theme is Palenight (<a href="https://github.com/JonathanSpeek/palenight-iterm2">color codes</a>), and I want to have one source of truth for these colors. Except for Emacs itself, which has <a href="https://github.com/doomemacs/themes#theme-list">doom-palenight</a> (and in which I occasionally switch to <code>doom-one-light</code>, e.g. when reading a long text), it can be done rather nicely with Org Mode.</p>
-<p>First, let&rsquo;s define a table with all the color codes:</p>
+<p>I used to define color codes here (see <a href="https://github.com/SqrtMinusOne/dotfiles/commit/2dbf1cdd008ec0061456782cca3ebd76e603b31e">previous version of the file</a>), now I just get colors from the current Emacs theme.</p>
+<p>To use them, let&rsquo;s define a noweb block:</p>
+<p><a id="code-snippet--get-color"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">my/color-value</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">name</span>)))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#008000">quote</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">color</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
+</span></span></code></pre></div><p>Test:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;get-color</span>(<span style="color:#19177c">name=</span><span style="color:#ba2121">&#34;red&#34;</span><span style="color:#666">,</span> <span style="color:#19177c">quote=1</span>)<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><p>This tables used to have values, now it has only keys:</p>
 <p><a id="table--colors"></a></p>
 <table>
 <thead>
 <tr>
 <th>color</th>
 <th>key</th>
-<th>value</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>black</td>
 <td>color0</td>
-<td>#292d3e</td>
 </tr>
 <tr>
 <td>red</td>
 <td>color1</td>
-<td>#f07178</td>
 </tr>
 <tr>
 <td>green</td>
 <td>color2</td>
-<td>#c3e88d</td>
 </tr>
 <tr>
 <td>yellow</td>
 <td>color3</td>
-<td>#ffcb6b</td>
 </tr>
 <tr>
 <td>blue</td>
 <td>color4</td>
-<td>#82aaff</td>
 </tr>
 <tr>
 <td>magenta</td>
 <td>color5</td>
-<td>#c792ea</td>
 </tr>
 <tr>
 <td>cyan</td>
 <td>color6</td>
-<td>#89ddff</td>
 </tr>
 <tr>
 <td>white</td>
 <td>color7</td>
-<td>#d0d0d0</td>
 </tr>
 <tr>
 <td>light-black</td>
 <td>color8</td>
-<td>#434758</td>
 </tr>
 <tr>
 <td>light-red</td>
 <td>color9</td>
-<td>#ff8b92</td>
 </tr>
 <tr>
 <td>light-green</td>
 <td>color10</td>
-<td>#ddffa7</td>
 </tr>
 <tr>
 <td>light-yellow</td>
 <td>color11</td>
-<td>#ffe585</td>
 </tr>
 <tr>
 <td>light-blue</td>
 <td>color12</td>
-<td>#9cc4ff</td>
 </tr>
 <tr>
 <td>light-magenta</td>
 <td>color13</td>
-<td>#e1acff</td>
 </tr>
 <tr>
 <td>light-cyan</td>
 <td>color14</td>
-<td>#a3f7ff</td>
 </tr>
 <tr>
 <td>light-white</td>
 <td>color15</td>
-<td>#ffffff</td>
-</tr>
-<tr>
-<td>color-fg</td>
-<td></td>
-<td>#000000</td>
 </tr>
 </tbody>
 </table>
-<p>The table above is the only source of truth for colors in this config.</p>
-<p>Contents of this table can then be <a href="https://orgmode.org/manual/Environment-of-a-Code-Block.html">accessed from a code block</a>. Let&rsquo;s define one to return the color code based on its name:</p>
-<p><a id="code-snippet--get-color"></a></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#19177c">seq-some</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#008000">and</span> (<span style="color:#19177c">string=</span> <span style="color:#19177c">name</span> (<span style="color:#00f">car</span> <span style="color:#19177c">e</span>)) (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">e</span>))) <span style="color:#19177c">table</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#008000">quote</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">color</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
-</span></span></code></pre></div><p>Test:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;get-color</span>(<span style="color:#19177c">name=</span><span style="color:#ba2121">&#34;red&#34;</span><span style="color:#666">,</span> <span style="color:#19177c">quote=1</span>)<span style="color:#19177c">&gt;&gt;</span>
-</span></span></code></pre></div><h3 id="xresources">Xresources</h3>
+<h3 id="xresources">Xresources</h3>
 <h4 id="colors-in-xresources">Colors in Xresources</h4>
 <p>However, I&rsquo;d rather use the <code>Xresources</code> file wherever possible. Here is the code to generate an Xresources file from this table:</p>
 <p><a id="code-snippet--get-xresources"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">mapconcat</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;*&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;: &#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;*&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;: &#34;</span> (<span style="color:#19177c">my/color-value</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>))))
 </span></span><span style="display:flex;"><span> (<span style="color:#19177c">seq-filter</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>) (<span style="color:#008000">and</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>)
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>)))))
@@ -202,8 +180,8 @@
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;\n&#34;</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>&lt;&lt;get-xresources()&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>*background: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>*foreground: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>*background: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>*foreground: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>)&gt;&gt;<span style="">
 </span></span></span></code></pre></div><p>So, whenever a program is capable of reading <code>.Xresources</code>, it will get colors from there, otherwise, it will get colors from noweb expressions in the literate config. Thus, in both cases, the color is set in a single Org Mode table.</p>
 <h4 id="fonts">Fonts</h4>
 <p>Also, Xresources are used to set <code>Xft</code> settings. Unfortunately, the DPI setting has to be unique for each machine, which means I cannot commit <code>Xresources</code> to the repo.</p>
@@ -403,9 +381,9 @@
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/exwm-modeline&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-init-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm-modeline-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-doom-colors</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">exwm-modeline-current-workspace</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;yellow</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:weight</span> <span style="color:#19177c">&#39;bold</span>)))
 </span></span></code></pre></div><h3 id="windows">Windows</h3>
 <p>A bunch of functions related to managing windows in EXWM.</p>
@@ -1755,7 +1733,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">&lt;&lt;get-polybar-colors()&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">background</span> <span style="color:#666">=</span> <span style="color:#ba2121">${xrdb:background}</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; foreground = ${xrdb:foreground}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${xrdb:color0}</span>
 </span></span></code></pre></div><h4 id="glyph-settings">Glyph settings</h4>
 <p>As for the module decorations though, I find it ironic that with all this fancy rendering around I have to resort to Unicode glyphs.</p>
 <p>Anyhow, the approach is to put a glyph between two blocks like this:</p>
@@ -2240,6 +2218,8 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-volume-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;pulseaudio&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-muted-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;pulseaudio&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-volume-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-muted-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-volume-underline = ${colors.white}</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-muted-underline = ${colors.light-black}</span>
@@ -2264,6 +2244,9 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-playing-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-paused-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-stopped-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;mpd&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-playing-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-paused-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-stopped-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-separator</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">separator-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.red}</span>
@@ -2280,6 +2263,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34; &lt;label&gt;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span> <span style="color:#666">=</span> <span style="color:#ba2121">%percentage%%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;cpu&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="ram-memory">ram-memory</h4>
 <p>RAM usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/ram-memory]</span>
@@ -2300,6 +2284,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-underline = ${colors.blue}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;ram-memory&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="swap-memory">swap-memory</h4>
 <p>Swap usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/swap-memory]</span>
@@ -2308,6 +2293,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span><span style="color:#666">=</span><span style="color:#ba2121"> %gb_swap_used:.1f%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;swap-memory&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="network">network</h4>
 <p>Upload/download speed</p>
 <p>UPD <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-07-24 Sun&gt;</span></span>: Somehow it doesn&rsquo;t work with my current internet setup.</p>
@@ -2326,6 +2312,8 @@
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-disconnected-underline = ${colors.red}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-connected-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;network&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-disconnected-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;network&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-connected-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-disconnected-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-0</span> <span style="color:#666">=</span> <span style="color:#ba2121">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ramp-signal-1</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
@@ -2342,6 +2330,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">tail</span> <span style="color:#666">=</span> <span style="color:#ba2121">true</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;bandwidth&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Copyright (C) 2015 James Murphy</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Copyright (C) 2022 Pavel Korytov</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Licensed under the terms of the GNU GPL v2 only.</span>
@@ -2507,6 +2496,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/script</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/openvpn.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;openvpn&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1200</span>
 </span></span></code></pre></div><h4 id="xkeyboard">xkeyboard</h4>
 <p>Current keyboard layout</p>
@@ -2516,6 +2506,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-underline = ${colors.magenta}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;xkeyboard&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-layout</span> <span style="color:#666">=</span> <span style="color:#ba2121">%icon%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">layout-icon-0</span> <span style="color:#666">=</span> <span style="color:#ba2121">ru;RU</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">layout-icon-1</span> <span style="color:#666">=</span> <span style="color:#ba2121">us;US</span>
@@ -2530,6 +2521,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-discharging-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-charging-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-full-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;battery&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-discharging</span> <span style="color:#666">=</span> <span style="color:#ba2121">%percentage%% %time%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label-charging</span> <span style="color:#666">=</span> <span style="color:#ba2121"> %percentage%% %time%</span>
 </span></span><span style="display:flex;"><span>
@@ -2559,6 +2551,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/weather.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; format-underline = ${colors.red}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;weather&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1200</span>
 </span></span></code></pre></div><h4 id="sun">sun</h4>
 <table>
@@ -2606,6 +2599,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/script</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/sun.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;sun&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">60</span>
 </span></span></code></pre></div><h4 id="aw-afk">aw-afk</h4>
 <p>Prints out a current uptime and non-AFK time from <a href="https://github.com/ActivityWatch">ActivityWatch</a> server</p>
@@ -2641,6 +2635,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/aw_afk.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">60</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;aw-afk&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="date">date</h4>
 <p>Current date</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/date]</span>
@@ -2654,6 +2649,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">time-alt</span> <span style="color:#666">=</span> <span style="color:#ba2121">%H:%M:%S</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;date&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;%date% %time%&#34;</span>
 </span></span></code></pre></div><h4 id="pomm">pomm</h4>
 <p>Pomodoro module.</p>
@@ -2665,6 +2661,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/pomm.sh</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-underline</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.light-green}</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="sep">SEP</h4>
 <p>A simple separator</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/SEP]</span>
@@ -2744,7 +2741,7 @@
 </span></span><span style="display:flex;"><span> <span style="color:#00f">#&#39;concat</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#00f">mapcar</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;: &#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;: &#34;</span> (<span style="color:#19177c">my/color-value</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>)) <span style="color:#ba2121">&#34;;\n&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">table</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* Generated from [[file:../../Desktop.org::*Theme][Theme:1]] */</span>
 </span></span><span style="display:flex;"><span> <span style="color:#666">*</span> {
@@ -2984,8 +2981,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[General]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">disabledTrayIcon</span><span style="color:#666">=</span><span style="color:#ba2121">false</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">drawColor</span><span style="color:#666">=</span><span style="color:#ba2121">#ff0000</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">drawThickness</span><span style="color:#666">=</span><span style="color:#ba2121">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">saveAfterCopyPath</span><span style="color:#666">=</span><span style="color:#ba2121">/home/pavel/Pictures</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">drawThickness</span><span style="color:#666">=</span><span style="color:#ba2121">3</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">savePath</span><span style="color:#666">=</span><span style="color:#ba2121">/home/pavel/Pictures</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">savePathFixed</span><span style="color:#666">=</span><span style="color:#ba2121">false</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">showStartupLaunchMessage</span><span style="color:#666">=</span><span style="color:#ba2121">false</span>
@@ -3561,24 +3557,26 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>map &lt;C-r&gt; set recolor false<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>map &lt;C-R&gt; set recolor true<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor-lightcolor &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor-lightcolor &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-highlight-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-highlight-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span># set notification-error-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-fg <span style="color:#ba2121">&#34;#000000&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;yellow&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span># set notification-warning-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-fg <span style="color:#ba2121">&#34;#000000&#34;</span><span style="">
 </span></span></span></code></pre></div><h2 id="various-software">Various software</h2>
 <p>This section generates manifests for various desktop software that I&rsquo;m using.</p>
 <h3 id="browsers">Browsers</h3>
