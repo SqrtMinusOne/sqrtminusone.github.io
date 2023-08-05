@@ -78,19 +78,44 @@
 <ul>
 <li><a href="https://sqrtminusone.xyz/posts/2022-02-12-literate/">A few cases of literate configuration</a>. A few interesting ways in which literate configuration is used in this file.</li>
 </ul>
+<h2 id="some-remarks">Some remarks</h2>
+<p>Removed features:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Last commit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rofi-buku</td>
+<td>e22476b0cc6315e104e5ce4de5559a61c830c429</td>
+</tr>
+</tbody>
+</table>
 <h2 id="global-customization">Global customization</h2>
 <h3 id="colors">Colors</h3>
 <p>I used to define color codes here (see <a href="https://github.com/SqrtMinusOne/dotfiles/commit/2dbf1cdd008ec0061456782cca3ebd76e603b31e">previous version of the file</a>), now I just get colors from the current Emacs theme.</p>
 <p>To use them, let&rsquo;s define a noweb block:</p>
 <p><a id="code-snippet--get-color"></a></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>)
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">my/color-value</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">name</span>)))))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#008000">quote</span> <span style="color:#666">0</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">color</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
 </span></span></code></pre></div><p>Test:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;get-color</span>(<span style="color:#19177c">name=</span><span style="color:#ba2121">&#34;red&#34;</span><span style="color:#666">,</span> <span style="color:#19177c">quote=1</span>)<span style="color:#19177c">&gt;&gt;</span>
-</span></span></code></pre></div><p>This tables used to have values, now it has only keys:</p>
+</span></span></code></pre></div><p>Also, get a foreground for the current color:</p>
+<p><a id="code-snippet--get-fg-for-color"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">val</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;black</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;white</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> <span style="color:#008000">quote</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">val</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">val</span>))
+</span></span></code></pre></div><p>Test;</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;get-fg-for-color</span>(<span style="color:#19177c">name=</span><span style="color:#ba2121">&#34;red&#34;</span><span style="color:#666">,</span> <span style="color:#19177c">quote=1</span>)<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><p>This table used to have values, now it has only keys:</p>
 <p><a id="table--colors"></a></p>
 <table>
 <thead>
@@ -168,7 +193,7 @@
 </table>
 <h3 id="xresources">Xresources</h3>
 <h4 id="colors-in-xresources">Colors in Xresources</h4>
-<p>However, I&rsquo;d rather use the <code>Xresources</code> file wherever possible. Here is the code to generate an Xresources file from this table:</p>
+<p>Some programs get their colors from <code>XResources</code>. Let&rsquo;s generate that file.</p>
 <p><a id="code-snippet--get-xresources"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">mapconcat</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
@@ -182,7 +207,7 @@
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>*background: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>*foreground: &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>)&gt;&gt;<span style="">
-</span></span></span></code></pre></div><p>So, whenever a program is capable of reading <code>.Xresources</code>, it will get colors from there, otherwise, it will get colors from noweb expressions in the literate config. Thus, in both cases, the color is set in a single Org Mode table.</p>
+</span></span></span></code></pre></div><p>Run <code>xrdb -load ~/.Xresources</code> to apply the changes.</p>
 <h4 id="fonts">Fonts</h4>
 <p>Also, Xresources are used to set <code>Xft</code> settings. Unfortunately, the DPI setting has to be unique for each machine, which means I cannot commit <code>Xresources</code> to the repo.</p>
 <p><a id="code-snippet--get-dpi"></a></p>
@@ -226,8 +251,16 @@
 </tbody>
 </table>
 <p><a href="https://github.com/derat/xsettingsd">xsettingsd</a> is a lightweight daemon which configures X11 applications. It is launched with shepherd in the <a href="#services">Services</a> section.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Net/ThemeName <span style="color:#ba2121">&#34;Matcha-dark-azul&#34;</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>Net/IconThemeName <span style="color:#ba2121">&#34;Papirus-Dark&#34;</span><span style="">
+<p><a id="code-snippet--get-gtk-theme"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Matcha-light-azul&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Matcha-dark-azul&#34;</span>)
+</span></span></code></pre></div><p><a id="code-snippet--get-icons-theme"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Papirus&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Papirus-Dark&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Net/ThemeName <span style="color:#ba2121">&#34;&lt;&lt;get-gtk-theme()&gt;&gt;&#34;</span><span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>Net/IconThemeName <span style="color:#ba2121">&#34;&lt;&lt;get-icons-theme()&gt;&gt;&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/DecorationLayout <span style="color:#ba2121">&#34;menu:minimize,maximize,close&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/FontName <span style="color:#ba2121">&#34;Sans 10&#34;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>Gtk/MonospaceFontName <span style="color:#ba2121">&#34;JetBrainsMono Nerd Mono 12&#34;</span><span style="">
@@ -379,7 +412,7 @@
 </span></span></span></code></pre></div><h4 id="modeline">Modeline</h4>
 <p>Show the current workspace in the modeline.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm-modeline</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/exwm-modeline&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-init-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">exwm-modeline-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
@@ -502,7 +535,7 @@
 <p>perspective.el works with EXWM more or less as one would expect - each EXWM workspace has its own set of perspectives. That way it feels somewhat like having multiple Emacs frames in a tiling window manager, although, of course, much more integrated with Emacs.</p>
 <p>However, there are still some issues. For instance, I was having strange behaviors with floating windows, EXWM buffers in perspectives, etc. So I&rsquo;ve made a package called <a href="https://github.com/SqrtMinusOne/perspective-exwm.el">perspective-exwm.el</a> that does two things:</p>
 <ul>
-<li>Fixes issues I found with some advises and hooks. Take a look at the package homepage for more detail on that.</li>
+<li>Advices away the issues I had. Take a look at the package homepage for more detail on that.</li>
 <li>Provides some additional functionality that makes use of both perspective.el and EXWM.</li>
 </ul>
 <p>References:</p>
@@ -677,7 +710,7 @@
 <h4 id="ivy-posframe">ivy-posframe</h4>
 <p><a href="https://github.com/tumashu/ivy-posframe">ivy-posframe</a> is an extension to show ivy candidates in a posframe.</p>
 <p>Take a look at <a href="https://github.com/ch11ng/exwm/issues/550">this issue</a> in the EXWM repo about setting it up.</p>
-<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-09 Sat&gt;</span></span>: This looks nice, but unfortunately too unstable. Disabling it.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">[2022-04-09 Sat]</span></span>: This looks nice, but unfortunately too unstable. Disabling it.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-posframe</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
@@ -1162,6 +1195,11 @@
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-update-class</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-workspace-rename-buffer</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;EXWM :: %s&#34;</span> <span style="color:#19177c">exwm-class-name</span>)))
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-set-alpha</span> (<span style="color:#19177c">alpha</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;alpha</span> <span style="color:#19177c">default-frame-alist</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">alpha</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">alpha</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-frame-parameter</span> (<span style="color:#00f">selected-frame</span>) <span style="color:#19177c">&#39;alpha</span> <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">alpha</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">alpha</span>)))
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -1185,8 +1223,9 @@
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;exwm-mode-line-config&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;&lt;exwm-fixes&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-frame-parameter</span> (<span style="color:#00f">selected-frame</span>) <span style="color:#19177c">&#39;alpha</span> <span style="color:#666">&#39;</span>(<span style="color:#666">90</span> <span style="color:#666">.</span> <span style="color:#666">90</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;default-frame-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">alpha</span> <span style="color:#666">.</span> (<span style="color:#666">90</span> <span style="color:#666">.</span> <span style="color:#666">90</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/exwm-set-alpha</span> <span style="color:#666">100</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/exwm-set-alpha</span> <span style="color:#666">90</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">perspective-exwm-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-enable</span>))
@@ -1706,35 +1745,52 @@
 </tbody>
 </table>
 <p><a href="https://github.com/polybar/polybar">Polybar</a> is a nice-looking, WM-agnostic statusbar program.</p>
-<p><del>I switched to polybar because I wanted to try out some WMs other than i3, but decided to stick with i3 for now.</del> Still using polybar with EXWM and pretty happy with it.</p>
 <p>Don&rsquo;t forget to install the Google Noto Color Emoji font. Guix package with all Noto fonts is way too large.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/polybar/polybar/wiki">polybar docs</a></li>
 </ul>
 <h3 id="general-settings-1">General settings</h3>
-<p>In relation to literate configuration, this is the most <del>crazy</del> advanced case of the former so far in my config.</p>
+<p>This is the most <del>crazy</del> advanced piece of my literate configuration so far.</p>
 <p>My polybar has:</p>
 <ul>
 <li>colors from the general color theme;</li>
 <li>powerline-ish decorations between modules.</li>
 </ul>
 <h4 id="colors-2">Colors</h4>
-<p>The &ldquo;colors&rdquo; part is straightforward enough. Polybar can use <code>Xresources</code>, so we just need to generate the appropriate bindings of Xresources to the polybar variables:</p>
+<p><del>The &ldquo;colors&rdquo; part is straightforward enough</del>. Once upon the time it was so&hellip;</p>
+<p>Polybar can use <code>Xresources</code>, but the problem with that is you&rsquo;re supposed to use <code>colorX</code> as foreground, not as background. This usually works fine with dark themes from <code>doom-themes</code>, but not so much with high-contrast <code>modus-themes</code>.</p>
+<p>So&hellip;</p>
 <p><a id="code-snippet--get-polybar-colors"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">mapconcat</span>
 </span></span><span style="display:flex;"><span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
-</span></span><span style="display:flex;"><span>   (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s = ${xrdb:%s}&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>)))
-</span></span><span style="display:flex;"><span> (<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>) (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">name</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">elem</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">name</span>))))
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">table</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s = %s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">elem</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span> (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">nreverse</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">color</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">unless</span> (<span style="color:#00f">member</span> <span style="color:#19177c">name</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;black&#34;</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">setq</span> <span style="color:#19177c">color</span> (<span style="color:#19177c">ct-iterate</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">c</span>) (<span style="color:#19177c">ct-edit-hsl-l-inc</span> <span style="color:#19177c">c</span> <span style="color:#666">2</span>))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">c</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">c</span> <span style="color:#666">65</span>)))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">name</span> <span style="color:#19177c">color</span>) <span style="color:#19177c">acc</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;light-%s&#34;</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">ct-edit-lab-l-inc</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">my/alpha-for-light</span>))
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">acc</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;black&#34;</span> <span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#ba2121">&#34;green&#34;</span> <span style="color:#ba2121">&#34;yellow&#34;</span> <span style="color:#ba2121">&#34;blue&#34;</span> <span style="color:#ba2121">&#34;magenta&#34;</span> <span style="color:#ba2121">&#34;cyan&#34;</span> <span style="color:#ba2121">&#34;white&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;background&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-active</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#ba2121">&#34;foreground&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;#000000&#34;</span>)))
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;\n&#34;</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[colors]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">&lt;&lt;get-polybar-colors()&gt;&gt;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">background</span> <span style="color:#666">=</span> <span style="color:#ba2121">${xrdb:background}</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${xrdb:color0}</span>
 </span></span></code></pre></div><h4 id="glyph-settings">Glyph settings</h4>
 <p>As for the module decorations though, I find it ironic that with all this fancy rendering around I have to resort to Unicode glyphs.</p>
 <p>Anyhow, the approach is to put a glyph between two blocks like this:</p>
@@ -2736,7 +2792,7 @@
 </table>
 <p><a href="https://github.com/davatorium/rofi">rofi</a> is another dynamic menu generator. It can act as dmenu replacement but offers a superset of dmenu&rsquo;s features.</p>
 <h3 id="theme">Theme</h3>
-<p>A theme, based on <a href="https://github.com/dracula/rofi">dracula theme</a> for rofi, but with palenight colorscheme.</p>
+<p>A theme based on the current Emacs theme. Inspired by <a href="https://github.com/dracula/rofi">dracula theme</a>.</p>
 <p><a id="code-snippet--get-rofi-colors"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">apply</span>
 </span></span><span style="display:flex;"><span> <span style="color:#00f">#&#39;concat</span>
@@ -2748,29 +2804,29 @@
 </span></span><span style="display:flex;"><span> <span style="color:#666">*</span> {
 </span></span><span style="display:flex;"><span>    <span style="">&lt;&lt;get-rofi-colors()&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    foreground:                  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">white</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">background</span>:                  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">black</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">background-color</span>:            <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">black</span>;
+</span></span><span style="display:flex;"><span>    foreground:                  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;fg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">background</span>:                  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">background-color</span>:            <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
 </span></span><span style="display:flex;"><span>    separatorcolor:              <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">border-color</span>:                <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
-</span></span><span style="display:flex;"><span>    selected-normal-foreground:  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">black</span>;
-</span></span><span style="display:flex;"><span>    selected-normal-background:  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
-</span></span><span style="display:flex;"><span>    selected-active-foreground:  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">black</span>;
-</span></span><span style="display:flex;"><span>    selected-active-background:  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
-</span></span><span style="display:flex;"><span>    selected-urgent-foreground:  <span style="color:#666">@</span>foreground;
-</span></span><span style="display:flex;"><span>    selected-urgent-background:  <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">red</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">border-color</span>:                <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;border&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-normal-background:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-normal-foreground:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-active-background:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;light-blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-active-foreground:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;light-blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-urgent-background:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;red&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    selected-urgent-foreground:  <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;red&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
 </span></span><span style="display:flex;"><span>    normal-foreground:           <span style="color:#666">@</span>foreground;
 </span></span><span style="display:flex;"><span>    normal-background:           <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">background</span>;
 </span></span><span style="display:flex;"><span>    active-foreground:           <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
 </span></span><span style="display:flex;"><span>    active-background:           <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">background</span>;
 </span></span><span style="display:flex;"><span>    urgent-foreground:           <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">red</span>;
 </span></span><span style="display:flex;"><span>    urgent-background:           <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">background</span>;
+</span></span><span style="display:flex;"><span>    alternate-normal-background: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg-alt&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
 </span></span><span style="display:flex;"><span>    alternate-normal-foreground: <span style="color:#666">@</span>foreground;
-</span></span><span style="display:flex;"><span>    alternate-normal-background: <span style="color:#666">@</span>light-black;
-</span></span><span style="display:flex;"><span>    alternate-active-foreground: <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">blue</span>;
-</span></span><span style="display:flex;"><span>    alternate-active-background: <span style="color:#666">@</span>light-black;
-</span></span><span style="display:flex;"><span>    alternate-urgent-foreground: <span style="color:#666">@</span><span style="color:#008000;font-weight:bold">red</span>;
-</span></span><span style="display:flex;"><span>    alternate-urgent-background: <span style="color:#666">@</span>light-black;
+</span></span><span style="display:flex;"><span>    alternate-active-background: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;light-blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    alternate-active-foreground: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;light-blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    alternate-urgent-background: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;red&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>    alternate-urgent-foreground: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;red&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
 </span></span><span style="display:flex;"><span>    spacing:                     <span style="color:#666">2</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">window</span> {
@@ -2882,43 +2938,7 @@
 </span></span><span style="display:flex;"><span>    text-color:       <span style="color:#008000;font-weight:bold">inherit</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="scripts">Scripts</h3>
-<h4 id="buku-bookmarks">Buku bookmarks</h4>
-<p>Inspired by the <a href="https://github.com/knatsakis/rofi-buku">knatsakis/rofi-buku</a> script.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#008000;font-weight:bold">$(</span>hostname<span style="color:#008000;font-weight:bold">)</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#39;pdsk&#39;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">BUKU</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/.local/bin/buku&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">BUKU</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/Programs/miniconda3/bin/buku&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># COMMAND=&#34;$BUKU -o %&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># COMMAND=&#34;qutebrowser $(buku -f 10 -p %)&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#19177c">COMMAND</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;firefox %&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#19177c">$1</span> <span style="color:#666">==</span> <span style="color:#ba2121">&#39;-e&#39;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">COMMAND</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$BUKU</span><span style="color:#ba2121"> -w %&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span><span style="color:#19177c">$BUKU</span> -f <span style="color:#666">4</span> -p | awk -F<span style="color:#ba2121">&#39;\t&#39;</span> -v <span style="color:#19177c">OFS</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\t&#39;</span> <span style="color:#ba2121">&#39;{
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    split($4, tags, &#34;,&#34;)
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    joined = sep = &#34;&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    for (i = 1; i in tags; i++) {
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	joined = joined sep &#34;[&#34; tags[i] &#34;]&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	sep = &#34; &#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    }
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    url = substr($2, 1, 40)
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    if (length($2) &gt; 40) {
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	url = url &#34;...&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    }
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    if ($1 != &#34;waiting for input&#34;) {
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">	printf &#34;%-5s %-60s %-45s %s\n&#34;, $1, $3, url, joined
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    }
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">}&#39;</span> | sort -k <span style="color:#666">2</span> | rofi -dmenu -matching normal -sort -sorting-method fzf -width <span style="color:#666">80</span> -l <span style="color:#666">20</span> | cut -d <span style="color:#ba2121">&#39; &#39;</span> -f <span style="color:#666">1</span> | <span style="color:#666">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">read</span> index;
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$index</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">exit</span> <span style="color:#666">0</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">url</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span><span style="color:#19177c">$BUKU</span> -f <span style="color:#666">10</span> -p <span style="color:#19177c">$index</span><span style="color:#008000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">echo</span> <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">url</span>#<span style="color:#ba2121">&#34;waiting for input&#34;</span><span style="color:#b68;font-weight:bold">}</span> | cut -d <span style="color:#ba2121">&#39; &#39;</span> -f <span style="color:#666">1</span> | xargs -I % <span style="color:#19177c">$COMMAND</span>
-</span></span><span style="display:flex;"><span><span style="color:#666">}</span>
-</span></span></code></pre></div><h4 id="man-pages">Man pages</h4>
+<h4 id="man-pages">Man pages</h4>
 <p>Inspired by <a href="https://www.youtube.com/watch?v=8E8sUNHdzG8">this Luke Smith&rsquo;s video</a>.</p>
 <p>A script to open a man page with zathura. There is no particular reason why one should look through man pages in pdf viewer rather than in console, but why not.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">SELECTED</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>man -k . | rofi -dmenu -l <span style="color:#666">20</span> | awk <span style="color:#ba2121">&#39;{print $1}&#39;</span><span style="color:#008000;font-weight:bold">)</span>
@@ -3036,22 +3056,8 @@
 </tr>
 </tbody>
 </table>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Note</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TODO</td>
-<td>Cleanup default config comments</td>
-</tr>
-</tbody>
-</table>
 <p><a href="https://github.com/dunst-project/dunst">dunst</a> is a lightweight notification daemon.</p>
-<p>My customizations of the original config consist mostly of changing colors.</p>
+<p>My customizations of the original config consist mostly of changing colors. Check out the default config or <code>man dunst</code> for the description of settings.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://dunst-project.org/documentation/">dunst documentation</a></li>
@@ -3059,106 +3065,25 @@
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>[global]<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    monitor = <span style="color:#666">0</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    follow = mouse<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The geometry of the window:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #   [{width}]x{height}[+<span style="color:#b68">/-{x}+/</span>-{y}]<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The geometry of the message window.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The height is measured in number of notifications everything <span style="color:#008000;font-weight:bold">else</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # in pixels.  If the width is omitted but the height is given<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # (<span style="color:#ba2121">&#34;-geometry x2&#34;</span>), the message window expands over the whole screen<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # (dmenu-like).  If width is <span style="color:#666">0</span>, the window expands to the longest<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # message displayed.  A positive x is measured from the left, a<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # negative from the right side of the screen.  Y is measured from<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # the top and down respectively.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The width can be negative.  In this case the actual width is the<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # screen width minus the width defined in within the geometry option.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    geometry = <span style="color:#ba2121">&#34;300x5-30+20&#34;</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Show how many messages are currently hidden (because of geometry).<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    indicate_hidden = yes<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Shrink window <span style="color:#008000;font-weight:bold">if</span> its smaller than the width.  Will be ignored <span style="color:#008000;font-weight:bold">if</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # width is <span style="color:#666">0</span>.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    shrink = no<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The transparency of the window.  Range: [<span style="color:#666">0</span>; <span style="color:#666">100</span>].<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # This option will only work <span style="color:#008000;font-weight:bold">if</span> a compositing window manager is<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # present (e.g. xcompmgr, compiz, etc.).<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    transparency = <span style="color:#666">15</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The height of the entire notification.  If the height is smaller<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # than the font height and padding combined, it will be raised<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # to the font height and padding.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    notification_height = <span style="color:#666">0</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Draw a line of <span style="color:#ba2121">&#34;separator_height&#34;</span> pixel height between two<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # notifications.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Set to <span style="color:#666">0</span> to disable.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    separator_height = <span style="color:#666">2</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Padding between text and separator.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    padding = <span style="color:#666">8</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Horizontal padding.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    horizontal_padding = <span style="color:#666">8</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Defines width in pixels of frame around the notification window.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Set to <span style="color:#666">0</span> to disable.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    frame_width = <span style="color:#666">1</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Defines color of the frame around the notification window.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Define a color for the separator.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # possible values are:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  * auto: dunst tries to find a color fitting to the background;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  * foreground: use the same color as the foreground;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  * frame: use the same color as the frame;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  * anything <span style="color:#008000;font-weight:bold">else</span> will be interpreted as a X color.<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;border&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    separator_color = frame<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Sort messages by urgency.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    sort = yes<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Don&#39;t remove messages, <span style="color:#008000;font-weight:bold">if</span> the user is idle (no mouse or keyboard input)<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # for longer than idle_threshold seconds.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Set to <span style="color:#666">0</span> to disable.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # A client can set the <span style="color:#ba2121">&#39;transient&#39;</span> hint to bypass this. See the rules<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # section for how to disable this <span style="color:#008000;font-weight:bold">if</span> necessary<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    idle_threshold = <span style="color:#666">120</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### Text ###<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    font = DejaVu Sans <span style="color:#666">9</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The spacing between lines.  If the height is smaller than the<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # font height, it will get raised to the font height.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    line_height = <span style="color:#666">0</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Possible values are:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # full: Allow a small subset of html markup in notifications:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        &lt;b&gt;<span style="color:#008000">bold</span>&lt;/b&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        &lt;i&gt;<span style="color:#008000">italic</span>&lt;/i&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        &lt;s&gt;strikethrough&lt;/s&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        &lt;u&gt;<span style="color:#008000">underline</span>&lt;/u&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        For a complete reference see<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        &lt;http:<span style="color:#b68">//</span>developer.gnome.org<span style="color:#b68">/pango/</span>stable/PangoMarkupFormat.html&gt;.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # strip: This setting is provided for compatibility with some broken<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        clients that send markup even though it&#39;s not enabled on the<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        server. Dunst will try to strip the markup but the parsing is<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        simplistic so using this option outside of matching rules for<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        specific applications *IS GREATLY DISCOURAGED*.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # no:    Disable markup parsing, incoming notifications will be treated as<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        plain text. Dunst will not advertise that it has the body-markup<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #        capability <span style="color:#008000;font-weight:bold">if</span> this is set as a global setting.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # It&#39;s important to note that markup inside the format option will be parsed<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # regardless of what this is set to.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    markup = full<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    # The format of the message.  Possible variables are:<span style="">
@@ -3172,177 +3097,339 @@
 </span></span></span><span style="display:flex;"><span><span style=""></span>    #   %%  Literal %<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    # Markup is allowed<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    format = <span style="color:#ba2121">&#34;&lt;b&gt;%s&lt;/b&gt;\n%b&#34;</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Alignment of message text.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Possible values are <span style="color:#ba2121">&#34;left&#34;</span>, <span style="color:#ba2121">&#34;center&#34;</span> and <span style="color:#ba2121">&#34;right&#34;</span>.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    alignment = left<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Show age of message <span style="color:#008000;font-weight:bold">if</span> message is older than show_age_threshold<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # seconds.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Set to <span style="color:#666">-1</span> to disable.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    show_age_threshold = <span style="color:#666">60</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Split notifications into multiple lines <span style="color:#008000;font-weight:bold">if</span> they don&#39;t fit into<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # geometry.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    word_wrap = yes<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # When word_wrap is set to no, specify where to make an ellipsis in long lines.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Possible values are <span style="color:#ba2121">&#34;start&#34;</span>, <span style="color:#ba2121">&#34;middle&#34;</span> and <span style="color:#ba2121">&#34;end&#34;</span>.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ellipsize = middle<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Ignore newlines <span style="color:#ba2121">&#39;\n&#39;</span> in notifications.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ignore_newline = no<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Stack together notifications with the same content<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    stack_duplicates = true<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Hide the count of stacked notifications with the same content<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    hide_duplicate_count = false<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Display indicators for URLs (U) and actions (A).<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    show_indicators = yes<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### Icons ###<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Align icons left<span style="color:#b68">/right/</span>off<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    icon_position = left<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Scale larger icons down to this size, set to <span style="color:#666">0</span> to disable<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    max_icon_size = <span style="color:#666">32</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Paths to default icons.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    icon_path = <span style="color:#b68">/usr/</span>share<span style="color:#b68">/icons/</span>Mint-Y<span style="color:#b68">/status/</span><span style="color:#666">32</span><span style="color:#b68">/;/</span>usr<span style="color:#b68">/share/</span>icons<span style="color:#b68">/Mint-Y/</span>devices/<span style="color:#666">32</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### History ###<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Should a notification popped up from history be sticky or timeout<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # as <span style="color:#008000;font-weight:bold">if</span> it would normally do.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    sticky_history = yes<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Maximum amount of notifications kept in history<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    history_length = <span style="color:#666">20</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### Misc/Advanced ###<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # dmenu path.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    dmenu = <span style="color:#b68">/usr/</span>bin/dmenu -p dunst:<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Browser for opening urls in context menu.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    browser = <span style="color:#b68">/usr/</span>bin/sensible-browser<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Always run rule-defined scripts, even <span style="color:#008000;font-weight:bold">if</span> the notification is suppressed<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>    browser = <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>browsers<span style="color:#b68">/browsers/</span>bin/firefox<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    always_run_script = true<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Define the title of the windows spawned by dunst<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    title = Dunst<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Define the class of the windows spawned by dunst<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    class = Dunst<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Print a notification on startup.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # This is mainly for error detection, since dbus (re-)starts dunst<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # automatically after a crash.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    startup_notification = false<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Manage dunst&#39;s desire for talking<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Can be one of the following values:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  crit: Critical features. Dunst aborts<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  warn: Only non-fatal warnings<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  mesg: Important Messages<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #  info: all unimportant stuff<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # debug: all less than unimportant stuff<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    verbosity = mesg<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Define the corner radius of the notification window<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # in pixel size. If the radius is <span style="color:#666">0</span>, you have no rounded<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # corners.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # The radius will be automatically lowered <span style="color:#008000;font-weight:bold">if</span> it exceeds half of the<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # notification height to avoid clipping text and/or icons.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    corner_radius = <span style="color:#666">0</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### Legacy<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Use the Xinerama extension instead of RandR for multi-monitor support.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # This setting is provided for compatibility with older nVidia drivers that<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # do not support RandR and using it on systems that support RandR is highly<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # discouraged.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # By enabling this setting dunst will not be able to detect when a monitor<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # is connected or disconnected which might break follow mode <span style="color:#008000;font-weight:bold">if</span> the screen<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # layout changes.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    force_xinerama = false<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    ### mouse<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Defines action of mouse event<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Possible values are:<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # * none: Don&#39;t do anything.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # * do_action: If the notification has exactly one action, or one is marked as default,<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #              invoke it. If there are multiple and no default, open the context menu.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # * close_current: Close current notification.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # * close_all: Close all notifications.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    mouse_left_click = close_current<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    mouse_middle_click = do_action<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    mouse_right_click = close_all<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span># Experimental features that may or may not work correctly. Do not expect them<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span># to have a consistent behaviour across releases.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>[experimental]<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Calculate the dpi to use on a per-monitor basis.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # If this setting is enabled the Xft.dpi value will be ignored and instead<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # dunst will attempt to calculate an appropriate dpi value for each monitor<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # using the resolution and physical size. This might be useful in setups<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # where there are multiple screens with very different dpi values.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    per_monitor_dpi = false<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>[shortcuts]<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Shortcuts are specified as [modifier+][modifier+]...key<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Available modifiers are <span style="color:#ba2121">&#34;ctrl&#34;</span>, <span style="color:#ba2121">&#34;mod1&#34;</span> (the alt-key), <span style="color:#ba2121">&#34;mod2&#34;</span>,<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # <span style="color:#ba2121">&#34;mod3&#34;</span> and <span style="color:#ba2121">&#34;mod4&#34;</span> (windows-key).<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Xev might be helpful to find names for keys.<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Close notification.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    close = ctrl+space<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Close all notifications.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    close_all = ctrl+shift+space<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Redisplay last message(s).<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # On the US keyboard layout <span style="color:#ba2121">&#34;grave&#34;</span> is normally above TAB and left<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # of <span style="color:#ba2121">&#34;1&#34;</span>. Make sure this key actually exists on your keyboard layout,<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # e.g. check output of <span style="color:#ba2121">&#39;xmodmap -pke&#39;</span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    history = ctrl+grave<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Context menu.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    context = ctrl+shift+period<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>[urgency_low]<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # IMPORTANT: colors have to be defined in quotation marks.<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Otherwise the <span style="color:#ba2121">&#34;#&#34;</span> and following would be interpreted as a comment.<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    background = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg-other&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;border&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    foreground = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    timeout = <span style="color:#666">10</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Icon for notifications with low urgency, uncomment to enable<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #icon = <span style="color:#b68">/path/</span>to/icon<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>[urgency_normal]<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    background = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;border&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    foreground = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    timeout = <span style="color:#666">10</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Icon for notifications with normal urgency, uncomment to enable<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #icon = <span style="color:#b68">/path/</span>to/icon<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>[urgency_critical]<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    background = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    foreground = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>    foreground = &lt;&lt;get-fg-for-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    frame_color = &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>    timeout = <span style="color:#666">0</span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    # Icon for notifications with critical urgency, uncomment to enable<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>    #icon = <span style="color:#b68">/path/</span>to/icon<span style="">
-</span></span></span></code></pre></div><h2 id="keynav">keynav</h2>
+</span></span></span></code></pre></div><h2 id="firefox">Firefox</h2>
+<p><a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a> is my web browser of choice.</p>
+<h3 id="tridactyl">Tridactyl</h3>
+<p><a href="https://github.com/tridactyl/tridactyl">Tridactyl</a> is a Firefox add-on that provides vim-like interface.</p>
+<p>Run <code>:nativeinstall</code> at the first start.</p>
+<h4 id="config">Config</h4>
+<p>The native messenger allows to configure the addon with a config file.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#7d9029">sanitize tridactyllocal tridactylsync</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind gn tabnew</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind gN tabclose</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind O fillcmdline tabopen</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind n findnext 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind N findnext -1</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind F hint -t</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">unbind &lt;C-f&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">set smoothscroll false</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">set findcase sensitive</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">colorscheme emacs</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind j scrollline 3</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind k scrollline -3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet gui full</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet statuspanel left</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet navbar none</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet tabs always</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">set searchurls.g https://google.com/search?q</span><span style="color:#666">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">set newtab about:blank</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">command fixamo_quiet jsb tri.excmds.setpref(&#34;privacy.resistFingerprinting.block_mozAddonManager&#34;, &#34;true&#34;).then(tri.excmds.setpref(&#34;extensions.webextensions.restrictedDomains&#34;, &#39;&#34;&#34;&#39;))</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">command fixamo js tri.excmds.setpref(&#34;privacy.resistFingerprinting.block_mozAddonManager&#34;, &#34;true&#34;).then(tri.excmds.setpref(&#34;extensions.webextensions.restrictedDomains&#34;, &#39;&#34;&#34;&#39;).then(tri.excmds.fillcmdline_tmp(3000, &#34;Permissions added to user.js. Please restart Firefox to make them take affect.&#34;)))</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">fixamo_quiet</span>
+</span></span></code></pre></div><h4 id="theme-1">Theme</h4>
+<p>Then, the package has its separate theme.</p>
+<p>I based it on <code>base16-dracula</code> by <a href="http://chriskempson.com">Chris Kempson</a>, but replaced the colors with my Emacs theme.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span>:<span style="color:#a2f">root</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-fg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;fg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-bg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-url-fg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;red&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-url-bg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-highlight-box-bg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-highlight-box-fg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/* Command line */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-cmdl-bg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg-alt&#34;</span>)<span style="color:#666">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">--</span>tridactyl-cmdl-fg<span style="color:#666">:</span> <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;fg&#34;</span>)<span style="color:#666">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/* Hint character tags */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">--</span>tridactyl-hintspan-fg<span style="color:#666">:</span> <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hintspan-bg</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/* Element Highlights */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hint-active-fg</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hint-active-bg</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hint-active-outline</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/* --tridactyl-hint-activy-outline: var(--base08); */</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hint-bg</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--tridactyl-hint-outline</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/* --tridactyl-hint-outline: var(--base08); */</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* a { */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/*   color: var(--base04); */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* } */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">command-line-holder</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">order</span>: <span style="color:#666">1</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border</span>: <span style="color:#666">2</span><span style="color:#b00040">px</span> <span style="color:#008000;font-weight:bold">solid</span> <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;bg&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">tridactyl-input</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">color</span>: <span style="color:#00f">var</span>(<span style="color:#666">--</span>tridactyl<span style="color:#666">-</span>fg);
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#666">90</span><span style="color:#b00040">%</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#666">1.2</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">line-height</span>: <span style="color:#666">1.5</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#00f">var</span>(<span style="color:#666">--</span>tridactyl<span style="color:#666">-</span>bg);
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding-left</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#666">0.8</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-weight</span>: <span style="color:#666">200</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border-spacing</span>: <span style="color:#666">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">table-layout</span>: <span style="color:#008000;font-weight:bold">fixed</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding-top</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding-bottom</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#666">&gt;</span> <span style="color:#008000;font-weight:bold">div</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">max-height</span>: <span style="color:#008000">calc</span>(<span style="color:#666">20</span> <span style="color:#666">*</span> <span style="color:#00f">var</span>(<span style="color:#666">--</span>option<span style="color:#666">-</span>height));
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">min-height</span>: <span style="color:#008000">calc</span>(<span style="color:#666">10</span> <span style="color:#666">*</span> <span style="color:#00f">var</span>(<span style="color:#666">--</span>option<span style="color:#666">-</span>height));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* COMPLETIONS */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">--option-height</span>: <span style="color:#666">1.4</span><span style="color:#b00040">em</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">color</span>: <span style="color:#00f">var</span>(<span style="color:#666">--</span>tridactyl<span style="color:#666">-</span>fg);
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#00f">var</span>(<span style="color:#666">--</span>tridactyl<span style="color:#666">-</span>bg);
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">display</span>: <span style="color:#008000;font-weight:bold">inline-block</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-weight</span>: <span style="color:#666">200</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">overflow</span>: <span style="color:#008000;font-weight:bold">hidden</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#666">100</span><span style="color:#b00040">%</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border-top</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">order</span>: <span style="color:#666">2</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* Olie doesn&#39;t know how CSS inheritance works */</span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">HistoryCompletionSource</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">max-height</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">min-height</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">HistoryCompletionSource</span> <span style="color:#008000;font-weight:bold">table</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#666">100</span><span style="color:#b00040">%</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#666">11</span><span style="color:#b00040">pt</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border-spacing</span>: <span style="color:#666">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">table-layout</span>: <span style="color:#008000;font-weight:bold">fixed</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* redundancy 2: redundancy 2: more redundancy */</span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">BmarkCompletionSource</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">max-height</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">min-height</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> <span style="color:#008000;font-weight:bold">td</span>.<span style="color:#00f;font-weight:bold">prefix</span><span style="color:#666">,</span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> <span style="color:#008000;font-weight:bold">td</span>.<span style="color:#00f;font-weight:bold">privatewindow</span><span style="color:#666">,</span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> <span style="color:#008000;font-weight:bold">td</span>.<span style="color:#00f;font-weight:bold">container</span><span style="color:#666">,</span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> <span style="color:#008000;font-weight:bold">td</span>.<span style="color:#00f;font-weight:bold">icon</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">display</span>: <span style="color:#008000;font-weight:bold">none</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">BufferCompletionSource</span> <span style="color:#008000;font-weight:bold">table</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border-spacing</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">table-layout</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> .<span style="color:#00f;font-weight:bold">title</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#666">50</span><span style="color:#b00040">%</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> <span style="color:#008000;font-weight:bold">table</span> <span style="color:#008000;font-weight:bold">tr</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">white-space</span>: <span style="color:#008000;font-weight:bold">nowrap</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">overflow</span>: <span style="color:#008000;font-weight:bold">hidden</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">text-overflow</span>: <span style="color:#008000;font-weight:bold">ellipsis</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">sectionHeader</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-weight</span>: <span style="color:#666">200</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border-bottom</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding</span>: <span style="color:#666">1</span><span style="color:#b00040">rem</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding-left</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding-bottom</span>: <span style="color:#666">0.2</span><span style="color:#b00040">rem</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">cmdline_iframe</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">position</span>: <span style="color:#008000;font-weight:bold">fixed</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">bottom</span>: <span style="color:#008000;font-weight:bold">unset</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">top</span>: <span style="color:#666">25</span><span style="color:#b00040">%</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">left</span>: <span style="color:#666">10</span><span style="color:#b00040">%</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">z-index</span>: <span style="color:#666">2147483647</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">width</span>: <span style="color:#666">80</span><span style="color:#b00040">%</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">box-shadow</span>: <span style="color:#008000">rgba</span>(<span style="color:#666">0</span>, <span style="color:#666">0</span>, <span style="color:#666">0</span>, <span style="color:#666">0.5</span>) <span style="color:#666">0</span><span style="color:#b00040">px</span> <span style="color:#666">0</span><span style="color:#b00040">px</span> <span style="color:#666">20</span><span style="color:#b00040">px</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>.<span style="color:#00f;font-weight:bold">TridactylStatusIndicator</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">position</span>: <span style="color:#008000;font-weight:bold">fixed</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">bottom</span>: <span style="color:#666">0</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#00f">var</span>(<span style="color:#666">--</span>tridactyl<span style="color:#666">-</span>bg) <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border</span>: <span style="color:#008000;font-weight:bold">unset</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">border</span>: <span style="color:#666">1</span><span style="color:#b00040">px</span> <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span> <span style="color:#008000;font-weight:bold">solid</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">font-size</span>: <span style="color:#666">12</span><span style="color:#b00040">pt</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">/*font-weight: 200 !important;*/</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">padding</span>: <span style="color:#666">0.8</span><span style="color:#b00040">ex</span> <span style="color:#bc7a00">!important</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">focused</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">color</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>#<span style="color:#00f;font-weight:bold">completions</span> .<span style="color:#00f;font-weight:bold">focused</span> .<span style="color:#00f;font-weight:bold">url</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">background</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">color</span>: <span style="color:#666">&lt;&lt;</span><span style="color:#00f">get-fg-for-color</span>(name<span style="">=</span><span style="color:#ba2121">&#34;blue&#34;</span>)<span style="color:#666">&gt;&gt;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* #Ocean-normal { */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/*  border-color: green !important; */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* } */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* #Ocean-insert { */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/*  border-color: yellow !important; */</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">/* } */</span>
+</span></span></code></pre></div><h3 id="firefox-color">Firefox Color</h3>
+<p><a href="https://color.firefox.com/">Firefox Color</a> is a system that allows for easy experimentation with Firefox themes.</p>
+<p>It can serialize themes into URLs like <code>https://color.firefox.com/?theme=&lt;theme&gt;</code>, so I thought it would be a piece of cake to generate one from my Emacs theme, right? Well&hellip;</p>
+<p>As it turns out, Firefox uses npm package called <a href="https://github.com/masotime/json-url">json-url</a> to create <code>&lt;theme&gt;</code>, which this package does by the following sequence:</p>
+<ul>
+<li>msgpack v5</li>
+<li>lzma</li>
+<li>url-safe base64</li>
+</ul>
+<p>I tried to reproduce the above in Emacs, but in the end gave up and used the package in a simple node script:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">const</span> JsonUrl <span style="color:#666">=</span> require(<span style="color:#ba2121">&#39;json-url&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">const</span> jsonCodec <span style="color:#666">=</span> JsonUrl(<span style="color:#ba2121">&#39;lzma&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">const</span> json <span style="color:#666">=</span> JSON.parse(process.argv[<span style="color:#666">2</span>]);
+</span></span><span style="display:flex;"><span>jsonCodec.compress(json).then((r) =&gt; process.stdout.write(r));
+</span></span></code></pre></div><p>Which I then can use to create the URL.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/firefox-encode-json</span> (<span style="color:#00f">string</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-output-to-string</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">standard-output</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;node&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/bin/firefox-theme/main.js&#34;</span>)
+</span></span><span style="display:flex;"><span>		    <span style="color:#00f">string</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/color-value-rgb</span> (<span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">if</span> (<span style="color:#00f">stringp</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>		   <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">color</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>((<span style="color:#19177c">r</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">*</span> <span style="color:#666">2.55</span> (<span style="color:#19177c">ct-get-rgb-r</span> <span style="color:#19177c">color</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">g</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">*</span> <span style="color:#666">2.55</span> (<span style="color:#19177c">ct-get-rgb-g</span> <span style="color:#19177c">color</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">b</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">*</span> <span style="color:#666">2.55</span> (<span style="color:#19177c">ct-get-rgb-b</span> <span style="color:#19177c">color</span>))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/firefox-get-json</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">toolbar-color</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">my/color-value-rgb</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-mode-line-active</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">ct-edit-hsl-l-dec</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-alt</span>) <span style="color:#666">10</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">ct-edit-hsl-l-inc</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-alt</span>) <span style="color:#666">15</span>)))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">text-color</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">my/color-value-rgb</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>) <span style="color:#19177c">&#39;fg</span> <span style="color:#19177c">&#39;yellow</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>((<span style="color:#19177c">colors</span> <span style="color:#666">.</span> ((<span style="color:#19177c">toolbar</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">toolbar-color</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">toolbar_text</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">text-color</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">frame</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;bg</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">tab_background_text</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;fg</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">toolbar_field</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;bg</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">toolbar_field_text</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;blue</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">tab_line</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">text-color</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">popup</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;bg-alt</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">popup_text</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/color-value-rgb</span> <span style="color:#19177c">&#39;fg</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">tab_loading</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">text-color</span>))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/firefox-get-color-url</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;https://color.firefox.com/?theme=&#34;</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">my/firefox-encode-json</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">json-encode</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">my/firefox-get-json</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/firefox-kill-color-url</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">kill-new</span> (<span style="color:#19177c">my/firefox-get-color-url</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/firefox-get-color-url</span>)
+</span></span></code></pre></div><h2 id="keynav">keynav</h2>
 <table>
 <thead>
 <tr>
@@ -3369,14 +3456,12 @@
 </tr>
 </tbody>
 </table>
-<p>How many times you have been working with keyboard-driven programs and had to use a mouse just to press some pesky little button in a modal window?</p>
-<p><a href="https://github.com/jordansissel/keynav">keynav</a> is a program that allows you to control the mouse with the keyboard with the general idea of bisecting the screen to get to the required point. I&rsquo;m still not sure if there is any point in using it, but it&rsquo;s rather funny. Unfortunately, the colors seem to be hardcoded.</p>
-<p>One of the usecases I found so far is to use the program to scroll webpages when tridactyl&rsquo;s scroll captures the wrong scroll area.</p>
+<p><a href="https://github.com/jordansissel/keynav">keynav</a> is a program for controlling mouse with keyboard, mostly by screen bisection. This is a poor replacement for a proper keyboard-drived sofware, but&hellip;</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/jordansissel/keynav/blob/master/keynav.pod">keynav documentation</a></li>
 </ul>
-<h3 id="config">Config</h3>
+<h3 id="config-1">Config</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span># clear all previous keybindings<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>clear<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
@@ -3448,8 +3533,8 @@
 </tbody>
 </table>
 <p><a href="https://github.com/yshui/picom">picom</a> is a compositor for X11. It allows effects such as transparency, blurring, etc.</p>
-<p>Sample configuration is a good resource for getting an overview of the available settings. I have only a bunch of necessary settings in mine.</p>
-<p>There are a bunch of forks for picom (e.g. <a href="https://github.com/ibhagwan/picom">ibhagwan/picom</a> adds rounded corners) which seem to have some popularity, but I use the base one.</p>
+<p>Check out the sample configuration to get an idea on what&rsquo;s possible. I only have some basic settings in mine.</p>
+<p>Also, there are some fancy forks of picom (e.g. <a href="https://github.com/ibhagwan/picom">ibhagwan/picom</a> adds rounded corners).</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/yshui/picom/wiki">picom wiki</a></li>
@@ -3550,34 +3635,34 @@
 </tr>
 </tbody>
 </table>
-<p><a href="https://pwmt.org/projects/zathura/">Zathura</a> is a pdf viewer with vim-like keybindings. One of my favorite features is an ability to invert the document colors.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>set abort-clear-search false<span style="">
+<p><a href="https://pwmt.org/projects/zathura/">Zathura</a> is a pdf viewer with vim-like keybindings.</p>
+<p><a id="code-snippet--zathura-recolor"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>) <span style="color:#ba2121">&#34;false&#34;</span> <span style="color:#ba2121">&#34;true&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>set abort-clear-search false<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set guioptions cs<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set selection-clipboard clipboard<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor true<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor &lt;&lt;zathura-recolor()&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>map &lt;C-r&gt; set recolor false<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>map &lt;C-R&gt; set recolor true<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor-lightcolor &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set recolor-lightcolor &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-group-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set completion-highlight-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-highlight-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set completion-highlight-fg &lt;&lt;get-fg-for-color(name=<span style="color:#ba2121">&#34;magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;bg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-magenta&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set inputbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;light-black&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set statusbar-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;white&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span># set notification-error-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-fg <span style="color:#ba2121">&#34;#000000&#34;</span><span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-error-fg &lt;&lt;get-fg-for-color(name=<span style="color:#ba2121">&#34;red&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-bg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;yellow&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span># set notification-warning-fg &lt;&lt;get-color(name=<span style="color:#ba2121">&#34;color-fg&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-fg <span style="color:#ba2121">&#34;#000000&#34;</span><span style="">
+</span></span></span><span style="display:flex;"><span><span style=""></span>set notification-warning-fg &lt;&lt;get-fg-for-color(name=<span style="color:#ba2121">&#34;yellow&#34;</span>, quote=<span style="color:#666">1</span>)&gt;&gt;<span style="">
 </span></span></span></code></pre></div><h2 id="various-software">Various software</h2>
 <p>This section generates manifests for various desktop software that I&rsquo;m using.</p>
 <h3 id="browsers">Browsers</h3>
@@ -3881,11 +3966,11 @@
 <td>flathub</td>
 </tr>
 <tr>
-<td>us.zoom.Zoom</td>
+<td>com.jetbrains.DataGrip</td>
 <td>flathub</td>
 </tr>
 <tr>
-<td>com.slack.Slack</td>
+<td>chat.rocket.RocketChat</td>
 <td>flathub</td>
 </tr>
 </tbody>
@@ -3915,7 +4000,7 @@
 </span></span></code></pre></div><p>Don&rsquo;t forget to run the following after the first installation:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nix-channel --update
 </span></span></code></pre></div><p>Installing packages:</p>
-<pre tabindex="0"><code class="language-nil" data-lang="nil">nix-env -i vk-messenger slack
+<pre tabindex="0"><code class="language-nil" data-lang="nil">nix-env -i slack
 </code></pre><h2 id="services-1">Services</h2>
 <p><a href="https://www.gnu.org/software/shepherd/manual/html_node/index.html">GNU Shepherd</a> is a service management system for GNU Guix.</p>
 <p>I previously used supervisor, but shepherd also seems pretty capable.</p>
@@ -4083,7 +4168,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/bin/davmail&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
 </span></span></code></pre></div><h3 id="shepherd-config">Shepherd config</h3>
-<p>Register services</p>
+<p>For some reason, running start on a one-shot service started to hang shepherd, not sure why&hellip; Turining these off for now.</p>
+<p>Register services:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">register-services</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">mpd</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">sqrt-data-agent-mpd</span>
@@ -4110,10 +4196,10 @@
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">aw-watcher-window</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">pulseeffects</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">xsettingsd</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">discord-rich-presence</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#408080;font-style:italic">; discord-rich-presence</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">polkit-gnome</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">davmail</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">xmodmap</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#408080;font-style:italic">; xmodmap</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">nm-applet</span>))
 </span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <p>Other desktop programs I use are listed below.</p>
@@ -4208,11 +4294,6 @@
 </tr>
 <tr>
 <td>desktop-misc</td>
-<td>vinagre</td>
-<td>My VNC client of choice</td>
-</tr>
-<tr>
-<td>desktop-misc</td>
 <td>gnome-disk-utility</td>
 <td>Manage disks</td>
 </tr>
@@ -4260,6 +4341,7 @@
             <b><a href="#">Table of Contents</a></b>
             <nav id="TableOfContents">
   <ul>
+    <li><a href="#some-remarks">Some remarks</a></li>
     <li><a href="#global-customization">Global customization</a>
       <ul>
         <li><a href="#colors">Colors</a></li>
@@ -4403,7 +4485,6 @@
         <li><a href="#theme">Theme</a></li>
         <li><a href="#scripts">Scripts</a>
           <ul>
-            <li><a href="#buku-bookmarks">Buku bookmarks</a></li>
             <li><a href="#man-pages">Man pages</a></li>
             <li><a href="#emojis-1">Emojis</a></li>
             <li><a href="#pass">pass</a></li>
@@ -4413,9 +4494,20 @@
     </li>
     <li><a href="#flameshot">Flameshot</a></li>
     <li><a href="#dunst">dunst</a></li>
+    <li><a href="#firefox">Firefox</a>
+      <ul>
+        <li><a href="#tridactyl">Tridactyl</a>
+          <ul>
+            <li><a href="#config">Config</a></li>
+            <li><a href="#theme-1">Theme</a></li>
+          </ul>
+        </li>
+        <li><a href="#firefox-color">Firefox Color</a></li>
+      </ul>
+    </li>
     <li><a href="#keynav">keynav</a>
       <ul>
-        <li><a href="#config">Config</a></li>
+        <li><a href="#config-1">Config</a></li>
         <li><a href="#using-with-picom">Using with picom</a></li>
       </ul>
     </li>

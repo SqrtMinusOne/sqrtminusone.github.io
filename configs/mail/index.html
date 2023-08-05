@@ -255,6 +255,10 @@
 <td>Job_Digital.Applicants</td>
 </tr>
 <tr>
+<td>job.moevm</td>
+<td>Job_Moevm</td>
+</tr>
+<tr>
 <td>etu</td>
 <td>Etu</td>
 </tr>
@@ -631,6 +635,13 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Aborting.&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-subject</span>)
+</span></span></code></pre></div><h3 id="ensure-password-is-loaded">Ensure password is loaded</h3>
+<p>Otherwise <code>msmtp</code> may call <code>pinentry</code> while Emacs is locked, which means EXWM can&rsquo;t process the password window.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ensure-password</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Job/Digital/Email/pvkorytov@etu.ru&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ensure-password</span>)
 </span></span></code></pre></div><h2 id="mailcap">mailcap</h2>
 <p>mailcap file is a file which defines how to read to different MIME types. Notmuch also uses it, so why not keep it here.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>audio/*; mpc add %s
@@ -677,6 +688,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
         <li><a href="#signing-messages">Signing messages</a></li>
         <li><a href="#tuning-signature">Tuning signature</a></li>
         <li><a href="#warn-if-no-subject">Warn if no subject</a></li>
+        <li><a href="#ensure-password-is-loaded">Ensure password is loaded</a></li>
       </ul>
     </li>
     <li><a href="#mailcap">mailcap</a></li>

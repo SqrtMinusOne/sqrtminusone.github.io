@@ -1319,22 +1319,21 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	    <span style="color:#19177c">custom-enabled-themes</span>))
 </span></span></code></pre></div><p>I also want to know if the current theme is light or not:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/light-p</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">and</span> (<span style="color:#19177c">seq-intersection</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">custom-enabled-themes</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">doom-one-light</span> <span style="color:#19177c">modus-operandi</span>))
-</span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">ct-light-p</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dark-p</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">not</span> (<span style="color:#19177c">my/light-p</span>)))
 </span></span></code></pre></div><p>Now, let&rsquo;s get the current color from <code>doom</code>. <code>doom-themes</code> provide <code>doom-color</code>, but I also want to:</p>
 <ul>
 <li>override some colors</li>
-<li>add <code>black</code>, <code>white</code> and <code>light-*</code></li>
+<li>add <code>black</code>, <code>white</code>, <code>light-*</code> and <code>border</code></li>
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/theme-override</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>((<span style="color:#19177c">doom-palenight</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">red</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;#f07178&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/alpha-for-light</span> <span style="color:#666">7</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/doom-color</span> (<span style="color:#19177c">color</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">override</span> (<span style="color:#19177c">alist-get</span> (<span style="color:#19177c">my/doom-p</span>) <span style="color:#19177c">my/theme-override</span>))
@@ -1347,8 +1346,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;fg</span>) (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;bg</span>)))
 </span></span><span style="display:flex;"><span>      ((<span style="color:#00f">eq</span> <span style="color:#19177c">&#39;white</span> <span style="color:#19177c">color</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;bg</span>) (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;fg</span>)))
+</span></span><span style="display:flex;"><span>      ((<span style="color:#00f">eq</span> <span style="color:#19177c">&#39;border</span> <span style="color:#19177c">color</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base0</span>) (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;base8</span>)))
 </span></span><span style="display:flex;"><span>      ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;light-&#34;</span>) <span style="color:#19177c">color-name</span>)
-</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">ct-edit-lab-l-inc</span> (<span style="color:#19177c">my/doom-color</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">color-name</span> <span style="color:#666">6</span>))) <span style="color:#666">10</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">ct-edit-hsl-l-inc</span> (<span style="color:#19177c">my/doom-color</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">color-name</span> <span style="color:#666">6</span>)))
+</span></span><span style="display:flex;"><span>			  <span style="color:#19177c">my/alpha-for-light</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#800">t</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">color</span>))))))
 </span></span></code></pre></div><p>And the same for <code>modus-themes</code>. <code>my/modus-color</code> has to accept the same arguments as I use for <code>my/doom-color</code> for backward compatibility, which requires a bit more tuning.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/modus-get-base</span> (<span style="color:#19177c">color</span>)
@@ -1367,16 +1369,18 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">pcase</span> <span style="color:#19177c">color</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;black</span> (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> <span style="color:#19177c">fg-main</span> <span style="color:#19177c">bg-main</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;white</span> (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> <span style="color:#19177c">bg-main</span> <span style="color:#19177c">fg-main</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;light-black</span> (<span style="color:#19177c">ct-edit-lab-l-inc</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;light-black</span> (<span style="color:#19177c">ct-edit-hsl-l-inc</span>
 </span></span><span style="display:flex;"><span>			 (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> <span style="color:#19177c">fg-main</span> <span style="color:#19177c">bg-main</span>)
 </span></span><span style="display:flex;"><span>			 <span style="color:#666">15</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;light-white</span> (<span style="color:#19177c">ct-edit-lab-l-inc</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">&#39;light-white</span> (<span style="color:#19177c">ct-edit-hsl-l-inc</span>
 </span></span><span style="display:flex;"><span>			 (<span style="color:#008000">if</span> <span style="color:#19177c">is-light</span> <span style="color:#19177c">bg-main</span> <span style="color:#19177c">fg-main</span>)
 </span></span><span style="display:flex;"><span>			 <span style="color:#666">15</span>)))))
 </span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-main</span> <span style="color:#19177c">palette</span>)))
 </span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;fg</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;fg-main</span> <span style="color:#19177c">palette</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg-alt</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;bg-dim</span> <span style="color:#19177c">palette</span>)))
 </span></span><span style="display:flex;"><span>     ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;violet</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">cadr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">&#39;magenta-cooler</span> <span style="color:#19177c">palette</span>)))
 </span></span><span style="display:flex;"><span>     ((<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;base&#34;</span> <span style="color:#19177c">digit</span>) (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">color</span>))
@@ -1394,7 +1398,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>(<span style="color:#19177c">black</span> <span style="color:#19177c">red</span> <span style="color:#19177c">green</span> <span style="color:#19177c">yellow</span> <span style="color:#19177c">blue</span> <span style="color:#19177c">magenta</span> <span style="color:#19177c">cyan</span> <span style="color:#19177c">white</span> <span style="color:#19177c">light-black</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#19177c">light-red</span> <span style="color:#19177c">light-green</span> <span style="color:#19177c">light-yellow</span> <span style="color:#19177c">light-blue</span> <span style="color:#19177c">light-magenta</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#19177c">light-cyan</span> <span style="color:#19177c">light-white</span> <span style="color:#19177c">bg</span> <span style="color:#19177c">fg</span> <span style="color:#19177c">violet</span> <span style="color:#19177c">grey</span> <span style="color:#19177c">base0</span> <span style="color:#19177c">base1</span> <span style="color:#19177c">base2</span>
-</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">base3</span> <span style="color:#19177c">base4</span> <span style="color:#19177c">base5</span> <span style="color:#19177c">base6</span> <span style="color:#19177c">base7</span> <span style="color:#19177c">base8</span>))
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">base3</span> <span style="color:#19177c">base4</span> <span style="color:#19177c">base5</span> <span style="color:#19177c">base6</span> <span style="color:#19177c">base7</span> <span style="color:#19177c">base8</span> <span style="color:#19177c">border</span> <span style="color:#19177c">bg-alt</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/test-colors</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -1417,8 +1421,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   ((<span style="color:#00f">eq</span> <span style="color:#19177c">color</span> <span style="color:#19177c">&#39;bg-other</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> <span style="color:#19177c">color</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">ct-edit-lab-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">ct-edit-lab-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">ct-edit-hsl-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">ct-edit-hsl-l-dec</span> <span style="color:#19177c">color</span> <span style="color:#666">3</span>))))
 </span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/doom-p</span>) (<span style="color:#19177c">my/doom-color</span> <span style="color:#19177c">color</span>))
 </span></span><span style="display:flex;"><span>   ((<span style="color:#19177c">my/modus-p</span>) (<span style="color:#19177c">my/modus-color</span> <span style="color:#19177c">color</span>))))
 </span></span></code></pre></div><p>And a few more functions</p>
@@ -1467,7 +1471,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	   <span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">&#39;my-theme-1</span>)
 </span></span><span style="display:flex;"><span>		       (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">theme</span>)))
 </span></span><span style="display:flex;"><span>	   <span style="color:#008000">do</span> (<span style="color:#19177c">disable-theme</span> <span style="color:#19177c">enabled-theme</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">theme</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">theme</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">current-prefix-arg</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/regenerate-desktop</span>)))
 </span></span></code></pre></div><h4 id="dim-inactive-buffers">Dim inactive buffers</h4>
 <p>Dim inactive buffers.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">auto-dim-other-buffers</span>
@@ -2835,7 +2841,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;aFunction symbol: &#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-mapc</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">advice</span> <span style="color:#19177c">_props</span>) (<span style="color:#19177c">advice-remove</span> <span style="color:#19177c">sym</span> <span style="color:#19177c">advice</span>)) <span style="color:#19177c">sym</span>))
 </span></span></code></pre></div><h5 id="ielm">IELM</h5>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;inferior-emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lispy-mode</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;inferior-emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
 </span></span></code></pre></div><h4 id="common-lisp">Common lisp</h4>
 <h5 id="slime">SLIME</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">slime</span>
@@ -5245,7 +5251,21 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><p>To launch from CLI, run:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>emacs -Q --batch -l run-tangle.el
 </span></span></code></pre></div><p>I have added this line to yadm&rsquo;s <code>post_alt</code> hook, so to run tangle after <code>yadm alt</code></p>
-<h4 id="folders">Folders</h4>
+<h4 id="regenerate-desktop-config">Regenerate desktop config</h4>
+<p>Somewhat similar to the previous one&hellip; Occasinally I want to re-tangle all desktop configuration files, for instance to apply a new theme.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/regenerate-desktop</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-tangle-file</span> <span style="color:#ba2121">&#34;/home/pavel/Desktop.org&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-tangle-file</span> <span style="color:#ba2121">&#34;/home/pavel/Console.org&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;xrdb&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;-load&#34;</span> <span style="color:#ba2121">&#34;/home/pavel/.Xresources&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;~/bin/polybar.sh&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;pkill&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;dunst&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;herd&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-set-alpha</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#19177c">my/light-p</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">my/exwm-set-alpha</span> <span style="color:#666">100</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/exwm-set-alpha</span> <span style="color:#666">90</span>))))
+</span></span></code></pre></div><h4 id="folders">Folders</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">folders-file</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;folders.el&#34;</span> <span style="color:#19177c">user-emacs-directory</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">folders-file</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">load-file</span> <span style="color:#19177c">folders-file</span>)))
@@ -8699,6 +8719,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#tables-for-guix-dependencies">Tables for Guix Dependencies</a></li>
             <li><a href="#noweb-evaluations">Noweb evaluations</a></li>
             <li><a href="#yadm-hook">yadm hook</a></li>
+            <li><a href="#regenerate-desktop-config">Regenerate desktop config</a></li>
             <li><a href="#folders">Folders</a></li>
           </ul>
         </li>
