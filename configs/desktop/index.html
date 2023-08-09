@@ -1198,7 +1198,8 @@
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-set-alpha</span> (<span style="color:#19177c">alpha</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;alpha</span> <span style="color:#19177c">default-frame-alist</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">alpha</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">alpha</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">set-frame-parameter</span> (<span style="color:#00f">selected-frame</span>) <span style="color:#19177c">&#39;alpha</span> <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">alpha</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">alpha</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">frame</span> <span style="color:#19177c">being</span> <span style="color:#19177c">the</span> <span style="color:#19177c">frames</span>
+</span></span><span style="display:flex;"><span>	   <span style="color:#008000">do</span> (<span style="color:#19177c">set-frame-parameter</span> <span style="color:#19177c">frame</span> <span style="color:#19177c">&#39;alpha</span> <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">alpha</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">alpha</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -3185,6 +3186,8 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">bind j scrollline 3</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">bind k scrollline -3</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind --mode</span><span style="color:#666">=</span><span style="color:#ba2121">normal &lt;C-i&gt; mode ignore</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">bind --mode</span><span style="color:#666">=</span><span style="color:#ba2121">ignore &lt;C-i&gt; mode normal</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet gui full</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">guiset_quiet statuspanel left</span>
