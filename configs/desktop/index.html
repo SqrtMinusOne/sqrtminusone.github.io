@@ -4177,6 +4177,23 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;vnstatd&#34;</span> <span style="color:#ba2121">&#34;-n&#34;</span>))
 </span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
+</span></span></code></pre></div><h3 id="opensnitch">opensnitch</h3>
+<p><a href="https://github.com/evilsocket/opensnitch">opensnitch</a> is a linux firewall.</p>
+<p>Install it via nix:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nix-env -I opensnitchd opensnitch-ui
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">opensnitchd</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">opensnitchd</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sudo&#34;</span> <span style="color:#ba2121">&#34;opensnitchd&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000;font-weight:bold">define </span><span style="color:#19177c">opensnitch-ui</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">make</span> <span style="color:#19177c">&lt;service&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:provides</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">opensnitch-ui</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:respawn?</span> <span style="color:#800">#t</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:start</span> (<span style="color:#00f">make-forkexec-constructor</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;sudo&#34;</span> <span style="color:#ba2121">&#34;opensnitch-ui&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">#</span><span style="color:#19177c">:stop</span> (<span style="color:#00f">make-kill-destructor</span>)))
 </span></span></code></pre></div><h3 id="shepherd-config">Shepherd config</h3>
 <p>For some reason, running start on a one-shot service started to hang shepherd, not sure why&hellip; Turining these off for now.</p>
 <p>Register services:</p>
@@ -4195,7 +4212,9 @@
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">davmail</span>
 </span></span><span style="display:flex;"><span> <span style="color:#408080;font-style:italic">;; xmodmap</span>
 </span></span><span style="display:flex;"><span> <span style="color:#19177c">nm-applet</span>
-</span></span><span style="display:flex;"><span> <span style="color:#19177c">vnstatd</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">vnstatd</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">opensnitchd</span>
+</span></span><span style="display:flex;"><span> <span style="color:#19177c">opensnitch-ui</span>)
 </span></span></code></pre></div><p>Daemonize shepherd</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">action</span> <span style="color:#19177c">&#39;shepherd</span> <span style="color:#19177c">&#39;daemonize</span>)
 </span></span></code></pre></div><p>Run services</p>
@@ -4212,7 +4231,9 @@
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">davmail</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#408080;font-style:italic">; xmodmap</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#19177c">nm-applet</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">vnstatd</span>))
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">vnstatd</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">opensnitchd</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">opensnitch-ui</span>))
 </span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <p>Other desktop programs I use are listed below.</p>
 <table>
@@ -4557,6 +4578,7 @@
         <li><a href="#vpn">VPN</a></li>
         <li><a href="#davmail">Davmail</a></li>
         <li><a href="#vnstatd">vnstatd</a></li>
+        <li><a href="#opensnitch">opensnitch</a></li>
         <li><a href="#shepherd-config">Shepherd config</a></li>
       </ul>
     </li>
