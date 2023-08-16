@@ -196,6 +196,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <td>progidy</td>
 <td>ab0d01c525f2b44dd64ec09747daf0fced4bd9c7</td>
 </tr>
+<tr>
+<td>tree-sitter</td>
+<td>1920a48aec49837d63fa88ca315928dc4e9d14c2</td>
+</tr>
 </tbody>
 </table>
 <h2 id="initial-setup">Initial setup</h2>
@@ -1300,7 +1304,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>Let&rsquo;s see&hellip;</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ef-themes</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ef-duo-light-palette-overrides</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">constant</span> <span style="color:#19177c">green</span>))))
 </span></span></code></pre></div><h4 id="custom-theme-1">Custom theme</h4>
 <p>Here I define a few things on the top of Emacs theme, because:</p>
 <ul>
@@ -1931,33 +1938,38 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">reusable-frames</span> <span style="color:#666">.</span> <span style="color:#19177c">visible</span>)
 </span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">window-height</span>   <span style="color:#666">.</span> <span style="color:#666">0.33</span>))))
 </span></span></code></pre></div><h4 id="tree-sitter">Tree Sitter</h4>
-<p>An incremental code parsing system, constructing a syntax tree at runtime.</p>
-<p>Right now it doesn&rsquo;t do much except provide a better syntax highlighting than regexes, but this integration is a rather recent development. There are already some major modes built on top of this thing.</p>
-<p>Also, it seems to break if run from mmm-mode, so there is a small workaround.</p>
+<p>Tree-Sitter integration with Emacs 29.</p>
 <p>References:</p>
 <ul>
-<li><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter library</a></li>
-<li><a href="https://ubolonton.github.io/emacs-tree-sitter/">Emacs Tree-sitter</a></li>
+<li><a href="https://www.masteringemacs.org/article/how-to-get-started-tree-sitter">How to Get Started with Tree-Sitter - Mastering Emacs</a></li>
 </ul>
 <!--listend-->
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tree-sitter-if-not-mmm</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">and</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;mmm-temp-buffer-name</span>)
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">string-equal</span> <span style="color:#19177c">mmm-temp-buffer-name</span> (<span style="color:#00f">buffer-name</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">tree-sitter-mode</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">tree-sitter-hl-mode</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">tree-sitter</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> ((<span style="color:#19177c">typescript-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">my/tree-sitter-if-not-mmm</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">js-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">my/tree-sitter-if-not-mmm</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">tree-sitter-mode</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">tree-sitter-hl-mode</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">csharp-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">tree-sitter-mode</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">tree-sitter-langs</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">tree-sitter</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">treesit</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">built-in</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#008000">featurep</span> <span style="color:#19177c">&#39;treesit</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">treesit-language-source-alist</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">bash</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-bash&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">cmake</span> <span style="color:#ba2121">&#34;https://github.com/uyha/tree-sitter-cmake&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">css</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-css&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">elisp</span> <span style="color:#ba2121">&#34;https://github.com/Wilfred/tree-sitter-elisp&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">go</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-go&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">html</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-html&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">javascript</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-javascript&#34;</span> <span style="color:#ba2121">&#34;master&#34;</span> <span style="color:#ba2121">&#34;src&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">json</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-json&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">make</span> <span style="color:#ba2121">&#34;https://github.com/alemuller/tree-sitter-make&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">markdown</span> <span style="color:#ba2121">&#34;https://github.com/ikatyang/tree-sitter-markdown&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">python</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-python&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">toml</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-toml&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">tsx</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-typescript&#34;</span> <span style="color:#ba2121">&#34;master&#34;</span> <span style="color:#ba2121">&#34;tsx/src&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">typescript</span> <span style="color:#ba2121">&#34;https://github.com/tree-sitter/tree-sitter-typescript&#34;</span> <span style="color:#ba2121">&#34;master&#34;</span> <span style="color:#ba2121">&#34;typescript/src&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">yaml</span> <span style="color:#ba2121">&#34;https://github.com/ikatyang/tree-sitter-yaml&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">treesit-font-lock-level</span> <span style="color:#666">4</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">major-mode-remap-alist</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">typescript-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">typescript-ts-mode</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">js-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">javascript-ts-mode</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">python-ts-mode</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">json-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">json-ts-mode</span>))))
 </span></span></code></pre></div><h4 id="dap">DAP</h4>
 <p>An Emacs client for Debugger Adapter Protocol.</p>
 <p>Okay, so, I tried to use it many times&hellip; Chrome DevTools and ipdb / pudb are just better for me. Maybe I&rsquo;ll check out RealGUD instead&hellip; Will see.</p>
@@ -2870,6 +2882,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-mapc</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">advice</span> <span style="color:#19177c">_props</span>) (<span style="color:#19177c">advice-remove</span> <span style="color:#19177c">sym</span> <span style="color:#19177c">advice</span>)) <span style="color:#19177c">sym</span>))
 </span></span></code></pre></div><h5 id="ielm">IELM</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;inferior-emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;bi&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ielm</span>)
 </span></span></code></pre></div><h4 id="common-lisp">Common lisp</h4>
 <h5 id="slime">SLIME</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">slime</span>
@@ -3308,9 +3321,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </tr>
 </tbody>
 </table>
+<p>Disabled that for now because it depends on the old tree sitter.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">csharp-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.cs\\&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-csharp-server-path</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;omnisharp-wrapper&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;csharp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">csharp-tree-sitter-mode</span>)

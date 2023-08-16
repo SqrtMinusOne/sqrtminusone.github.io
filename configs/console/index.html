@@ -78,7 +78,22 @@
 <ul>
 <li>A friend of mine</li>
 </ul>
-<h2 id="dot-profile"><code>.profile</code></h2>
+<h2 id="colors">Colors</h2>
+<p>Noweb function to get colors.</p>
+<p><a id="code-snippet--get-color"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#008000">quote</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">color</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
+</span></span></code></pre></div><p><a id="code-snippet--get-fg-for-color"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">val</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;black</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;white</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> <span style="color:#008000">quote</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">val</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">val</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq-local</span> <span style="color:#19177c">org-confirm-babel-evaluate</span> <span style="color:#800">nil</span>)
+</span></span></code></pre></div><h2 id="dot-profile"><code>.profile</code></h2>
 <h3 id="environment">Environment</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">QT_QPA_PLATFORMTHEME</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;qt5ct&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">QT_AUTO_SCREEN_SCALE_FACTOR</span><span style="color:#666">=</span><span style="color:#666">0</span>
@@ -262,7 +277,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">exec</span> fish
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><p>The rest of <code>.bashrc</code> is not executed if fish was launched.</p>
-<h4 id="colors">Colors</h4>
+<h4 id="colors-1">Colors</h4>
 <p>Setting for colors, packed in the default <code>.bashrc</code> in Manjaro</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">use_color</span><span style="color:#666">=</span><span style="color:#008000">true</span>
 </span></span><span style="display:flex;"><span>
@@ -455,7 +470,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># if test -n &#34;$EMACS_CONDA_ENV&#34;;
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span>    <span style="color:#408080;font-style:italic"># conda activate $EMACS_CONDA_ENV
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># end
-</span></span></span></code></pre></div><h3 id="colors-1">Colors</h3>
+</span></span></span></code></pre></div><h3 id="colors-2">Colors</h3>
 <p>Fish seems to have hardcoded colorcodes in some color settings. I set these to base16 colors, so they would match Xresources.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_command</span> cyan
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_comment</span> green
@@ -464,7 +479,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_escape</span> yellow
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_operator</span> yellow
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_param</span> magenta
-</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_quote</span> brwhite
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_quote</span> green
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">set</span> <span style="color:#19177c">fish_color_redirection</span> yellow
 </span></span></code></pre></div><h3 id="keybindings">Keybindings</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000">bind</span> <span style="color:#7d9029">-M</span> insert <span style="color:#b62;font-weight:bold">\e</span>l forward-char
@@ -689,21 +704,7 @@
 </tbody>
 </table>
 <p><a href="https://github.com/alacritty/alacritty">Alacritty</a> is a GPU-accelerated terminal emulator. I haven&rsquo;t found it to be an inch faster than st, but <code>yml</code> configuration is way more convenient than patches.</p>
-<p>The application doesn&rsquo;t support XResources, so here goes noweb.</p>
-<p><a id="code-snippet--get-color"></a></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">color</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#008000">quote</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">color</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
-</span></span></code></pre></div><p><a id="code-snippet--get-fg-for-color"></a></p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">val</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;black</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;white</span>))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> <span style="color:#008000">quote</span> <span style="color:#666">1</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">val</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">val</span>))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq-local</span> <span style="color:#19177c">org-confirm-babel-evaluate</span> <span style="color:#800">nil</span>)
-</span></span></code></pre></div><p>References:</p>
+<p>References:</p>
 <ul>
 <li><a href="https://github.com/alacritty/alacritty/blob/master/alacritty.yml">default config</a></li>
 </ul>
@@ -1067,6 +1068,7 @@
             <b><a href="#">Table of Contents</a></b>
             <nav id="TableOfContents">
   <ul>
+    <li><a href="#colors">Colors</a></li>
     <li><a href="#dot-profile"><code>.profile</code></a>
       <ul>
         <li><a href="#environment">Environment</a></li>
@@ -1088,7 +1090,7 @@
           <ul>
             <li><a href="#startup-and-environment">Startup &amp; environment</a></li>
             <li><a href="#launch-fish">Launch fish</a></li>
-            <li><a href="#colors">Colors</a></li>
+            <li><a href="#colors-1">Colors</a></li>
             <li><a href="#settings">Settings</a></li>
             <li><a href="#aliases">Aliases</a></li>
             <li><a href="#micromamba">Micromamba</a></li>
@@ -1101,7 +1103,7 @@
     <li><a href="#fish">Fish</a>
       <ul>
         <li><a href="#micromamba-1">Micromamba</a></li>
-        <li><a href="#colors-1">Colors</a></li>
+        <li><a href="#colors-2">Colors</a></li>
         <li><a href="#keybindings">Keybindings</a></li>
         <li><a href="#functions">Functions</a></li>
         <li><a href="#direnv">direnv</a></li>
