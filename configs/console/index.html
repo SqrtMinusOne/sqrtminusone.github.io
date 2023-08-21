@@ -900,7 +900,7 @@
 </span></span><span style="display:flex;"><span>    notify-send <span style="color:#ba2121">&#34;Terminal&#34;</span> <span style="color:#ba2121">&#34;Command execution complete&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h3 id="autocommit"><code>autocommit</code></h3>
-<p>A script to autocommit files in a repository. I use it to sync my org directory and password store. I guess it&rsquo;s not how git is intended to be used, but it works for me.</p>
+<p>A script to perform automatic commits in a repository. I use it to sync my org directory and password store. I guess it&rsquo;s not how git is intended to be used, but it works for me.</p>
 <p>Usage:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>autocommit &lt;repository&gt; [-F]
 </span></span></code></pre></div><p>Environment:</p>
@@ -920,12 +920,12 @@
 </tr>
 </tbody>
 </table>
-<p>Here&rsquo;s more or less what the script is doing:</p>
+<p>Here&rsquo;s roughly what the script is doing:</p>
 <ul>
 <li>If there is a merge conflict, notify</li>
-<li>If there are changed files in the last <code>TIMEOUT_MIN</code> minutes, commit</li>
+<li>If there were changed files in the last <code>TIMEOUT_MIN</code> minutes, commit</li>
 <li>Fetch</li>
-<li>If there were changes in the last <code>TTMEOUT_MIN</code>, merge (usually the merge has to be fast-forwarded)</li>
+<li>If there were changes in the last <code>TTMEOUT_MIN</code>, merge (usually the merge is just fast-forward)</li>
 <li>If the fetch was successful &amp; the merge was either successful or delayed because of changes in the last <code>TIMEOUT_MIN</code>, push</li>
 <li>Send a notification about the events above</li>
 <li>Send a separate notification if there is a merge conflict</li>
