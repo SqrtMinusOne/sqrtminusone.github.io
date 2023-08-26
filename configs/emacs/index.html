@@ -2372,10 +2372,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">typescript-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.ts\\&#39;&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">rainbow-delimiters-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;typescript-mode</span>))
 </span></span></code></pre></div><h4 id="javascript">JavaScript</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;js-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
@@ -3918,7 +3919,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		       <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects/&#34;</span>
 </span></span><span style="display:flex;"><span>		       <span style="color:#19177c">f</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">member</span> <span style="color:#19177c">f</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;..&#34;</span>))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">f</span>)))
 </span></span><span style="display:flex;"><span>	   (<span style="color:#00f">directory-files</span>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects&#34;</span>))))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span>
@@ -6065,7 +6066,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">elfeed-summary</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-filter-by-title</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-filter-by-title</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-skip-sync-tag</span> <span style="color:#19177c">&#39;skip</span>))
 </span></span></code></pre></div><h4 id="elfeed-sync">elfeed-sync</h4>
 <p><a href="https://github.com/SqrtMinusOne/elfeed-sync">elfeed-sync</a> is my package to sync elfeed with <a href="https://tt-rss.org/">tt-rss</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed-sync</span>

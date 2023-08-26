@@ -507,7 +507,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 <tbody>
 <tr>
 <td>main</td>
-<td>t</td>
+<td>m</td>
 <td><a href="mailto:thexcloud@gmail.com">thexcloud@gmail.com</a></td>
 </tr>
 <tr>
@@ -517,7 +517,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </tr>
 <tr>
 <td>pvkorytov</td>
-<td>e</td>
+<td>v</td>
 <td><a href="mailto:pvkorytov@etu.ru">pvkorytov@etu.ru</a></td>
 </tr>
 </tbody>
@@ -561,18 +561,23 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">tag</span> <span style="color:#19177c">filter_tags</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">add-to-list</span>
 </span></span><span style="display:flex;"><span>       <span style="color:#19177c">&#39;searches</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;(:name \&#34;%s\&#34; :query \&#34;%s\&#34;)&#34;</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;(:name \&#34;%s\&#34; :query \&#34;%s\&#34; :key \&#34;%s\&#34;)&#34;</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s (%s)&#34;</span>
 </span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
 </span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">tag</span>))
 </span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
 </span></span><span style="display:flex;"><span>		       (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>)))))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">tag</span>)))
 </span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">searches</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-saved-searches</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span> <span style="color:#008000">:key</span> <span style="color:#ba2121">&#34;d&#34;</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">notmuch-hello-mode-map</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">notmuch-jump-search</span>)
 </span></span></code></pre></div><h3 id="signing-messages">Signing messages</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;message-setup-hook</span> <span style="color:#19177c">&#39;mml-secure-sign-pgpmime</span>))
