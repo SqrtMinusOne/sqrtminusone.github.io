@@ -4403,7 +4403,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;xdg-open&#34;</span> (<span style="color:#19177c">file-truename</span> <span style="color:#19177c">file</span>))))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-ref-ivy</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ivy-bibtex</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-ref-ivy</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ref-insert-link-hydra/body</span>)
@@ -4413,7 +4414,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><h5 id="ivy-bibtex">ivy-bibtex</h5>
 <p><a href="https://github.com/tmalsburg/helm-bibtex">ivy-bibtex</a> is an Ivy interface to bibtex. It uses the same configuration variables as <code>org-ref</code>, or rather, both packages use variables from the built-in <code>bibtex.el</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ivy-bibtex</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ivy-bibtex</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org-ref</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;fB&#34;</span> <span style="color:#19177c">&#39;ivy-bibtex</span>))
