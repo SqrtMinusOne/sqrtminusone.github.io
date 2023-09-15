@@ -141,6 +141,8 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">GUIX_PACKAGE_PATH</span><span style="color:#666">=</span>~/guix-packages
 </span></span></code></pre></div><p>Locale settings</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">GUIX_LOCPATH</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.guix-extra-profiles/console/console/lib/locale
+</span></span></code></pre></div><p>Somehow LibreOffice doesn&rsquo;t work without the following:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">GIO_EXTRA_MODULES</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;&#34;</span>
 </span></span></code></pre></div><h3 id="other-package-managers">Other package managers</h3>
 <p>Using other package managers with Guix requires some extra work.</p>
 <p>Cask</p>
@@ -419,9 +421,14 @@
 </table>
 <p><a href="https://fishshell.com/">Fish shell</a> is a non-POSIX-compliant shell, which offers some fancy UI &amp; UX features.</p>
 <p>Launch starship</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$TERM</span><span style="color:#ba2121">&#34;</span> !<span style="color:#666">=</span> <span style="color:#ba2121">&#34;dumb&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">and</span> <span style="color:#008000">type</span> <span style="color:#7d9029">-q</span> starship
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$TERM</span><span style="color:#ba2121">&#34;</span> !<span style="color:#666">=</span> <span style="color:#ba2121">&#34;dumb&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">and</span> <span style="color:#008000">type</span> <span style="color:#7d9029">-q</span> starship;
 </span></span><span style="display:flex;"><span>    <span style="color:#00f">starship</span> init <span style="color:#008000">fish</span> <span style="color:#666">|</span> <span style="color:#008000">source
-</span></span></span><span style="display:flex;"><span><span style="color:#008000"></span><span style="color:#008000;font-weight:bold">end</span>
+</span></span></span><span style="display:flex;"><span><span style="color:#008000"></span><span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">function</span> <span style="color:#008000">fish_prompt</span> <span style="color:#7d9029">-d</span> <span style="color:#ba2121">&#34;Write out the prompt&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008000">printf</span> <span style="color:#ba2121">&#39;%s@%s %s%s%s &gt; &#39;</span> <span style="color:#19177c">$USER</span> <span style="color:#19177c">$hostname</span> <span style="color:#b62;font-weight:bold">\
+</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span>	    <span style="color:#666">(</span><span style="color:#008000">set_color</span> <span style="color:#19177c">$fish_color_cwd</span><span style="color:#666">)</span> <span style="color:#666">(</span><span style="color:#00f">basename</span> <span style="color:#666">(</span><span style="color:#00f">pwd</span><span style="color:#666">))</span> <span style="color:#666">(</span><span style="color:#008000">set_color </span>normal<span style="color:#666">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
 </span></span></code></pre></div><p>Enable vi keybindings &amp; aliases. The alias syntax is the same as in bash, so it&rsquo;s just a noweb reference to <code>.bashrc</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span><span style="color:#00f">fish_vi_key_bindings</span>
 </span></span><span style="display:flex;"><span>
