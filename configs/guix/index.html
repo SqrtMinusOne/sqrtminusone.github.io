@@ -602,25 +602,25 @@
 <ul>
 <li>
 <p>paths to <code>ca</code>, <code>cert</code> and <code>key</code> are made absolute</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>ca <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>ca.crt<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>cert <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.crt<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>key <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.key<span style="">
-</span></span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>ca <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>ca.crt
+</span></span><span style="display:flex;"><span>cert <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.crt
+</span></span><span style="display:flex;"><span>key <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>client.key
+</span></span></code></pre></div></li>
 <li>
 <p>added <code>auth-user-pass</code> with a link to login info</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>auth-user-pass <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>auth.conf<span style="">
-</span></span></span></code></pre></div><p><code>auth.conf</code> looks like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>auth-user-pass <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.vpn/</span>auth.conf
+</span></span></code></pre></div><p><code>auth.conf</code> looks like this:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>login
 </span></span><span style="display:flex;"><span>password
 </span></span></code></pre></div></li>
 <li>
 <p>Run <a href="https://github.com/alfredopalhares/openvpn-update-resolv-conf">openvpn-update-resolv-conf</a> script to prevent DNS leaks. <code>openvpn-update-resolve-conf</code> originates in my <a href="https://github.com/SqrtMinusOne/channel-q">channel-q</a>.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-04-07 Thu&gt;</span></span>: Looks like this doesn&rsquo;t work on some connections. See the next option in that case</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>setenv PATH <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>sbin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>console<span style="color:#b68">/console/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>sbin<span style="">
-</span></span></span><span style="display:flex;"><span><span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh<span style="">
-</span></span></span></code></pre></div><p><code>setenv PATH</code> is necessary because both <code>resolvconf</code> (openresolve) and <code>update-resolv-conf.sh</code> are shell scripts which need GNU coreutils and stuff, and OpenVPN clears PATH by default.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>setenv PATH <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>sbin:<span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>console<span style="color:#b68">/console/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>bin:<span style="color:#b68">/run/</span>current-system<span style="color:#b68">/profile/</span>sbin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh
+</span></span><span style="display:flex;"><span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>system<span style="color:#b68">/system/</span>bin/update-resolv-conf.sh
+</span></span></code></pre></div><p><code>setenv PATH</code> is necessary because both <code>resolvconf</code> (openresolve) and <code>update-resolv-conf.sh</code> are shell scripts which need GNU coreutils and stuff, and OpenVPN clears PATH by default.</p>
 </li>
 <li>
 <p>Manually fix <code>etc/resolv.conf</code> to prevent DNS leaks</p>
@@ -628,13 +628,13 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;nameserver 8.8.8.8&#34;</span> &gt; /etc/resolv.conf
 </span></span></code></pre></div><p>Restore <code>resolv.conf</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>resolveconf -u
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/fix-resolve-conf<span style="">
-</span></span></span><span style="display:flex;"><span><span style=""></span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/restore-resolve-conf<span style="">
-</span></span></span></code></pre></div></li>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/fix-resolve-conf
+</span></span><span style="display:flex;"><span>down <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/restore-resolve-conf
+</span></span></code></pre></div></li>
 <li>
 <p>run a script to fix Docker routes</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>route-up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/vpn-fix-routes<span style="">
-</span></span></span></code></pre></div><p>References:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>route-up <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/bin/</span>scripts/vpn-fix-routes
+</span></span></code></pre></div><p>References:</p>
 <ul>
 <li><a href="https://github.com/moby/libnetwork/issues/779">Github issue</a></li>
 </ul>
