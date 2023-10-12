@@ -640,6 +640,36 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Aborting.&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-subject</span>)
+</span></span></code></pre></div><h3 id="capitalize-formal-pronous">Capitalize formal pronous</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/ru-formal-pronous</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;вы&#34;</span> <span style="color:#ba2121">&#34;вас&#34;</span> <span style="color:#ba2121">&#34;вам&#34;</span> <span style="color:#ba2121">&#34;вами&#34;</span> <span style="color:#ba2121">&#34;ваш&#34;</span> <span style="color:#ba2121">&#34;ваша&#34;</span> <span style="color:#ba2121">&#34;ваше&#34;</span> <span style="color:#ba2121">&#34;ваши&#34;</span> <span style="color:#ba2121">&#34;вашего&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;вашей&#34;</span> <span style="color:#ba2121">&#34;вашему&#34;</span> <span style="color:#ba2121">&#34;вашим&#34;</span> <span style="color:#ba2121">&#34;вашем&#34;</span> <span style="color:#ba2121">&#34;вашеми&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">regexp-opt</span> <span style="color:#19177c">my/ru-formal-pronous</span> <span style="color:#19177c">&#39;words</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-ensure-capitalized-formal-pronouns</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">message-goto-body</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-block</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">case-fold-search</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">confirmed</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">capitalized</span> (<span style="color:#00f">capitalize</span> <span style="color:#19177c">match</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">beg</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">end</span> (<span style="color:#00f">match-end</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> <span style="color:#19177c">confirmed</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Replace %s with %s? &#34;</span>
+</span></span><span style="display:flex;"><span>				      <span style="color:#19177c">match</span> <span style="color:#19177c">capitalized</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">insert</span> <span style="color:#19177c">capitalized</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">confirmed</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">cl-return</span>))))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-capitalized-formal-pronouns</span>)
 </span></span></code></pre></div><h3 id="ensure-password-is-loaded">Ensure password is loaded</h3>
 <p>Otherwise <code>msmtp</code> may call <code>pinentry</code> while Emacs is locked, which means EXWM can&rsquo;t process the password window.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ensure-password</span> ()
@@ -693,6 +723,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
         <li><a href="#signing-messages">Signing messages</a></li>
         <li><a href="#tuning-signature">Tuning signature</a></li>
         <li><a href="#warn-if-no-subject">Warn if no subject</a></li>
+        <li><a href="#capitalize-formal-pronous">Capitalize formal pronous</a></li>
         <li><a href="#ensure-password-is-loaded">Ensure password is loaded</a></li>
       </ul>
     </li>

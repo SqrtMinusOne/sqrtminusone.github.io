@@ -3092,7 +3092,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">py-isort-buffer</span> <span style="color:#19177c">py-isort-region</span>))
 </span></span></code></pre></div><p>The following binding calls yapf &amp; isort on the buffer</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;python-mode-map</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">python-mode-map</span> <span style="color:#19177c">python-ts-mode-map</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;rr&#34;</span> (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">save-excursion</span>
@@ -5560,7 +5560,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-void-if-file-is-tramp</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">file-remote-p</span> (<span style="color:#008000">or</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">default-directory</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">dir</span>)))
-</span></span></code></pre></div><p><code>editorconfig</code> lovely package looks for the <code>.editorconfig</code> file in the file tree.</p>
+</span></span></code></pre></div><p><code>editorconfig</code>. This lovely package looks for <code>.editorconfig</code> in the file tree.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;editorconfig</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig-apply</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--disabled-for-filename</span>
