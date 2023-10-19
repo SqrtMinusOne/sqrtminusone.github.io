@@ -921,6 +921,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">popup-previous</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">accent-custom</span> <span style="color:#666">&#39;</span>((<span style="color:#19177c">a</span> (<span style="color:#19177c">ā</span>))
 </span></span><span style="display:flex;"><span>			(<span style="color:#19177c">A</span> (<span style="color:#19177c">Ā</span>)))))
+</span></span></code></pre></div><h5 id="binky">binky</h5>
+<p>Experimenting with this package.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">binky</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">binky-binky</span>))
 </span></span></code></pre></div><h3 id="working-with-projects">Working with projects</h3>
 <p>Packages related to managing projects.</p>
 <p>I used to have <a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> here, but in the end decided that dired with <a href="https://github.com/jojojames/dired-sidebar">dired-sidebar</a> does a better job. Dired has its separate section in &ldquo;Applications&rdquo;.</p>
@@ -3985,11 +3991,31 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;* %?\n&#34;</span>
 </span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;/Entered on/ %U&#34;</span>))))
+</span></span></code></pre></div><h5 id="org-super-agenda">org-super-agenda</h5>
+<p><a href="https://github.com/alphapapa/org-super-agenda">org-super-agenda</a> is alphapapa&rsquo;s extension to group items in org-agenda.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-super-agenda</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Alphapapa doesn&#39;t like evil</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">org-super-agenda-header-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#800">nil</span>))
+</span></span></code></pre></div><p>It doesn&rsquo;t look great with org-bars mode, so&hellip;</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-super-agenda--make-agenda-header-around</span> (<span style="color:#19177c">fun</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">remove-text-properties</span> <span style="color:#666">0</span> (<span style="color:#00f">length</span> <span style="color:#19177c">name</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">line-prefix</span> <span style="color:#800">nil</span>) <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">remove-text-properties</span> <span style="color:#666">0</span> (<span style="color:#00f">length</span> <span style="color:#19177c">name</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">wrap-prefix</span> <span style="color:#800">nil</span>) <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> (<span style="color:#00f">substring-no-properties</span> <span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-super-agenda</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;org-super-agenda--make-agenda-header</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-super-agenda--make-agenda-header-around</span>))
 </span></span></code></pre></div><h5 id="org-ql">org-ql</h5>
 <p><a href="https://github.com/alphapapa/org-ql">org-ql</a> is a package to query the org files. I&rsquo;ve tried using it for:</p>
 <ul>
 <li>Grabbing done tasks / meetings / etc for review workflow</li>
-<li>Adding Trello tasks into Agenga</li>
 </ul>
 <p>None of that worked out, but I&rsquo;ll keep the package here in case I have some more ideas.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-ql</span>
@@ -4002,7 +4028,60 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; See https://github.com/alphapapa/org-ql/pull/237</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-ql-regexp-part-ts-time</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">optional</span> <span style="color:#ba2121">&#34;-&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>)))))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">optional</span> <span style="color:#ba2121">&#34;-&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>))))
+</span></span><span style="display:flex;"><span>  )
+</span></span></code></pre></div><h5 id="link-tasks-to-meetings">Link tasks to meetings</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-meeting--prompt</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">meetings</span> (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">element-with-markers</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#008000">:from</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>		     <span style="color:#008000">:where</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">todo</span>) (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;mt&#34;</span>) (<span style="color:#19177c">ts-active</span> <span style="color:#008000">:from</span> <span style="color:#19177c">today</span> <span style="color:#19177c">to</span> <span style="color:#666">31</span>))
+</span></span><span style="display:flex;"><span>		     <span style="color:#008000">:order-by</span> <span style="color:#19177c">&#39;scheduled</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">data</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">lambda</span> (<span style="color:#19177c">meeting</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">let</span> ((<span style="color:#19177c">raw-value</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">meeting</span>))
+</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">scheduled</span> (<span style="color:#19177c">org-format-timestamp</span>
+</span></span><span style="display:flex;"><span>				    (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:scheduled</span> <span style="color:#19177c">meeting</span>)
+</span></span><span style="display:flex;"><span>				    (<span style="color:#00f">cdr</span> <span style="color:#19177c">org-time-stamp-formats</span>))))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">cons</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-30s %s&#34;</span> <span style="color:#19177c">raw-value</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">propertize</span> <span style="color:#19177c">scheduled</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;org-agenda-date</span>))
+</span></span><span style="display:flex;"><span>			  <span style="color:#19177c">meeting</span>)))
+</span></span><span style="display:flex;"><span>		<span style="color:#19177c">meetings</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">ivy-prescient-sort-commands</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">cdr</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">assoc</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Meeting: &#34;</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">data</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-meeting--format-link</span> (<span style="color:#19177c">meeting</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[[file:%s::*%s][%s]]&#34;</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">buffer-file-name</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">marker-buffer</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">meeting</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">meeting</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">meeting</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-meeting-link</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">meeting</span> (<span style="color:#19177c">my/org-meeting--prompt</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;MEETING&#34;</span> (<span style="color:#19177c">my/org-meeting--format-link</span> <span style="color:#19177c">meeting</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ql-meeting-tasks</span> (<span style="color:#19177c">meeting</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">my/org-meeting--prompt</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-search</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;MEETING&#34;</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/org-meeting--format-link</span> <span style="color:#19177c">meeting</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">date</span> <span style="color:#19177c">priority</span> <span style="color:#19177c">todo</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:buffer</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;*Meeting Tasks: %s*&#34;</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">meeting</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path</span> <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ql-meeting-tasks-agenda</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">meeting</span> (<span style="color:#008000">save-window-excursion</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">org-agenda-switch-to</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">org-back-to-heading</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">org-ql--add-markers</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">org-element-at-point</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-ql-meeting-tasks</span> <span style="color:#19177c">meeting</span>)))
 </span></span></code></pre></div><h5 id="tracking-habits">Tracking habits</h5>
 <p>Let&rsquo;s see how this goes.</p>
 <p>References:</p>
@@ -4914,6 +4993,31 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">calfw-org</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">calfw</span> <span style="color:#19177c">org</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><h4 id="org-timeblock">org-timeblock</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-timeblock-conf</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-timeblock</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;ichernyshovvv/org-timeblock&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-timeblock-mode</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ot&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-timeblock-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-timeblock-conf</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">org-timeblock-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-forward-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-backward-column</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-forward-column</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-backward-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-day-earlier</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-day-later</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-day-earlier</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-day-later</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-goto</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-todo-set</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>))
 </span></span></code></pre></div><h3 id="ui-1">UI</h3>
 <h4 id="latex-fragments">LaTeX fragments</h4>
 <p>A function to enable LaTeX native highlighting. Not setting this as default, because it loads LaTeX stuff.</p>
@@ -8801,6 +8905,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#review-workflow-1">Review workflow</a></li>
             <li><a href="#contacts">Contacts</a></li>
             <li><a href="#calendar-view">Calendar view</a></li>
+            <li><a href="#org-timeblock">org-timeblock</a></li>
           </ul>
         </li>
         <li><a href="#ui-1">UI</a>
