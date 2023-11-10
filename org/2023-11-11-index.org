@@ -1,7 +1,7 @@
 #+HUGO_SECTION: posts
 #+HUGO_BASE_DIR: ../
 #+TITLE: Declarative filesystem management with Emacs & Org Mode
-#+DATE: 2023-11-10
+#+DATE: 2023-11-11
 #+HUGO_TAGS: emacs
 #+HUGO_TAGS: orgmode
 #+HUGO_DRAFT: true
@@ -174,13 +174,14 @@ So, let's parse the Org tree. This is done by recursively traversing the tree re
 
 #+begin_src emacs-lisp
 (defun my/index--tree-get-recursive (heading &optional path)
-  "Recursively read index tree from HEADING.
+  "Read the index tree recursively from HEADING.
 
 HEADING is an org-element of type `headline'.
 
-PATH is the path to the current node. If not provided, it is
-assumed to be the root of the index.  The return value is an
-alist, see `my/index--tree-get' for details."
+If PATH is provided, it is the path to the current node. If not
+provided, it is assumed to be the root of the index.
+
+The return value is an alist; see `my/index--tree-get' for details."
   (when (eq (org-element-type heading) 'headline)
     (let (val
           (new-path (concat
@@ -213,7 +214,7 @@ alist, see `my/index--tree-get' for details."
       val)))
 
 (defun my/index--tree-get ()
-  "Read index tree from the current org buffer.
+  "Read the index tree from the current org buffer.
 
 The return value is a list of alists, each representing a
 folder/node.  Alists can have the following keys:
@@ -340,14 +341,13 @@ FULL-TREE and TREE are forms as defined by `my/index--tree-get'.  TREE
 is the narrowed FULL-TREE (returned by `my/index--tree-narrow').
 
 ACTIVE-PATHS is a list of paths that are currently active.  If not
-provided, it is computed from TREE, i.e. as those paths that have to
-exists on the current machine.
+provided, it is computed from TREE.
 
 The return value is a list of alists with the following keys:
 - path - the path of the folder
 - exists - whether the folder exists on the filesystem
 - has-to-exist - whether the folder exists in the tree
-- extra - if the folder exists in the filesystem but not in tree.
+- extra - if the folder exists in the filesystem but not in the tree.
 - children - a list of alists with the same keys for the children of
   the folder."
   (let ((active-paths (or active-paths (my/index--tree-get-paths tree))))
@@ -540,8 +540,7 @@ To sync git, we just need to clone the required git repos. Removing the repos is
   "Get commands to clone the yet uncloned git repos in TREE.
 
 TREE is a form a defined by `my/index--tree-get'.  This is supposed to
-be the tree narrowed to the current machine
-(`my/index--tree-narrow').
+be the tree narrowed to the current machine (`my/index--tree-narrow').
 
 The return value is a list of commands as defined by
 `my/index--commands-display'."
@@ -808,7 +807,7 @@ for recursive calls.
 The result is a list of alists with the following keys:
 - `:names` - list of names, e.g.
   (\"10.01 Something\" \"10.01.01 Something\")
-: `:path` - path to the folder, e.g.
+- `:path` - path to the folder, e.g.
   \"/path/10 stuff/10.01 Something/10.01.01 Something/\"
 - `:child-navs` - list of child navigation structures (optional)"
   (seq-sort-by
@@ -901,7 +900,7 @@ command as follows:
   - '(4): Select an indexed directory, and select a child indexed
     directory if available.
 - If in an indexed directory with indexed children (a project):
-  - nil: Select another indexed directory from the project
+  - nil: Select another indexed directory from the project.
   - '(4): Select a top-level indexed directory (the same as nil for
     the previous case).
   - '(16): The same as '(4) for the previous case.
