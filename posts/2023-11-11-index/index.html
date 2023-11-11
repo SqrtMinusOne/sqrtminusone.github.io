@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Declarative filesystem management with Emacs &amp; Org Mode</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+
+<div class="root">
+    <h1 id="title-small-screen">Declarative filesystem management with Emacs &amp; Org Mode</h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen">Declarative filesystem management with Emacs &amp; Org Mode</h1>
+        <div class="abstract">
+<p>The post describes a Johnny.Decimal-inspired filesystem structure, declared in an org file and synchronized across machines. Different folders are available on different machines.</p>
+</div>
+<h2 id="intro">Intro</h2>
+<p>My filesystem is, shall we say, not the most orderly place.</p>
+<center>
+<iframe src="https://emacs.ch/@sqrtminusone/110514686718545191/embed" class="mastodon-embed" style="max-width: 100%; border: 0" width="500" allowfullscreen="allowfullscreen"></iframe><script src="https://emacs.ch/embed.js" async="async"></script>
+</center>
+<p>It&rsquo;s been somewhat messy, and messy in different ways across my three machines. For instance, my laptop had work projects in <code>~/Code/Job</code>, my work machine had just <code>~/Code</code>, and so forth.</p>
+<p>Strangely, I couldn&rsquo;t find and existing solution to that problem. Surely, I can&rsquo;t be the only one facing that issue, can I?</p>
+<p>Fortunately, I&rsquo;m well-acquainted (make-yourself-a) Swiss Army Knife of computing called <a href="https://www.gnu.org/software/emacs/">Emacs</a>, so&hellip; below is my attempt to make something of it. And another addition to the already substantial list of my Emacs uses.</p>
+<p>Also, my <code>M-x magit-log-buffer-file</code> shows I&rsquo;ve created that file on the same day I had written the embedded toot, so this must be the longest Emacs thing I&rsquo;ve been figuring out. And it&rsquo;s probably the least portable, but I nevertheless hope you find it useful.</p>
+<h2 id="idea">Idea</h2>
+<figure><img src="/images/index/index.png"/>
+</figure>
+
+<p>So, I decided to try declarative filesystem management.</p>
+<p>At the core is my work-in-progress adaptation of <a href="https://johnnydecimal.com/">Johnny.Decimal</a><sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. Essentially, it suggests prefixing your folders with numbers like <code>12.34</code>, where:</p>
+<ul>
+<li>the first digit is the &ldquo;<a href="https://johnnydecimal.com/10-19-concepts/11-core/11.02-areas-and-categories/">category</a>&rdquo;;</li>
+<li>the second digit is the &ldquo;<a href="https://johnnydecimal.com/10-19-concepts/11-core/11.02-areas-and-categories/">area</a>&rdquo;;</li>
+<li>the last two digits are the <a href="https://johnnydecimal.com/10-19-concepts/11-core/11.03-ids/">ID</a>.</li>
+</ul>
+<p>The point is to organize your folder structure, limiting its depth for quicker and more straightforward access. Check the website for a more thorough description.</p>
+<p>So, what I want is to:</p>
+<ul>
+<li>define a Jonny.Decimal-esque file tree in a single <a href="https://orgmode.org/">Org</a> file;</li>
+<li>have different nodes of that file tree active on different machines, e.g. I don&rsquo;t want <a href="https://github.com/SqrtMinusOne?tab=repositories&amp;q=&amp;type=&amp;language=emacs+lisp&amp;sort=">my Emacs stuff</a> on my work machine;</li>
+<li>use different tools to sync different nodes (currently <a href="https://git-scm.com/">git</a>, <a href="https://mega.nz/">MEGA</a>, and &ldquo;nothing&rdquo;).</li>
+</ul>
+<h3 id="folder-structure">Folder structure</h3>
+<p>As I said, I tried (and still trying) to adapt the proposed scheme to better suit my needs. Here&rsquo;s a subset of my current tree:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>10-19 Code
+</span></span><span style="display:flex;"><span>   10 [REDACTED]
+</span></span><span style="display:flex;"><span>      10.02 Digital Schedule       ; project root
+</span></span><span style="display:flex;"><span>      10.03 Digital Trajectories   ; project root
+</span></span><span style="display:flex;"><span>   12 My Emacs Packages
+</span></span><span style="display:flex;"><span>      12.01 lyrics-fetcher.el      ; managed by git
+</span></span><span style="display:flex;"><span>      12.02 pomm.el                ; managed by git
+</span></span><span style="display:flex;"><span>   15 Other Projects
+</span></span><span style="display:flex;"><span>      15.04 ZMU_2022               ; I&#39;m done with this and don&#39;t need it on any machine
+</span></span><span style="display:flex;"><span>20-29 Education
+</span></span><span style="display:flex;"><span>   24 Publications                 ; the entrire area is managed by MEGA
+</span></span><span style="display:flex;"><span>      24.Y20.01 [bibtex code]
+</span></span><span style="display:flex;"><span>      24.Y20.02 [bibtex code]
+</span></span><span style="display:flex;"><span>   26 Students
+</span></span><span style="display:flex;"><span>      26.Y22.01 [student name]
+</span></span><span style="display:flex;"><span>30-39 Life
+</span></span><span style="display:flex;"><span>   32 org-mode
+</span></span><span style="display:flex;"><span>   33 Library
+</span></span></code></pre></div><p>The root of the tree is my <code>$HOME</code>. The entry at the third (or second) level can be either an entity itself (such as a git repository), or a &ldquo;project root&rdquo;.</p>
+<p>In several places, I use year references (<code>Y20</code>) instead of the plain <code>AC.ID</code>. This is mainly to group things by academic years, e.g. to find all my publications or students in a specific year, which I need for occasional reports. I also have semester references (<code>SEM10</code>) for my undergraduate studies.</p>
+<p>The project structure is more or less standard. Johnny.Decimal <a href="https://johnnydecimal.com/10-19-concepts/13-multiple-projects/13.01-introduction/">proposes</a> using <code>PRO.AC.ID</code> to manage multiple projects, but this doesn&rsquo;t seem to fit quite as well in my case. So I came up with the following:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>10.03 Digital Trajectories                      ; project root
+</span></span><span style="display:flex;"><span>   10.03.A Artifacts                            ; managed by MEGA
+</span></span><span style="display:flex;"><span>      10.03.A.04 library queries (Jan 23)
+</span></span><span style="display:flex;"><span>   10.03.D Documents                            ; managed by MEGA
+</span></span><span style="display:flex;"><span>      10.03.D.01 Initial design
+</span></span><span style="display:flex;"><span>   10.03.R Repos
+</span></span><span style="display:flex;"><span>       10.03.R.00 digital-trajectories-deploy   ; managed by MEGA
+</span></span><span style="display:flex;"><span>       10.03.R.01 digital-trajectories-backend  ; managed by git
+</span></span><span style="display:flex;"><span>   10.03.U Dumps                                ; managed by nothing, no need to sync this
+</span></span></code></pre></div><p>I also use year references on the third level for courses I happen to teach across multiple academic years.</p>
+<p>Perhaps this is too verbose (<code>10.03.R.01</code>), but it works for now.</p>
+<h3 id="tools-choice">Tools choice</h3>
+<p>As I mentioned earlier, my current options to manage a particular node are:</p>
+<ul>
+<li><a href="https://git-scm.com/">git</a>;</li>
+<li><a href="https://mega.nz/">MEGA</a> - for files that don&rsquo;t fit into git, such as DOCX documents, photos, etc.;</li>
+<li>&ldquo;nothing&rdquo; - for something that I don&rsquo;t need to sync across machines, e.g. database dumps.</li>
+</ul>
+<p>Another tool I considered was <a href="https://github.com/restic/restic">restic</a>. It&rsquo;s an interesting backup &amp; sync solution with built-in encryption, snapshots, etc.</p>
+<p>However, a challenge I encountered is that its repositories are only accessible via restic. So, even if I use something like MEGA as a backend, I won&rsquo;t be able to use the MEGA file-sharing features, which I occasionally want for document or photo folders. Hence, for now, I&rsquo;m more interested in synchronizing the file tree in MEGA with <a href="https://github.com/meganz/MEGAcmd">MEGAcmd</a> (and also clean up the mess up there).</p>
+<p>Another interesting tool is <a href="https://rclone.org/">rclone</a>, which provides a single interface for multiple services like Google Drive, Dropbox, S3, WebDAV. It also supports MEGA, but it requires turning off the two-factor authentication, which I don&rsquo;t want.</p>
+<h2 id="implementation">Implementation</h2>
+<h3 id="dependencies">Dependencies</h3>
+<p>We&rsquo;ll need lexical binding.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;; -*- lexical-binding: t -*-</span>
+</span></span></code></pre></div><p>And a package called <a href="https://github.com/daniel-ness/ini.el">ini.el</a> to parse INI files.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ini</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;daniel-ness/ini.el&#34;</span>))
+</span></span></code></pre></div><p>The rest is built into Emacs.</p>
+<h3 id="org-tree">Org tree</h3>
+<h4 id="tree-definitions">Tree definitions</h4>
+<p>The root is my <code>$HOME</code> directory.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/index-root</span> (<span style="color:#00f">concat</span> (<span style="color:#19177c">getenv</span> <span style="color:#ba2121">&#34;HOME&#34;</span>) <span style="color:#ba2121">&#34;/&#34;</span>))
+</span></span></code></pre></div><p>The org tree is located in my <code>org-mode</code> folder in a file called <code>index.org</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/index-file</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/misc/index.org&#34;</span>))
+</span></span></code></pre></div><p>Each &ldquo;area&rdquo; is an Org header with the <code>folder</code> tag; the Org hierarchy forms the file tree. A header can have the following properties:</p>
+<ul>
+<li><code>machine</code> - a list of hostnames for which the node is active (or <code>nil</code>)</li>
+<li><code>kind</code> - <code>mega</code>, <code>git</code>, or <code>dummy</code></li>
+<li><code>remote</code> - remote URL for <code>git</code></li>
+<li><code>symlink</code> - in case the folder has to be symlinked somewhere else<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></li>
+</ul>
+<p>E.g. a part of the tree above:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-org" data-lang="org"><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> 10-19 Code                                                        </span><span style="font-style:italic"> :folder:</span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">**</span> 10 [REDACTED]
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">***</span> 10.03 Digital Trajectories
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:machine:  indigo eminence
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:project:  t
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.A Artifacts
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.D Documents
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.R Repos
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">*****</span> 10.03.R.00 digital-trajectories-deploy
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">*****</span> 10.03.R.01 digital-trajectories-backend
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     git
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:remote:   [REACTED]
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.U Dumps
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     dummy
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
+</span></span></code></pre></div><h4 id="parse-tree">Parse tree</h4>
+<p>So, let&rsquo;s parse the Org tree. This is done by recursively traversing the tree returned by <code>org-element-parse-buffer</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-get-recursive</span> (<span style="color:#19177c">heading</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Read the index tree recursively from HEADING.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">HEADING is an org-element of type </span><span style="color:#19177c">`headline&#39;</span><span style="color:#ba2121">.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If PATH is provided, it is the path to the current node. If not
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">provided, it is assumed to be the root of the index.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is an alist; see </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121"> for details.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> (<span style="color:#19177c">org-element-type</span> <span style="color:#19177c">heading</span>) <span style="color:#19177c">&#39;headline</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> (<span style="color:#19177c">val</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">new-path</span> (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">or</span> <span style="color:#19177c">path</span> <span style="color:#19177c">my/index-root</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>                     <span style="color:#ba2121">&#34;/&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">children</span> (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">org-element-contents</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>                              (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>)
+</span></span><span style="display:flex;"><span>                                        (<span style="color:#19177c">my/index--tree-get-recursive</span>
+</span></span><span style="display:flex;"><span>                                         <span style="color:#19177c">e</span> <span style="color:#19177c">new-path</span>)))
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">seq-filter</span> <span style="color:#00f">#&#39;identity</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">children</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">machine</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:MACHINE</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:machine</span> <span style="color:#19177c">val</span>) (<span style="color:#19177c">split-string</span> <span style="color:#19177c">machine</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">symlink</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:SYMLINK</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:symlink</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">symlink</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:PROJECT</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:project</span> <span style="color:#19177c">val</span>) <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">kind-str</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:KIND</span> <span style="color:#19177c">heading</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#19177c">kind</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">kind-str</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">kind</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">kind</span> <span style="color:#19177c">&#39;git</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">remote</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:REMOTE</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">unless</span> <span style="color:#19177c">remote</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No remote for %s&#34;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">val</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">remote</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">val</span>) (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">new-path</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">val</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-get</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Read the index tree from the current org buffer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of alists, each representing a
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">folder/node.  Alists can have the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:name&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:path&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:children&#39; - child nodes
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:machine&#39; - list of machines on which the node is active
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:symlink&#39; - a symlink to create
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:kind&#39; - one of \&#34;git\&#34;, \&#34;mega\&#34;, or \&#34;dummy\&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:remote&#39; - the remote to use for git nodes&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-element-map</span> (<span style="color:#19177c">org-element-parse-buffer</span>) <span style="color:#19177c">&#39;headline</span> <span style="color:#00f">#&#39;identity</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">and</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">=</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:level</span> <span style="color:#19177c">el</span>) <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">seq-contains-p</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;substring-no-properties</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:tags</span> <span style="color:#19177c">el</span>))
+</span></span><span style="display:flex;"><span>                            <span style="color:#ba2121">&#34;folder&#34;</span>))))
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index--tree-get-recursive</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">tree</span>))
+</span></span></code></pre></div><h4 id="verify-tree">Verify tree</h4>
+<p>I also want to make sure that I didn&rsquo;t mess up the numbers, i.e., didn&rsquo;t place <code>10.02</code> under <code>11</code>, and so on.</p>
+<p>To do that, we first need to extract the number from the name:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--extact-number</span> (<span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract the number from the index NAME.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NAME is a string.  The number is the first sequence of digits, e.g.:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- 10-19
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- 10.01
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- 10.01.Y22.01&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-match-data</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">|</span> <span style="color:#19177c">num</span> <span style="color:#19177c">alpha</span> <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;-&#34;</span>))) <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span> <span style="color:#19177c">name</span>)))
+</span></span></code></pre></div><p>Then, we can recursively verify the numbers:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tree--verfify-recursive</span> (<span style="color:#19177c">elem</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">current</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Verify that ELEM is a valid tree element.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">CURRENT is the current number or name of the parent element.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">name</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">number</span> (<span style="color:#19177c">my/index--extact-number</span> <span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">number</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Can&#39;t find number: %s&#34;</span> <span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">listp</span> <span style="color:#19177c">current</span>) (<span style="color:#19177c">not</span> (<span style="color:#00f">null</span> <span style="color:#19177c">current</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">seq-some</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">cand</span>) (<span style="color:#19177c">string-prefix-p</span> <span style="color:#19177c">cand</span> <span style="color:#19177c">name</span>)) <span style="color:#19177c">current</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Name: %s doesn&#39;t match: %s&#34;</span> <span style="color:#19177c">name</span> <span style="color:#19177c">current</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#00f">stringp</span> <span style="color:#19177c">current</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#19177c">current</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Name: %s doesn&#39;t match: %s&#34;</span> <span style="color:#19177c">name</span> <span style="color:#19177c">current</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">recur-value</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">if</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#00f">+</span> <span style="color:#19177c">num</span>) <span style="color:#ba2121">&#34;-&#34;</span> (<span style="color:#00f">+</span> <span style="color:#19177c">num</span>)) <span style="color:#19177c">number</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">let*</span> ((<span style="color:#19177c">borders</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">number</span> <span style="color:#ba2121">&#34;-&#34;</span>))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">start</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">borders</span>)))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">end</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">borders</span>))))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#19177c">start</span> <span style="color:#19177c">to</span> (<span style="color:#00f">1-</span> <span style="color:#19177c">end</span>) <span style="color:#19177c">collect</span> (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">i</span>)))
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">number</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#19177c">my/tree--verfify-recursive</span> <span style="color:#19177c">e</span> <span style="color:#19177c">recur-value</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-verify</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Verify that TREE is a valid tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return t if it is valid, otherwise raise an error.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">See </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121"> for the format of TREE.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tree--verfify-recursive</span> <span style="color:#19177c">tree</span>))
+</span></span></code></pre></div><h4 id="narrow-tree">Narrow tree</h4>
+<p>Finally, we need to narrow the tree to only leave nodes that are active for the current machine.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-narrow-recursive</span> (<span style="color:#19177c">elem</span> <span style="color:#19177c">machine</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Remove all children of ELEM that are not active on MACHINE.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">elem-machines</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:machine</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">not</span> (<span style="color:#19177c">seq-some</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem-machine</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">string-equal</span> <span style="color:#19177c">elem-machine</span> <span style="color:#19177c">machine</span>))
+</span></span><span style="display:flex;"><span>                           <span style="color:#19177c">elem-machines</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">#&#39;identity</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">my/index--tree-narrow-recursive</span> <span style="color:#19177c">e</span> <span style="color:#19177c">machine</span>))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-narrow</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Remove all elements of TREE that are not active on machine.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#00f">#&#39;identity</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>) (<span style="color:#19177c">my/index--tree-narrow-recursive</span> <span style="color:#19177c">elem</span> (<span style="color:#00f">system-name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">copy-tree</span> <span style="color:#19177c">tree</span>))))
+</span></span></code></pre></div><h3 id="commands">Commands</h3>
+<p>Next, apply the tree to the filesystem.</p>
+<p>I&rsquo;ve decided to implement this by generating a bash script and executing it with <code>bash +x</code>. This way, I can check the required changes in advance and avert potential data loss if something unexpected happens.</p>
+<p>One command for the script will be a list like:</p>
+<ul>
+<li><code>(&lt;command&gt; &lt;category&gt; &lt;priority&gt;)</code></li>
+</ul>
+<h4 id="filesystem">Filesystem</h4>
+<p>First, we need to create non-existing folders and remove folders that aren&rsquo;t supposed to exist.</p>
+<p>To do that, we need to find all such folders:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--filesystem-tree-mapping</span> (<span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">active-paths</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return a \&#34;sync state\&#34; between the filesystem and the tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FULL-TREE and TREE are forms as defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  TREE
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">is the narrowed FULL-TREE (returned by </span><span style="color:#19177c">`my/index--tree-narrow&#39;</span><span style="color:#ba2121">).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ACTIVE-PATHS is a list of paths that are currently active.  If not
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">provided, it is computed from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of alists with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- path - the path of the folder
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- exists - whether the folder exists on the filesystem
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- has-to-exist - whether the folder exists in the tree
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- extra - if the folder exists in the filesystem but not in the tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- children - a list of alists with the same keys for the children of
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  the folder.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">active-paths</span> (<span style="color:#008000">or</span> <span style="color:#19177c">active-paths</span> (<span style="color:#19177c">my/index--tree-get-paths</span> <span style="color:#19177c">tree</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">full-tree</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">extra-folders</span> <span style="color:#00f">=</span> (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>                                            (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>                                   (<span style="color:#19177c">seq-difference</span>
+</span></span><span style="display:flex;"><span>                                    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">d</span>) (<span style="color:#008000">if</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">d</span>)
+</span></span><span style="display:flex;"><span>                                                            (<span style="color:#00f">concat</span> <span style="color:#19177c">d</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>                                                          <span style="color:#19177c">d</span>))
+</span></span><span style="display:flex;"><span>                                            (<span style="color:#00f">directory-files</span> <span style="color:#19177c">path</span> <span style="color:#800">t</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">not</span> <span style="color:#ba2121">&#34;.&#34;</span>) <span style="color:#19177c">eos</span>)))
+</span></span><span style="display:flex;"><span>                                    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">child</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>                                             <span style="color:#19177c">collect</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">child</span>))))
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">folder-exists</span> <span style="color:#00f">=</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">folder-has-to-exist</span> <span style="color:#00f">=</span> (<span style="color:#19177c">seq-contains-p</span> <span style="color:#19177c">active-paths</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">collect</span> <span style="color:#666">`</span>((<span style="color:#19177c">path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">exists</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">folder-exists</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">has-to-exist</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">folder-has-to-exist</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">children</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>                                     (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">f</span> <span style="color:#19177c">in</span> <span style="color:#19177c">extra-folders</span>
+</span></span><span style="display:flex;"><span>                                              <span style="color:#19177c">collect</span> <span style="color:#666">`</span>((<span style="color:#19177c">path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>                                                        (<span style="color:#19177c">exists</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                                                        (<span style="color:#19177c">has-to-exist</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>                                                        (<span style="color:#19177c">extra</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>                                     (<span style="color:#19177c">my/index--filesystem-tree-mapping</span>
+</span></span><span style="display:flex;"><span>                                      (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">tree</span> <span style="color:#19177c">active-paths</span>)))))))
+</span></span></code></pre></div><p>And generate commands from the results of the above:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--filesystem-commands</span> (<span style="color:#19177c">mapping</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to sync filesystem with the tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">MAPPING is a form generated by </span><span style="color:#19177c">`my/index--filesystem-tree-mapping&#39;</span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">that describes the \&#34;sync state\&#34; between the filesystem and the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of commands as defined by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">mapping</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;path</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">exists</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;exists</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">has-to-exist</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;has-to-exist</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">extra</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;extra</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">exists</span>) <span style="color:#19177c">has-to-exist</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mkdir \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">path</span>) <span style="color:#ba2121">&#34;Make directories&#34;</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">exists</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">has-to-exist</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;rm -rf \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#008000">if</span> <span style="color:#19177c">extra</span> <span style="color:#ba2121">&#34;Remove extra files&#34;</span> <span style="color:#ba2121">&#34;Remove directories&#34;</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#008000">if</span> <span style="color:#19177c">extra</span> <span style="color:#666">20</span> <span style="color:#666">10</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index--filesystem-commands</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;children</span> <span style="color:#19177c">elem</span>))))
+</span></span></code></pre></div><h4 id="mega">MEGA</h4>
+<p>As I said above, MEGA provides <a href="https://github.com/meganz/MEGAcmd">MEGAcmd</a>, which is a convenient way to access MEGA via CLI.</p>
+<p>To initialize the session, run</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mega-login &lt;login&gt; &lt;password&gt;
+</span></span></code></pre></div><p>Then you&rsquo;ll be able to run the rest of <code>mega-*</code> commands.</p>
+<p>The command I want to run, <code>mega-sync</code>, prints the results in a table-like way. So let&rsquo;s parse that.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/parse-table-str</span> (<span style="color:#00f">string</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Convert a table-like STRING into alist.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The input format is as follows:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">HEADER1 HEADER2 HEADER3
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">value1  value2  3
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">value4  value5  6
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Which creates the following output:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\(((HEADER1. \&#34;value1\&#34;) (HEADER2 . \&#34;value2\&#34;) (HEADER3 . \&#34;3\&#34;))
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"> ((HEADER1. \&#34;value4\&#34;) (HEADER2 . \&#34;value5\&#34;) (HEADER3 . \&#34;6\&#34;)))
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The functions also skips lines in [square brackets] and ones that
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">start with more than 3 spaces.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">lines</span> (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">s</span>) (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">s</span>)
+</span></span><span style="display:flex;"><span>                                      (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;[&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>) <span style="color:#ba2121">&#34;]&#34;</span>) <span style="color:#19177c">s</span>)
+</span></span><span style="display:flex;"><span>                                      (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> (<span style="color:#00f">&gt;=</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34; &#34;</span>)) <span style="color:#19177c">s</span>))))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">split-string</span> <span style="color:#00f">string</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">first-line</span> (<span style="color:#00f">car</span> <span style="color:#19177c">lines</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">headers</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">first-line</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">header-indices</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">lambda</span> (<span style="color:#19177c">header</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">cl-search</span> <span style="color:#19177c">header</span> <span style="color:#19177c">first-line</span>))
+</span></span><span style="display:flex;"><span>                          <span style="color:#19177c">headers</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">line</span> <span style="color:#19177c">in</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">lines</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">collect</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">header</span> <span style="color:#19177c">in</span> <span style="color:#19177c">headers</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#19177c">for</span> <span style="color:#19177c">start</span> <span style="color:#19177c">in</span> <span style="color:#19177c">header-indices</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#19177c">for</span> <span style="color:#19177c">end</span> <span style="color:#19177c">in</span> (<span style="color:#00f">append</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">header-indices</span>)
+</span></span><span style="display:flex;"><span>                                                 (<span style="color:#00f">list</span> (<span style="color:#00f">length</span> <span style="color:#19177c">line</span>)))
+</span></span><span style="display:flex;"><span>                              <span style="color:#19177c">collect</span> (<span style="color:#00f">cons</span>
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#00f">intern</span> <span style="color:#19177c">header</span>)
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>                                        (<span style="color:#00f">substring</span> <span style="color:#19177c">line</span> <span style="color:#19177c">start</span> <span style="color:#19177c">end</span>)))))))
+</span></span></code></pre></div><p>Now we can invoke <code>mega-sync</code> to get the current sync status. <code>--path-display-size=10000</code> disables truncation of long paths.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--mega-data-from-sync</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get the current MEGA sync status.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of alists with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- path - path to file or directory
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- enabled - whether the file or directory is enabled for sync&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">mega-result</span> (<span style="color:#19177c">my/parse-table-str</span>
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;mega-sync --path-display-size=10000&#34;</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">value</span> <span style="color:#19177c">in</span> <span style="color:#19177c">mega-result</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">localpath</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;LOCALPATH</span> <span style="color:#19177c">value</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">collect</span> <span style="color:#666">`</span>((<span style="color:#19177c">path</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">if</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">localpath</span>)
+</span></span><span style="display:flex;"><span>                                    (<span style="color:#00f">concat</span> <span style="color:#19177c">localpath</span> <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#19177c">localpath</span>))
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">enabled</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">string-equal</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;ACTIVE</span> <span style="color:#19177c">value</span>)
+</span></span><span style="display:flex;"><span>                                                 <span style="color:#ba2121">&#34;Enabled&#34;</span>))))))
+</span></span></code></pre></div><p>And get the same data from the tree.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-get-paths</span> (<span style="color:#19177c">tree</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">kind</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get paths from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form a defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  KIND is either a
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">filter by the kind attribute or nil, in which case all paths are
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">returned.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of strings.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">or</span> (<span style="color:#00f">null</span> <span style="color:#19177c">kind</span>) (<span style="color:#00f">eq</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">kind</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index--tree-get-paths</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">kind</span>)))
+</span></span></code></pre></div><p>With that information, we can generate commands to synchronize the required and actual sync paths.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--mega-local-path</span> (<span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get path in the MEGA cloud by the local path PATH.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-replace</span> <span style="color:#19177c">my/index-root</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--mega-commands</span> (<span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to sync the mega-sync state with TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FULL-TREE and TREE are forms as defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  TREE
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">is the narrowed FULL-TREE (returned by </span><span style="color:#19177c">`my/index--tree-narrow&#39;</span><span style="color:#ba2121">).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of commands as defined by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">paths-all</span> (<span style="color:#19177c">my/index--tree-get-paths</span> <span style="color:#19177c">full-tree</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">mega-paths-to-enable</span> (<span style="color:#19177c">my/index--tree-get-paths</span> <span style="color:#19177c">tree</span> <span style="color:#19177c">&#39;mega</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">mega-info</span> (<span style="color:#19177c">my/index--mega-data-from-sync</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">mega-paths-enabled</span> (<span style="color:#19177c">seq-map</span>
+</span></span><span style="display:flex;"><span>                              (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;path</span> <span style="color:#19177c">e</span>))
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;enabled</span> <span style="color:#19177c">e</span>))
+</span></span><span style="display:flex;"><span>                                          <span style="color:#19177c">mega-info</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">mega-paths-disabled</span> (<span style="color:#19177c">seq-map</span>
+</span></span><span style="display:flex;"><span>                               (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;path</span> <span style="color:#19177c">e</span>))
+</span></span><span style="display:flex;"><span>                               (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>) (<span style="color:#19177c">not</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;enabled</span> <span style="color:#19177c">e</span>)))
+</span></span><span style="display:flex;"><span>                                           <span style="color:#19177c">mega-info</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">seq-difference</span> <span style="color:#19177c">mega-paths-to-enable</span> <span style="color:#19177c">mega-paths-enabled</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#008000">if</span> (<span style="color:#19177c">seq-contains-p</span> <span style="color:#19177c">mega-paths-disabled</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mega-sync -e \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">path</span>) <span style="color:#ba2121">&#34;Mega enable sync&#34;</span> <span style="color:#666">5</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">else</span> <span style="color:#00f">append</span> (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mega-mkdir -p \&#34;%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                                         (<span style="color:#19177c">my/index--mega-local-path</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>                                 <span style="color:#ba2121">&#34;Mega mkdirs&#34;</span> <span style="color:#666">4</span>)
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mega-sync \&#34;%s\&#34; \&#34;%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                                         <span style="color:#19177c">path</span> (<span style="color:#19177c">my/index--mega-local-path</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>                                 <span style="color:#ba2121">&#34;Mega add sync&#34;</span> <span style="color:#666">5</span>)))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">seq-difference</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">seq-intersection</span> <span style="color:#19177c">mega-paths-enabled</span> <span style="color:#19177c">paths-all</span>)
+</span></span><span style="display:flex;"><span>                           <span style="color:#19177c">mega-paths-to-enable</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mega-sync -d \&#34;%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                               (<span style="color:#00f">substring</span> <span style="color:#19177c">path</span> <span style="color:#666">0</span> (<span style="color:#00f">1-</span> (<span style="color:#00f">length</span> <span style="color:#19177c">path</span>))))
+</span></span><span style="display:flex;"><span>                       <span style="color:#ba2121">&#34;Mega remove sync&#34;</span> <span style="color:#666">4</span>)))))
+</span></span></code></pre></div><h4 id="git-repos">Git repos</h4>
+<p>To sync git, we just need to clone the required git repos. Removing the repos is handled by the folder sync commands.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--git-commands</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to clone the yet uncloned git repos in TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form a defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  This is supposed to
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">be the tree narrowed to the current machine (</span><span style="color:#19177c">`my/index--tree-narrow&#39;</span><span style="color:#ba2121">).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of commands as defined by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">&#39;git</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">or</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#19177c">directory-empty-p</span> <span style="color:#19177c">path</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;git clone \&#34;%s\&#34; \&#34;%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                                 (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>                                 <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;Init git repos&#34;</span> <span style="color:#666">2</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index--git-commands</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span></code></pre></div><h4 id="wakatime">Wakatime</h4>
+<p>So, that&rsquo;s it for synchronization. A few other things are needed here.</p>
+<p>I use <a href="https://wakatime.com/">WakaTime</a> to track my coding activity, and I don&rsquo;t like the alphanumeric prefixes in my coding stats. Fortunately, <code>wakatime-cli</code> provides an option called <a href="https://github.com/wakatime/wakatime-cli/blob/develop/USAGE.md#project-map-section">projectmap</a> to rename projects, so we just have to generate its contents.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--bare-project-name</span> (<span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Remove the alphanumeric prefix from NAME.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">E.g. 10.03.R.01 Project Name -&gt; Project Name.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">replace-regexp-in-string</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">|</span> <span style="color:#19177c">num</span> <span style="color:#19177c">alpha</span> <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#ba2121">&#34;-&#34;</span>)) <span style="color:#19177c">space</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--wakatime-escape</span> (<span style="color:#00f">string</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Escape STRING for use in a WakaTime config file.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00f">string</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;&#39;&#34;</span>) <span style="color:#ba2121">&#34;\\\\&#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;(&#34;</span>) <span style="color:#ba2121">&#34;\\\\(&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;)&#34;</span>) <span style="color:#ba2121">&#34;\\\\)&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--wakatime-get-map-tree</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get a list of (folder-name . bare-project-name) pairs from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form as defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\&#34;bare-project-name\&#34; is project name without the alphanumeric
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">prefix.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">name</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">if</span> (<span style="color:#00f">eq</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">&#39;git</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">cons</span> (<span style="color:#19177c">my/index--wakatime-escape</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#19177c">my/index--wakatime-escape</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">my/index--bare-project-name</span> <span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">&#39;git</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:symlink</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">cons</span> (<span style="color:#19177c">my/index--wakatime-escape</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#408080;font-style:italic">;; lmao</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#408080;font-style:italic">;; /a/b/c/ -&gt; c</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#408080;font-style:italic">;; /a/b/c -&gt; b</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">file-name-nondirectory</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">directory-file-name</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">file-name-directory</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:symlink</span> <span style="color:#19177c">elem</span>)))))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#19177c">my/index--wakatime-escape</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">my/index--bare-project-name</span> <span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index--wakatime-get-map-tree</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span></code></pre></div><p>And insert that in <code>wakatime.cfg</code> if necessary.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--wakatime-commands</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to update WakaTime config from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form a defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">. The return value is
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">a list of commands as defined by </span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">map-tree</span> (<span style="color:#19177c">my/index--wakatime-get-map-tree</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">map-tree-encoding</span> (<span style="color:#19177c">ini-encode</span> <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;projectmap&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">map-tree</span>))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">map-tree-saved</span> (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">insert-file-contents</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/.wakatime.cfg&#34;</span>))
+</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">string-match-p</span> (<span style="color:#00f">regexp-quote</span> <span style="color:#19177c">map-tree-encoding</span>)
+</span></span><span style="display:flex;"><span>                                           (<span style="color:#00f">buffer-string</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">map-tree-saved</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">insert-command</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;echo \&#34;\n\n%s\&#34; &gt;&gt; ~/.wakatime.cfg&#34;</span>
+</span></span><span style="display:flex;"><span>                                          <span style="color:#19177c">map-tree-encoding</span>)
+</span></span><span style="display:flex;"><span>                                  <span style="color:#ba2121">&#34;Update WakaTime config&#34;</span> <span style="color:#666">9</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">list</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;sed -i -z &#39;s/\\[projectmap\\]\\n[^[]*//g&#39; ~/.wakatime.cfg&#34;</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#ba2121">&#34;Update WakaTime config&#34;</span> <span style="color:#666">9</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">insert-command</span>)))))
+</span></span></code></pre></div><h4 id="symlinks">Symlinks</h4>
+<p>The last part here is creating symbolic links.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-get-symlink-commands</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to create symlinks from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form a defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">. The return value is
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">a list of commands as defined by </span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">path</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">symlink</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:symlink</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">symlink</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">symlink</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">do</span> (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Wrong symlink: %s (should be a directory)&#34;</span> <span style="color:#19177c">symlink</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">path</span> <span style="color:#19177c">symlink</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">or</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">symlink</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">file-exists-p</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">symlink</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">not</span> (<span style="color:#00f">file-symlink-p</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">symlink</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>))))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;rm -rf %s&#34;</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">symlink</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;Remove files to make symlinks&#34;</span> <span style="color:#666">6</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">path</span> <span style="color:#19177c">symlink</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">not</span> (<span style="color:#00f">file-symlink-p</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">symlink</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>))))
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;ln -s &#39;%s&#39; &#39;%s&#39;&#34;</span> <span style="color:#19177c">path</span>
+</span></span><span style="display:flex;"><span>                                 (<span style="color:#00f">substring</span> <span style="color:#19177c">symlink</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;Make symlinks&#34;</span> <span style="color:#666">7</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index-get-symlink-commands</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span></code></pre></div><h4 id="run-all-commands">Run all commands</h4>
+<p>And put that all together.</p>
+<p>First, as I want to check what&rsquo;s going to be executed, let&rsquo;s make a function to display commands in a separate buffer. Making it <code>sh-mode</code> is enough for now.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/index-commands</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Commands to be executed by </span><span style="color:#19177c">`my/index-commands-exec&#39;</span><span style="color:#ba2121">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--commands-display</span> (<span style="color:#19177c">commands</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Display COMMANDS in a buffer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">COMMANDS is a list of commands as defined by </span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">commands</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No commands to display&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#00f">get-buffer-create</span> <span style="color:#ba2121">&#34;*index commands*&#34;</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">groups</span> (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">g</span>) (<span style="color:#00f">nth</span> <span style="color:#666">2</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">g</span>)))
+</span></span><span style="display:flex;"><span>                 <span style="color:#00f">#&#39;&lt;</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">seq-group-by</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">c</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">c</span>))
+</span></span><span style="display:flex;"><span>                               <span style="color:#19177c">commands</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">sh-mode</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">commands-sequence</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">erase-buffer</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq-local</span> <span style="color:#19177c">my/index-commands</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">g</span> <span style="color:#19177c">in</span> <span style="color:#19177c">groups</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">for</span> <span style="color:#19177c">group-name</span> <span style="color:#00f">=</span> (<span style="color:#00f">car</span> <span style="color:#19177c">g</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">for</span> <span style="color:#19177c">elems</span> <span style="color:#00f">=</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">g</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;# &#34;</span> <span style="color:#19177c">group-name</span> <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#008000">do</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">elems</span>
+</span></span><span style="display:flex;"><span>                             <span style="color:#008000">do</span> (<span style="color:#008000">push</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>) <span style="color:#19177c">my/index-commands</span>)
+</span></span><span style="display:flex;"><span>                             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq-local</span> <span style="color:#19177c">buffer-read-only</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">switch-to-buffer</span> <span style="color:#19177c">buffer</span>)))
+</span></span></code></pre></div><p>In order to execute these commands, <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html">compile</a> with <code>bash -x</code> on a temporary file is quite sufficient.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-commands-exec</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">&#39;sh-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Not shell mode&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">filename</span> (<span style="color:#19177c">make-temp-file</span> <span style="color:#ba2121">&#34;index-commands-&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">write-region</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>) <span style="color:#19177c">filename</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">compile</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;bash -x &#34;</span> <span style="color:#19177c">filename</span>))))
+</span></span></code></pre></div><p>I&rsquo;ll also try to save some time by caching the resulting index tree. <code>file-has-changed-p</code> is pretty helpful in that.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/index--tree</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;The last version of the index tree.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--tree-retrive</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrive the last version of the index tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">This function returns the last saved version of the index tree if it
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">is still valid. Otherwise, it re-parses the index file.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">my/index--tree</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">cond</span> ((<span style="color:#00f">string-equal</span> (<span style="color:#00f">buffer-file-name</span>) <span style="color:#19177c">my/index-file</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">my/index--tree-get</span>))
+</span></span><span style="display:flex;"><span>         ((<span style="color:#008000">or</span> (<span style="color:#00f">null</span> <span style="color:#19177c">my/index--tree</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">file-has-changed-p</span> <span style="color:#19177c">my/index-file</span> <span style="color:#19177c">&#39;index</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">insert-file-contents</span> <span style="color:#19177c">my/index-file</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">let</span> ((<span style="color:#00f">buffer-file-name</span> <span style="color:#19177c">my/index-file</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">my/index--tree-get</span>))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#800">t</span> <span style="color:#19177c">my/index--tree</span>))))
+</span></span></code></pre></div><p>With that, we can make the main entrypoint.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-commands-sync</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Sync the filesystem with the index.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">full-tree</span> (<span style="color:#19177c">my/index--tree-retrive</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/index--tree-verify</span> <span style="color:#19177c">full-tree</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">tree</span> (<span style="color:#19177c">my/index--tree-narrow</span> <span style="color:#19177c">full-tree</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">mega-commands</span> (<span style="color:#19177c">my/index--mega-commands</span> <span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">mapping</span> (<span style="color:#19177c">my/index--filesystem-tree-mapping</span> <span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">folder-commands</span> (<span style="color:#19177c">my/index--filesystem-commands</span> <span style="color:#19177c">mapping</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">git-commands</span> (<span style="color:#19177c">my/index--git-commands</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">waka-commands</span> (<span style="color:#19177c">my/index--wakatime-commands</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">symlink-commands</span> (<span style="color:#19177c">my/index-get-symlink-commands</span> <span style="color:#19177c">tree</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/index--commands-display</span> (<span style="color:#00f">append</span> <span style="color:#19177c">mega-commands</span> <span style="color:#19177c">folder-commands</span> <span style="color:#19177c">git-commands</span>
+</span></span><span style="display:flex;"><span>                                          <span style="color:#19177c">waka-commands</span> <span style="color:#19177c">symlink-commands</span>)))))
+</span></span></code></pre></div><h3 id="navigation">Navigation</h3>
+<p>The last piece is the navigation interface.</p>
+<p>Of course, plain dired does the job fine, thanks to the relatively low-depth filesystem structure. But I still want a navigation interface like <code>M-x projectile-switch-project</code>.</p>
+<h4 id="navigation-data">Navigation data</h4>
+<p>There are two slight problems with that.</p>
+<p>First, the index tree does not always have the full info. For instance, I have the <code>10.03.A Artifacts</code> folder, which I sync with MEGA and which has child folders like <code>10.03.A.01 smth</code> and so on. Names of the latter are not stored anywhere because I don&rsquo;t see the point, which means we have to extract that from the filesystem.</p>
+<p>Second, as it turns out, there have to be two levels for navigation, which are delimited by the <code>project</code> property. I&rsquo;m not sure if that the optimal way to implement Jonny.Decimal, but it works for me.</p>
+<p>So, a function to tackle the first problem:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--nav-extend</span> (<span style="color:#19177c">name</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find all index-related files in PATH.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NAME is the name of the root index entry, e.g. \&#34;10.01
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Something\&#34;.  If PATH containts folders like \&#34;10.01.01
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Something\&#34;, \&#34;10.01.02 ...\&#34;, they will be returned.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a form as defined by </span><span style="color:#19177c">`my/index--nav-get&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">number</span> (<span style="color:#19177c">my/index--extact-number</span> <span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">files</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">cons</span> <span style="color:#19177c">f</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">path</span> <span style="color:#19177c">f</span>)))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#19177c">f</span>)))
+</span></span><span style="display:flex;"><span>                               (<span style="color:#00f">directory-files</span> <span style="color:#19177c">path</span>))))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">matching-files</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#008000">and</span> (<span style="color:#00f">file-directory-p</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">string-prefix-p</span> <span style="color:#19177c">number</span> (<span style="color:#00f">car</span> <span style="color:#19177c">f</span>))))
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">files</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">length&gt;</span> <span style="color:#19177c">matching-files</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">length&lt;</span> <span style="color:#19177c">matching-files</span> (<span style="color:#00f">length</span> <span style="color:#19177c">files</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Extraneuous files in %s&#34;</span> <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">name-1</span> <span style="color:#666">.</span> <span style="color:#19177c">path-1</span>) <span style="color:#19177c">in</span> <span style="color:#19177c">matching-files</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#00f">append</span> (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">child-files</span> (<span style="color:#19177c">my/index--nav-extend</span> <span style="color:#19177c">name-1</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">path-1</span> <span style="color:#ba2121">&#34;/&#34;</span>))))
+</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#008000">lambda</span> (<span style="color:#19177c">child-datum</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#008000">push</span> <span style="color:#19177c">name-1</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:names</span> <span style="color:#19177c">child-datum</span>))
+</span></span><span style="display:flex;"><span>                             <span style="color:#19177c">child-datum</span>)
+</span></span><span style="display:flex;"><span>                           <span style="color:#19177c">child-files</span>)
+</span></span><span style="display:flex;"><span>                        <span style="color:#666">`</span>(((<span style="color:#008000">:names</span> <span style="color:#666">.</span> (<span style="color:#666">,</span><span style="color:#19177c">name-1</span>))
+</span></span><span style="display:flex;"><span>                           (<span style="color:#008000">:path</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#19177c">path-1</span> <span style="color:#ba2121">&#34;/&#34;</span>)))))))))
+</span></span></code></pre></div><p>And one to get the navigation data structure.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--nav-get</span> (<span style="color:#19177c">tree</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">names</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get the navigation structure from TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form as defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  NAMES is a
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">list of names of the parent entries, e.g. (\&#34;10.01 Something\&#34;), used
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">for recursive calls.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The result is a list of alists with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:names` - list of names, e.g.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  (\&#34;10.01 Something\&#34; \&#34;10.01.01 Something\&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:path` - path to the folder, e.g.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  \&#34;/path/10 stuff/10.01 Something/10.01.01 Something/\&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:child-navs` - list of child navigation structures (optional)&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>) (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">item</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#00f">#&#39;string-lessp</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">cl-reduce</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">name</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">path</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">cond</span> ((<span style="color:#19177c">alist-get</span> <span style="color:#008000">:project</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">let</span> ((<span style="color:#19177c">current-nav</span> <span style="color:#666">`</span>((<span style="color:#008000">:names</span> <span style="color:#666">.</span> (<span style="color:#666">,@</span><span style="color:#19177c">names</span> <span style="color:#666">,</span><span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>                                    (<span style="color:#008000">:path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">path</span>))))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">child-navs</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#008000">and</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>                                 (<span style="color:#19177c">my/index--nav-get</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>))))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">current-nav</span>) <span style="color:#19177c">child-navs</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">push</span> <span style="color:#19177c">current-nav</span> <span style="color:#19177c">acc</span>)))
+</span></span><span style="display:flex;"><span>              ((<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">child-navs</span> (<span style="color:#19177c">my/index--nav-get</span>
+</span></span><span style="display:flex;"><span>                                      (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>                                      <span style="color:#666">`</span>(<span style="color:#666">,@</span><span style="color:#19177c">names</span> <span style="color:#666">,</span><span style="color:#19177c">name</span>)))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">child-nav</span> <span style="color:#19177c">in</span> <span style="color:#19177c">child-navs</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#008000">do</span> (<span style="color:#008000">push</span> <span style="color:#19177c">child-nav</span> <span style="color:#19177c">acc</span>))))
+</span></span><span style="display:flex;"><span>              (<span style="color:#800">t</span> (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">extended-nav</span> (<span style="color:#19177c">my/index--nav-extend</span> <span style="color:#19177c">name</span> <span style="color:#19177c">path</span>)))
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">child-nav</span> <span style="color:#19177c">in</span> <span style="color:#19177c">extended-nav</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#008000">do</span> (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:names</span> <span style="color:#19177c">child-nav</span>)
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#00f">append</span> <span style="color:#19177c">names</span> (<span style="color:#00f">list</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>                                               (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:names</span> <span style="color:#19177c">child-nav</span>)))
+</span></span><span style="display:flex;"><span>                              <span style="color:#008000">do</span> (<span style="color:#008000">push</span> <span style="color:#19177c">child-nav</span> <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">push</span> <span style="color:#666">`</span>((<span style="color:#008000">:names</span> <span style="color:#666">.</span> (<span style="color:#666">,@</span><span style="color:#19177c">names</span> <span style="color:#666">,</span><span style="color:#19177c">name</span>))
+</span></span><span style="display:flex;"><span>                           (<span style="color:#008000">:path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">acc</span>))))
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>)))
+</span></span></code></pre></div><p>It also makes sense to cache results of the above.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/index--nav</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Navigation stucture for the index.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--nav-retrive</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrive the navigation structure from the index file.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a form as defined by </span><span style="color:#19177c">`my/index--nav-get&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> (<span style="color:#00f">null</span> <span style="color:#19177c">my/index--nav</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">file-has-changed-p</span> <span style="color:#19177c">my/index-file</span> <span style="color:#19177c">&#39;nav</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">tree</span> (<span style="color:#19177c">my/index--tree-retrive</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq</span> <span style="color:#19177c">my/index--nav</span> (<span style="color:#19177c">my/index--nav-get</span>
+</span></span><span style="display:flex;"><span>                             (<span style="color:#19177c">my/index--tree-narrow</span> <span style="color:#19177c">tree</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">my/index--nav</span>))
+</span></span></code></pre></div><h4 id="emacs-interface">Emacs interface</h4>
+<p>As for Emacs interface, <code>completing-read</code> is sufficient, except that I don&rsquo;t want <a href="https://github.com/radian-software/prescient.el">prescient.el</a> to interfere with the default ordering of elements.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--nav-prompt</span> (<span style="color:#19177c">nav</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Prompt the user for the navigation item to select.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NAV is a structure as defined by </span><span style="color:#19177c">`my/index--nav-get&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">collection</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">cons</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">last</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:names</span> <span style="color:#19177c">item</span>)))
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">item</span>)))
+</span></span><span style="display:flex;"><span>                  <span style="color:#19177c">nav</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">ivy-prescient-sort-commands</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">cdr</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">assoc</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Index: &#34;</span> <span style="color:#19177c">collection</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">collection</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--nav-find-path</span> (<span style="color:#19177c">nav</span> <span style="color:#19177c">path</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find the navigation item in NAV with the given PATH.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NAV is a structure as defined by </span><span style="color:#19177c">`my/index--nav-get&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-find</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">string-prefix-p</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">item</span>) <span style="color:#19177c">path</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">nav</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-nav</span> (<span style="color:#19177c">arg</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">func</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Navigate the filesystem index.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ARG is the prefix argument.  It modifies the behavior of the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">command as follows:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- If not in an indexed directory, or in an indexed directory with no
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  indexed children:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - nil: Select an indexed directory.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(4): Select an indexed directory, and select a child indexed
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    directory if available.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- If in an indexed directory with indexed children (a project):
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - nil: Select another indexed directory from the project.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(4): Select a top-level indexed directory (the same as nil for
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    the previous case).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(16): The same as &#39;(4) for the previous case.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FUNC is the function to call with the selected path.  It defaults
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">to </span><span style="color:#19177c">`dired&#39;</span><span style="color:#ba2121"> if used interactively.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">nav</span> (<span style="color:#19177c">my/index--nav-retrive</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">current-nav</span> (<span style="color:#19177c">my/index--nav-find-path</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">nav</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">default-directory</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">current-child-navs</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">current-nav</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">null</span> <span style="color:#19177c">arg</span>) (<span style="color:#00f">null</span> <span style="color:#19177c">current-child-navs</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) <span style="color:#19177c">current-child-navs</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">func</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>)))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) (<span style="color:#00f">null</span> <span style="color:#19177c">current-child-navs</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">16</span>)) <span style="color:#19177c">current-child-navs</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">selected</span> (<span style="color:#19177c">my/index--nav-find-path</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">nav</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">child-navs</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">selected</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">child-navs</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">selected</span>)))))
+</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">null</span> <span style="color:#19177c">arg</span>) <span style="color:#19177c">current-child-navs</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">current-child-navs</span>))))))
+</span></span></code></pre></div><p>Finally, something that I can bind to a key.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index-nav</span>)
+</span></span></code></pre></div><div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Thanks @maddo at the former <a href="https://systemcrafters.net/community/">SystemCrafters</a> discord for pointing that out.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>To my surprise, I found several places where I can&rsquo;t use (or find how to use) paths with spaces, <a href="https://guix.gnu.org/manual/en/html_node/Channels.html">Guix channels</a> being one. Hence, symlinks.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#intro">Intro</a></li>
+    <li><a href="#idea">Idea</a>
+      <ul>
+        <li><a href="#folder-structure">Folder structure</a></li>
+        <li><a href="#tools-choice">Tools choice</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation">Implementation</a>
+      <ul>
+        <li><a href="#dependencies">Dependencies</a></li>
+        <li><a href="#org-tree">Org tree</a>
+          <ul>
+            <li><a href="#tree-definitions">Tree definitions</a></li>
+            <li><a href="#parse-tree">Parse tree</a></li>
+            <li><a href="#verify-tree">Verify tree</a></li>
+            <li><a href="#narrow-tree">Narrow tree</a></li>
+          </ul>
+        </li>
+        <li><a href="#commands">Commands</a>
+          <ul>
+            <li><a href="#filesystem">Filesystem</a></li>
+            <li><a href="#mega">MEGA</a></li>
+            <li><a href="#git-repos">Git repos</a></li>
+            <li><a href="#wakatime">Wakatime</a></li>
+            <li><a href="#symlinks">Symlinks</a></li>
+            <li><a href="#run-all-commands">Run all commands</a></li>
+          </ul>
+        </li>
+        <li><a href="#navigation">Navigation</a>
+          <ul>
+            <li><a href="#navigation-data">Navigation data</a></li>
+            <li><a href="#emacs-interface">Emacs interface</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>
