@@ -3969,6 +3969,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><p>Refile settings</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-outline-path-complete-in-steps</span> <span style="color:#800">nil</span>)
+</span></span></code></pre></div><p>My day ends late sometimes. Thanks John Wigley.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-extend-today-until</span> <span style="color:#666">4</span>)
 </span></span></code></pre></div><h5 id="capture-templates">Capture templates</h5>
 <p>Settings for Org capture mode. The goal here is to have a non-disruptive process to capture various ideas.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/generate-inbox-note-name</span> ()
@@ -4285,7 +4287,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Review: Stale tasks&#34;</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">todo</span> <span style="color:#19177c">priority</span> <span style="color:#19177c">date</span>)
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Clocked&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-ql-clocked-report</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Recently timestamped&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-ql-view-recent-items</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Unlinked to meetings&#34;</span>
 </span></span><span style="display:flex;"><span>	     (<span style="color:#00f">list</span> <span style="color:#008000">:buffers-files</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-agenda-files</span>
@@ -4740,7 +4741,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-file-type</span> <span style="color:#19177c">&#39;weekly</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-file-format</span> <span style="color:#ba2121">&#34;%Y-%m-%d.org&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-date-format</span> <span style="color:#ba2121">&#34;%A, %Y-%m-%d&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-enable-encryption</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-enable-encryption</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-time-format-post-midnight</span> <span style="color:#ba2121">&#34;PM: %R &#34;</span>))
 </span></span></code></pre></div><p>So, <a href="https://github.com/SqrtMinusOne/org-journal-tags">org-journal-tags</a> is my package that implements a tagging system for org-journal.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-journal-tags</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/org-journal-tags&#34;</span>)
@@ -6093,6 +6095,17 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">telega-buffer</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">files</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">telega-chatbuf-attach-file</span> <span style="color:#19177c">file</span>))))
+</span></span></code></pre></div><p>Save a file to a dired buffer.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-save-to-dired</span> (<span style="color:#19177c">msg</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#19177c">telega-msg-for-interactive</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">prefix-numeric-value</span> <span style="color:#19177c">current-prefix-arg</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">arg</span> <span style="color:#666">4</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">with-current-buffer</span> (<span style="color:#19177c">my/get-good-buffer</span> <span style="color:#19177c">&#39;dired-mode</span> <span style="color:#ba2121">&#34;Dired buffer: &#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">dired-current-directory</span>))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">telega-msg-save</span> <span style="color:#19177c">msg</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">telega-msg-save</span> <span style="color:#19177c">msg</span>)))
 </span></span></code></pre></div><p>Attach files to notmuch.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dired-attach-to-notmuch</span> (<span style="color:#19177c">files</span> <span style="color:#19177c">notmuch-buffer</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
@@ -6151,6 +6164,10 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;am&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-attach-to-notmuch</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-attach-to-ement</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;an&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-attach-to-mastodon</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;telega</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;telega-msg-button-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-save-to-dired</span>))
 </span></span></code></pre></div><h3 id="shells-terminals">Shells / Terminals</h3>
 <h4 id="vterm">vterm</h4>
 <p>My terminal emulator of choice.</p>
