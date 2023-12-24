@@ -882,6 +882,20 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;v&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">yas-visit-snippet-file</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-imap</span> <span style="color:#ba2121">&#34;M-TAB&#34;</span> <span style="color:#19177c">&#39;company-yasnippet</span>)
+</span></span></code></pre></div><h4 id="input-method">Input Method</h4>
+<blockquote>
+<p>I have to switch layouts all the time, especially in LaTeX documents, because for some reason the Bolsheviks abandoned the idea of replacing Russian Cyrillic letters with Latin ones.</p>
+</blockquote>
+<ul>
+<li>Me, <span class="timestamp-wrapper"><span class="timestamp">[2021-04-24 Sat]</span></span>, in a commit to <a href="https://github.com/SystemCrafters/crafter-configs">SystemCrafters/crafter-configs</a>.</li>
+</ul>
+<p>Fortunately, Emacs offers a way out of the above with input methods.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://protesilaos.com/codelog/2023-12-12-emacs-multilingual-editing/">https://protesilaos.com/codelog/2023-12-12-emacs-multilingual-editing/</a> - A video by Prot from which I learned about this feature.</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">default-input-method</span> <span style="color:#ba2121">&#34;russian-computer&#34;</span>)
 </span></span></code></pre></div><h4 id="other-small-packages">Other small packages</h4>
 <h5 id="managing-parentheses--smartparens">Managing parentheses (smartparens)</h5>
 <p>A minor mode to deal with pairs. Its functionality overlaps with evil-surround, but smartparens provides the most comfortable way to do stuff like automatically insert pairs.</p>
@@ -3502,6 +3516,112 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-link-set-parameters</span> <span style="color:#ba2121">&#34;rel&#34;</span> <span style="color:#008000">:follow</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">browse-url</span> <span style="color:#008000">:export</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/export-rel-url</span>))
+</span></span></code></pre></div><h3 id="keybindings-and-stuff">Keybindings &amp; stuff</h3>
+<p>I&rsquo;ve moved this block above because the <code>my-leader-def</code> expression in the next block seems to override the previous ones. So it has to be on the top.</p>
+<h4 id="general-keybindings">General keybindings</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#19177c">&#39;org-decrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#19177c">&#39;org-encrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#19177c">&#39;org-latex-preview</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#19177c">&#39;org-shiftright</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#19177c">&#39;org-shiftleft</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-babel-next-src-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-babel-previous-src-block</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-agenda-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-agenda-later</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-agenda-earlier</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span> <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#19177c">&#39;org-ctrl-c-ctrl-c</span>))
+</span></span></code></pre></div><h4 id="copy-a-link">Copy a link</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-link-copy</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract URL from org-mode link and add it to kill ring.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">link</span> (<span style="color:#19177c">org-element-lineage</span> (<span style="color:#19177c">org-element-context</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">link</span>) <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">type</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">link</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">link</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">type</span> <span style="color:#ba2121">&#34;:&#34;</span> <span style="color:#19177c">url</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">kill-new</span> <span style="color:#19177c">url</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;Copied URL: &#34;</span> <span style="color:#19177c">url</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C-x C-l&#34;</span> <span style="color:#19177c">&#39;my/org-link-copy</span>))
+</span></span></code></pre></div><h4 id="navigating-source-blocks">Navigating source blocks</h4>
+<p>An idea born from discussing Org Mode navigation with @Infu.</p>
+<p>Modifying <code>org-babel-next-src-block</code> and <code>org-babel-previous-src-block</code> to ignore hidden source blocks.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to the next visible source block.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">With ARG, repeats or can move backward if negative.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">regexp</span> <span style="color:#19177c">org-babel-src-block-regexp</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">beginning-of-line</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">end-of-line</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#00f">bobp</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-start</span> <span style="color:#19177c">o</span>))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">_</span> <span style="color:#800">nil</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-incf</span> <span style="color:#19177c">arg</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-end</span> <span style="color:#19177c">o</span>))
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">_</span> (<span style="color:#00f">end-of-line</span>) <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-decf</span> <span style="color:#19177c">arg</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-max</span>)) (<span style="color:#00f">beginning-of-line</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-previous-visible-src-block</span> (<span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to the prevous visible source block.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">With ARG, repeats or can move backward if negative.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#00f">-</span> <span style="color:#19177c">arg</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-next-visible-src-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-previous-visible-src-block</span>))
+</span></span></code></pre></div><h4 id="open-a-file-from-org-directory">Open a file from <code>org-directory</code></h4>
+<p>A function to open a file from <code>org-directory</code>, excluding a few directories like <code>roam</code> and <code>journal</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-file-open</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>))))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;append</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">string-replace</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">file</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o o&#34;</span> <span style="color:#19177c">&#39;my/org-file-open</span>)
 </span></span></code></pre></div><h3 id="literate-programing">Literate programing</h3>
 <h4 id="python-and-jupyter">Python &amp; Jupyter</h4>
 <p>Use jupyter kernels for Org Mode.</p>
@@ -4015,7 +4135,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/org-clock-agg&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-clock-agg</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ol&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-clock-agg</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ol&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-clock-agg</span>)))
 </span></span></code></pre></div><p>The following enables org-clock persistence between Emacs sessions.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-clock-persist</span> <span style="color:#19177c">&#39;clock</span>)
@@ -5516,7 +5637,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;ox-latex</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/setup-org-latex</span>))
 </span></span></code></pre></div><h5 id="fix-russian-dictionary">Fix Russian dictionary</h5>
-<p>No idea why, but somehow the exported uses english words if there isn&rsquo;t <code>:default</code> key in the dictionary.</p>
+<p>No idea why, but somehow the exported file uses english words if there isn&rsquo;t <code>:default</code> key in the dictionary.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ox</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-export-dictionary</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">item</span> <span style="color:#19177c">in</span> <span style="color:#19177c">org-export-dictionary</span> <span style="color:#19177c">collect</span>
@@ -5527,111 +5648,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>				   (<span style="color:#00f">plist-get</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">entry</span>) <span style="color:#008000">:utf-8</span>))
 </span></span><span style="display:flex;"><span>			   <span style="color:#19177c">collect</span> (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;ru&#34;</span> <span style="color:#008000">:default</span> (<span style="color:#00f">plist-get</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">entry</span>) <span style="color:#008000">:utf-8</span>))
 </span></span><span style="display:flex;"><span>			   <span style="color:#19177c">else</span> <span style="color:#19177c">collect</span> <span style="color:#19177c">entry</span>)))))
-</span></span></code></pre></div><h3 id="keybindings-and-stuff">Keybindings &amp; stuff</h3>
-<h4 id="general-keybindings">General keybindings</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#19177c">&#39;org-decrypt-entry</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#19177c">&#39;org-encrypt-entry</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#19177c">&#39;org-latex-preview</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#19177c">&#39;org-shiftright</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#19177c">&#39;org-shiftleft</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-babel-next-src-block</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-babel-previous-src-block</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-agenda-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-agenda-later</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-agenda-earlier</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span> <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#19177c">&#39;org-ctrl-c-ctrl-c</span>))
-</span></span></code></pre></div><h4 id="copy-a-link">Copy a link</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-link-copy</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract URL from org-mode link and add it to kill ring.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;P&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">link</span> (<span style="color:#19177c">org-element-lineage</span> (<span style="color:#19177c">org-element-context</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">link</span>) <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">type</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">link</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">link</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">url</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">type</span> <span style="color:#ba2121">&#34;:&#34;</span> <span style="color:#19177c">url</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">kill-new</span> <span style="color:#19177c">url</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;Copied URL: &#34;</span> <span style="color:#19177c">url</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C-x C-l&#34;</span> <span style="color:#19177c">&#39;my/org-link-copy</span>))
-</span></span></code></pre></div><h4 id="navigating-source-blocks">Navigating source blocks</h4>
-<p>An idea born from discussing Org Mode navigation with @Infu.</p>
-<p>Modifying <code>org-babel-next-src-block</code> and <code>org-babel-previous-src-block</code> to ignore hidden source blocks.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#19177c">arg</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to the next visible source block.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">With ARG, repeats or can move backward if negative.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">regexp</span> <span style="color:#19177c">org-babel-src-block-regexp</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">beginning-of-line</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">end-of-line</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#00f">bobp</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
-</span></span><span style="display:flex;"><span>			 (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-start</span> <span style="color:#19177c">o</span>))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
-</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">_</span> <span style="color:#800">nil</span>))))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-incf</span> <span style="color:#19177c">arg</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
-</span></span><span style="display:flex;"><span>			(<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-end</span> <span style="color:#19177c">o</span>))
-</span></span><span style="display:flex;"><span>			(<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">_</span> (<span style="color:#00f">end-of-line</span>) <span style="color:#800">nil</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-decf</span> <span style="color:#19177c">arg</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-max</span>)) (<span style="color:#00f">beginning-of-line</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-previous-visible-src-block</span> (<span style="color:#19177c">arg</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move to the prevous visible source block.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">With ARG, repeats or can move backward if negative.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/org-babel-next-visible-src-block</span> (<span style="color:#00f">-</span> <span style="color:#19177c">arg</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-next-visible-src-block</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-babel-previous-visible-src-block</span>))
-</span></span></code></pre></div><h4 id="open-a-file-from-org-directory">Open a file from <code>org-directory</code></h4>
-<p>A function to open a file from <code>org-directory</code>, excluding a few directories like <code>roam</code> and <code>journal</code>.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-file-open</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">thread-last</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>))))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;append</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
-</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">string-replace</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">file</span>)))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">append</span>
-</span></span><span style="display:flex;"><span>	     <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o o&#34;</span> <span style="color:#19177c">&#39;my/org-file-open</span>)
 </span></span></code></pre></div><h3 id="system-configuration">System configuration</h3>
 <p>Functions related to literate configuration.</p>
 <h4 id="tables-for-guix-dependencies">Tables for Guix Dependencies</h4>
@@ -9880,6 +9896,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#settings">Settings</a></li>
             <li><a href="#undo-tree">Undo Tree</a></li>
             <li><a href="#snippets">Snippets</a></li>
+            <li><a href="#input-method">Input Method</a></li>
             <li><a href="#other-small-packages">Other small packages</a></li>
           </ul>
         </li>
@@ -10079,6 +10096,14 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#support-for-relative-urls">Support for relative URLs</a></li>
           </ul>
         </li>
+        <li><a href="#keybindings-and-stuff">Keybindings &amp; stuff</a>
+          <ul>
+            <li><a href="#general-keybindings">General keybindings</a></li>
+            <li><a href="#copy-a-link">Copy a link</a></li>
+            <li><a href="#navigating-source-blocks">Navigating source blocks</a></li>
+            <li><a href="#open-a-file-from-org-directory">Open a file from <code>org-directory</code></a></li>
+          </ul>
+        </li>
         <li><a href="#literate-programing">Literate programing</a>
           <ul>
             <li><a href="#python-and-jupyter">Python &amp; Jupyter</a></li>
@@ -10129,14 +10154,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#html-export">Html export</a></li>
             <li><a href="#org-ref-1">org-ref</a></li>
             <li><a href="#latex-1">LaTeX</a></li>
-          </ul>
-        </li>
-        <li><a href="#keybindings-and-stuff">Keybindings &amp; stuff</a>
-          <ul>
-            <li><a href="#general-keybindings">General keybindings</a></li>
-            <li><a href="#copy-a-link">Copy a link</a></li>
-            <li><a href="#navigating-source-blocks">Navigating source blocks</a></li>
-            <li><a href="#open-a-file-from-org-directory">Open a file from <code>org-directory</code></a></li>
           </ul>
         </li>
         <li><a href="#system-configuration">System configuration</a>
