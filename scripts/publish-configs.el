@@ -104,7 +104,19 @@
 
 ;; Export packages
 (setq my/emacs-packages
-      '("lyrics-fetcher"))
+      '("lyrics-fetcher"
+        "pomm"
+        "elfeed-summary"
+        "exwm-modeline"
+        "perspective-exwm"
+        "org-journal-tags"
+        "elfeed-sync"
+        "password-store-ivy"
+        "avy-dired"
+        "reverso"
+        "micromamba"
+        "biome"
+        "org-clock-agg"))
 
 (defun my/export-packages ()
   (cd (concat (vc-find-root default-directory ".git") "org/packages"))
