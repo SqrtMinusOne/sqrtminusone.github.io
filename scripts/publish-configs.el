@@ -119,8 +119,26 @@
          (expand-file-name
           (format "%s/repos/%s/img" root package))
          (format "./static/%s-img" package) t t))
-      (with-temp-buffer
+      (with-current-buffer (generate-new-buffer "tmp")
         (insert-file-contents (format "./%s.org" package))
+        (goto-char (point-min))
+        (insert
+         "#+HUGO_CUSTOM_FRONT_MATTER: :repo "
+         (let ((default-directory (format "%s/repos/%s/" root package)))
+           (string-trim
+            (shell-command-to-string
+             "git remote get-url origin | sed 's/.*SqrtMinusOne\\/\\(.*\\)\\.git/\\1/'")))
+         "\n")
+        (when-let
+            (published-at
+             (with-temp-buffer
+               (insert-file-contents (format "%s/repos/%s/%s.el" root package package))
+               (goto-char (point-min))
+               (when (re-search-forward (rx bol ";; Published-At:" (0+ space) (group (1+ nonl))) nil t)
+                 (substring-no-properties
+                  (match-string 1)))))
+          (insert
+           "#+DATE: " published-at "\n"))
         (replace-string
          "./img/" (format "./static/%s-img/" package) nil (point-min) (point-max))
         (setq-local buffer-file-name (format "./%s.org" package))

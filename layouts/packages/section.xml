@@ -6,8 +6,6 @@
 {{- else -}}
 {{- $pages = $pctx.Pages -}}
 {{- end -}}
-{{- $pages = where $pages "Section" "!=" "configs" -}}
-{{- $pages = where $pages ".Params.norss" "!=" "true" -}}
 {{- $limit := .Site.Config.Services.RSS.Limit -}}
 {{- if ge $limit 1 -}}
 {{- $pages = $pages | first $limit -}}
@@ -27,7 +25,7 @@
     {{- with .OutputFormats.Get "RSS" -}}
     {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
     {{- end -}}
-    {{ range $pages }}
+    {{ range where $pages "Section" "!=" "configs" }}
     <item>
       <title>{{ .Title }}</title>
       <link>{{ .Permalink }}</link>
