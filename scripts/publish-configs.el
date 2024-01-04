@@ -3,18 +3,26 @@
 (require 'vc)
 (require 'files)
 
-(setq package-user-dir (expand-file-name "./.packages"))
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(setq byte-compile-warnings nil)
 
 ;; Initialize the package system
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+(straight-use-package 'use-package)
 (require 'use-package)
 
 ;; Org Hugo
@@ -48,7 +56,7 @@
     slug))
 
 (use-package ox-hugo
-  :ensure t
+  :straight t
   :config
   (setq org-hugo-anchor-functions '(org-hugo-get-page-or-bundle-name
                                     org-hugo-get-custom-id
@@ -59,7 +67,7 @@
 ;; Org Make TOC
 
 (use-package org-make-toc
-  :ensure t
+  :straight t
   :config
   (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org))
 
