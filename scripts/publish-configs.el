@@ -167,3 +167,6 @@
               (org-mode-hook nil)
               (text-mode-hook nil))
           (org-hugo-export-to-md))))))
+
+(my/export-dotfiles)
+(my/export-packages)
