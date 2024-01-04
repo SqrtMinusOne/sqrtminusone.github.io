@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>org-journal-tags</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        org-journal-tags
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=org-journal-tags&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            org-journal-tags
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=org-journal-tags&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <figure><a href="https://melpa.org/#/org-journal-tags"><img src="https://melpa.org/packages/org-journal-tags-badge.svg"/></a>
+</figure>
+
+<p>A package to make sense of <del>my life</del> <a href="https://github.com/bastibe/org-journal">org-journal</a> records.</p>
+<p>The package adds the <code>org-journal:</code> link type to Org Mode. When placed in an org-journal file, the link serves as a &ldquo;tag&rdquo; that references one or many paragraphs of the journal or the entire section. These tags are aggregated in the database that can be queried in various ways.</p>
+<h2 id="rationale">Rationale</h2>
+<p>Journal files, by their very nature, are weakly structured. A single journal note can reference multiple entities (or none) and can itself be composed of multiple parts that have in common only the date and time when they were written. Needless to say, it&rsquo;s hard to find anything in such records.</p>
+<p>This package attempts to improve the accessibility of the journal by:</p>
+<ul>
+<li>Taking advantage of temporal data, e.g. allowing to query entries in some date range.</li>
+<li>Allowing to extract (and reference) only certain parts of a particular journal entry.</li>
+<li>Compensating weak structure by with more advanced query engine.</li>
+</ul>
+<p>For instance, when I&rsquo;m writing down the progress on a job project, I can leave a tag like <code>job.&lt;project-name&gt;</code> in the paragraph(s) related to that project. Later, I can query only those paragraphs that are referenced by this particular tag. The query results can then be narrowed, for instance, to include the word &ldquo;backend&rdquo;, or extended with some other tag.</p>
+<p>If no tag matches the subject matter, the journal can be queried with a regular expression, e.g. by searching some regex within a specific time frame. Subsequent searches are also significantly faster than the built-in <code>org-journal</code> search functionality due to the to caching mechanism.</p>
+<h2 id="installation">Installation</h2>
+<p>The package is available on MELPA. Install it however you normally install packages, my preferred way is <code>use-package</code> with <code>straight</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-journal-tags</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org-journal</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-journal-tags-autosync-mode</span>))
+</span></span></code></pre></div><h2 id="basic-usage">Basic usage</h2>
+<h3 id="adding-tags">Adding tags</h3>
+<p>To add an inline tag, you can manually create a link of the following format:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>[[org-journal:&lt;tag-name&gt;][&lt;tag-description&gt;]]
+</span></span></code></pre></div><p>Or run <code>M-x org-journal-tags-insert-tag</code> to insert a tag with a completion interface. The description is not aggregated and thus optional. Also, <code>&lt;tag-name&gt;</code> cannot contain <code>:</code>.</p>
+<p>The link will reference the current Org Mode paragraph. If you want to reference more paragraphs, you can set the number of paragraphs like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>[[org-journal:&lt;tag-name&gt;::&lt;number-of-paragraphs&gt;][&lt;tag-description&gt;]]
+</span></span></code></pre></div><p>Run <code>M-x org-journal-tags-link-get-region-at-point</code> to select the referenced region of the buffer.</p>
+<p>To add a tag to the entire section, run <code>M-x org-journal-tags-prop-set</code>, which will create or update the <code>Tags</code> property in the property drawer of the current time section. This command features a notmuch-like UI, i.e. completing read for multiple entries, where <code>+&lt;tag&gt;</code> adds a tag and <code>-&lt;tag&gt;</code> deletes a tag.</p>
+<p>If you decide to rename a tag, there&rsquo;s <code>M-x org-journal-tags-refactor</code>.</p>
+<h3 id="tag-kinds">Tag kinds</h3>
+<p>Tag kind is a predefined class of tag with some extra functionality. The link format fo such tags is as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>[[org-journal:&lt;kind&gt;:&lt;tag-name&gt;][&lt;tag-description&gt;]]
+</span></span><span style="display:flex;"><span>[[org-journal:&lt;kind&gt;:&lt;tag-name&gt;::&lt;number-of-paragraphs&gt;][&lt;tag-description&gt;]]
+</span></span></code></pre></div><p>If <code>&lt;kind&gt;</code> is omitted, a tag is considered &ldquo;normal&rdquo;.</p>
+<p>Running <code>C-u M-x org-journal-tags-insert-tag</code> will first prompt for the tag kind and then for the tag itself from the set of already used tags of that kind.</p>
+<p>Running <code>C-u C-u M-x org-journal-tags-insert-tag</code> will also first prompt for the tag kind, but then will try to invoke the kind-specific tag selection logic, if such is available. For instance, the <code>contact</code> kind will prompt the <code>org-contacts</code> database.</p>
+<p>For now, the only available tag kind is <a href="https://repo.or.cz/org-contacts.git">org-contacts</a>.</p>
+<h3 id="adding-timestamps">Adding timestamps</h3>
+<p>In addition to tags, the package also aggregates inline timestamps, i.e. timestamps that are left in the text like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>This is a text. This is a text with &lt;2022-04-07 Thu&gt; a timestamp. This is a text again.
+</span></span></code></pre></div><p>A timestamp will reference just the current paragraph.</p>
+<p>Other forms of timestamps (<code>SCHEDULED</code>, <code>DEADLINE</code>, etc.) are not supported at the moment, because this functionality is implemented well enough by <a href="https://orgmode.org/manual/Agenda-Views.html">org-agenda</a>.</p>
+<p>The envisioned use case for this functionality to leave references for the future to be seen at a particular date.</p>
+<h3 id="database">Database</h3>
+<p>The package stores tags and references to these tags in a database.</p>
+<p><code>org-journal-tags-autosync-mode</code> enables synchronizing the database at the moment of saving of the org-journal buffer. You can also run the synchronization manually:</p>
+<ul>
+<li><code>M-x org-journal-tags-process-buffer</code> to process the current buffer.</li>
+<li><code>M-x org-journal-tags-db-sync</code> to sync changed org-journal files in the filesystem.</li>
+</ul>
+<p>The same mode enables saving the database on killing Emacs, but you can always run <code>M-x org-journal-tags-db-save</code> manually.</p>
+<p><code>M-x org-journal-tags-db-unload</code> saves and unloads the database from the memory, <code>M-x org-journal-tags-db-reset</code> creates a new database.</p>
+<h3 id="status-buffer">Status buffer</h3>
+<figure><img src="/org-journal-tags-img/status.png"/>
+</figure>
+
+<p><em>(I replaced tag names with &ldquo;X&rdquo; just for the screenshot)</em></p>
+<p><code>M-x org-journal-tags-status</code> opens the status buffer with some statistics about the journal and tags. Press <code>?</code> to see the available keybindings.</p>
+<p>Pressing <code>RET</code> on a tag name in the &ldquo;All tags&rdquo; section should open a query buffer set to return all references for this tag.</p>
+<h3 id="query-constructor">Query constructor</h3>
+<figure><img src="/org-journal-tags-img/query.png"/>
+</figure>
+
+<p>Pressing <code>s</code> in the status buffer or running <code>M-x org-journal-tags-transient-query</code> opens a <a href="https://magit.vc/manual/transient/">transient.el</a> buffer with query settings.</p>
+<p>The options are as follows:</p>
+<ul>
+<li><strong>Include tags</strong> filters the references so that each reference had at least one of these tags.</li>
+<li><strong>Exclude tags</strong> filters the references so that each reference didn&rsquo;t have any of these tags.</li>
+<li><strong>Include children</strong> includes child tags to the previous two lists.</li>
+<li><strong>Tag location</strong> can filter only section tags on inline tags.</li>
+<li><strong>Start date</strong> and <strong>End date</strong> filter the references by date.</li>
+<li><strong>Filter timestamps</strong> filters the references so that they include a timestamp.</li>
+<li><strong>Timestamp start date</strong> and <strong>Timestamp end date</strong> filter
+timestamps by their date.</li>
+<li><strong>Regex</strong> filter the references by a regular expression. It can be a string or <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Rx-Notation.html">rx</a> expression (it just has to start with <code>(rx</code> in this case).</li>
+<li><strong>Narrow to regex</strong> makes it so that each reference had only paragraphs that have a regex match.</li>
+<li><strong>Sort</strong> sorts the result in ascending order. It&rsquo;s descending by default.</li>
+</ul>
+<p>Pressing <code>RET</code> or <code>e</code> executes the query. Journal files are cached, so subsequent queries within one session are much faster.</p>
+<h3 id="query-results">Query results</h3>
+<figure><img src="/org-journal-tags-img/query-results.png"/>
+</figure>
+
+<p>After the query completes, the package opens the results buffer. Press <code>?</code> to see the available keybindings there.</p>
+<p>Pressing <code>RET</code> opens the corresponding org-journal entry.</p>
+<p>Pressing <code>s</code> opens the query constructor buffer. If opened from inside the query results, the query constructor has 4 additional options:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Set operation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Union</strong></td>
+<td>old ∪ new</td>
+<td>Add records of the new query to the displayed records</td>
+</tr>
+<tr>
+<td><strong>Intersection</strong></td>
+<td>old ∩ new</td>
+<td>Leave only those records that are both displayed and in the new query</td>
+</tr>
+<tr>
+<td><strong>Difference from current</strong></td>
+<td>old \ new</td>
+<td>Exclude records of the new query from the displayed records</td>
+</tr>
+<tr>
+<td><strong>Difference to current</strong></td>
+<td>new \ old</td>
+<td>Exclude displayed records from ones of the new query</td>
+</tr>
+</tbody>
+</table>
+<p>Thus it is possible to make any query that can be described as a sequence of such set operations.</p>
+<h2 id="advanced-usage">Advanced usage</h2>
+<h3 id="automatic-tagging">Automatic tagging</h3>
+<p>org-journal provides a hook to automatically add information to the journal entries.</p>
+<p>It can be used to automatically assign tags, for instance, based on hostname. Here&rsquo;s an excerpt from my configuration:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/set-journal-header</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-journal-tags-prop-apply-delta</span> <span style="color:#008000">:add</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;host.%s&#34;</span> (<span style="color:#00f">system-name</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">boundp</span> <span style="color:#19177c">&#39;my/loc-tag</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-journal-tags-prop-apply-delta</span> <span style="color:#008000">:add</span> (<span style="color:#00f">list</span> <span style="color:#19177c">my/loc-tag</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-journal-after-entry-create-hook</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/set-journal-header</span>)
+</span></span></code></pre></div><h3 id="encryption">Encryption</h3>
+<p>There are two ways how org-journal can be encrypted:</p>
+<ul>
+<li>With <a href="https://orgmode.org/manual/Org-Crypt.html">org-crypt</a>, by setting <code>org-journal-enable-encryption</code>.</li>
+<li>With <a href="https://www.gnu.org/software/emacs/manual/html_node/epa/Encrypting_002fdecrypting-gpg-files.html">epa</a>, by setting <code>org-journal-encrypt-journal</code>.</li>
+</ul>
+<p>Both ways are supported by this package (I use the first). The decryption of entries takes some time, but this is alleviated by caching.</p>
+<p>The cache is stored in the <code>org-journal-tags--files-cache</code> variable, so in principle, someone could come to your computer and inspect the value of this variable (who would ever do that?). If that&rsquo;s an issue, you can do something like:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">run-with-idle-timer</span> (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">15</span>) <span style="color:#800">t</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-journal-tags-cache-reset</span>)
+</span></span></code></pre></div><p>To clear the cache on Emacs being idle after 15 minutes.</p>
+<p>Also, as said above, <code>org-journal-tags</code> uses its own database, which is more like persistent cache for tags and references. You can encrypt it as well with <a href="https://www.gnu.org/software/emacs/manual/html_node/epa/Encrypting_002fdecrypting-gpg-files.html">epa</a> by adding <code>.gpg</code> to the <code>org-journal-tags-db-file</code> variable:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-journal-tags-db-file</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">user-emacs-directory</span> <span style="color:#ba2121">&#34;var/org-journal-tags/index.gpg&#34;</span>))
+</span></span></code></pre></div><p>The database is also stored in memory in <code>org-journal-tags-db</code> variable, so once again, someone could inspect the value of the variable or just run <code>M-x org-journal-tags-status</code>.</p>
+<p>To avoid that, you can manually run <code>M-x org-journal-tags-db-unload</code> or add it to <code>run-with-idle-timer</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">run-with-idle-timer</span> (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">15</span>) <span style="color:#800">t</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-journal-tags-db-unload</span>)
+</span></span></code></pre></div><p>If you have everything set up correctly, encrypting a file shouldn&rsquo;t ask for a passphrase, so this function can be run automatically.</p>
+<h3 id="advanced-querying">Advanced querying</h3>
+<p>This package provides an API for doing queries from the Lisp code.</p>
+<p>The central function there <code>org-journal-tags-query</code>, which has an interface corresponding to the flags in the query constructor. Take a look at its docstring for more info.</p>
+<p>Also, you can use some of the following operations on the set of journal references:</p>
+<ul>
+<li><code>org-journal-tags--query-union-refs</code> - union</li>
+<li><code>org-journal-tags--query-diff-refs</code> - difference</li>
+<li><code>org-journal-tags--query-intersect-refs</code> - intersection</li>
+<li><code>org-journal-tags--query-merge-refs</code> - merge intersecting references within one set</li>
+<li><code>org-journal-tags--query-sort-refs</code> - order references by date</li>
+<li><code>org-journal-tags--string-extract-refs</code> - collect strings corresponding to references</li>
+</ul>
+<h2 id="final-notes">Final notes</h2>
+<p>This package turned out to be almost as long and complex as <a href="https://github.com/bastibe/org-journal">org-journal</a> itself, and it also introduces some new dependencies. Hence I decided it would be better off as a separate package.</p>
+<p>Also, I want to list some sources of inspiration. The database logic is heavily inspired by <a href="https://github.com/skeeto/elfeed">elfeed</a>. The UI with <a href="https://www.gnu.org/software/emacs/manual/html_mono/widget.html">Emacs widgets</a> for tags &amp; <code>completing-read-multiple</code> and the tagging system in general is inspired by <a href="https://notmuchmail.org/">notmuch</a>. Finally, <a href="https://github.com/magit/transient">transient.el</a> and <a href="https://magit.vc/manual/magit-section.html">magit-section</a> are the UI packages that made this one possible, or at least much easier to implement.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#rationale">Rationale</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#basic-usage">Basic usage</a>
+      <ul>
+        <li><a href="#adding-tags">Adding tags</a></li>
+        <li><a href="#tag-kinds">Tag kinds</a></li>
+        <li><a href="#adding-timestamps">Adding timestamps</a></li>
+        <li><a href="#database">Database</a></li>
+        <li><a href="#status-buffer">Status buffer</a></li>
+        <li><a href="#query-constructor">Query constructor</a></li>
+        <li><a href="#query-results">Query results</a></li>
+      </ul>
+    </li>
+    <li><a href="#advanced-usage">Advanced usage</a>
+      <ul>
+        <li><a href="#automatic-tagging">Automatic tagging</a></li>
+        <li><a href="#encryption">Encryption</a></li>
+        <li><a href="#advanced-querying">Advanced querying</a></li>
+      </ul>
+    </li>
+    <li><a href="#final-notes">Final notes</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

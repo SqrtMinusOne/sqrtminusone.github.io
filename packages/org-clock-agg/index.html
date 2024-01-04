@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>org-clock-agg</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        org-clock-agg
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=org-clock-agg&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            org-clock-agg
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=org-clock-agg&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <p>Aggregate <a href="https://orgmode.org/manual/Clocking-Work-Time.html">org-clock</a> records and display the results in an interactive buffer. The records are grouped by predicates such as file name, their outline path in the file, etc. Each record is placed in a tree structure; each node of the tree shows the total time spent in that node and its children. The top-level node shows the total time spent in all records found by the query.</p>
+<figure><img src="/org-clock-agg-img/screenshot.png"/>
+</figure>
+
+<h2 id="installation">Installation</h2>
+<p>The package isn&rsquo;t yet available anywhere but in this repository. My preferred way for such cases is <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/radian-software/straight.el">straight.el</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-clock-agg</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/org-clock-agg&#34;</span>))
+</span></span></code></pre></div><p>Alternatively, clone the repository, add it to the <code>load-path</code>, and <code>require</code> the package.</p>
+<h2 id="usage">Usage</h2>
+<p>Run <code>M-x org-clock-agg</code> to open the interactive buffer (as depicted in the screenshot above).</p>
+<p>The interactive buffer provides the following controls:</p>
+<ul>
+<li><strong>Files</strong>: Specifies the org files from which to select (defaults to <a href="https://orgmode.org/manual/Agenda-Files.html">org-agenda</a>).</li>
+<li><strong>Date from</strong> and <strong>To</strong>: Define the date range.</li>
+<li><strong>Group by</strong>: Determines how <code>org-clock</code> records are grouped.</li>
+<li><strong>Show elements</strong>: Whether to display raw <code>org-clock</code> records in each node.</li>
+<li><strong>Add &ldquo;Ungrouped&rdquo;</strong>: Option to include the &ldquo;Ungrouped&rdquo; node. This is particularly useful with <a href="#custom-grouping-predicates">custom grouping predicates</a>.</li>
+</ul>
+<p>Press <code>[Refresh]</code> to update the buffer. The initial search might take some time, but subsequent searches are generally faster due to the caching mechanism employed by <a href="https://github.com/alphapapa/org-ql">org-ql</a>.</p>
+<p>The buffer uses <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html">outline-mode</a> to display the tree, so each node becomes an <code>outline-mode</code> header. Refer to the linked manual for available commands/keybindings, or, if you use <code>evil-mode</code>, check <a href="https://github.com/emacs-evil/evil-collection/blob/master/modes/outline/evil-collection-outline.el">the relevant evil-collection file</a>.</p>
+<h3 id="files">Files</h3>
+<p>By default, the package selects <code>org-clock</code> records from <code>(org-agenda-files)</code>. Additional options can be included by customizing the <code>org-clock-agg-files-preset</code> variable. For instance:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-clock-agg-files-preset</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;Org Agenda + Archive&#34;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#666">.</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#666">,</span>(<span style="color:#00f">append</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">cl-remove-if</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#19177c">eos</span>) <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/archive/&#34;</span>) <span style="color:#800">t</span>))))))
+</span></span></code></pre></div><p>Note that after updating any of these variables, you&rsquo;ll need to reopen the <code>*org-clock-agg*</code> buffer to view the changes.</p>
+<p>Alternatively, you can directly specify the list of files within the buffer by selecting &ldquo;Custom list&rdquo; in the &ldquo;Files&rdquo; control.</p>
+<h3 id="date-range">Date Range</h3>
+<p>Dates can take the following values:</p>
+<ul>
+<li>A number: Represents a relative number of days from the current date. E.g. the default value of <code>-7</code> to <code>0</code> menas the previous week up to today.</li>
+<li>A date string in the format <code>YYYY-MM-DD HH:mm:ss</code>, with or without the time part.</li>
+</ul>
+<p>By default, the interval is inclusive. For instance, specifying an interval like 2023-12-12 .. 2023-12-13 includes all records from 2023-12-12 00:00:00 to 2023-12-13 23:59:59.</p>
+<h3 id="group-by">Group By</h3>
+<p>Records are grouped based on the sequence of grouping predicates.</p>
+<p>For example, with the following content in <code>tasks.org</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Tasks
+</span></span><span style="display:flex;"><span>** DONE Thing 1
+</span></span><span style="display:flex;"><span>:LOGBOOK:
+</span></span><span style="display:flex;"><span>CLOCK: [2023-12-13 Wed 19:01]--[2023-12-13 Wed 19:29] =&gt;  0:28
+</span></span><span style="display:flex;"><span>CLOCK: [2023-12-13 Wed 19:30]--[2023-12-13 Wed 19:40] =&gt;  0:10
+</span></span><span style="display:flex;"><span>:END:
+</span></span></code></pre></div><p>And predicates &ldquo;Org file&rdquo;, &ldquo;Day&rdquo;, and &ldquo;Outline path&rdquo;, the records for &ldquo;Thing 1&rdquo; will be processed as follows:</p>
+<ul>
+<li>&ldquo;Day&rdquo; -&gt; <code>2023-12-13</code></li>
+<li>&ldquo;Org file&rdquo; -&gt; <code>tasks.org</code></li>
+<li>&ldquo;Outline path&rdquo; -&gt; <code>Tasks</code>, <code>Thing 1</code></li>
+</ul>
+<p>Consequently, the node will be placed at the path <code>2023-12-13</code> / <code>tasks.org</code> / <code>Tasks</code> / <code>Thing 1</code> in the resulting tree:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Results                                                  Root    0:38
+</span></span><span style="display:flex;"><span>** 2023-12-13                                               Day    0:38
+</span></span><span style="display:flex;"><span>*** tasks.org                                          Org File    0:38
+</span></span><span style="display:flex;"><span>**** Tasks                                         Outline path    0:38
+</span></span><span style="display:flex;"><span>***** Thing 1                                      Outline path    0:38
+</span></span><span style="display:flex;"><span>- [2023-12-13 Wed 19:01]--[2023-12-13 Wed 19:29] =&gt;  0:28 : DONE Thing 1
+</span></span><span style="display:flex;"><span>- [2023-12-13 Wed 19:30]--[2023-12-13 Wed 19:40] =&gt;  0:10 : DONE Thing 1
+</span></span></code></pre></div><p>The following built-in predicates are currently available:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Comment</th>
+<th>Customization variables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Category</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Org file</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Outline path</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Tags</td>
+<td>Sorted alphabetically</td>
+<td></td>
+</tr>
+<tr>
+<td>Headline</td>
+<td>Last item of the outline path</td>
+<td></td>
+</tr>
+<tr>
+<td>Day</td>
+<td></td>
+<td><code>org-clock-agg-day-format</code></td>
+</tr>
+<tr>
+<td>Week</td>
+<td></td>
+<td><code>org-clock-agg-week-format</code></td>
+</tr>
+<tr>
+<td>Month</td>
+<td></td>
+<td><code>org-clock-agg-month-format</code></td>
+</tr>
+<tr>
+<td>TODO keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Is done</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Selected props</td>
+<td></td>
+<td><code>org-clock-agg-properties</code></td>
+</tr>
+</tbody>
+</table>
+<p>Ensure to use <code>setopt</code> to set the variables; otherwise, the customization logic will not be invoked:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">setopt</span> <span style="color:#19177c">org-clock-agg-properties</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;PROJECT_NAME&#34;</span>))
+</span></span></code></pre></div><p>Refer also to <a href="#custom-grouping-predicates-1">custom grouping predicates</a>.</p>
+<h2 id="customization">Customization</h2>
+<h3 id="node-formatting">Node Formatting</h3>
+<p>The <code>org-clock-agg-node-format</code> variable determines the formatting of individual tree nodes. This uses a <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Format-Strings.html">format string</a> that with the following format specifiers avaiable:</p>
+<ul>
+<li><code>%t</code>: Node title with the level prefix, truncated to <code>title-width</code> characters (refer to below)</li>
+<li><code>%c</code>: Name of the grouping function that generated the node</li>
+<li><code>%z</code>: Time spent in the node, formatted according to <code>org-clock-agg-duration-format</code>.</li>
+<li><code>%s</code>: Time share of the node against the parent node</li>
+<li><code>%S</code>: Time share of the node against the top-level node</li>
+</ul>
+<p>The default value is:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>%-%(+ title-width)t %20c %8z
+</span></span></code></pre></div><p>Where <code>%(+ title-width)</code> is <code>(- (window-width) org-clock-agg-node-title-width-delta)</code>, with the default value of the latter set to <code>40</code>.</p>
+<p>Thefore, in the default configuration, the node title is truncated to <code>title-width</code> characters, while 40 symbols are allocated for the rest of the header, i.e. &quot; %20c %8z&quot; (30 symbols), along with additional space for folding symbols of <code>outline-minor-mode</code>, line numbers, etc.</p>
+<h3 id="record-formatting">Record Formatting</h3>
+<p>When the &ldquo;Show records&rdquo; flag is enabled, associated records for each node are displayed. The formatting of these is defined by <code>org-clock-agg-elem-format</code>, which is also a format string with the following specifiers:
+Customize the formatting of these records through <code>org-clock-agg-elem-format</code>, which also utilizes a format string comprising the following specifiers:</p>
+<ul>
+<li><code>%s</code>: Start of the time range</li>
+<li><code>%e</code>: End of the time range</li>
+<li><code>%d</code>: Duration of the time range</li>
+<li><code>%t</code>: Title of the record.</li>
+</ul>
+<p>The default value is:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>- [%s]--[%e] =&gt; %d : %t
+</span></span></code></pre></div><h3 id="custom-grouping-predicates-2">Custom grouping predicates</h3>
+<p>It&rsquo;s possible to define custom grouping predicates in addition to the default ones. In fact, it&rsquo;s probably the only way to get grouping that is tailored to your particular org workflow; I haven&rsquo;t included my predicates in the package because they aren&rsquo;t general enough.</p>
+<p>To create new predicates, use <code>org-clock-agg-defgroupby</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">org-clock-agg-defgroupby</span> <span style="color:#19177c">&lt;name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:key1</span> <span style="color:#19177c">value1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:key2</span> <span style="color:#19177c">value2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">&lt;body&gt;</span>)
+</span></span></code></pre></div><p>The available keyword arguments include:</p>
+<ul>
+<li><code>:readable-name</code>: Function name for the UI.</li>
+<li><code>:default-sort</code>: Default sorting function.</li>
+</ul>
+<p>The body binds two variables - <code>elem</code> and <code>extra-params</code>, and must return a list of strings.</p>
+<p>The <code>elem</code> variable is an alist that represents one org-clock record. The keys are as follows:</p>
+<ul>
+<li><code>:start</code>: Start time in seconds since the epoch</li>
+<li><code>:end</code>: End time in seconds since the epoch</li>
+<li><code>:duration</code>: Duration in seconds</li>
+<li><code>:headline</code>: Instance of <a href="https://orgmode.org/worg/dev/org-element-api.html">org-element</a> for the headline</li>
+<li><code>:tags</code>: List of tags</li>
+<li><code>:file</code>: File name</li>
+<li><code>:outline-path</code>: titles of all headlines from the root to the current headline</li>
+<li><code>:properties</code>: List of properties; <code>org-clock-agg-properties</code> sets the selection list</li>
+<li><code>:category</code>: <a href="https://orgmode.org/manual/Categories.html">Category</a> of the current headline.</li>
+</ul>
+<p>The <code>extra-params</code> variable is an alist of global parameters controlling the function&rsquo;s behavior. Additional parameters can be added by customizing <code>org-clock-agg-extra-params</code>. This alist has keys as parameter names and values as <a href="https://www.gnu.org/software/emacs/manual/html_mono/widget.html">widget.el</a> expressions (applied to <code>widget-create</code>) controlling the UI. Each widget must contain an <code>:extras-key</code> key.</p>
+<p>For instance:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-clock-agg-extra-params</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;Events: Offline / Online&#34;</span> <span style="color:#666">.</span> (<span style="color:#19177c">checkbox</span> <span style="color:#008000">:extras-key</span> <span style="color:#008000">:events-online</span>))))
+</span></span></code></pre></div><p>This adds a checkbox to the form that appears as:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Events: Offline / Online [ ]
+</span></span></code></pre></div><p>When checked, <code>extra-params</code> takes the value <code>((:extras-keys . t))</code>.</p>
+<p>Here&rsquo;s an example predicate. I store meetings the following way:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Some project
+</span></span><span style="display:flex;"><span>** Meetings
+</span></span><span style="display:flex;"><span>*** Some meeting 1
+</span></span><span style="display:flex;"><span>*** Some meeting 2
+</span></span><span style="display:flex;"><span>* Another project
+</span></span><span style="display:flex;"><span>** Meetings
+</span></span><span style="display:flex;"><span>*** Another meeting 1
+</span></span><span style="display:flex;"><span>*** Another meeting 2 (offline)
+</span></span></code></pre></div><p>I want to group these meetings by title, i.e. group all instances of &ldquo;Some meeting&rdquo;, &ldquo;Another meeting&rdquo;, etc. Optionally I want to group online and offline meetings.</p>
+<p>This can be done the following way:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">org-clock-agg-defgroupby</span> <span style="color:#19177c">event</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:readable-name</span> <span style="color:#ba2121">&#34;Event&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:default-sort</span> <span style="color:#19177c">total</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">title</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:headline</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">is-meeting</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;meeting&#34;</span> (<span style="color:#00f">downcase</span> <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">seq-contains-p</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:tags</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;mt&#34;</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">is-offline</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;offline&#34;</span> (<span style="color:#00f">downcase</span> <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">seq-contains-p</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:tags</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;offline&#34;</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">title-without-stuff</span> (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>			       (<span style="color:#19177c">replace-regexp-in-string</span>
+</span></span><span style="display:flex;"><span>				(<span style="color:#008000">rx</span> (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">group</span> (<span style="color:#00f">+</span> (<span style="color:#008000">or</span> <span style="color:#19177c">digit</span> <span style="color:#ba2121">&#34;.&#34;</span>)))
+</span></span><span style="display:flex;"><span>				     <span style="color:#ba2121">&#34;(offline)&#34;</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">seq</span> <span style="color:#ba2121">&#34;[&#34;</span> (<span style="color:#00f">+</span> <span style="color:#19177c">alnum</span>) <span style="color:#ba2121">&#34;]&#34;</span>) ))
+</span></span><span style="display:flex;"><span>				<span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">title</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">is-meeting</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;Meeting&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">,@</span>(<span style="color:#008000">when</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:events-online</span> <span style="color:#19177c">extra-params</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> <span style="color:#19177c">is-offline</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Offline&#34;</span>) <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Online&#34;</span>)))
+</span></span><span style="display:flex;"><span>	<span style="color:#666">,</span><span style="color:#19177c">title-without-stuff</span>))))
+</span></span></code></pre></div><p>For the following result:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Results
+</span></span><span style="display:flex;"><span>** Meetings
+</span></span><span style="display:flex;"><span>*** Some meeting
+</span></span><span style="display:flex;"><span>*** Another meeting
+</span></span><span style="display:flex;"><span>** Ungrouped
+</span></span></code></pre></div><p>This can be coupled with a project predicate to analyze the time spent per project in a particular kind of meeting.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#files">Files</a></li>
+        <li><a href="#date-range">Date Range</a></li>
+        <li><a href="#group-by">Group By</a></li>
+      </ul>
+    </li>
+    <li><a href="#customization">Customization</a>
+      <ul>
+        <li><a href="#node-formatting">Node Formatting</a></li>
+        <li><a href="#record-formatting">Record Formatting</a></li>
+        <li><a href="#custom-grouping-predicates-2">Custom grouping predicates</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

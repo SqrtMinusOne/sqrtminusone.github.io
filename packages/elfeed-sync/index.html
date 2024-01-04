@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>elfeed-sync</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        elfeed-sync
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=elfeed-sync&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            elfeed-sync
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=elfeed-sync&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <p>Sync read/marked status of entries between <a href="https://github.com/skeeto/elfeed">elfeed</a> and <a href="https://tt-rss.org/">tt-rss</a>. Supports <a href="https://github.com/SqrtMinusOne/elfeed-summary">elfeed-summary</a>.</p>
+<p>DISCLAIMER: It&rsquo;s still an alpha version of the package, so you may want to backup your elfeed index and tt-rss database.</p>
+<figure><img src="/elfeed-sync-img/screenshot.png"/>
+</figure>
+
+<h2 id="installation">Installation</h2>
+<p>The project consists of the tt-rss plugin and the Emacs package.</p>
+<p>If you are using the <a href="https://git.tt-rss.org/fox/ttrss-docker-compose.git/tree/README.md">tt-rss docker</a> setup, the steps are as follows. Change them accordingly if you are not.</p>
+<ol>
+<li>
+<p>Mount the <code>/var/www/html</code> directory from the container somewhere to the filesystem as described <a href="https://git.tt-rss.org/fox/ttrss-docker-compose.wiki.git/tree/Home.md#how-do-i-use-dynamic-image-for-development">here</a>.</p>
+</li>
+<li>
+<p>Put the repository to the <code>tt-rss/plugins.local/elfeed_sync</code> folder:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">cd</span> ./html/tt-rss/plugins.local/
+</span></span><span style="display:flex;"><span>git clone https://github.com/SqrtMinusOne/elfeed-sync.git elfeed_sync
+</span></span></code></pre></div></li>
+<li>
+<p>Add <code>elfeed_sync</code> to the <code>TTRSS_PLUGINS</code> environment variable.</p>
+<pre tabindex="0"><code class="language-dotenv" data-lang="dotenv">TTRSS_PLUGINS=auth_internal, auth_remote, nginx_xaccel, elfeed_sync
+</code></pre></li>
+<li>
+<p>Allow larger request body sizes in nginx. Add the following to the <code>server</code> directive:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#7d9029">client_max_body_size 10M;</span>
+</span></span></code></pre></div><p>For me, the sync payload is around 3M.</p>
+</li>
+<li>
+<p>Increase the read timeout in nginx. Add the following to the php location directive:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#7d9029">fastcgi_read_timeout 600;</span>
+</span></span></code></pre></div><p>Syncing the entries is usually pretty fast, but the first feed sync takes a while.</p>
+</li>
+<li>
+<p>Then restart tt-rss. Check if the plugin appears in the Preferences &gt; Plugins section.</p>
+</li>
+<li>
+<p>Enable &ldquo;Allows accessing this account through the API&rdquo; in the Preferences &gt; Preferences. You also may want to disable &ldquo;Purge unread articles&rdquo;, because elfeed doesn&rsquo;t do that.</p>
+</li>
+</ol>
+<p>Install the Emacs package however you normally install packages, I prefer use-package and straight.el. Make sure to enable <code>elfeed-sync-mode</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed-sync</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/elfeed-sync&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">elfeed</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">elfeed-sync-mode</span>))
+</span></span></code></pre></div><p>Then set up the following variables:</p>
+<ul>
+<li><code>elfeed-sync-tt-rss-instance</code> - point that to your tt-rss instance, e.g.
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>https://example.com/tt-rss
+</span></span></code></pre></div>(No trailing slash)</li>
+<li><code>elfeed-sync-tt-rss-login</code></li>
+<li><code>elfeed-sync-tt-rss-password</code></li>
+<li><code>elfeed-sync-unread-tag</code> - elfeed tag to map to read status in tt-rss. <code>unread</code> by default.</li>
+<li><code>elfeed-sync-marked-tag</code> - elfeed tag to map to marked status in tt-rss. <code>later</code> by default.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="syncing-the-feed-list">Syncing the feed list</h3>
+<p>The first thing you probably want to do is to sync the feed list.</p>
+<p>It makes little sense to sync tt-rss feeds to elfeed, because people often use projects like <a href="https://github.com/remyhonig/elfeed-org">elfeed-org</a>. But it&rsquo;s possible to sync elfeed feeds to tt-rss.</p>
+<p>The function <code>M-x elfeed-sync-feeds</code> does exactly that. If you have <a href="https://github.com/SqrtMinusOne/elfeed-summary">elfeed-summary</a> installed and tt-rss categories enabled, the function will recreate the elfeed-summary tree in tt-rss.</p>
+<p>The first run of the function takes a while because tt-rss has to fetch the feed at the moment of the first subscription. Which is why increasing the timeout may be necessary.</p>
+<p>However, running the function multiple times until it succeeds should also work.</p>
+<h3 id="syncing-the-entry-list">Syncing the entry list</h3>
+<p>To sync the entry list, run <code>M-x elfeed-sync</code>. The sync usually takes a couple of seconds.</p>
+<p>The sync finishes at the &ldquo;Sync complete!&rdquo; message. Check the <code>*elfeed-log*</code> buffer for statistics.</p>
+<p>Occasionally, some entries do not match. Here are the possible cases:</p>
+<ul>
+<li>Entry exists in the elfeed database, but not in tt-rss.
+Run <code>M-x elfeed-sync-search-missing</code> to display such entries.</li>
+<li>Entry exists in the tt-rss database, but not in elfeed:
+<ul>
+<li>Entry appeared in the feed after the last <code>elfeed-update</code>.
+Run <code>M-x elfeed-update</code> and then <code>M-x elfeed-sync</code>.</li>
+<li>Entry appeared and disappeared in the feed after the last <code>elfeed-update</code>.
+Such an entry will never get to the elfeed database. If you want to, run <code>M-x elfeed-sync</code> and then <code>M-x elfeed-sync-read-ttrss-missing</code> to mark all such entries as read.</li>
+</ul>
+</li>
+<li>Entry appeared in the feed before <code>elfeed-sync-look-back</code>.
+Such an entry will never be matched. This is an inconvenience if you have just set up tt-rss, it fetched old entries from the feeds and such entries remain permanently unread because they are untouched by the <code>M-x elfeed-sync</code>.
+To mark such entries as read, run <code>M-x elfeed-sync-read-ttrss-old</code>.</li>
+</ul>
+<h2 id="implementation-details">Implementation details</h2>
+<p>The heavy-lifting is done on the elisp side because I ran into strange performance issues with associative arrays in PHP.</p>
+<p>Check the <code>elfeed-sync--do-sync</code> function for the description of the synchronization algorithm. The tl;dr is to download all entries from tt-rss and match each entry against the elfeed database. In the case of discrepancy update whichever entry has the lower priority.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#syncing-the-feed-list">Syncing the feed list</a></li>
+        <li><a href="#syncing-the-entry-list">Syncing the entry list</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation-details">Implementation details</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

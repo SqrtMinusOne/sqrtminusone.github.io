@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>elfeed-summary</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        elfeed-summary
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=elfeed-summary&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            elfeed-summary
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=elfeed-summary&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <figure><a href="https://melpa.org/#/elfeed-summary"><img src="https://melpa.org/packages/elfeed-summary-badge.svg"/></a>
+</figure>
+
+<p>The package provides a tree-based feed summary interface for <a href="https://github.com/skeeto/elfeed">elfeed</a>. The tree can include individual feeds, <a href="https://github.com/skeeto/elfeed#filter-syntax">searches</a>, and groups. It mainly serves as an easier &ldquo;jumping point&rdquo; for elfeed, so to make querying a subset of the elfeed database one action away.</p>
+<p>Inspired by <a href="https://github.com/newsboat/newsboat">newsboat</a>.</p>
+<figure><img src="/elfeed-summary-img/screenshot.png"/>
+</figure>
+
+<h2 id="installation">Installation</h2>
+<p>The package is available on MELPA, so install it however you normally install packages. My preferred way is <code>use-package</code> with <code>straight</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed-summary</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Of course, you have to have <a href="https://github.com/skeeto/elfeed">elfeed</a> configured.</p>
+<h2 id="usage">Usage</h2>
+<p>Running <code>M-x elfeed-summary</code> opens up the summary buffer, as shown on the screenshot.</p>
+<p>The tree consists of:</p>
+<ul>
+<li>feeds;</li>
+<li>searches;</li>
+<li>groups, that can include other groups, feeds, and searches.</li>
+</ul>
+<p>Groups can also be generated automatically.</p>
+<p>Available keybindings in the summary mode:</p>
+<table>
+<thead>
+<tr>
+<th>Keybinding</th>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RET</code></td>
+<td><code>elfeed-summary--action</code></td>
+<td>Open thing under the cursor (a feed, search, or a group). If there is at least one unread item, it will show only unread items.</td>
+</tr>
+<tr>
+<td><code>M-RET</code></td>
+<td><code>elfeed-summary--action-show-read</code></td>
+<td>Open thing under the cursor, but always include read items</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>&hellip;</td>
+<td>Quit the summary buffer</td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td><code>elfeed-summary--refresh</code></td>
+<td>Refresh the summary buffer</td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td><code>elfeed-summary-update</code></td>
+<td>Run update for elfeed feeds</td>
+</tr>
+<tr>
+<td><code>u</code></td>
+<td><code>elfeed-summary-toggle-only-unread</code></td>
+<td>Toggle showing only unread entries</td>
+</tr>
+<tr>
+<td><code>U</code></td>
+<td><code>elfeed-summary--action-mark-read</code></td>
+<td>Mark everything in the entry under the cursor as read</td>
+</tr>
+</tbody>
+</table>
+<p>The standard keybindings from <a href="https://magit.vc/manual/magit.html#Sections">magit-section</a> are also available, for instance <code>TAB</code> toggles the visibility of the current group. <a href="https://github.com/emacs-evil/evil">evil-mode</a> is also supported.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="tree-configuration">Tree configuration</h3>
+<p>The structure of the tree is determined by the <code>elfeed-summary-settings</code> variable.</p>
+<p>This is a list of these possible items:</p>
+<ul>
+<li>Group <code>(group . &lt;group-params&gt;)</code>
+Groups are used to group elements under collapsible sections.</li>
+<li>Query <code>(query . &lt;query-params&gt;)</code>
+Query extracts a subset of elfeed feeds based on the given criteria. Each found feed will be represented as a line.</li>
+<li>Search <code>(search . &lt;search-params&gt;)</code>
+Elfeed search, as defined by <code>elfeed-search-set-filter</code>.</li>
+<li>Tags tree <code>(auto-tags . &lt;auto-tags-params&gt;)</code>
+A tree generated automatically from the available tags.</li>
+<li>Tag groups <code>(tag-groups . &lt;tag-group-params&gt;)</code>
+Insert one tag as one group.</li>
+<li>a few special forms</li>
+</ul>
+<p><code>&lt;group-params&gt;</code> is an alist with the following keys:</p>
+<ul>
+<li><code>:title</code> (mandatory)</li>
+<li><code>:elements</code> (mandatory) - elements of the group. The structure is the same as in the root definition.</li>
+<li><code>:face</code> - group face. The default face is <code>elfeed-summary-group-face</code>.</li>
+<li><code>:hide</code> - if non-nil, the group is collapsed by default.</li>
+</ul>
+<p><code>&lt;query-params&gt;</code> can be:</p>
+<ul>
+<li>A symbol of a tag.
+A feed will be matched if it has that tag.</li>
+<li><code>:all</code>. Will match anything.</li>
+<li><code>(title . &quot;string&quot;)</code> or <code>(title . &lt;form&gt;)</code>
+Match feed title with <code>string-match-p</code>. &lt;form&gt; makes sense if you
+want to pass something like <code>rx</code>.</li>
+<li><code>(author . &quot;string&quot;)</code> or <code>(author . &lt;form&gt;)</code></li>
+<li><code>(url . &quot;string&quot;)</code> or <code>(url . &lt;form&gt;)</code></li>
+<li><code>(and &lt;q-1&gt; &lt;q-2&gt; ... &lt;q-n&gt;)</code>
+Match if all the conditions 1, 2, &hellip;, n match.</li>
+<li><code>(or &lt;q-1&gt; &lt;q-2&gt; ... &lt;q-n&gt;)</code> or <code>(&lt;q-1&gt; &lt;q-2&gt; ... &lt;q-n&gt;)</code>
+Match if any of the conditions 1, 2, &hellip;, n match.</li>
+<li><code>(not &lt;query&gt;)</code></li>
+</ul>
+<p>Feed tags for the query are determined by the <code>elfeed-feeds</code> variable.</p>
+<p>Query examples:</p>
+<ul>
+<li><code>(emacs lisp)</code>
+Return all feeds that have either &ldquo;emacs&rdquo; or &ldquo;lisp&rdquo; tags.</li>
+<li><code>(and emacs lisp)</code>
+Return all feeds that have both &ldquo;emacs&rdquo; and &ldquo;lisp&rdquo; tags.</li>
+<li><code>(and (title . &quot;Emacs&quot;) (not planets))</code>
+Return all feeds that have &ldquo;Emacs&rdquo; in their title and don&rsquo;t have
+the &ldquo;planets&rdquo; tag.</li>
+</ul>
+<p><code>&lt;search-params&gt;</code> is an alist with the following keys:</p>
+<ul>
+<li><code>:filter</code> (mandatory) filter string, as defined by
+<code>elfeed-search-set-filter</code></li>
+<li><code>:title</code> (mandatory) title.</li>
+<li><code>:tags</code> - list of tags to get the face of the entry.</li>
+</ul>
+<p><code>&lt;auto-tags-params&gt;</code> is an alist with the following keys:</p>
+<ul>
+<li><code>:max-level</code> - maximum level of the tree (default 2)</li>
+<li><code>:source</code> - which feeds to use to build the tree.
+Can be <code>:misc</code> (default) or <code>(query . &lt;query-params&gt;)</code>.</li>
+<li><code>:original-order</code> - do not try to build a more concise tree by
+putting the most frequent tags closer to the root of the tree.</li>
+<li><code>:faces</code> - list of faces for groups.</li>
+</ul>
+<p><code>&lt;tag-group-params&gt;</code> is an alist with the following keys:</p>
+<ul>
+<li><code>:source</code> - which feeds to use to build the tree.
+Can be <code>:misc</code> (default) or <code>(query . &lt;query-params&gt;)</code>.</li>
+<li><code>:repeat-feeds</code> - allow feeds to repeat.  Otherwise, each feed is
+assigned to group with the least amount of members.</li>
+<li><code>:face</code> - face for groups.</li>
+</ul>
+<p>Available special forms:</p>
+<ul>
+<li><code>:misc</code> - print out feeds, not found by any query above.</li>
+</ul>
+<p>Also keep in mind that <code>'(key . ((values)))</code> is the same as <code>'(key (values))</code>. This helps to shorten the form in many cases.</p>
+<p>Also, this variable is not validated by any means, so wrong values can produce somewhat cryptic errors. Sorry about that.</p>
+<h3 id="example">Example</h3>
+<p>Here is an excerpt from my configuration that was used to produce this screenshot:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-settings</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;GitHub&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#19177c">url</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;SqrtMinusOne.private.atom&#34;</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span> <span style="color:#666">.</span> ((<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Guix packages&#34;</span>)
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>			   (<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">github</span> <span style="color:#19177c">guix_packages</span>)))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">:hide</span> <span style="color:#800">t</span>)))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Blogs [Software]&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">query</span> <span style="color:#666">.</span> <span style="color:#19177c">software_blogs</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Blogs [People]&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">blogs</span> <span style="color:#19177c">people</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">emacs</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Emacs&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">blogs</span> <span style="color:#19177c">people</span> <span style="color:#19177c">emacs</span>))))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Podcasts&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">query</span> <span style="color:#666">.</span> <span style="color:#19177c">podcasts</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Videos&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Music&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">videos</span> <span style="color:#19177c">music</span>))))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Tech&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">videos</span> <span style="color:#19177c">tech</span>))))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;History&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">query</span> <span style="color:#666">.</span> (<span style="color:#008000">and</span> <span style="color:#19177c">videos</span> <span style="color:#19177c">history</span>))))
+</span></span><span style="display:flex;"><span>		<span style="color:#408080;font-style:italic">;; ...</span>
+</span></span><span style="display:flex;"><span>		))
+</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; ...</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">group</span> (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Miscellaneous&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Searches&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:elements</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">search</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">:filter</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;@6-months-ago sqrtminusone&#34;</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;About me&#34;</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">search</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">:filter</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;+later&#34;</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Check later&#34;</span>))))
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">group</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:title</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Ungrouped&#34;</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">:elements</span> <span style="color:#008000">:misc</span>))))))
+</span></span></code></pre></div><h3 id="automatic-generation-of-groups">Automatic generation of groups</h3>
+<h4 id="auto-tags"><code>auto-tags</code></h4>
+<p>As described in the <a href="#tree-configuration-1">tree configuration</a> section, there are two ways to avoid defining all the relevant groups manually, <code>auto-tags</code>  and <code>tag-groups</code>. Both use tags that are defined in <code>elfeed-feeds</code>.</p>
+<p><code>auto-tags</code> tries to build the most concise tree from these tags. E.g. if we have feeds:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>feed1 tag1 tag2
+</span></span><span style="display:flex;"><span>feed2 tag1 tag2
+</span></span><span style="display:flex;"><span>feed3 tag1 tag3
+</span></span><span style="display:flex;"><span>feed4 tag1 tag3
+</span></span></code></pre></div><p>It will create the following tree:</p>
+<ul>
+<li>tag1
+<ul>
+<li>tag2
+<ul>
+<li>feed1</li>
+<li>feed2</li>
+</ul>
+</li>
+<li>tag3
+<ul>
+<li>feed3</li>
+<li>feed4</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The tree is truncated by <code>:max-level</code>, which is 2 by default.</p>
+<p>If tags don&rsquo;t form this kind of hierarchy in <code>elfeed-feeds</code>, the algorithm will still try to build the most &ldquo;optimal&rdquo; tree, where the most frequent tags are on the top.</p>
+<p>To avoid that you can set <code>(:original-order . t)</code>, in which case each feed will be placed at the path <code>tag1 tag2 ... tagN feed</code>, where the order of tags is the same as in <code>elfeed-feeds</code>. By the way, this allows reproducing the hierarchy of <a href="https://github.com/remyhonig/elfeed-org">elfeed-org</a>, e.g. this structure:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* tag1                      :tag1:
+</span></span><span style="display:flex;"><span>** feed1
+</span></span><span style="display:flex;"><span>** feed2                    :tag2:
+</span></span><span style="display:flex;"><span>** feed3                    :tag2:
+</span></span><span style="display:flex;"><span>* tag3                      :tag3:
+</span></span><span style="display:flex;"><span>** feed4                    :tag2:
+</span></span><span style="display:flex;"><span>** feed5                    :tag2:
+</span></span><span style="display:flex;"><span>** feed6                    :tag2:
+</span></span></code></pre></div><p>Will be converted to this:</p>
+<ul>
+<li>tag1
+<ul>
+<li>feed1</li>
+<li>tag2
+<ul>
+<li>feed2</li>
+<li>feed3</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>tag3
+<ul>
+<li>tag2
+<ul>
+<li>feed4</li>
+<li>feed5</li>
+<li>feed6</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Whereas without <code>:original-order</code> the structure will be:</p>
+<ul>
+<li>tag1
+<ul>
+<li>feed1</li>
+</ul>
+</li>
+<li>tag2
+<ul>
+<li>tag1
+<ul>
+<li>feed2</li>
+<li>feed3</li>
+</ul>
+</li>
+<li>tag3
+<ul>
+<li>feed4</li>
+<li>feed5</li>
+<li>feed6</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="tag-groups"><code>tag-groups</code></h4>
+<p>The second option is <code>tag-groups</code>, which creates a group for each tag.</p>
+<p>By default, each feed is assigned to its less frequent tag. This can be turned off by setting <code>(:repeat-feeds . t)</code>.</p>
+<p>E.g., the elfeed-org setup from the section above will be converted to this structure:</p>
+<ul>
+<li>tag1
+<ul>
+<li>feed1</li>
+<li>feed2</li>
+<li>feed3</li>
+</ul>
+</li>
+<li>tag3
+<ul>
+<li>feed4</li>
+<li>feed5</li>
+<li>feed6</li>
+</ul>
+</li>
+</ul>
+<p>And with <code>:repeat-feeds</code>:</p>
+<ul>
+<li>tag1
+<ul>
+<li>feed1</li>
+<li>feed2</li>
+<li>feed3</li>
+</ul>
+</li>
+<li>tag2
+<ul>
+<li>feed2</li>
+<li>feed3</li>
+<li>feed4</li>
+<li>feed5</li>
+<li>feed6</li>
+</ul>
+</li>
+<li>tag3
+<ul>
+<li>feed4</li>
+<li>feed5</li>
+<li>feed6</li>
+</ul>
+</li>
+</ul>
+<h4 id="common-options">Common options</h4>
+<p>Both <code>auto-tags</code> and <code>tag-groups</code> allow setting the <code>:search</code> parameter.</p>
+<p>The default value is <code>(:search . :misc)</code>, i.e. use feeds that weren&rsquo;t found by other queries.</p>
+<p>Passing <code>(:search . (query . &lt;query-params&gt;))</code> is another option.</p>
+<h3 id="faces">Faces</h3>
+<p>Group faces by default use the <code>elfeed-summary-group-faces</code> variable, which serves as a list of faces for each level of the tree. Individual group faces can be overridden with the <code>:face</code> attribute.</p>
+<p>Feed faces by default reuse <a href="https://github.com/skeeto/elfeed#custom-tag-faces">the existing elfeed mechanism</a>. The tags for feeds are taken from the <code>elfeed-feeds</code> variable; if a feed has at least one unread entry, the unread tag is added to the list. This can be overridden by setting the <code>elfeed-summary-feed-face-fn</code> variable.</p>
+<p>Searches are mostly the same as feeds, but tags for the search are taken from the <code>:tags</code> attribute. This also can be overridden with <code>elfeed-summary-search-face-fn</code> variable.</p>
+<h3 id="opening-elfeed-search-in-other-window">Opening <code>elfeed-search</code> in other window</h3>
+<p>If you set:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-other-window</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Then <code>RET</code> and <code>M-RET</code> in the <code>elfeed-summary</code> buffer will open the search buffer in other window.</p>
+<p><code>elfeed-summary-width</code> regulates the width of the remaining summary window in this case. It is useful because the data in the search buffer is generally wider than in the summary buffer. The variable can also be set to <code>nil</code> to disable this behavior.</p>
+<h3 id="skipping-feeds">Skipping feeds</h3>
+<p><a href="https://tt-rss.org/">tt-rss</a> has a feature to disable updating a particular feed but keep it in the feed list. I also want that for elfeed.</p>
+<p>To use that, set <code>elfeed-summary-skip-sync-tag</code> to some value:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">elfeed-summary-skip-sync-tag</span> <span style="color:#19177c">&#39;skip</span>)
+</span></span></code></pre></div><p>And tag the feeds you want to skip with this tag. Then, running <code>M-x elfeed-summary-update</code> will skip them. This won&rsquo;t affect <code>M-x elfeed-update</code> unless you:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">elfeed-update</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">elfeed-summary-update</span>)
+</span></span></code></pre></div><p>Also watch out if you use <a href="https://github.com/remyhonig/elfeed-org">elfeed-org</a> and want to use the <code>ignore</code> tag, because this package omits feeds with this tag altogether (configurable by <code>rmh-elfeed-org-ignore-tag</code>).</p>
+<h3 id="other-options">Other options</h3>
+<p>Also take a look at <code>M-x customize-group elfeed-summary</code> for the rest of available options.</p>
+<h2 id="ideas-and-alternatives">Ideas and alternatives</h2>
+<p>The default interface of elfeed is just a list of all entries. Naturally, it gets hard to navigate when there are a lot of sources with varying frequencies of posts.</p>
+<p>Elfeed itself provides one solution, which is using <a href="https://github.com/skeeto/elfeed#bookmarks">bookmarks</a> to save individual <a href="https://github.com/skeeto/elfeed#filter-syntax">searches</a>. This can work, but it can be somewhat cumbersome.</p>
+<p><a href="https://github.com/sp1ff/elfeed-score">elfeed-score</a> is another solution, which introduces scoring rules for entries. Thus, with proper rules set, the most important entries should be on the top of the list. You can take a look at <a href="https://www.youtube.com/watch?v=rvWbUGx9U5E">this video by John Kitchin</a> to see how this can work.</p>
+<p>However, I mostly had <code>elfeed-score</code> to group entries to sets with equal scores, and I then processed one such set or the other. This is why I decided this package is a better fit for my workflow.</p>
+<p>Another idea I used often before that is this function:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-search-filter-source</span> (<span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Filter elfeed search buffer by the feed under the cursor.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">elfeed-search-selected</span> <span style="color:#008000">:ignore-region</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">elfeed-entry-p</span> <span style="color:#19177c">entry</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">elfeed-search-set-filter</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;@6-months-ago &#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;+unread &#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;=&#34;</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">replace-regexp-in-string</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;?&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">not-newline</span>) <span style="color:#19177c">eos</span>)
+</span></span><span style="display:flex;"><span>       <span style="color:#ba2121">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">elfeed-feed-url</span> (<span style="color:#19177c">elfeed-entry-feed</span> <span style="color:#19177c">entry</span>)))))))
+</span></span></code></pre></div><p>I&rsquo;ve bound it to <code>o</code>, so I would open <code>elfeed</code>, press <code>o</code>, and only see unread entries from a particular feed. Then I cleaned the filter and switched to the next feed. Once again, a tree with feeds is obviously a better tool for such a workflow.</p>
+<p>The last solution I want to mention is <a href="https://github.com/manojm321/elfeed-dashboard">elfeed-dashboard</a>, although I didn&rsquo;t test this one. It looks similar to this package but seems to require much more fine-tuning, for instance, it doesn&rsquo;t allow to list all the feeds with a certain tag in a group.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#configuration">Configuration</a>
+      <ul>
+        <li><a href="#tree-configuration">Tree configuration</a></li>
+        <li><a href="#example">Example</a></li>
+        <li><a href="#automatic-generation-of-groups">Automatic generation of groups</a>
+          <ul>
+            <li><a href="#auto-tags"><code>auto-tags</code></a></li>
+            <li><a href="#tag-groups"><code>tag-groups</code></a></li>
+            <li><a href="#common-options">Common options</a></li>
+          </ul>
+        </li>
+        <li><a href="#faces">Faces</a></li>
+        <li><a href="#opening-elfeed-search-in-other-window">Opening <code>elfeed-search</code> in other window</a></li>
+        <li><a href="#skipping-feeds">Skipping feeds</a></li>
+        <li><a href="#other-options">Other options</a></li>
+      </ul>
+    </li>
+    <li><a href="#ideas-and-alternatives">Ideas and alternatives</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

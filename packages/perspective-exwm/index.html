@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>perspective-exwm</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        perspective-exwm
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=perspective-exwm.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            perspective-exwm
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=perspective-exwm.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <figure><a href="https://melpa.org/#/perspective-exwm"><img src="https://melpa.org/packages/perspective-exwm-badge.svg"/></a>
+</figure>
+
+<p>A couple of tricks and fixes to make using <a href="https://github.com/ch11ng/exwm">EXWM</a> and <a href="https://github.com/nex3/perspective-el">perspective.el</a> a better experience.</p>
+<h2 id="installation">Installation</h2>
+<p>This package is available on MELPA. Install it however you usually install packages, I use <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/raxod502/straight.el">straight.el</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">perspective-exwm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Or clone the repository, add the package to the <code>load-path</code> and load it with <code>require</code>.</p>
+<p>The package provides a minor mode, <code>perspective-exwm-mode</code>, which is meant to be loaded before <code>exwm-init</code>. For instance, if you use <code>use-package</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">...</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">perspective-exwm-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-init</span>))
+</span></span></code></pre></div><h2 id="usage-and-details">Usage and details</h2>
+<ul>
+<li>
+<p><code>perspective-exwm-mode</code><br />
+The mode does a couple of things:</p>
+<ul>
+<li>advises away a bug with half-killing the current perspective when closing a floating window. <del>I haven&rsquo;t tested this as thoroughly</del> I haven&rsquo;t run into this issue for nearly a month, so it seems to be fixed. But there&rsquo;s <code>M-x perspective-exwm-revive-perspectives</code> if the problem arises anyway.</li>
+<li>fixes a bug with running <code>persp-set-buffer</code> on an EXWM buffer that was moved between workspaces by advising <code>persp-buffer-in-other-p</code>.</li>
+<li>fixes a bug with <code>persp-set-buffer</code> copying all the perspectives from other workspaces to the current one.</li>
+<li>adjusts the name of the initial perspective in the new workspace. It tries to get the name from the <code>perspective-exwm-override-initial-name</code> variable and fallbacks to <code>main-&lt;index&gt;</code>.</li>
+</ul>
+<p>For the last point, I have the following in my configuration:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">perspective-exwm-override-initial-name</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">&#39;</span>((<span style="color:#666">0</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;misc&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#666">1</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;core&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#666">2</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;browser&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#666">3</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;comms&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#666">4</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;dev&#34;</span>)))
+</span></span></code></pre></div><p>Having distinct perspective names between frames also serves a purpose, because otherwise there are issues with multiple perspectives sharing the same scratch buffer.</p>
+</li>
+<li>
+<p><code>M-x perspective-exwm-cycle-exwm-buffers-forward</code>, <code>perspective-exwm-cycle-exwm-buffers-backward</code><br />
+Cycle EXWM buffers in the current perspective.</p>
+<figure><img src="/perspective-exwm-img/cycle-buffers.png"/>
+    </figure>
+
+<p>The buffer highlighted in yellow is the current one, the buffer highlighted in blue is shown in another window of the perspective so it will be omitted from the cycle.</p>
+<p>Set <code>perspective-exwm-get-exwm-buffer-name</code> to customize the displayed name, by default it&rsquo;s <code>exwm-class-name</code>.</p>
+</li>
+<li>
+<p><code>M-x perspective-exwm-cycle-all-buffers-forward</code>, <code>perspective-exwm-cycle-exwm-all-backward</code><br />
+The same as above, but not restricted to EXWM buffers.</p>
+</li>
+<li>
+<p><code>M-x perspective-exwm-switch-perspective</code><br />
+Select a perspective from the list of all perspectives on all workspaces.</p>
+<figure><img src="/perspective-exwm-img/switch-perspective.png"/>
+    </figure>
+
+</li>
+<li>
+<p><code>M-x perspective-exwm-copy-to-workspace</code><br />
+Copy the current perspective to another EXWM workspace.</p>
+</li>
+<li>
+<p><code>M-x perspective-exwm-move-to-workspace</code><br />
+Move the current perspective to another EXWM workspace.</p>
+</li>
+<li>
+<p><code>perspective-exwm-assign-windows</code><br />
+A handy function to move the current window to a given workspace and/or perspective. Example usage:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-configure-window</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">pcase</span> <span style="color:#19177c">exwm-class-name</span>
+</span></span><span style="display:flex;"><span>    ((<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;Firefox&#34;</span> <span style="color:#ba2121">&#34;Nightly&#34;</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:workspace-index</span> <span style="color:#666">2</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;browser&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#ba2121">&#34;Alacritty&#34;</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;term&#34;</span>))
+</span></span><span style="display:flex;"><span>    ((<span style="color:#008000">or</span> <span style="color:#ba2121">&#34;VK&#34;</span> <span style="color:#ba2121">&#34;Slack&#34;</span> <span style="color:#ba2121">&#34;Discord&#34;</span> <span style="color:#ba2121">&#34;TelegramDesktop&#34;</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">perspective-exwm-assign-window</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:workspace-index</span> <span style="color:#666">3</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:persp-name</span> <span style="color:#ba2121">&#34;comms&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;exwm-manage-finish-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-configure-window</span>)
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="known-issues">Known issues</h2>
+<ul>
+<li><code>perspective-exwm-move-to-workspace</code> kills X windows in the perspective it tries to move. Have no idea how to fix this at the moment.</li>
+</ul>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage-and-details">Usage and details</a></li>
+    <li><a href="#known-issues">Known issues</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

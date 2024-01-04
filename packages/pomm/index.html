@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>pomm.el</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        pomm.el
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=pomm.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            pomm.el
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=pomm.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <figure><a href="https://melpa.org/#/pomm"><img src="https://melpa.org/packages/pomm-badge.svg"/></a>
+</figure>
+
+<p>Implementation of <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Pomodoro</a> and <a href="https://www.lesswrong.com/posts/RWu8eZqbwgB9zaerh/third-time-a-better-way-to-work">Third Time</a> techniques for Emacs.</p>
+<figure><img src="/pomm-img/screenshot.png"/>
+</figure>
+
+<p>Features:</p>
+<ul>
+<li>Managing the timer with the excellent <a href="https://github.com/magit/transient/blob/master/lisp/transient.el">transient.el</a>.</li>
+<li>Persistent state between Emacs sessions.
+The timer state isn&rsquo;t reset if you close Emacs. If necessary, the state file can be synchronized between machines.</li>
+<li>History.
+History of the timer can be stored in a CSV file. Eventually, I want to join this with <a href="https://activitywatch.net/">other activity data</a> to see if the state of the timer changes how I use the computer.</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>The package is available on MELPA. Install it however you usually install Emacs packages, e.g.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>M-x package-install pomm
+</span></span></code></pre></div><p>My preferred way is <code>use-package</code> with <code>straight.el</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">pomm</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">pomm</span> <span style="color:#19177c">pomm-third-time</span>))
+</span></span></code></pre></div><p>Or you can clone the repository, add the package to the <code>load-path</code> and load it with <code>require</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;pomm</span>)
+</span></span></code></pre></div><p>The package requires Emacs 27.1 because the time API of the previous versions is kinda crazy and 27.1 has <code>time-convert</code>.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="pomodoro">Pomodoro</h3>
+<p>Run <code>M-x pomm</code> to open the transient buffer.</p>
+<p>The listed commands are rather self-descriptive and match the Pomodoro ideology.</p>
+<p>The timer can have 3 states:</p>
+<ul>
+<li><strong>Stopped</strong>. Can be started with &ldquo;s&rdquo; or <code>M-x pomm-start</code>. A new iteration of the timer will be started.</li>
+<li><strong>Paused</strong>. Can be continuted with &ldquo;s&rdquo; / <code>M-x pomm-start</code> or stopped competely with &ldquo;S&rdquo; / <code>M-x pomm-stop</code>.</li>
+<li><strong>Running</strong>. Can be paused with &ldquo;p&rdquo; / <code>M-x pomm-pause</code> or stopped with &ldquo;S&rdquo; / <code>M-x pomm-stop</code>.</li>
+</ul>
+<p>The state of the timer can be reset with &ldquo;R&rdquo; or <code>M-x pomm-reset</code>.</p>
+<p>&ldquo;u&rdquo; updates the transient buffer. The update is manual because I didn&rsquo;t figure out how to automate this, and I think this is not <em>really</em> necessary.</p>
+<p>With &ldquo;r&rdquo; or <code>M-x pomm-set-context</code> you can set the current &ldquo;context&rdquo;, that is some description of the task you are currently working on. This description will show up in history and in the csv file. Also, <code>M-x pomm-start-with-context</code> will prompt for the context and then start the timer.</p>
+<h3 id="third-time">Third Time</h3>
+<p>Run <code>M-x pomm-third-time</code> to open the transient buffer for the Third Time technique.</p>
+<figure><img src="/pomm-img/screenshot-tt.png"/>
+</figure>
+
+<p>Essentially, the techique is designed aroud the formula:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Time of break =  1/3 x Time of work.
+</span></span></code></pre></div><p>I.e. you work as long as you want or need, and then take a break with the maximum duration <code>1/3</code> of the time worked. If you take a shorter break, the remaining break time is saved and added to the next break within the same session. <a href="https://www.lesswrong.com/posts/RWu8eZqbwgB9zaerh/third-time-a-better-way-to-work">Here is a more detailed explanation</a>.</p>
+<p>The Third Time timer can have 2 states:</p>
+<ul>
+<li><strong>Stopped</strong>. Can be started with &ldquo;s&rdquo; or <code>M-x pomm-third-time-start</code>.</li>
+<li><strong>Running</strong>. Can be stopped with &ldquo;S&rdquo; or <code>M-x pomm-third-time-stop</code>. This resets the accumulated break time.</li>
+</ul>
+<p>Use &ldquo;b&rdquo; or <code>M-x pomm-third-time-switch</code> to switch the current period type (work or break). If the break time runs out, the timer automatically switches to work.</p>
+<h2 id="customization">Customization</h2>
+<p>Some settings are available in the transient buffer, but you can customize the relevant variables to make them permanent. Check <code>M-x customize-group</code> <code>pomm</code> and <code>M-x customize-group pomm-third-time</code> for more information.</p>
+<h3 id="alerts">Alerts</h3>
+<p>The package sends alerts via <code>alert.el</code>. The default style of alert is a plain <code>message</code>, but if you want an actual notification, set <code>alert-default-style</code> accordingly:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">alert-default-style</span> <span style="color:#19177c">&#39;libnotify</span>)
+</span></span></code></pre></div><h3 id="sounds">Sounds</h3>
+<p>By default sounds are disabled. Set <code>pomm-audio-enabled</code> to <code>t</code> to toggle them. Set <code>pomm-audio-tick-enabled</code> to <code>t</code> if you want the ticking sound.</p>
+<p>This functionality needs <code>pomm-audio-player-executable</code> to be set so that the program could be invoked like: <code>&lt;executable&gt; /path/to/sound.wav</code>.</p>
+<p>The package ships with some built-it sounds, which you can replace by customizing the <code>pomm-audio-files</code> variable.</p>
+<h3 id="modeline">Modeline</h3>
+<p>If you want the timer to display in the modeline, activate the <code>pomm-mode-line-mode</code> minor mode.</p>
+<h3 id="polybar-module">Polybar module</h3>
+<p>If you want to display the Pomodoro status in something like polybar, you can add the following lines to your config:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;pomm-on-tick-hook</span> <span style="color:#19177c">&#39;pomm-update-mode-line-string</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;pomm-on-status-changed-hook</span> <span style="color:#19177c">&#39;pomm-update-mode-line-string</span>)
+</span></span></code></pre></div><p>Create a script like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> ps -e | grep emacs &gt;&gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    emacsclient --eval <span style="color:#ba2121">&#34;(if (boundp &#39;pomm-current-mode-line-string) pomm-current-mode-line-string \&#34;\&#34;) &#34;</span> | xargs <span style="color:#008000">echo</span> -e
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span></code></pre></div><p>And add a polybar module definition to your polybar config:</p>
+<pre tabindex="0"><code class="language-conf-windows" data-lang="conf-windows">[module/pomm]
+type = custom/script
+exec = /home/pavel/bin/polybar/pomm.sh
+interval = 1
+</code></pre><h3 id="state-file-location">State file location</h3>
+<p>To implement pesistence between Emacs sessions, the package stores its state in the following files:</p>
+<ul>
+<li><code>pomm-state-file-location</code>, <code>.emacs.d/pomm</code> by default</li>
+<li><code>pomm-third-time-state-file-location</code>, <code>/.emacs.d/pomm-third-time</code> by default</li>
+</ul>
+<p>Set these paths however like.</p>
+<h3 id="history">History</h3>
+<p>If you set the <code>pomm-csv-history-file</code> (and/or <code>pomm-third-time-csv-history-file</code>) variable, the package will log its history in CSV format. Just keep in mind that the parent directory has to exist.</p>
+<p>The file for the Pomodoro technique has the following columns:</p>
+<ul>
+<li><code>timestamp</code></li>
+<li><code>status</code> (<code>stopped</code>, <code>paused</code> or <code>running</code>, according to the <a href="#usage-1">usage</a> section)</li>
+<li><code>kind</code> (<code>work</code>, <code>short-break</code>, <code>long-break</code> or <code>nil</code>)</li>
+<li><code>iteration</code></li>
+<li><code>context</code></li>
+</ul>
+<p>One for the Third Time technique has an extra column called <code>break-time-remaining</code>.</p>
+<p>A new entry is written after a particular state of the timer comes into being.</p>
+<p>To customize timestamp, set the <code>pomm-csv-history-file-timestamp-format</code> variable. For example, for traditional <code>YYYY-MM-DD HH:mm:ss</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">pomm-csv-history-file-timestamp-format</span> <span style="color:#ba2121">&#34;%F %T&#34;</span>)
+</span></span></code></pre></div><p>The format is the same as in <code>format-time-string</code>.</p>
+<h2 id="alternatives">Alternatives</h2>
+<p>There is a number of packages with a similar purpose, here is a rough comparison of features:</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>3rd party integrations</th>
+<th>Control method (1)</th>
+<th>Persistent history</th>
+<th>Persistent state</th>
+<th>Notifications</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SqrtMinusOne/pomm.el">pomm.el</a></td>
+<td>-</td>
+<td>transient.el</td>
+<td>CSV</td>
+<td>+</td>
+<td>alert.el + sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/marcinkoziej/org-pomodoro/tree/master">org-pomodoro</a></td>
+<td>Org Mode!</td>
+<td>via Org commands</td>
+<td>via Org mode</td>
+<td>-</td>
+<td>alert.el + sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/TatriX/pomidor/">pomidor</a></td>
+<td>-</td>
+<td>self-cooked interactive buffer</td>
+<td>custom delimited format?</td>
+<td>+, but saving on-demand</td>
+<td>alert.el + sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/baudtack/pomodoro.el/">pomodoro.el</a></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>notifications.el + sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/konr/tomatinho/">tomatinho</a></td>
+<td>-</td>
+<td>self-cooked interactive buffer</td>
+<td>-</td>
+<td>-</td>
+<td>message + sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/ferfebles/redtick">redtick</a></td>
+<td>-</td>
+<td>mode-line icon</td>
+<td>+</td>
+<td>-</td>
+<td>sounds</td>
+</tr>
+<tr>
+<td><a href="https://github.com/abo-abo/gtk-pomodoro-indicator">gtk-pomodoro-indicator</a></td>
+<td>GTK panel</td>
+<td>CLI</td>
+<td>-</td>
+<td>-, but the program is independent from Emacs</td>
+<td>GTK notifications</td>
+</tr>
+</tbody>
+</table>
+<p>Be sure to check those out if this one doesn&rsquo;t quite fit your workflow!</p>
+<p>(1) Means of timer control with exception of Emacs interactive commands</p>
+<p>Also take a look at <a href="https://github.com/telotortium/org-pomodoro-third-time">org-pomodoro-third-time</a>, which adapts <code>org-pomodoro</code> for the Third Time technique.</p>
+<h2 id="p-dot-s-dot">P.S.</h2>
+<p>The package name is not an abbreviation. I just hope it doesn&rsquo;t mean something horrible in some language I don&rsquo;t know.</p>
+<p>The sounds are made by Mike Koening under <a href="https://creativecommons.org/licenses/by/3.0/legalcode">CC BY 3.0</a>.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#pomodoro">Pomodoro</a></li>
+        <li><a href="#third-time">Third Time</a></li>
+      </ul>
+    </li>
+    <li><a href="#customization">Customization</a>
+      <ul>
+        <li><a href="#alerts">Alerts</a></li>
+        <li><a href="#sounds">Sounds</a></li>
+        <li><a href="#modeline">Modeline</a></li>
+        <li><a href="#polybar-module">Polybar module</a></li>
+        <li><a href="#state-file-location">State file location</a></li>
+        <li><a href="#history">History</a></li>
+      </ul>
+    </li>
+    <li><a href="#alternatives">Alternatives</a></li>
+    <li><a href="#p-dot-s-dot">P.S.</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

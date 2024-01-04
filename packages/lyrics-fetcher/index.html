@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>lyrics-fetcher.el</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        lyrics-fetcher.el
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=lyrics-fetcher.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            lyrics-fetcher.el
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=lyrics-fetcher.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <figure><a href="https://melpa.org/#/lyrics-fetcher"><img src="https://melpa.org/packages/lyrics-fetcher-badge.svg"/></a>
+</figure>
+
+<p>A package to fetch song lyrics and album covers. Integrates with EMMS.</p>
+<figure><img src="/lyrics-fetcher-img/screenshot.png"/>
+</figure>
+
+<p>The available backends are <a href="https://genius.com">genius.com</a> and <a href="https://music.163.com/">music.163.com</a>.</p>
+<h2 id="installation">Installation</h2>
+<p>The package is available on MELPA. Install it however you normally install packages, I prefer <code>use-package</code> with <code>straight</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lyrics-fetcher</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">emms</span>))
+</span></span></code></pre></div><p>Install <a href="https://imagemagick.org/index.php">imagemagick</a> if you want to download covers.</p>
+<p>If you want to use the genius backend, you have to set <a href="https://docs.genius.com/">genius.com</a> client access token. To do that, <a href="https://genius.com/api-clients/new">create a new client,</a> click &ldquo;Generate Access Token&rdquo; and put the result to the <code>lyrics-fetcher-genius-access-token</code> variable. I do this with password-store:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">lyrics-fetcher-genius-access-token</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">password-store-get</span> <span style="color:#ba2121">&#34;My_Online/APIs/genius.com&#34;</span>))
+</span></span></code></pre></div><p>But of course, you can just hardcode the string.</p>
+<h2 id="usage">Usage</h2>
+<p>Available commands:</p>
+<ul>
+<li>
+<p><code>M-x lyrics-fetcher-show-lyrics</code> - show lyrics for the current playing track.</p>
+<p>The resulting lyric files are saved to the <code>lyrics-fetcher-lyrics-folder</code> and have the <code>lyrics-fetcher-lyrics-file-extension</code> extension. The folder will be created if it doesn&rsquo;t exist.</p>
+<p>By default, the function opens an already saved lyrics file if one exists, otherwise tries to fetch the lyrics.</p>
+<p>If called with <code>C-u</code>, then tries to fetch the text regardless of the latter.</p>
+<p>If called with <code>C-u C-u</code>, prompts the user to select a matching song. That is helpful when there are multiple songs with similar names, and the top one isn&rsquo;t the right one.</p>
+<p>If called with <code>C-u C-u C-u</code>, edit the search query in minibuffer before sending. This is helpful when there is extra information in the song title which prevents the API from finding the song.</p>
+</li>
+<li>
+<p><code>M-x lyrics-fetcher-show-lyrics-query</code> - fetch lyrics by a text query.</p>
+<p>Modified by <code>C-u</code> the same way as <code>lyrics-fetcher-show-lyrics</code>.</p>
+</li>
+<li>
+<p><code>M-x lyrics-fetcher-use-backend</code> - select a backend to use.</p>
+</li>
+</ul>
+<p>EMMS integration:</p>
+<ul>
+<li>
+<p><code>M-x lyrics-fetcher-emms-browser-show-at-point</code> - fetch data for the current point in EMMS browser.</p>
+<p>If the point contains just one song, it will be fetched the usual way and lyrics will be shown upon successful completion.</p>
+<p>If the point contains many songs (e.g. it&rsquo;s an album), the lyrics will be fetched consequentially for every song. The process then will stop at the first failure.</p>
+<p>Modified by <code>C-u</code> the same way as <code>lyrics-fetcher-show-lyrics</code>.</p>
+</li>
+<li>
+<p><code>M-x lyrics-fetcher-emms-browser-fetch-covers-at-point</code> - fetch album covers for the current point in the EMMS browser.</p>
+<p>This functionality requires songs&rsquo; directories to be grouped by albums, i.e. one album per one folder.</p>
+<p>The files will be saved to the folder with names like &ldquo;cover_small.jpg&rdquo;, &ldquo;cover_med.jpg&rdquo;, &ldquo;cover_large.jpg&rdquo;.</p>
+<p>You can customize the sizes via the <code>lyrics-fetcher-small-cover-size</code> and <code>lyrics-fetcher-medium-cover-size</code> variables.</p>
+<p>Modified by <code>C-u</code> the same way as <code>lyrics-fetcher-show-lyrics</code>.</p>
+</li>
+<li>
+<p><code>M-x lyrics-fetcher-emms-browser-open-large-cover-at-point</code> - open large_cover for the current point in EMMS browser.</p>
+</li>
+<li>
+<p><code>M-x lyrics-fetcher-lyrics-catchup</code> - feed the LRC file for the current track to EMMS.</p>
+</li>
+</ul>
+<p>Lyric view mode keybindings:</p>
+<ul>
+<li><code>q</code> - close the lyrics buffer</li>
+<li><code>r</code> - refetch the lyrics in the buffer</li>
+</ul>
+<h2 id="available-backends">Available backends</h2>
+<p>As of now, the available backends are <code>genius</code> and <code>neteasecloud</code> (thanks <a href="https://github.com/Elilif">@Elilif</a>). Backends can be switched with <code>M-x lyrics-fetcher-use-backend</code>, or from the Lisp code:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">lyrics-fetcher-use-backend</span> <span style="color:#19177c">&#39;neteasecloud</span>)
+</span></span></code></pre></div><p>The <code>genius</code> backend fetches lyrics in a simple text format.</p>
+<p><code>neteasecloud</code> fetches in the <a href="https://en.wikipedia.org/wiki/LRC_(file_format)">LRC</a> format, which contains timestamps for each line of the lyrics text.</p>
+<p>LRC files can also be read by <code>emms-lyrics</code>. <code>lyrics-fetcher-use-backend</code> sets up <code>lyrics-fetcher</code> and EMMS variables so that EMMS could see the lyrics, downloaded by <code>lyrics-fetcher</code>. Running <code>M-x emms-lyrics</code> then should enable lyric display for newly played tracks, or you can run <code>M-x lyrics-fetcher-lyrics-catchup</code> to manually feed the current LRC file to EMMS.</p>
+<h2 id="customization-and-extension">Customization and extension</h2>
+<h3 id="lyrics-file-naming-and-location">Lyrics file naming and location</h3>
+<p>As was outlined above, lyrics files are saved to <code>lyrics-fetcher-lyrics-folder</code> and have an extension set in <code>lyrics-fetcher-lyrics-file-extension</code>.</p>
+<p>Take a look at the <code>lyrics-fetcher-format-song-name-method</code> and <code>lyrics-fetcher-format-file-name-method</code> variables if you want to customize the lyrics buffer and file naming.</p>
+<p>Also note that integration with <code>emms-lyrics</code> requires these variables to be set with <code>lyrics-fetcher-use-backend</code></p>
+<h3 id="using-other-player-than-emms">Using other player than EMMS</h3>
+<p>To use another player, customize <code>lyrics-fetcher-current-track-method</code>.</p>
+<p>This variable contains a function that returns the current playing track. The return format has to be either a string or (recommended) an EMMS-like alist, which has to have the following fields:</p>
+<ul>
+<li><code>info-artist</code> or <code>info-albumartist</code></li>
+<li><code>info-title</code></li>
+</ul>
+<h3 id="adding-another-backend">Adding another backend</h3>
+<p>A function to perform the lyric fetching is set in <code>lyrics-fetcher-fetch-method</code>.</p>
+<p>The function has to receive 3 arguments:</p>
+<ul>
+<li><code>track</code> - a string or alist, as outlined <a href="#using-other-player-than-emms-1">above</a>.</li>
+<li><code>callback</code> - the function which has to be called with the resulting lyrics string</li>
+<li><code>sync</code> - if non-nil, inquire the user about the possible choices. This is called <code>sync</code> because then it is reasonable to perform the request synchronously, as otherwise, it won&rsquo;t be nice to suddenly throw a prompt at the user.</li>
+</ul>
+<p>The album cover fetching is similar. The corresponding function is set in <code>lyrics-fetcher-download-cover-method</code> and has to receive the following parameters:</p>
+<ul>
+<li><code>track</code> - as above</li>
+<li><code>callback</code> - has to be called with the path to the resulting file. This file should be named <code>cover_large.&lt;extension&gt;</code>.</li>
+<li><code>folder</code> - where the file has to be put</li>
+<li><code>sync</code> - as above.</li>
+</ul>
+<p>The first argument is <code>track</code> because in EMMS all the required information is stored in tracks, and album data is deduced from tracks. So this package just takes a sample track in the album.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>I&rsquo;ve noticed that Genius can give pages with different DOMs to different people. If you have an empty buffer instead of lyrics, please attach the <code>curl-cookie-jar</code> file to the issue. It usually resides in <code>.emacs.d/request</code>.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#available-backends">Available backends</a></li>
+    <li><a href="#customization-and-extension">Customization and extension</a>
+      <ul>
+        <li><a href="#lyrics-file-naming-and-location">Lyrics file naming and location</a></li>
+        <li><a href="#using-other-player-than-emms">Using other player than EMMS</a></li>
+        <li><a href="#adding-another-backend">Adding another backend</a></li>
+      </ul>
+    </li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

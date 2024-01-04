@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>reverso.el</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        reverso.el
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=reverso.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            reverso.el
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=reverso.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <p>Emacs client for <a href="https://www.reverso.net/">Reverso</a>. The implemented features are:</p>
+<ul>
+<li><a href="https://www.reverso.net/text-translation">Translation</a></li>
+<li><a href="https://context.reverso.net/translation/">Context</a> (AKA bilingual concordances)</li>
+<li><a href="https://www.reverso.net/spell-checker/english-spelling-grammar/">Grammar check</a></li>
+<li><a href="https://synonyms.reverso.net/synonym/">Synonyms search</a></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>The package isn&rsquo;t yet available anywhere but in this repository. My preferred way for such cases is <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/radian-software/straight.el">straight.el</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/reverso.el&#34;</span>))
+</span></span></code></pre></div><p>Or clone the repository, add it to the <code>load-path</code> and <code>require</code> the package.</p>
+<h2 id="usage">Usage</h2>
+<p>There&rsquo;s a single entrypoint for all implemented functions: <code>M-x reverso</code>. The UI is implemented using the excellent <a href="https://github.com/magit/transient/">transient.el</a>.</p>
+<h3 id="input-handling">Input Handling</h3>
+<p>All commands handle input as follows:</p>
+<p>By default, the input string is empty. If a command is launched with a region selected, use the string of that region. If launched with the prefix argument (<code>C-u</code>), use the entire buffer.</p>
+<p>Results are displayed in <code>reverso-result-mode</code> buffers. When launched within that buffer, the command uses the input string specific to the buffer. If launched with <code>C-u</code>, it uses the output string from that buffer (if available).</p>
+<h3 id="translation">Translation</h3>
+<p>Use <code>M-x reverso t</code> or <code>M-x reverso-translate</code> to invoke the translation transient.</p>
+<figure><img src="/reverso-img/translation-transient.png"/>
+</figure>
+
+<p>The &ldquo;Source language&rdquo; and &ldquo;Target language&rdquo; parameters are self-explanatory. Note that not every language is compatible with every other language in the general case. &ldquo;Swap languages&rdquo; attempts to swap them.</p>
+<p>Enabling &ldquo;Brief translation output&rdquo; will display only the translated version of the string in the output buffer.</p>
+<figure><img src="/reverso-img/translation-res.png"/>
+</figure>
+
+<p>Otherwise, the result buffer may contain the following sections:</p>
+<ul>
+<li><strong>Source text</strong> and <strong>Translation</strong></li>
+<li><strong>Corrected text</strong>, if available</li>
+<li><strong>Context results</strong>, if available</li>
+</ul>
+<p>Context results typically appear for short strings, as seen in the example from the screenshot.</p>
+<h3 id="context">Context</h3>
+<p>Use <code>M-x reverso c</code> or <code>M-x reverso-context</code> to invoke context search (or <a href="https://en.wikipedia.org/w/index.php?title=Online_bilingual_concordance&amp;redirect=no">bilingual concordances</a>, essentially a Rosetta stone generator).</p>
+<p>The input/output UI resembles that of the translation command.</p>
+<p>Interestingly, direct context search often yields different results than the &ldquo;Context results&rdquo; section of the translation command. Hence, checking both might provide more comprehensive data.</p>
+<h3 id="synonyms">Synonyms</h3>
+<p>Use <code>M-x reverso s</code> or <code>M-x reverso-synonyms</code> to invoke the synonyms search.</p>
+<figure><img src="/reverso-img/synonyms-transient.png"/>
+</figure>
+
+<figure><img src="/reverso-img/synonyms-res.png"/>
+</figure>
+
+<p>If necessary, results are segmented by parts of speech.</p>
+<p>Each part of speech section contains up to three subsections:</p>
+<ul>
+<li>Synonyms</li>
+<li>Examples</li>
+<li>Antonyms</li>
+</ul>
+<h3 id="grammar-check">Grammar check</h3>
+<p>Use <code>M-x reverso g</code> or <code>M-x reverso-grammar</code> to invoke the grammar check.</p>
+<figure><img src="/reverso-img/grammar-transient.png"/>
+</figure>
+
+<p>Currently, only English, French, Spanish, and Italian languages are available.</p>
+<figure><img src="/reverso-img/grammar-res.png"/>
+</figure>
+
+<p>The results may contain the following sections:</p>
+<ul>
+<li><strong>Source text</strong>, highlighting errors with <code>reverso-error-face</code></li>
+<li><strong>Corrected text</strong></li>
+<li><strong>Corrections</strong></li>
+</ul>
+<h3 id="grammar-check-in-buffer">Grammar check in buffer</h3>
+<p>It can be convenient to apply the grammar check directly to the current buffer without displaying results in another buffer. Use <code>M-x reverso b</code> or <code>M-x reverso-grammar-buffer</code> for this.</p>
+<figure><img src="/reverso-img/grammar-buffer-transient.png"/>
+</figure>
+
+<p>Running <code>e</code> there (or <code>M-x reverso-check-buffer</code>) utilizes the current buffer as input and highlights any found errors using overlays. If a region is selected, the check is confined to that region.</p>
+<p>There are a couple of caveats there. First, the service considers each linebreak as a new line, which is incompatible with <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Filling.html">filling text</a>, i.e. breaking it into lines of a specified width. The &ldquo;Remove linebreaks&rdquo; option (<code>l</code>) is a workaround for this.</p>
+<p>Secondly, the service usually freaks out with special syntax, for instance, Org Mode links.</p>
+<p>The third issue partly follows from the second one, as the service often finds &ldquo;errors&rdquo; within hidden parts of Org links. Either skip these errors or execute <code>M-x org-toggle-link-display</code> in Org files beforehand.</p>
+<p>Lastly (and this applies to all other methods as well), the API usually restricts input size. If the service returns an error, try running the command on a smaller region of the buffer.</p>
+<figure><img src="/reverso-img/grammar-buffer-res.png"/>
+</figure>
+
+<p>When the cursor is placed on an error, the &ldquo;Information&rdquo; section provides details.</p>
+<p>&ldquo;Fix error&rdquo; (<code>f</code> or <code>M-x reverso-check-fix-at-point</code>) opens a completion interface with potential fixes. &ldquo;Ignore error&rdquo; (<code>i</code> or <code>M-x reverso-check-ignore-error</code>) simply removes the overlay and moves to the next error.</p>
+<p>&ldquo;Previous error&rdquo; (<code>p</code> or <code>M-x reverso-check-prev-error</code>), &ldquo;Next error&rdquo; (<code>n</code> or <code>M-x reverso-check-next-error</code>), &ldquo;First error&rdquo; (<code>P</code> or <code>M-x reverso-check-first-error</code>) and &ldquo;Last error&rdquo; (<code>L</code> or <code>M-x reverso-check-last-error</code>) serve to navigate the error list.</p>
+<p>&ldquo;Clear&rdquo; (<code>c</code> or <code>M-x reverso-clear</code>) removes error overlays. If a region is selected, it removes overlays only in that region; otherwise, it removes them from the entire buffer.</p>
+<h3 id="history">History</h3>
+<p>Enable <code>reverso-history-mode</code> to keep history:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">reverso-history-mode</span>)
+</span></span></code></pre></div><p>I haven&rsquo;t implemented persistence yet, but I might in the future.</p>
+<p>After enabling the minor mode, <code>M-x reverso-history</code> or <code>M-x reverso h</code> will display recent commans. <code>RET</code> on shows the results of each command.</p>
+<h2 id="caveats">Caveats</h2>
+<p>Before proceeding further, here are some general caveats to be aware of.</p>
+<p>Firstly, the package uses a reverse-engineered API, so all the typical consequences apply, such as sudden irreparable breakages. Although I&rsquo;ve been using it for over a year, so&hellip; maybe not.</p>
+<p>Secondly, the limit on input size has been mentioned. The obvious is executing commands on a smaller region.</p>
+<p>Thirdly, there have been reports that Reverso dispatches <strong>IP bans</strong> to particularly enthusiastic users, so be cautious if you&rsquo;re sending lots of automated queries. This is also why I didn&rsquo;t implement running one command for multiple consecutive regions.</p>
+<p>Lastly, exercise caution with the content sent to the service. Avoid inadvertently sharing confidential information (like passwords) or anything that could be used against you in other ways. While the service claims to be <a href="https://www.reverso.net/privacy.aspx?lang=EN">GDPR-compliant</a>, we can&rsquo;t actually check that.</p>
+<h2 id="customization">Customization</h2>
+<p>Run <code>M-x customize-group reverso</code> to view the available parameters. Here are a few.</p>
+<p>If you don&rsquo;t need all 17 languages, customize the <code>reverso-languages</code> variable to narrow down the list:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">english</span> <span style="color:#19177c">german</span> <span style="color:#19177c">russian</span>))
+</span></span></code></pre></div><p>If the length of <code>reverso-languages</code> exceeds <code>reverso-language-completing-read-threshold</code>, switching a language in transient buffers will invoke <code>completing-read</code> (minibuffer completion). Otherwise, it will simply switch to the next language available.</p>
+<p><code>reverso-max-display-lines-in-input</code> controls the maximum number of lines displayed in the input section of a transient buffer.</p>
+<p>The available faces:</p>
+<ul>
+<li><code>reverso-highlight-face</code></li>
+<li><code>reverso-error-face</code></li>
+<li><code>reverso-heading-face</code></li>
+<li><code>reverso-keyword-face</code></li>
+<li><code>reverso-definition-face</code></li>
+</ul>
+<p>are inherited from the faces of <code>transient.el</code> and <code>basic-faces</code> to look nice.</p>
+<h2 id="elisp-api">Elisp API</h2>
+<p>In Emacs Lisp, there are four primary functions that interact with the Reverso API:</p>
+<ul>
+<li><code>reverso--translate</code></li>
+<li><code>reverso--get-context</code></li>
+<li><code>reverso--get-grammar</code></li>
+<li><code>reverso--get-context</code></li>
+</ul>
+<p>Refer to the docstrings for more detailed information.</p>
+<p>Each function is asynchronous, and the results are retrieved via a callback.</p>
+<p>As Reverso sometimes modifies its available languages and compatibility matrix, so if you change that, execute <code>reverso-verify-settings</code> to check for potential errors.</p>
+<h2 id="alternatives-and-observations">Alternatives and Observations</h2>
+<p>A widely recognized translation service is <a href="https://translate.google.com/">Google Translate</a>, so of course, there&rsquo;s an <a href="https://github.com/atykhonov/google-translate">Emacs client</a> for it.</p>
+<p>The <a href="https://github.com/emacs-grammarly">emacs-grammarly</a> package series provides the Elisp API for <a href="https://www.grammarly.com/">Grammarly</a> (a grammar checking service) along with multiple frontends. Unlike Reverso, Grammarly has an official API (so you don&rsquo;t risk getting an IP ban), and it allows a much larger input size.</p>
+<p>Additionally, Grammarly is less bothered by Org and Markdown syntax, although it struggles with inline code blocks. It seems to do work generally better than Reverso, but it also generates a lot of false positives. For instance, it finds a lot of issues in <a href="https://www.economist.com/">The Economist</a> articles, which, I think, have beautiful English.</p>
+<p>Another notable grammar-checking solution is <a href="https://languagetool.org/">LanguageTool</a>, which can be <a href="https://dev.languagetool.org/http-server">run offline</a> and used with its <a href="https://github.com/mhayashi1120/Emacs-langtool">Emacs package</a>. This tool offers the advantage of unlimited usage and doesn&rsquo;t transmit your data to a third-party server you can&rsquo;t control. But it still doesn&rsquo;t like markup syntaxes.</p>
+<p>Also, I&rsquo;ve been pretty happy with <a href="https://github.com/valentjn/ltex-ls">LTeX LS</a>, which is a LanguageTool-based language server explicitly designed to support markup formats like Org, Markdown, LaTeX, among others.</p>
+<p>The <a href="https://www.npmjs.com/package/reverso-api">reverso-api</a> npm package implements the same commands in JavaScript. It also provided invaluable information for creating this package.</p>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#input-handling">Input Handling</a></li>
+        <li><a href="#translation">Translation</a></li>
+        <li><a href="#context">Context</a></li>
+        <li><a href="#synonyms">Synonyms</a></li>
+        <li><a href="#grammar-check">Grammar check</a></li>
+        <li><a href="#grammar-check-in-buffer">Grammar check in buffer</a></li>
+        <li><a href="#history">History</a></li>
+      </ul>
+    </li>
+    <li><a href="#caveats">Caveats</a></li>
+    <li><a href="#customization">Customization</a></li>
+    <li><a href="#elisp-api">Elisp API</a></li>
+    <li><a href="#alternatives-and-observations">Alternatives and Observations</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>

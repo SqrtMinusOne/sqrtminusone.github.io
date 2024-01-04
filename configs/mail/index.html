@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Mail</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        Mail
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            Mail
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        </h1>
+        <p>:TOC:      :include all :depth 3</p>
+<p>My email configration. Currently I use <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
+<p>My problem with any particular mail setup was that I use Gmail labels quite extensively, and handling these over IMAP is rather awkward. Notmuch seems to be the only software that provides the same first-class support for labels.</p>
+<p>But I also have an Exchange account, with which I communicate via IMAP/SMTP adapter, and in this case, I synchronize notmuch tags and IMAP folders.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://sqrtminusone.xyz/posts/2021-02-27-gmail/">My post</a> about email configuration. I wrote it some time ago, but the general idea remains.</li>
+</ul>
+<h2 id="lieer">Lieer</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python-lieer</td>
+</tr>
+</tbody>
+</table>
+<p>Lieer is a program to link up Gmail and notmuch. Basically, it downloads mail from Gmail via API, stores them in Maildir, and synchronizes labels with notmuch.</p>
+<p>I have a separate directory in my <code>~/Mail</code> for each address. To init lieer, run the following command in the directory:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>gmi init &lt;address&gt;
+</span></span></code></pre></div><p>After which the settings will be stored in <code>gmailieer.json</code> and the credentials in <code>.credentials.gmailieer.json</code>. The latter file is stored encrypted.</p>
+<p>My preferred settings:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>gmi set --replace-slash-with-dot
+</span></span><span style="display:flex;"><span>gmi set --ignore-tags-local new
+</span></span></code></pre></div><p>Running <code>gmi sync</code> in the required directory performs the synchronization. The first sync takes a while, the subsequent syncs are pretty fast.</p>
+<h2 id="davmail">DavMail</h2>
+<p>is a gateway between MS Exchange and the rest of the world, which uses IMAP/SMTP/LDAP/etc. As I have one corporate MS Exchange address, this is just the program I need. As of yet, it isn&rsquo;t packaged for Guix, but it&rsquo;s easy enough to download.</p>
+<p>It has a GUI mode, but I prefer headless config.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#7d9029">davmail.server</span><span style="color:#666">=</span><span style="color:#ba2121">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.mode</span><span style="color:#666">=</span><span style="color:#ba2121">Auto</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.url</span><span style="color:#666">=</span><span style="color:#ba2121">https://mail.etu.ru/owa/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.server.certificate.hash</span><span style="color:#666">=</span><span style="color:#ba2121">0C:9E:CF:D3:62:26:DB:FA:F1:EE:36:9D:60:E7:31:71:CF:1F:92:85</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.caldavPort</span><span style="color:#666">=</span><span style="color:#ba2121">1080</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.imapPort</span><span style="color:#666">=</span><span style="color:#ba2121">1143</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.ldapPort</span><span style="color:#666">=</span><span style="color:#ba2121">1389</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.popPort</span><span style="color:#666">=</span><span style="color:#ba2121">1110</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.smtpPort</span><span style="color:#666">=</span><span style="color:#ba2121">1025</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.imapAutoExpunge</span><span style="color:#666">=</span><span style="color:#ba2121">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">davmail.enableKeepalive</span><span style="color:#666">=</span><span style="color:#ba2121">false</span>
+</span></span></code></pre></div><p>Also it&rsquo;s a bit of problem to get it launched as it looks for its jars in the pwd, so here is a script.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">cd</span> <span style="color:#19177c">$HOME</span>/bin/davmail-6.0.0-3375
+</span></span><span style="display:flex;"><span>./davmail davmail.properties
+</span></span></code></pre></div><p>Shepherd service is defined in <a href="/configs/desktop/#davmail">Desktop.org</a>.</p>
+<h2 id="offlineimap">OfflineIMAP</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>offlineimap</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/OfflineIMAP/offlineimap">OfflineIMAP</a> is a program that can synchronize IMAP mailbox and Maildir. Lieer does everything by itself, but my pirate Exchange IMAP needs this program. There is also <a href="https://isync.sourceforge.io/">isync</a>, but there I had some weird issues with duplicate UIDs, which don&rsquo;t occur for OfflineIMAP.</p>
+<p>I have a few options for setting a username and password. First, I can run <code>pass</code> in <code>remotepasswordeval</code>, and while this will work, it will keep my keyring unlocked because I want to run <code>offlineimap</code> every couple of minutes.</p>
+<p>Another option is to use noweb and not push the file below to the version control. Then I have a plaintext password of email on my computer, but I think it&rsquo;s a lesser evil than the entire keyring.</p>
+<p>I would use <code>password-store-get</code> from password-store.el, but I want this to be able to run without any 3rd party packages, so it&rsquo;s just bash.</p>
+<p><a id="code-snippet--mail-username"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pass show Job/Digital/Email/pvkorytov@etu.ru | sed -n <span style="color:#ba2121">&#39;s/username: //;2p&#39;</span>
+</span></span></code></pre></div><p><a id="code-snippet--mail-password"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pass show Job/Digital/Email/pvkorytov@etu.ru | head -n <span style="color:#666">1</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[general]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">accounts</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Account pvkorytov]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">localrepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-local</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoterepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-remote</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Repository pvkorytov-local]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">Maildir</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">localfolders</span> <span style="color:#666">=</span> <span style="color:#ba2121">~/Mail/pvkorytov_etu/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Repository pvkorytov-remote]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">IMAP</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remotehost</span> <span style="color:#666">=</span> <span style="color:#ba2121">localhost</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoteuser</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;mail-username()&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remotepass</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;mail-password()&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoteport</span> <span style="color:#666">=</span> <span style="color:#ba2121">1143</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">starttls</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ssl</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">sslcacertfile</span> <span style="color:#666">=</span> <span style="color:#ba2121">/etc/ssl/certs/ca-certificates.crt</span>
+</span></span></code></pre></div><h2 id="notmuch">Notmuch</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>notmuch</td>
+</tr>
+<tr>
+<td>parallel</td>
+</tr>
+</tbody>
+</table>
+<p>Notmuch is an email indexer program, which handles labels in a way somewhat similar to Gmail. It also provides a frontend for Emacs, but it&rsquo;s not the only one available.</p>
+<h3 id="config">Config</h3>
+<p>Not much is going on here.</p>
+<p>First, the database path.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[database]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">path</span><span style="color:#666">=</span><span style="color:#ba2121">/home/pavel/Mail</span>
+</span></span></code></pre></div><p>My name and list of emails. It&rsquo;s not like it&rsquo;s a secret anyhow.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[user]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">name</span><span style="color:#666">=</span><span style="color:#ba2121">Pavel Korytov</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">primary_email</span><span style="color:#666">=</span><span style="color:#ba2121">thexcloud@gmail.com</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">other_email</span><span style="color:#666">=</span><span style="color:#ba2121">progin6304@gmail.com;pvkorytov@etu.ru</span>
+</span></span></code></pre></div><p>A list of tags which will be added by <code>notmuch new</code> and directory names which will be ignored by <code>notmuch new</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[new]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">tags</span><span style="color:#666">=</span><span style="color:#ba2121">new;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ignore</span><span style="color:#666">=</span><span style="color:#ba2121">.osync_workdir;.mbsyncstate;.uidvalidity;.lock;/.*gmailieer\.json.*/</span>
+</span></span></code></pre></div><p>Exclude these tags from search by default.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[search]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">exclude_tags</span><span style="color:#666">=</span><span style="color:#ba2121">trash;spam;</span>
+</span></span></code></pre></div><p>Maildir compatibility.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[maildir]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">synchronize_flags</span><span style="color:#666">=</span><span style="color:#ba2121">true</span>
+</span></span></code></pre></div><h3 id="hooks">Hooks</h3>
+<p>Now we have to link up lieer &amp; davmail&rsquo;s maildir and with notmuch. This is done via the notmuch hook system, which allows running custom scripts before and after any command.</p>
+<p>With lieer and Gmail, it is enough to simply run the program, because Gmail has first-class support for tags. Maildir does not, so I decide to synchronize notmuch tags and IMAP folders. In essence, the idea is to:</p>
+<ul>
+<li>move emails to their folders by tags <em>before</em> the synchronization</li>
+<li>tag mails by their folders <em>after</em> the synchronization</li>
+</ul>
+<p>The problem is that with that approach one email can have only one tag, but it&rsquo;s better than nothing.</p>
+<p>So, here are the rules which match tags &amp; folders:</p>
+<p><a id="table--pvkorytov-tags"></a></p>
+<table>
+<thead>
+<tr>
+<th>tag</th>
+<th>folder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inbox</td>
+<td>INBOX</td>
+</tr>
+<tr>
+<td>sent</td>
+<td>Sent</td>
+</tr>
+<tr>
+<td>spam</td>
+<td>Junk</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Trash</td>
+</tr>
+<tr>
+<td>job.digital</td>
+<td>Job_Digital</td>
+</tr>
+<tr>
+<td>job.digital.docs</td>
+<td>Job_Digital.Docs</td>
+</tr>
+<tr>
+<td>job.digital.support</td>
+<td>Job_Digital.Support</td>
+</tr>
+<tr>
+<td>job.digital.superservice</td>
+<td>Job_Digital.Superservice</td>
+</tr>
+<tr>
+<td>job.digital.applicants</td>
+<td>Job_Digital.Applicants</td>
+</tr>
+<tr>
+<td>job.moevm</td>
+<td>Job_Moevm</td>
+</tr>
+<tr>
+<td>etu</td>
+<td>Etu</td>
+</tr>
+</tbody>
+</table>
+<p>And below is a noweb function, which generates the following commands for notmuch to execute:</p>
+<ul>
+<li><em>before</em> sync:
+<ul>
+<li><code>notmuch search --output files &quot;NOT path:[PATH] AND tag:[TAG] AND tag:[ROOT_TAG]&quot; | xargs -I ! mv ! [PATH]</code>
+Move emails with <code>TAG</code> but outside the matching <code>PATH</code> to the latter</li>
+<li><code>notmuch search --output=files &quot;NOT path:[ARCHIVE_PATH] AND tag:[ROOT_TAG] AND NOT tag:[TAG1] ... AND NOT tag:[TAGN]&quot; | xargs -I ! mv ! [ARCHIVE_PATH]</code>
+Move untagged emails to the <code>ARCHIVE_PATH</code></li>
+</ul>
+</li>
+<li><em>after</em> sync:
+<ul>
+<li><code>notmuch tag +[TAG] &quot;path:[PATH] AND NOT tag:[TAG]&quot;</code>
+Tag emails in <code>PATH</code> which do not yet have the matching <code>TAG</code></li>
+<li><code>notmuch tag -[TAG] &quot;NOT path:[PATH] AND tag:[TAG] AND tag:[ROOT_TAG]&quot;</code>
+Remove <code>TAG</code> from emails which are outside the matching <code>PATH</code></li>
+</ul>
+</li>
+</ul>
+<p>These rules are getting included in the respective hooks.</p>
+<p><a id="code-snippet--mail-tags"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#ba2121">&#34;~/Mail&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">rules</span> <span style="color:#666">&#39;</span>()))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">row</span> <span style="color:#19177c">tags</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">tag</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">row</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">folder</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">row</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">make_tag</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch tag +%s \&#34;path:%s/%s/cur/** AND NOT tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span>)
+</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">remove</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch tag -%s \&#34;NOT path:%s/%s/cur/** AND tag:%s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		 <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">move</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND tag:%s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">archive_root</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND %s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">row</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;NOT tag:%s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">row</span>)))
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">tags</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34; AND &#34;</span>)
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span>))
+</span></span><span style="display:flex;"><span>     <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">rules</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span></code></pre></div><h4 id="pre-new"><code>pre_new</code></h4>
+<p>This hook runs fetch from Gmail &amp; offlineimap in parallel before the <code>notmuch new</code> command. The <code>parallel</code> command is provided by <a href="https://www.gnu.org/software/parallel/">GNU Parallel</a>.</p>
+<p>It isn&rsquo;t necessary to run <code>cd</code> for offlineimap, but it&rsquo;s easier to write that way.</p>
+<p><a id="code-snippet--pre-new-pvkorytov-tags"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/mail-format-tags-rules</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;pvkorytov_etu&#34;</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#ba2121">&#34;Archive&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># GMI=&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">GMI</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;gmi&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Running pre-new filters&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(move=&#34;t&#34;,archive_root=&#34;Archive&#34;)&gt;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">echo &#34;Pre-new filters done&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">parallel --link -j0 &#34;(cd /home/pavel/Mail/{1}/ &amp;&amp; {2} {3})&#34; ::: thexcloud progin6304 pvkorytov_etu ::: &#34;$GMI&#34; &#34;$GMI&#34; &#34;offlineima</span>p<span style="color:#ba2121">&#34; ::: sync sync &#34;&#34;
+</span></span></span></code></pre></div><h4 id="post-new"><code>post_new</code></h4>
+<p>And this hook tags different mailboxes with different tags.</p>
+<p><a id="code-snippet--post-new-pvkorytov-tags"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/mail-format-tags-rules</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;pvkorytov_etu&#34;</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>notmuch tag +main <span style="color:#ba2121">&#34;path:thexcloud/** AND tag:new&#34;</span>
+</span></span><span style="display:flex;"><span>notmuch tag +progin <span style="color:#ba2121">&#34;path:progin6304/** AND tag:new&#34;</span>
+</span></span><span style="display:flex;"><span>notmuch tag +pvkorytov <span style="color:#ba2121">&#34;path:pvkorytov_etu/** AND tag:new&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Running post-new filters&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(ma</span>ke_tag<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,remove<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span><span style="color:#666">)</span>&gt;&gt;
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Post-new filters done&#34;</span>
+</span></span><span style="display:flex;"><span>notmuch tag -new <span style="color:#ba2121">&#34;tag:new&#34;</span>
+</span></span></code></pre></div><h2 id="sync-script">Sync script</h2>
+<p>A script to run <code>notmuch new</code> and push a notification if there is new mail.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">DISPLAY</span><span style="color:#666">=</span>:0
+</span></span><span style="display:flex;"><span><span style="color:#19177c">CHECK_FILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/Mail/.last_check&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">QUERY</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;tag:unread&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">ALL_QUERY</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;tag:unread&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CHECK_FILE</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">DATE</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>cat <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$CHECK_FILE</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">QUERY</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$QUERY</span><span style="color:#ba2121"> and date:@</span><span style="color:#19177c">$DATE</span><span style="color:#ba2121">..&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>notmuch new
+</span></span><span style="display:flex;"><span><span style="color:#19177c">NEW_UNREAD</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>notmuch count <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$QUERY</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#19177c">ALL_UNREAD</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>notmuch count <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$ALL_QUERY</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#19177c">$NEW_UNREAD</span> -gt <span style="color:#666">0</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">MAIN_UNREAD</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>notmuch count <span style="color:#ba2121">&#34;tag:unread AND tag:main&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">PROGIN_UNREAD</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>notmuch count <span style="color:#ba2121">&#34;tag:unread AND tag:progin&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">ETU_UNREAD</span><span style="color:#666">=</span><span style="color:#008000;font-weight:bold">$(</span>notmuch count <span style="color:#ba2121">&#34;tag:unread AND tag:pvkorytov&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">read</span> -r -d <span style="color:#ba2121">&#39;&#39;</span> NOTIFICATION <span style="color:#ba2121">&lt;&lt;EOM
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">$NEW_UNREAD new messages
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">$MAIN_UNREAD thexcloud@gmail.com
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">$PROGIN_UNREAD progin6304@gmail.com
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">$ETU_UNREAD pvkorytov@etu.ru
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">$ALL_UNREAD total
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">EOM</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#ba2121">&#34;New Mail&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$NOTIFICATION</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">$(</span>date +%s<span style="color:#008000;font-weight:bold">)</span><span style="color:#ba2121">&#34;</span> &gt; <span style="color:#19177c">$CHECK_FILE</span>
+</span></span></code></pre></div><p>The script is ran via GNU Mcron every 5 minutes.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">job</span> <span style="color:#ba2121">&#34;*/5 * * * * &#34;</span> <span style="color:#ba2121">&#34;~/bin/scripts/check-email&#34;</span>)
+</span></span></code></pre></div><h2 id="msmtp">MSMTP</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>msmtp</td>
+</tr>
+</tbody>
+</table>
+<p>Sending emails can be done with MSMTP. It automatially chooses the email address and server based on the contents of the message, which is handy if there are multiple mailboxes to be managed.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>defaults
+</span></span><span style="display:flex;"><span>auth on
+</span></span><span style="display:flex;"><span>tls on
+</span></span><span style="display:flex;"><span>tls_trust_file <span style="color:#b68">/etc/</span>ssl<span style="color:#b68">/certs/</span>ca-certificates.crt
+</span></span><span style="display:flex;"><span>logfile ~/.msmtp.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>account main
+</span></span><span style="display:flex;"><span>host smtp.gmail.com
+</span></span><span style="display:flex;"><span>port <span style="color:#666">587</span>
+</span></span><span style="display:flex;"><span>from thexcloud@gmail.com
+</span></span><span style="display:flex;"><span>user thexcloud@gmail.com
+</span></span><span style="display:flex;"><span>passwordeval <span style="color:#ba2121">&#34;pass show My_Online/APIs/google-main-app-password | head -n 1&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>account progin
+</span></span><span style="display:flex;"><span>host smtp.gmail.com
+</span></span><span style="display:flex;"><span>port <span style="color:#666">587</span>
+</span></span><span style="display:flex;"><span>from progin6304@gmail.com
+</span></span><span style="display:flex;"><span>user progin6304@gmail.com
+</span></span><span style="display:flex;"><span>passwordeval <span style="color:#ba2121">&#34;pass show My_Online/ETU/progin6304@gmail.com | head -n 1&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>account pvkorytov
+</span></span><span style="display:flex;"><span>tls off
+</span></span><span style="display:flex;"><span>auth plain
+</span></span><span style="display:flex;"><span>host localhost
+</span></span><span style="display:flex;"><span>port <span style="color:#666">1025</span>
+</span></span><span style="display:flex;"><span>from pvkorytov@etu.ru
+</span></span><span style="display:flex;"><span>user pvkorytov
+</span></span><span style="display:flex;"><span>passwordeval <span style="color:#ba2121">&#34;pass show Job/Digital/Email/pvkorytov@etu.ru | head -n 1&#34;</span>
+</span></span></code></pre></div><h2 id="emacs">Emacs</h2>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>emacs-notmuch</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, Emacs configuration. Let&rsquo;s start with some variables:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">user-mail-address</span> <span style="color:#ba2121">&#34;thexcloud@gmail.com&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#00f">user-full-name</span> <span style="color:#ba2121">&#34;Pavel Korytov&#34;</span>)
+</span></span></code></pre></div><p>Then, the problem with my Guix setup is that Emacs by default doesn&rsquo;t see the elisp files of notmuch, so here is a small workaround:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span>  <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/mail/mail/share/emacs/site-lisp&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">normal-top-level-add-subdirs-to-load-path</span>))
+</span></span></code></pre></div><p>Some functions to toggle tags:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/notmuch-toggle-trash</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-collection-notmuch-toggle-tag</span> <span style="color:#ba2121">&#34;trash&#34;</span> <span style="color:#ba2121">&#34;search&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ignore</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/notmuch-toggle-inbox</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-collection-notmuch-toggle-tag</span> <span style="color:#ba2121">&#34;inbox&#34;</span> <span style="color:#ba2121">&#34;search&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ignore</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/notmuch-toggle-unread</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-collection-notmuch-toggle-tag</span> <span style="color:#ba2121">&#34;unread&#34;</span> <span style="color:#ba2121">&#34;search&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ignore</span>))
+</span></span></code></pre></div><p>And notmuch settings:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">notmuch</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; :ensure nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">notmuch</span> <span style="color:#19177c">notmuch-search</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">notmuch-wash-cited-text</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mail-specify-envelope-from</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">message-sendmail-envelope-from</span> <span style="color:#19177c">&#39;header</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mail-envelope-from</span> <span style="color:#19177c">&#39;header</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-always-prompt-for-sender</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">message-send-mail-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">message-send-mail-with-sendmail</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">sendmail-program</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;msmtp&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">send-mail-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">sendmail-send-it</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mml-secure-openpgp-sign-with-sender</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-mua-user-agent-function</span> <span style="color:#19177c">&#39;notmuch-mua-user-agent-full</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;notmuch-search-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-toggle-trash</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-toggle-inbox</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;u&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-toggle-unread</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Use org-contacts for completion</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-contacts</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-address-command</span> <span style="color:#19177c">&#39;as-is</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-hello-mode-hook</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
+</span></span></code></pre></div><p>The file is read in <code>init.el</code>.</p>
+<h3 id="keybindings">Keybindings</h3>
+<p>I used to have a more complicated keybinding system here, but that seemed to go against the Dao.</p>
+<p>Root keybindings:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;am&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;notmuch&#34;</span> <span style="color:#ba2121">&#34;mail&#34;</span> <span style="color:#666">0</span> (<span style="color:#19177c">notmuch</span>)))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/persp-add-rule</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-hello-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-search-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-tree-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-message-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>)
+</span></span></code></pre></div><p><a id="table--root-tags"></a></p>
+<table>
+<thead>
+<tr>
+<th>Root tag</th>
+<th>Prefix</th>
+<th>Keybinding description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>main</td>
+<td>m</td>
+<td><a href="mailto:thexcloud@gmail.com">thexcloud@gmail.com</a></td>
+</tr>
+<tr>
+<td>progin</td>
+<td>p</td>
+<td><a href="mailto:progin6304@gmail.com">progin6304@gmail.com</a></td>
+</tr>
+<tr>
+<td>pvkorytov</td>
+<td>v</td>
+<td><a href="mailto:pvkorytov@etu.ru">pvkorytov@etu.ru</a></td>
+</tr>
+</tbody>
+</table>
+<p><a id="table--filter-tags"></a></p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Prefix</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inbox</td>
+<td>i</td>
+<td>inbox</td>
+</tr>
+<tr>
+<td>unread</td>
+<td>u</td>
+<td>unread</td>
+</tr>
+<tr>
+<td>sent</td>
+<td>s</td>
+<td>sent</td>
+</tr>
+<tr>
+<td></td>
+<td>a</td>
+<td>all mail</td>
+</tr>
+</tbody>
+</table>
+<p>The following formats the tables above to a proper syntax for <code>setq notmuch-saved-searches</code>:</p>
+<p><a id="code-snippet--format-notmuch-saved-searches"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">searches</span> <span style="color:#666">&#39;</span>()))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">root_tag</span> <span style="color:#19177c">root_tags</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">tag</span> <span style="color:#19177c">filter_tags</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">&#39;searches</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;(:name \&#34;%s\&#34; :query \&#34;%s\&#34; :key \&#34;%s\&#34;)&#34;</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s (%s)&#34;</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">tag</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">tag</span>)))
+</span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">searches</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-saved-searches</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span> <span style="color:#008000">:key</span> <span style="color:#ba2121">&#34;d&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">notmuch-hello-mode-map</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">notmuch-jump-search</span>)
+</span></span></code></pre></div><h3 id="signing-messages">Signing messages</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;message-setup-hook</span> <span style="color:#19177c">&#39;mml-secure-sign-pgpmime</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">mml-secure-key-preferences</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#19177c">OpenPGP</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;thexcloud@gmail.com&#34;</span> <span style="color:#ba2121">&#34;914472A1FD6775C166F96EBEED739ADF81C78160&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">CMS</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))))
+</span></span></code></pre></div><h3 id="tuning-signature">Tuning signature</h3>
+<p>By default, <code>message.el</code> inserts the signature at the bottom of the message, like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;message text&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Person &lt;person@mail.org&gt; writes:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; Stuff
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Yours,
+</span></span><span style="display:flex;"><span>me
+</span></span></code></pre></div><p>This creates issues with certain email clients. For instance, MS Exchange often just cuts the text at <code>Person &lt;person@mail.org&gt;....</code>, so there&rsquo;s no way to see the signature from the UI.</p>
+<p>What&rsquo;s more, MS Exchange, Gmail and other such clients add the signature before the quotation block, like that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;message text&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Yours,
+</span></span><span style="display:flex;"><span>me
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Person &lt;person@mail.org&gt; writes:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; Stuff
+</span></span></code></pre></div><p>So here I modifiy the citation function to insert the signature like in the second example for <del>certain cases</del>.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-10-27 Thu&gt;</span></span>: for consistency&rsquo;s sake, I&rsquo;ll make the signature on the top for all cases.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-insert-signature-need-on-top</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Then advice the <code>notmuch-mua-reply</code> function:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-maybe-fix-signature</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/message-insert-signature-need-on-top</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">message-signature-separator</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">move-beginning-of-line</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">kill-region</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">point-max</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">message-goto-body</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;sign=pgpmime&#34;</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">forward-line</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#19177c">current-kill</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">set-buffer-modified-p</span> <span style="color:#800">nil</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;notmuch-mua</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">notmuch-mua-reply</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-maybe-fix-signature</span>))
+</span></span></code></pre></div><h3 id="warn-if-no-subject">Warn if no subject</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-ensure-subject</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">message-field-value</span> <span style="color:#ba2121">&#34;Subject&#34;</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;No subject. Send? &#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Aborting.&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-subject</span>)
+</span></span></code></pre></div><h3 id="capitalize-formal-pronous">Capitalize formal pronous</h3>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/ru-formal-pronous</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;вы&#34;</span> <span style="color:#ba2121">&#34;вас&#34;</span> <span style="color:#ba2121">&#34;вам&#34;</span> <span style="color:#ba2121">&#34;вами&#34;</span> <span style="color:#ba2121">&#34;ваш&#34;</span> <span style="color:#ba2121">&#34;ваша&#34;</span> <span style="color:#ba2121">&#34;ваше&#34;</span> <span style="color:#ba2121">&#34;ваши&#34;</span> <span style="color:#ba2121">&#34;вашего&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;вашей&#34;</span> <span style="color:#ba2121">&#34;вашему&#34;</span> <span style="color:#ba2121">&#34;вашим&#34;</span> <span style="color:#ba2121">&#34;вашем&#34;</span> <span style="color:#ba2121">&#34;вашеми&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">regexp-opt</span> <span style="color:#19177c">my/ru-formal-pronous</span> <span style="color:#19177c">&#39;words</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-ensure-capitalized-formal-pronouns</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">message-goto-body</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-block</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">case-fold-search</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">confirmed</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">capitalized</span> (<span style="color:#00f">capitalize</span> <span style="color:#19177c">match</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">beg</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">end</span> (<span style="color:#00f">match-end</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> <span style="color:#19177c">confirmed</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Replace %s with %s? &#34;</span>
+</span></span><span style="display:flex;"><span>				      <span style="color:#19177c">match</span> <span style="color:#19177c">capitalized</span>)))
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">insert</span> <span style="color:#19177c">capitalized</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">confirmed</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">cl-return</span>))))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-capitalized-formal-pronouns</span>)
+</span></span></code></pre></div><h3 id="ensure-password-is-loaded">Ensure password is loaded</h3>
+<p>Otherwise <code>msmtp</code> may call <code>pinentry</code> while Emacs is locked, which means EXWM can&rsquo;t process the password window.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ensure-password</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Job/Digital/Email/pvkorytov@etu.ru&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ensure-password</span>)
+</span></span></code></pre></div><h2 id="mailcap">mailcap</h2>
+<p>mailcap file is a file which defines how to read to different MIME types. Notmuch also uses it, so why not keep it here.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>audio/*; mpc add %s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>image/*; feh %s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>application/msword; /usr/bin/xdg-open %s
+</span></span><span style="display:flex;"><span>application/pdf; zathura %s
+</span></span><span style="display:flex;"><span>application/postscript ; zathura %s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>text/html; firefox %s
+</span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
+<p><a id="code-snippet--packages"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-guix-dependencies</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span>(<span style="color:#00f">specifications-&gt;manifest</span>
+</span></span><span style="display:flex;"><span> <span style="color:#666">&#39;</span>(
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>()<span style="color:#19177c">&gt;&gt;</span>))
+</span></span></code></pre></div>
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#lieer">Lieer</a></li>
+    <li><a href="#davmail">DavMail</a></li>
+    <li><a href="#offlineimap">OfflineIMAP</a></li>
+    <li><a href="#notmuch">Notmuch</a>
+      <ul>
+        <li><a href="#config">Config</a></li>
+        <li><a href="#hooks">Hooks</a>
+          <ul>
+            <li><a href="#pre-new"><code>pre_new</code></a></li>
+            <li><a href="#post-new"><code>post_new</code></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#sync-script">Sync script</a></li>
+    <li><a href="#msmtp">MSMTP</a></li>
+    <li><a href="#emacs">Emacs</a>
+      <ul>
+        <li><a href="#keybindings">Keybindings</a></li>
+        <li><a href="#signing-messages">Signing messages</a></li>
+        <li><a href="#tuning-signature">Tuning signature</a></li>
+        <li><a href="#warn-if-no-subject">Warn if no subject</a></li>
+        <li><a href="#capitalize-formal-pronous">Capitalize formal pronous</a></li>
+        <li><a href="#ensure-password-is-loaded">Ensure password is loaded</a></li>
+      </ul>
+    </li>
+    <li><a href="#mailcap">mailcap</a></li>
+    <li><a href="#guix-settings">Guix settings</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>
