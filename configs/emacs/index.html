@@ -211,6 +211,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <td>org-roam-protocol</td>
 <td>2f0c20eb01b8899d00d129cc7ca5c6b263c69c65</td>
 </tr>
+<tr>
+<td>eshell-info-banner</td>
+<td>4ccc0bbc412b68e1401533264d801d86b1fc8cc7</td>
+</tr>
+<tr>
+<td>aweshell</td>
+<td>4ccc0bbc412b68e1401533264d801d86b1fc8cc7</td>
+</tr>
 </tbody>
 </table>
 <h2 id="initial-setup">Initial setup</h2>
@@ -1166,7 +1174,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">global-company-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#666">0.125</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#666">0.2</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">company-dabbrev-downcase</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">company-show-numbers</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>
@@ -6211,7 +6219,7 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;. s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-save-to-dired</span>))
 </span></span></code></pre></div><h3 id="shells-terminals">Shells / Terminals</h3>
 <h4 id="vterm">vterm</h4>
-<p>My terminal emulator of choice.</p>
+<p><a href="https://github.com/akermu/emacs-libvterm">vterm</a> is a terminal emulator for Emacs.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/akermu/emacs-libvterm">emacs-libvterm repo</a></li>
@@ -6221,21 +6229,24 @@ Some other optimization settings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> <span style="color:#19177c">my/is-termux</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">straight-use-package</span> <span style="color:#19177c">&#39;vterm</span>))
 </span></span></code></pre></div><p>The actual config:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">vterm</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/vterm-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">term-prompt-regexp</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">rx</span> <span style="color:#19177c">bol</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;&gt;&#34;</span> <span style="color:#ba2121">&#34;✕&#34;</span>) <span style="color:#ba2121">&#34; &#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">vterm</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">vterm</span> <span style="color:#19177c">vterm-other-window</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">vterm-kill-buffer-on-exit</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;vterm-mode-hook</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">global-display-line-numbers-mode</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">vterm-environment</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;IS_VTERM=1&#34;</span>))
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;vterm-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/vterm-setup</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;evil-collection-vterm-insert</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:before</span> (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
-</span></span><span style="display:flex;"><span>			(<span style="color:#008000">ignore-errors</span>
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">vterm-reset-cursor-point</span> <span style="color:#19177c">args</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (advice-add &#39;evil-collection-vterm-insert</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;             :before (lambda (&amp;rest args)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;                       (ignore-errors</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;                         (apply #&#39;vterm-reset-cursor-point args))))</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;vterm-mode-map</span>
@@ -6287,21 +6298,21 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Toogle subteminal.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">vterm-window</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">seq-find</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">window</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">string-match</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#ba2121">&#34;vterm-subterminal.*&#34;</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">buffer-name</span> (<span style="color:#00f">window-buffer</span> <span style="color:#19177c">window</span>))))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">window-list</span>))))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">seq-find</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">window</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">string-match</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#ba2121">&#34;vterm-subterminal.*&#34;</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">buffer-name</span> (<span style="color:#00f">window-buffer</span> <span style="color:#19177c">window</span>))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">window-list</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">vterm-window</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">get-buffer-window</span> (<span style="color:#00f">current-buffer</span>)) <span style="color:#19177c">vterm-window</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">current-buffer</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">select-window</span> <span style="color:#19177c">vterm-window</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">vterm-other-window</span> <span style="color:#ba2121">&#34;vterm-subterminal&#34;</span>))))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/slow-ssh</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#19177c">&#39;my/toggle-vterm-subteminal</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#19177c">&#39;vterm</span>))
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (unless my/slow-ssh</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   (general-nmap &#34;`&#34; &#39;my/toggle-vterm-subteminal)</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   (general-nmap &#34;~&#34; &#39;vterm))</span>
 </span></span></code></pre></div><h5 id="dired-integration">Dired integration</h5>
 <p>A function to get pwd for vterm. Couldn&rsquo;t find a built-in function for some reason, but this seems work fine:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/vterm-get-pwd</span> ()
@@ -6337,68 +6348,299 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;vterm-mode-hook</span> <span style="color:#19177c">&#39;with-editor-export-editor</span>))
 </span></span></code></pre></div><h4 id="eshell">eshell</h4>
-<p>A shell written in Emacs lisp. I don&rsquo;t use it as of now, but keep the config just in case.</p>
+<p><a href="https://www.gnu.org/software/emacs/manual/html_mono/eshell.html">eshell</a> is a shell implemented in Emacs Lisp.</p>
+<p>I&rsquo;ll try to use it as my primary shell for a few reasons. Firstly, I just want to have a &ldquo;normal&rdquo; (&hellip;evil&hellip;) editing experience for shell prompts. My current shell setup is fish with vi bindings, which doesn&rsquo;t work well with vterm because the shell just accepts the keystrokes from the terminal, completely oblivious to the current Emacs state. So, I need to do stuff like entering insert state in Emacs, then entering normal state in the shell while keeping Emacs in insert state. That&rsquo;s just too much pain sometimes.</p>
+<p>This setup also frequently messes with fish autosuggestions.</p>
+<p>Secondly, I do want to be able to run <code>dired</code> or <code>find-file</code> from the terminal. I&rsquo;ve sort of implemented that in the <a href="#vterm-1">vterm</a> section, but an Emacs-integrated shell is obviously more convenient for that.</p>
+<p>TODO:</p>
+<ul>
+<li>Configure it for TRAMP (<code>company-idle-delay</code> to a large value, what else?)</li>
+</ul>
+<h5 id="initial-configuration">Initial configuration</h5>
+<p>Some initial configuration.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/configure-eshell</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-pre-command-hook</span> <span style="color:#19177c">&#39;eshell-save-some-history</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;eshell-output-filter-functions</span> <span style="color:#19177c">&#39;eshell-truncate-buffer</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-history-size</span> <span style="color:#666">10000</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-hist-ingnoredups</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-buffer-maximum-lines</span> <span style="color:#666">10000</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-define-key</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#00f">insert</span> <span style="color:#19177c">visual</span>) <span style="color:#19177c">eshell-mode-map</span> (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;&lt;home&gt;&#34;</span>) <span style="color:#19177c">&#39;eshell-bol</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-define-key</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#00f">insert</span> <span style="color:#19177c">visual</span>) <span style="color:#19177c">eshell-mode-map</span> (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-r&#34;</span>) <span style="color:#19177c">&#39;counsel-esh-history</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#00f">insert</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;eshell-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;home&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell-bol</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">counsel-esh-history</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;eshell-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#19177c">&#39;my/eshell-complete</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;eshell-mode-map</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-h&#34;</span>) <span style="color:#19177c">&#39;evil-window-left</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-l&#34;</span>) <span style="color:#19177c">&#39;evil-window-right</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-k&#34;</span>) <span style="color:#19177c">&#39;evil-window-up</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-j&#34;</span>) <span style="color:#19177c">&#39;evil-window-down</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-h&#34;</span> <span style="color:#19177c">&#39;evil-window-left</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-l&#34;</span> <span style="color:#19177c">&#39;evil-window-right</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-k&#34;</span> <span style="color:#19177c">&#39;evil-window-up</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-j&#34;</span> <span style="color:#19177c">&#39;evil-window-down</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#408080;font-style:italic">;; XXX Did they forget to set it to nil?</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-first-time-p</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:ensure</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">built-in</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">evil-collection</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">eshell</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-history-size</span> <span style="color:#666">10000</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-hist-ignoredups</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-buffer-maximum-lines</span> <span style="color:#666">10000</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; XXX 90 to override `evil-collection&#39;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-first-time-mode-hook</span> <span style="color:#19177c">&#39;my/configure-eshell</span> <span style="color:#666">90</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-command-aliases-list</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;exit&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#ba2121">&#34;clear&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;ll&#34;</span> <span style="color:#ba2121">&#34;ls -la&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;e&#34;</span> <span style="color:#ba2121">&#34;find-file&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-banner-message</span> <span style="color:#ba2121">&#34;&#34;</span>))
+</span></span></code></pre></div><h5 id="ui-2">UI</h5>
+<p>I&rsquo;ll try reusing the <a href="https://starship.rs/">Starship</a> prompt.</p>
+<p>The executable can print out the text of the prompt, but somehow it refuses when there&rsquo;s <code>TERM=dumb</code> in the environment. I also advise Eshell to record the execution time for the <code>--cmd-duration</code> flag.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/eshell-last-command-start-time</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-starship-prompt</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">cmd</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;TERM=xterm starship prompt --status=%d --cmd-duration=%d&#34;</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">eshell-last-command-status</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">if</span> <span style="color:#19177c">my/eshell-last-command-start-time</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#008000">let</span> ((<span style="color:#19177c">delta</span> (<span style="color:#00f">float-time</span>
+</span></span><span style="display:flex;"><span>				       (<span style="color:#00f">time-subtract</span>
+</span></span><span style="display:flex;"><span>					(<span style="color:#00f">current-time</span>)
+</span></span><span style="display:flex;"><span>					<span style="color:#19177c">my/eshell-last-command-start-time</span>))))
+</span></span><span style="display:flex;"><span>			   (<span style="color:#008000">setq</span> <span style="color:#19177c">my/eshell-last-command-start-time</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>			   (<span style="color:#00f">round</span> (<span style="color:#00f">*</span> <span style="color:#19177c">delta</span> <span style="color:#666">1000</span>)))
+</span></span><span style="display:flex;"><span>		       <span style="color:#666">0</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;bash&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;-c&#34;</span> <span style="color:#19177c">cmd</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">thread-first</span> <span style="color:#ba2121">&#34;\n&#34;</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">concat</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#00f">buffer-string</span>)))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">ansi-color-apply</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-set-start-time</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">my/eshell-last-command-start-time</span> (<span style="color:#00f">current-time</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;eshell</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell-send-input</span> <span style="color:#008000">:before</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-set-start-time</span>))
+</span></span></code></pre></div><p>Now this can go in <code>eshell-prompt-function</code> with two more options. First, <code>eshell-highlight-prompt</code> has to be set to nil because it screws up faces applied by <code>ansi-color.el</code>.</p>
+<p>Second, <code>eshell-prompt-regexp</code> has to align with the <code>starship</code> configuration. The relevant part of mine looks like this:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[character]
+</span></span><span style="display:flex;"><span>success_symbol = <span style="color:#ba2121">&#34;[&gt; ](bold green)&#34;</span>
+</span></span><span style="display:flex;"><span>error_symbol = <span style="color:#ba2121">&#34;[✕ ](bold red)&#34;</span>
+</span></span></code></pre></div><p>So my regex matches with either of these two prompts. IIRC the default value is different from mine.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;eshell</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-prompt-regexp</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bol</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;&gt;&#34;</span> <span style="color:#ba2121">&#34;✕&#34;</span>) <span style="color:#ba2121">&#34; &#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-prompt-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/get-starship-prompt</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-highlight-prompt</span> <span style="color:#800">nil</span>))
+</span></span></code></pre></div><p><a href="https://github.com/zwild/eshell-prompt-extras/">eshell-prompt-extras</a> is an alternative to the above that doesn&rsquo;t depend on <code>starship</code>. I&rsquo;ll keep it here for now because I expect I won&rsquo;t be able to use starship everywhere.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-colors</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">epe-pipeline-delimiter-face</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;green</span>))
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">epe-pipeline-host-face</span>      <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;blue</span>))
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">epe-pipeline-time-face</span>      <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;yellow</span>))
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">epe-pipeline-user-face</span>      <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;red</span>)))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-first-time-mode-hook</span> <span style="color:#19177c">&#39;my/configure-eshell</span> <span style="color:#666">90</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">my/slow-ssh</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>		(<span style="color:#008000">setq-local</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#666">1000</span>))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-banner-message</span> <span style="color:#ba2121">&#34;&#34;</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">aweshell</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;manateelazycat/aweshell&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell-prompt-extras</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">eshell</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">aweshell-alert-buffer-face</span>  <span style="color:#008000">:background</span> (<span style="color:#19177c">color-darken-name</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg</span>) <span style="color:#666">3</span>))
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">aweshell-alert-command-face</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;red</span>) <span style="color:#008000">:weight</span> <span style="color:#19177c">&#39;bold</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-prompt-regexp</span> <span style="color:#ba2121">&#34;^[^#\nλ]* λ[#]* &#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-highlight-prompt</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-prompt-function</span> <span style="color:#19177c">&#39;epe-theme-pipeline</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell-info-banner</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">eshell-info-banner</span> <span style="color:#008000">:type</span> <span style="color:#19177c">git</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:host</span> <span style="color:#19177c">github</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;phundrak/eshell-info-banner.el&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">eshell-banner-load</span> <span style="color:#666">.</span> <span style="color:#19177c">eshell-info-banner-update-banner</span>)
+</span></span></code></pre></div><p><a href="https://github.com/akreisher/eshell-syntax-highlighting/">eshell-syntax-highlighting</a> highlights things like correct/incorrect commands (like fish).</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell-syntax-highlighting</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">eshell</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-info-banner-filter-duplicate-partitions</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-info-banner-exclude-partitions</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;b/efi&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">eshell-syntax-highlighting-global-mode</span>))
+</span></span></code></pre></div><p><a href="https://github.com/ryuslash/eshell-fringe-status/">eshell-fringe-status</a> shows the status of the last command in fringe. I&rsquo;ve disabled it because I configured starship to use status from eshell.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell-fringe-status</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">eshell</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#19177c">&#39;eshell-fringe-status-mode</span>))
+</span></span></code></pre></div><h5 id="fish-completions">Fish completions</h5>
+<p><a href="https://github.com/LemonBreezes/emacs-fish-completion/">emacs-fish-completion</a> uses <code>fish</code> to autocomplete prompts when the built-in completion fails. This way, it can autocomplete <code>docker</code>, <code>yarn</code>, etc., which is pretty cool.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">fish-completion</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">eshell</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;fish&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">global-fish-completion-mode</span>))
+</span></span></code></pre></div><h5 id="fish-like-autosuggestions">Fish-like autosuggestions</h5>
+<p>I&rsquo;m used to these fancy autosuggestions provided by <code>fish</code>.</p>
+<p>There are two packages that do something like that:</p>
+<ul>
+<li><a href="https://github.com/dieggsy/esh-autosuggest">esh-autosuggest</a>. It just uses <a href="https://github.com/company-mode/company-mode">company-mode</a> to display suggestions, which prevents using <code>company-mode</code> for anything else.</li>
+<li><a href="https://elpa.gnu.org/packages/capf-autosuggest.html">capf-autosuggest</a>. It mostly does what I want, but it doesn&rsquo;t verify its suggestion, e.g. it can suggest <code>cd</code> to a non-existing directory. I tried advising this functionality, but then the package became too slow because it fetches all candidates on each keystroke.</li>
+</ul>
+<p>So, I&rsquo;ve spent a ridiculous amount of time implementing this probably unnecessary feature, and I&rsquo;m still not sure if I should keep it&hellip;</p>
+<p>But anyway, here&rsquo;s my overlay-based solution inspired by <a href="https://github.com/copilot-emacs/copilot.el">copilot.el</a>. First, we need to get the current input string:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-get-input</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">beginning-of-line</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">looking-at-p</span> <span style="color:#19177c">eshell-prompt-regexp</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">substring-no-properties</span> (<span style="color:#19177c">eshell-get-old-input</span>)))))
+</span></span></code></pre></div><p>In order to verify suggestions (for instance, to check whether the suggested directory exists), it&rsquo;s necessary to &ldquo;unquote&rdquo; strings because history stores them in the quoted form.</p>
+<p>There&rsquo;s a built-in function called <code>shell-unquote-argument</code>, but it requires the current buffer to have a process for a seemingly Windows-related reason&hellip; So below is a copy of this function without that part.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/shell-unquote-argument-without-process</span> (<span style="color:#00f">string</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-match-data</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">idx</span> <span style="color:#666">0</span>) <span style="color:#19177c">next</span> <span style="color:#19177c">inside</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">quote-chars</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;&#39;&#34;</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#ba2121">&#34;\\&#34;</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">idx</span> (<span style="color:#00f">length</span> <span style="color:#00f">string</span>))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">string-match</span> <span style="color:#19177c">quote-chars</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#ba2121">?\\</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>		  ((<span style="color:#008000">and</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#19177c">inside</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">inside</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>)))))
+</span></span><span style="display:flex;"><span>      <span style="color:#00f">string</span>)))
+</span></span></code></pre></div><p>Now, verify one suggestion against the current input. At the moment, outside of checking the prefix, it does the following:</p>
+<ul>
+<li>If the suggestion is <code>cd</code> to directory, check if this directory exists</li>
+<li>If it&rsquo;s <code>git something</code>, check if we&rsquo;re in a git repo</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-history-is-good-suggestion</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">suggestion</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">and</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#19177c">input</span> <span style="color:#19177c">suggestion</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;cd &#34;</span> <span style="color:#19177c">input</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">let</span> ((<span style="color:#19177c">suggested-dir</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">my/shell-unquote-argument-without-process</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">substring</span> <span style="color:#19177c">suggestion</span> <span style="color:#666">3</span>))))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">suggested-dir</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#19177c">suggested-dir</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">suggested-dir</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">file-directory-p</span> (<span style="color:#00f">concat</span> (<span style="color:#19177c">eshell/pwd</span>) <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">suggested-dir</span>))))
+</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">if</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;git&#34;</span> <span style="color:#19177c">suggestion</span>)
+</span></span><span style="display:flex;"><span>	   <span style="color:#408080;font-style:italic">;; How is this faster than &#39;magit-toplevel&#39;?</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">vc-git-root</span>)
+</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>)))
+</span></span></code></pre></div><p>And propose one suggestion for the current <code>input</code>, because I don&rsquo;t need more. It users two sources:</p>
+<ul>
+<li><code>eshell-history-ring</code></li>
+<li><code>pcomplete</code>, which is integrated with <code>eshell</code> out-of-the-box. It was soo painful to figure out&hellip; But it works.</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-history-suggest-one</span> (<span style="color:#19177c">input</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">seq-empty-p</span> <span style="color:#19177c">input</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">s</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> (<span style="color:#19177c">ring-elements</span> <span style="color:#19177c">eshell-history-ring</span>)
+</span></span><span style="display:flex;"><span>			   <span style="color:#19177c">for</span> <span style="color:#19177c">proc-elem</span> <span style="color:#00f">=</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#00f">substring-no-properties</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">when</span> (<span style="color:#19177c">my/eshell-history-is-good-suggestion</span> <span style="color:#19177c">input</span> <span style="color:#19177c">proc-elem</span>)
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">return</span> <span style="color:#19177c">proc-elem</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">substring</span> <span style="color:#19177c">s</span> (<span style="color:#00f">length</span> <span style="color:#19177c">input</span>)))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">ignore-errors</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">pcomplete-stub</span> <span style="color:#19177c">input</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">completions</span> (<span style="color:#19177c">pcomplete-completions</span>))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">one-completion</span> (<span style="color:#00f">car</span> (<span style="color:#00f">all-completions</span> <span style="color:#19177c">pcomplete-stub</span> <span style="color:#19177c">completions</span>)))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">bound</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">completion-boundaries</span> <span style="color:#19177c">pcomplete-stub</span> <span style="color:#19177c">completions</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;&#34;</span>))))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">unless</span> (<span style="color:#19177c">zerop</span> <span style="color:#19177c">bound</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">setq</span> <span style="color:#19177c">one-completion</span> (<span style="color:#00f">concat</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">pcomplete-stub</span> <span style="color:#666">0</span> <span style="color:#19177c">bound</span>) <span style="color:#19177c">one-completion</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#408080;font-style:italic">;; (message &#34;%s %s&#34; pcomplete-stub one-completion)</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">comint-quote-filename</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">substring</span> <span style="color:#19177c">one-completion</span> (<span style="color:#00f">min</span>
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">length</span> <span style="color:#19177c">pcomplete-stub</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">length</span> <span style="color:#19177c">one-completion</span>)))))))))
+</span></span></code></pre></div><p>As I said, I want to use an overlay to display the suggestion. I tried to store the current overlay in a buffer-local variable, but somehow it was getting lost at times&hellip; And there aren&rsquo;t many overlays anyway, so this doesn&rsquo;t seem to slow down Emacs that much.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-get</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">seq-find</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">ov</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">overlay-get</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;my/eshell-completion-overlay</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">overlays-in</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>))))
+</span></span></code></pre></div><p>Thanks <a href="https://emacs.stackexchange.com/questions/15078/inserting-before-an-after-string-overlay">this answer on StackExchange</a> for pointing out the <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Special-Properties.html#index-cursor-_0028text-property_0029">cursor</a> text property.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-update</span> (<span style="color:#19177c">pos</span> <span style="color:#19177c">value</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">overlay-value</span> (<span style="color:#00f">propertize</span> <span style="color:#19177c">value</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;shadow</span>
+</span></span><span style="display:flex;"><span>				   <span style="color:#19177c">&#39;cursor</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">overlay</span> (<span style="color:#19177c">my/eshell-overlay-get</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">overlay</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">move-overlay</span> <span style="color:#19177c">overlay</span> <span style="color:#19177c">pos</span> <span style="color:#19177c">pos</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">overlay</span> (<span style="color:#00f">make-overlay</span> <span style="color:#19177c">pos</span> <span style="color:#19177c">pos</span> (<span style="color:#00f">current-buffer</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">overlay-put</span> <span style="color:#19177c">overlay</span> <span style="color:#19177c">&#39;my/eshell-completion-overlay</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">overlay-put</span> <span style="color:#19177c">overlay</span> <span style="color:#19177c">&#39;after-string</span> <span style="color:#19177c">overlay-value</span>)))
+</span></span></code></pre></div><p>The function to remove the overlay:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-remove</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">ov</span> (<span style="color:#00f">overlays-in</span> (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">overlay-get</span> <span style="color:#19177c">ov</span> <span style="color:#19177c">&#39;my/eshell-completion-overlay</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">delete-overlay</span> <span style="color:#19177c">ov</span>))))
+</span></span></code></pre></div><p>Putting that all together.</p>
+<p>This also hides the overlay if <code>company</code> completion is active because <code>company</code> sometimes creates its own overlays that intersect with mine&hellip; I don&rsquo;t yet understand when it happens because sometimes <code>company</code> just creates the completion dialog with no overlay, and I couldn&rsquo;t find a way to check if the overlay is created or not.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-suggest</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let*</span> ((<span style="color:#19177c">input</span> (<span style="color:#19177c">my/eshell-get-input</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">suggestion</span> (<span style="color:#19177c">my/eshell-history-suggest-one</span> <span style="color:#19177c">input</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">_</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">company-prefix</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/eshell-overlay-update</span> (<span style="color:#00f">line-end-position</span>) <span style="color:#19177c">suggestion</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/eshell-overlay-remove</span>)))
+</span></span></code></pre></div><p>The function can be added in <code>after-change-functions</code>, which is executed on every text modification. This shouldn&rsquo;t slow eshell down because <code>eshell-send-input</code> sets <code>inhibit-modification-hooks</code> to t.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-suggest-enable</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-functions</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-completion-started-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-after-completion-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq-local company-idle-delay nil)</span>
+</span></span><span style="display:flex;"><span>  )
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/slow-ssh</span> <span style="color:#19177c">my/remote-server</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#19177c">&#39;aweshell-dedicated-toggle</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#19177c">&#39;eshell</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest-enable</span>)
+</span></span></code></pre></div><p>Finally, a function that inserts the overlay in buffer if it&rsquo;s available and calls <code>company-complete</code> if it&rsquo;s not. I&rsquo;ve bound it to <code>&lt;tab&gt;</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-complete</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#00f">=</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">line-end-position</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">overlay</span> (<span style="color:#19177c">my/eshell-overlay-get</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-overlay</span> <span style="color:#19177c">overlay</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">insert</span> (<span style="color:#00f">overlay-get</span> <span style="color:#19177c">overlay</span> <span style="color:#19177c">&#39;after-string</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">company-complete</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">company-complete</span>)))
+</span></span></code></pre></div><h5 id="dedicated-buffer">Dedicated buffer</h5>
+<p>Make a dedicated buffer for eshell in the bottom of the screen.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;display-buffer-alist</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;eshell-dedicated.*&#34;</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">display-buffer-reuse-window</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#19177c">display-buffer-in-side-window</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">side</span> <span style="color:#666">.</span> <span style="color:#19177c">bottom</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">reusable-frames</span> <span style="color:#666">.</span> <span style="color:#19177c">visible</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">window-height</span> <span style="color:#666">.</span> <span style="color:#666">0.33</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-dedicated</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; XXX the byte-compiler freaks out if eshell is required within the</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; `let*&#39; block because it binds `dedicated-buffer&#39;... dynamically?</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; How?</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;eshell</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">eshell-buffer-name</span> <span style="color:#ba2121">&#34;eshell-dedicated&#34;</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">dedicated-buffer</span> (<span style="color:#00f">get-buffer</span> <span style="color:#19177c">eshell-buffer-name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">dedicated-buffer</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">eshell</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">window</span> (<span style="color:#00f">get-buffer-window</span> <span style="color:#19177c">dedicated-buffer</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">selected-window</span>) <span style="color:#19177c">window</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">kill-buffer-and-window</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">select-window</span> <span style="color:#19177c">window</span>))))))
+</span></span></code></pre></div><h5 id="global-keybindings">Global keybindings</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-dedicated</span>
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell</span>)
+</span></span></code></pre></div><h4 id="eat">eat</h4>
+<p><a href="https://codeberg.org/akib/emacs-eat">eat</a> is a terminal emulator written in Emacs Lisp.</p>
+<p>It&rsquo;s slower than <code>vterm</code>, but it seems to be the second best option because of <code>line-mode</code>, which sends the input line-by-line allowing it to edit like in <code>eshell</code>. However, this obviously disables syntax higlighting and autosuggestions, which <code>eshell</code> with my configuration has.</p>
+<p>Still, I&rsquo;ll probably switch to <code>eat</code> if <code>eshell</code> doesn&rsquo;t work for me.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eat</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;*.el&#34;</span> (<span style="color:#ba2121">&#34;term&#34;</span> <span style="color:#ba2121">&#34;term/*.el&#34;</span>) <span style="color:#ba2121">&#34;*.texi&#34;</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34;*.ti&#34;</span> (<span style="color:#ba2121">&#34;terminfo/e&#34;</span> <span style="color:#ba2121">&#34;terminfo/e/*&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#ba2121">&#34;terminfo/65&#34;</span> <span style="color:#ba2121">&#34;terminfo/65/*&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#ba2121">&#34;integration&#34;</span> <span style="color:#ba2121">&#34;integration/*&#34;</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;.dir-locals.el&#34;</span> <span style="color:#ba2121">&#34;*-tests.el&#34;</span>))))
+</span></span></code></pre></div><p>Yeah, and <code>eat</code> has integration with eshell too.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-load-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eat-eshell-visual-command-mode</span>)
 </span></span></code></pre></div><h4 id="shell-1">shell</h4>
 <p>Interactive subshell (<code>M-x shell</code>) is a way to run commands with input and output through an Emacs buffer.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/setup-shell</span> ()
@@ -10258,6 +10500,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
           <ul>
             <li><a href="#vterm">vterm</a></li>
             <li><a href="#eshell">eshell</a></li>
+            <li><a href="#eat">eat</a></li>
             <li><a href="#shell-1">shell</a></li>
           </ul>
         </li>
