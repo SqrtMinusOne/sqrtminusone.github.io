@@ -2915,7 +2915,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ar&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">reverso</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">reverso-history-mode</span>))
 </span></span></code></pre></div><h3 id="lisp">Lisp</h3>
 <figure><img src="/ox-hugo/lisp_cycles.png"/>
 </figure>
@@ -5869,7 +5870,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-find-file</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;=&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-narrow</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-create-empty-file-subtree</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">vterm</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">wdired-change-to-wdired-mode</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;left&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-up-directory</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;right&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-find-file</span>
@@ -6028,6 +6029,17 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;sS&#34;</span> <span style="color:#19177c">&#39;my/dired-open-this-subdir</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;sQ&#34;</span> <span style="color:#19177c">&#39;my/dired-kill-all-subdirs</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;TAB&#34;</span>) <span style="color:#19177c">&#39;dired-hide-subdir</span>))
+</span></span></code></pre></div><h4 id="other-functions">Other functions</h4>
+<p>Goto project root.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dired-goto-project-root</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">dired--find-possibly-alternative-file</span> (<span style="color:#19177c">projectile-project-root</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;dired</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;dired-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-goto-project-root</span>))
 </span></span></code></pre></div><h4 id="tramp-1">TRAMP</h4>
 <p>TRAMP is a package that provides remote editing capacities. It is particularly useful for remote server management.</p>
 <p>Unfortunately, many Emacs packages don&rsquo;t exactly moderate their rate of filesystem operations, and on TRAMP over network each operation adds additional overhead, so&hellip; it can get pretty slow. To debug these issues, set the following variable to 6:</p>
@@ -6371,7 +6383,9 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;eshell-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#19177c">&#39;my/eshell-complete</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#19177c">&#39;my/eshell-complete</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell-previous-matching-input-from-input</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eshell-next-matching-input-from-input</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -6380,8 +6394,8 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-l&#34;</span> <span style="color:#19177c">&#39;evil-window-right</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-k&#34;</span> <span style="color:#19177c">&#39;evil-window-up</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-j&#34;</span> <span style="color:#19177c">&#39;evil-window-down</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#408080;font-style:italic">;; XXX Did they forget to set it to nil?</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-first-time-p</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; XXX Did they forget to set it to nil?</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-first-time-p</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:type</span> <span style="color:#19177c">built-in</span>)
@@ -6581,15 +6595,20 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/eshell-overlay-update</span> (<span style="color:#00f">line-end-position</span>) <span style="color:#19177c">suggestion</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/eshell-overlay-remove</span>)))
 </span></span></code></pre></div><p>The function can be added in <code>after-change-functions</code>, which is executed on every text modification. This shouldn&rsquo;t slow eshell down because <code>eshell-send-input</code> sets <code>inhibit-modification-hooks</code> to t.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-overlay-suggest-enable</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-functions</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-completion-started-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-after-completion-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq-local company-idle-delay nil)</span>
-</span></span><span style="display:flex;"><span>  )
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">define-minor-mode</span> <span style="color:#19177c">my/eshell-overlay-suggest-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Fish-like suggestions for eshell.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after-hook</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">my/eshell-overlay-suggest-mode</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-change-functions</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-completion-started-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-after-completion-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;after-change-functions</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-completion-started-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;company-after-completion-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/eshell-overlay-remove</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-overlay-suggest-enable</span>)
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-hook &#39;eshell-mode-hook #&#39;my/eshell-overlay-suggest-mode)</span>
 </span></span></code></pre></div><p>Finally, a function that inserts the overlay in buffer if it&rsquo;s available and calls <code>company-complete</code> if it&rsquo;s not. I&rsquo;ve bound it to <code>&lt;tab&gt;</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-complete</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -6624,6 +6643,11 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">selected-window</span>) <span style="color:#19177c">window</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">kill-buffer-and-window</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">select-window</span> <span style="color:#19177c">window</span>))))))
+</span></span></code></pre></div><h5 id="custom-commands">Custom commands</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">eshell/prt</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">root</span> (<span style="color:#19177c">projectile-project-root</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">eshell/cd</span> <span style="color:#19177c">root</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Not in a project&#34;</span>)))
 </span></span></code></pre></div><h5 id="global-keybindings">Global keybindings</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -10125,6 +10149,11 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">meme</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;larsmagne/meme&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> <span style="color:#ba2121">&#34;images&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">meme</span>))
+</span></span></code></pre></div><h4 id="ed">Ed</h4>
+<p>My text editor isn&rsquo;t old enough.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ed-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;ryanprior/ed-mode&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ed</span>))
 </span></span></code></pre></div><h2 id="guix-settings">Guix settings</h2>
 <table>
 <thead>
@@ -10491,6 +10520,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#basic-config-and-keybindings">Basic config &amp; keybindings</a></li>
             <li><a href="#addons-1">Addons</a></li>
             <li><a href="#subdirectories">Subdirectories</a></li>
+            <li><a href="#other-functions">Other functions</a></li>
             <li><a href="#tramp-1">TRAMP</a></li>
             <li><a href="#bookmarks">Bookmarks</a></li>
             <li><a href="#integrations-1">Integrations</a></li>
@@ -10591,6 +10621,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#zone">Zone</a></li>
             <li><a href="#gource">Gource</a></li>
             <li><a href="#memes">Memes</a></li>
+            <li><a href="#ed">Ed</a></li>
           </ul>
         </li>
       </ul>
