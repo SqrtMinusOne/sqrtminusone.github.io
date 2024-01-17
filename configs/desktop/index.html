@@ -221,7 +221,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">hostname</span> (<span style="color:#00f">system-name</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">cond</span> ((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;azure&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;eminence&#34;</span>) <span style="color:#666">120</span>)
-</span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;indigo&#34;</span>) <span style="color:#666">120</span>)
+</span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;violet&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	((<span style="color:#00f">string-equal</span> <span style="color:#19177c">hostname</span> <span style="color:#ba2121">&#34;iris&#34;</span>) <span style="color:#666">120</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#800">t</span> <span style="color:#666">96</span>)))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Xft.dpi: &lt;&lt;get-dpi()&gt;&gt;
@@ -321,6 +321,8 @@
 </span></span><span style="display:flex;"><span>    xrandr --output DisplayPort-0 --off --output HDMI-A-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DVI-D-0 --mode 1920x1080 --pos 1920x0 --rotate normal
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;eminence&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    xgamma -gamma 1.25
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;violet&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    xrandr --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --off --output DP-1 --mode 1920x1080 --pos 1920x0 --rotate normal --output DP-2 --off --output DP-3 --off --output DP-4 --off --output DP-5 --off --output None-1-1 --off
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h2 id="exwm">EXWM</h2>
 <p>Settings for <a href="https://github.com/ch11ng/exwm">Emacs X Window Manager</a>, a tiling WM implemented in Emacs Lisp. This part has a few bits copied from my blog post.</p>
@@ -400,22 +402,24 @@
 <p>The GUI pinentry doesn&rsquo;t work too well with EXWM because of issues with popup windows, so we will use the Emacs one.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">pinentry</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">exwm</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; :after (exwm)</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;GPG_AGENT_INFO&#34;</span> <span style="color:#800">nil</span>) <span style="color:#408080;font-style:italic">;; use emacs pinentry</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">auth-source-debug</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epg-gpg-program</span> <span style="color:#ba2121">&#34;gpg2&#34;</span>) <span style="color:#408080;font-style:italic">;; not necessary</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epg-gpg-program</span> <span style="color:#ba2121">&#34;gpg&#34;</span>) <span style="color:#408080;font-style:italic">;; not necessary</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;epa-file</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">epa-file-enable</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epa-pinentry-mode</span> <span style="color:#19177c">&#39;loopback</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">epg-pinentry-mode</span> <span style="color:#19177c">&#39;loopback</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">pinentry-start</span>))
+</span></span></code></pre></div><p><a id="code-snippet--find-pinentry"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;pinentry&#34;</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>default-cache-ttl <span style="color:#666">3600</span>
 </span></span><span style="display:flex;"><span>max-cache-ttl <span style="color:#666">3600</span>
 </span></span><span style="display:flex;"><span>allow-emacs-pinentry
 </span></span><span style="display:flex;"><span>allow-loopback-pinentry
-</span></span><span style="display:flex;"><span>pinentry-program <span style="color:#b68">/home/</span>pavel<span style="color:#b68">/.guix-extra-profiles/</span>console<span style="color:#b68">/console/</span>bin/pinentry
+</span></span><span style="display:flex;"><span>pinentry-program &lt;&lt;find-pinentry()&gt;&gt;
 </span></span></code></pre></div><h4 id="modeline">Modeline</h4>
 <p>Show the current workspace in the modeline.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">exwm-modeline</span>
@@ -623,17 +627,18 @@
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">my/exwm-last-workspaces</span>)))
 </span></span></code></pre></div><h4 id="the-monitor-list">The monitor list</h4>
 <p>The second piece of the puzzle is getting the monitor list in the right order.</p>
-<p>While it is possible to retrieve the monitor list from <code>exwm-randr-workspace-output-plist</code>, this won&rsquo;t scale well beyond two monitors, mainly because changing this variable may screw up the order.</p>
+<p>While it is possible to retrieve the monitor list from <code>exwm-randr-workspace-monitor-plist</code>, this won&rsquo;t scale well beyond two monitors, mainly because changing this variable may screw up the order.</p>
 <p>So the easiest way is to just define the variable like that:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-monitor-list</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">pcase</span> (<span style="color:#00f">system-name</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#ba2121">&#34;indigo&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span> <span style="color:#ba2121">&#34;DVI-D-0&#34;</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#ba2121">&#34;violet&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span> <span style="color:#ba2121">&#34;DP-1&#34;</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">_</span> <span style="color:#666">&#39;</span>(<span style="color:#800">nil</span>))))
 </span></span></code></pre></div><p>If you are changing the RandR configuration on the fly, this variable will also need to be changed, but for now, I don&rsquo;t have such a necessity.</p>
 <p>A function to get the current monitor:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-get-current-monitor</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return the current monitor name or nil.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
 </span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">cl-position</span> (<span style="color:#00f">selected-frame</span>)
 </span></span><span style="display:flex;"><span>			  <span style="color:#19177c">exwm-workspace--list</span>)))
 </span></span></code></pre></div><p>And a function to cycle the monitor list in either direction:</p>
@@ -667,9 +672,9 @@
 </span></span><span style="display:flex;"><span>					<span style="color:#19177c">for</span> <span style="color:#19177c">_</span> <span style="color:#19177c">in</span> <span style="color:#19177c">exwm-workspace--list</span>
 </span></span><span style="display:flex;"><span>					<span style="color:#19177c">collect</span> <span style="color:#19177c">i</span>))
 </span></span><span style="display:flex;"><span>	      <span style="color:#008000">if</span> (<span style="color:#008000">if</span> <span style="color:#19177c">other-monitor</span>
-</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">string-equal</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span> <span style="color:#19177c">i</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">string-equal</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#19177c">i</span>)
 </span></span><span style="display:flex;"><span>				   <span style="color:#19177c">other-monitor</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">not</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-output-plist</span> <span style="color:#19177c">i</span>)))
+</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">not</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#19177c">i</span>)))
 </span></span><span style="display:flex;"><span>	      <span style="color:#008000">return</span> <span style="color:#19177c">i</span>))))
 </span></span></code></pre></div><p>I bind this function to <code>s-q</code>, as I&rsquo;m used from i3.</p>
 <h4 id="move-the-workspace-to-another-monitor">Move the workspace to another monitor</h4>
@@ -1219,8 +1224,8 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;exwm-randr</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-randr-enable</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">start-process-shell-command</span> <span style="color:#ba2121">&#34;xrandr&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;~/bin/scripts/screen-layout&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;indigo&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-another-monitor</span> <span style="color:#ba2121">&#34;DVI-D-0&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;violet&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-another-monitor</span> <span style="color:#ba2121">&#34;DP-1&#34;</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#666">`</span>(<span style="color:#666">2</span> <span style="color:#666">,</span><span style="color:#19177c">my/exwm-another-monitor</span> <span style="color:#666">3</span> <span style="color:#666">,</span><span style="color:#19177c">my/exwm-another-monitor</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">exwm-workspace-warp-cursor</span> <span style="color:#800">t</span>)
@@ -1944,6 +1949,14 @@
 <td>HDMI-A-0</td>
 <td>battery</td>
 </tr>
+<tr>
+<td>HDMI-0</td>
+<td>battery</td>
+</tr>
+<tr>
+<td>DP-1</td>
+<td>battery</td>
+</tr>
 </tbody>
 </table>
 <p>Another thing we need to do is to set the color of modules in accordance with the <code>polybar_modules</code> table. The background can be determined from the <code>Color</code> column with the following code block:</p>
@@ -2182,7 +2195,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$hostname</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">=</span> <span style="color:#ba2121">&#34;iris&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;HDMI-1&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">TRAY_MONITOR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;DP-1&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Setting varying on the monitor</span>
@@ -2192,6 +2205,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DVI-D-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;13&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;13&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;13&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;13&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DP-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;13&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">declare</span> -A <span style="color:#19177c">EMOJI_SCALE</span><span style="color:#666">=(</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;eDP&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;9&#34;</span>
@@ -2199,6 +2214,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DVI-D-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;10&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;10&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;10&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;10&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DP-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;10&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">declare</span> -A <span style="color:#19177c">BAR_HEIGHT</span><span style="color:#666">=(</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;eDP&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
@@ -2206,6 +2223,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DVI-D-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DP-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;29&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">declare</span> -A <span style="color:#19177c">BLOCKS</span><span style="color:#666">=(</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;eDP&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>eDP<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
@@ -2213,6 +2232,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DVI-D-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>DVI-D-0<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-A-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>HDMI-A-0<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>HDMI-1<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;HDMI-0&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>HDMI-0<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">[</span><span style="color:#ba2121">&#34;DP-1&#34;</span><span style="color:#666">]=</span><span style="color:#ba2121">&#34;&lt;&lt;polybar-generate-modules(monitor=&#34;</span>DP-1<span style="color:#ba2121">&#34;)&gt;&gt;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Geolocation for some modules</span>
@@ -4031,6 +4052,18 @@
 </code></pre><h2 id="services-1">Services</h2>
 <p><a href="https://www.gnu.org/software/shepherd/manual/html_node/index.html">GNU Shepherd</a> is a service management system for GNU Guix.</p>
 <p>I previously used supervisor, but shepherd also seems pretty capable.</p>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>shepherd</td>
+</tr>
+</tbody>
+</table>
 <h3 id="music">Music</h3>
 <table>
 <thead>
@@ -4390,6 +4423,11 @@
 <tr>
 <td>desktop-misc</td>
 <td>android-file-transfer</td>
+<td></td>
+</tr>
+<tr>
+<td>desktop-misc</td>
+<td>mcron</td>
 <td></td>
 </tr>
 </tbody>
