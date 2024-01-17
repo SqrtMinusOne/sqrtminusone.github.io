@@ -350,8 +350,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#00f">load</span> <span style="color:#19177c">custom-file</span> <span style="color:#19177c">&#39;noerror</span>)
 </span></span></code></pre></div><h4 id="authinfo">authinfo</h4>
 <p>Use only the gpg-encrypted version of the file.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">auth-source-debug</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">auth-sources</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/.authinfo&#34;</span>))
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">auth-source-debug</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">auth-sources</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/.authinfo.gpg&#34;</span>))
 </span></span></code></pre></div><h4 id="private-config">Private config</h4>
 <p>I have some variables which I don&rsquo;t commit to the repo, e.g. my current location. They are stored in <code>private.el</code></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">private-file</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;private.el&#34;</span> <span style="color:#19177c">user-emacs-directory</span>)))
@@ -989,6 +989,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;magit</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;M&#34;</span> <span style="color:#19177c">&#39;magit-file-dispatch</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;forge</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">magit-blame-styles</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">headings</span>
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">heading-format</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;%-20a %C %s\n&#34;</span>))
@@ -997,15 +998,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">lines</span>
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">show-lines</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">show-message</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))))
-</span></span></code></pre></div><p><a href="https://github.com/magit/forge">forge</a> provides integration with forges, such as GitHub and GitLab.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">forge</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">magit</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;forge-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;gitlab.etu.ru&#34;</span>
-</span></span><span style="display:flex;"><span>			      <span style="color:#ba2121">&#34;gitlab.etu.ru/api/v4&#34;</span>
-</span></span><span style="display:flex;"><span>			      <span style="color:#ba2121">&#34;gitlab.etu.ru&#34;</span>
-</span></span><span style="display:flex;"><span>			      <span style="color:#19177c">forge-gitlab-repository</span>)))
 </span></span></code></pre></div><p><a href="https://github.com/emacsorphanage/git-gutter">git-gutter</a> is a package which shows git changes for each line (added/changed/deleted lines).</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">git-gutter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -1016,6 +1008,66 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">git-timemachine</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">git-timemachine</span>))
+</span></span></code></pre></div><h4 id="forge-and-code-review">Forge and code-review</h4>
+<p><a href="https://github.com/magit/forge">forge</a> provides integration with forges, such as GitHub and GitLab.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">forge</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">magit</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;forge-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;gitlab.etu.ru&#34;</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#ba2121">&#34;gitlab.etu.ru/api/v4&#34;</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#ba2121">&#34;gitlab.etu.ru&#34;</span>
+</span></span><span style="display:flex;"><span>			      <span style="color:#19177c">forge-gitlab-repository</span>)))
+</span></span></code></pre></div><p><code>forge</code> depends on a package called <a href="https://github.com/magit/ghub">ghub</a>. I don&rsquo;t like that it uses <code>auth-source</code> to store the token so I&rsquo;ll advise it to use <code>password-store</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/password-store-get-field</span> (<span style="color:#19177c">entry</span> <span style="color:#19177c">field</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">field</span> (<span style="color:#19177c">password-store-get-field</span> <span style="color:#19177c">entry</span> <span style="color:#19177c">field</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">field</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/password-store-get-field</span> <span style="color:#19177c">entry</span> <span style="color:#19177c">field</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghub--token</span> (<span style="color:#19177c">host</span> <span style="color:#19177c">username</span> <span style="color:#19177c">package</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">nocreate</span> <span style="color:#19177c">forge</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#008000">or</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">host</span> <span style="color:#ba2121">&#34;gitlab.etu.ru/api/v4&#34;</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">equal</span> <span style="color:#19177c">host</span> <span style="color:#ba2121">&#34;gitlab.etu.ru/api&#34;</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">equal</span> <span style="color:#19177c">username</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">my/password-store-get-field</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#ba2121">&#34;Job/Digital/Infrastructure/gitlab.etu.ru&#34;</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s-token&#34;</span> <span style="color:#19177c">package</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#800">t</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Don&#39;t know token: %s %s %s&#34;</span> <span style="color:#19177c">host</span> <span style="color:#19177c">username</span> <span style="color:#19177c">package</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ghub</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ghub--token</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghub--token</span>))
+</span></span></code></pre></div><p><a href="https://github.com/wandersoncferreira/code-review">code-review</a> is a package that implements code review in Emacs. The main branch is broken, <a href="https://github.com/wandersoncferreira/code-review/pull/246">but this PR</a> works.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">code-review</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;phelrine/code-review&#34;</span> <span style="color:#008000">:branch</span> <span style="color:#ba2121">&#34;fix/closql-update&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">forge</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">code-review-auth-login-marker</span> <span style="color:#19177c">&#39;forge</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">code-review-gitlab-base-url</span> <span style="color:#ba2121">&#34;gitlab.etu.ru&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">code-review-gitlab-host</span> <span style="color:#ba2121">&#34;gitlab.etu.ru/api&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">code-review-gitlab-graphql-host</span> <span style="color:#ba2121">&#34;gitlab.etu.ru/api&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">code-review-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-comment-add-or-edit</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gr&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-reload</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-transient-api</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-comment-code-suggestion</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-submit-single-diff-comment-at-point</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;TAB&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">magit-section-toggle</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">forge-topic-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-forge-pr-at-point</span>))
+</span></span></code></pre></div><p>Fix issue <a href="https://github.com/wandersoncferreira/code-review/issues/253">253</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/code-review-comment-quit</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Quit the comment window.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">magit-mode-quit-window</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">get-buffer</span> <span style="color:#19177c">code-review-buffer-name</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">code-review-comment-cursor-pos</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">code-review-comment-reset-global-vars</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;code-review</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">code-review-comment-quit</span> <span style="color:#008000">:override</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/code-review-comment-quit</span>))
 </span></span></code></pre></div><h4 id="editorconfig">Editorconfig</h4>
 <p>Editorconfig support for Emacs.</p>
 <p>References:</p>
@@ -1552,6 +1604,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">current-prefix-arg</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/regenerate-desktop</span>)))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/switch-theme</span> <span style="color:#19177c">&#39;ef-duo-light</span>)
+</span></span></code></pre></div><h5 id="extending-current-theme">Extending current theme</h5>
+<p>Colors that aren&rsquo;t set in themes.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;transient</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">transient-key-exit</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;dark-red</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">transient-key-noop</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;grey</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">transient-key-return</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;yellow</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">transient-key-stay</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;green</span>))))
 </span></span></code></pre></div><h4 id="dim-inactive-buffers">Dim inactive buffers</h4>
 <p>Dim inactive buffers.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">auto-dim-other-buffers</span>
@@ -6058,10 +6118,17 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">file-remote-p</span> (<span style="color:#008000">or</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">default-directory</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">dir</span>)))
 </span></span></code></pre></div><p><code>editorconfig</code>. This lovely package looks for <code>.editorconfig</code> in the file tree.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;editorconfig</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span> (<span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">filename</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">apply</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;editorconfig</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig-apply</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--disabled-for-filename</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>))
+</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--advice-find-file-noselect</span> <span style="color:#008000">:around</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span>))
 </span></span></code></pre></div><p><code>all-the-icons-dired</code> runs <code>test</code> on every file in the directory.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;all-the-icons-dired</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired-mode</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
@@ -6420,7 +6487,7 @@ Some other optimization settings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/eshell-last-command-start-time</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-starship-prompt</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">cmd</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;TERM=xterm starship prompt --status=%d --cmd-duration=%d&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">cmd</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;TERM=xterm starship prompt --status=%d --cmd-duration=%d --logical-path=%s&#34;</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">eshell-last-command-status</span>
 </span></span><span style="display:flex;"><span>		     (<span style="color:#008000">if</span> <span style="color:#19177c">my/eshell-last-command-start-time</span>
 </span></span><span style="display:flex;"><span>			 (<span style="color:#008000">let</span> ((<span style="color:#19177c">delta</span> (<span style="color:#00f">float-time</span>
@@ -6429,7 +6496,8 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>					<span style="color:#19177c">my/eshell-last-command-start-time</span>))))
 </span></span><span style="display:flex;"><span>			   (<span style="color:#008000">setq</span> <span style="color:#19177c">my/eshell-last-command-start-time</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>			   (<span style="color:#00f">round</span> (<span style="color:#00f">*</span> <span style="color:#19177c">delta</span> <span style="color:#666">1000</span>)))
-</span></span><span style="display:flex;"><span>		       <span style="color:#666">0</span>))))
+</span></span><span style="display:flex;"><span>		       <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">default-directory</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-temp-buffer</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">call-process</span> <span style="color:#ba2121">&#34;bash&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;-c&#34;</span> <span style="color:#19177c">cmd</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">thread-first</span> <span style="color:#ba2121">&#34;\n&#34;</span>
@@ -6648,6 +6716,12 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">root</span> (<span style="color:#19177c">projectile-project-root</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">eshell/cd</span> <span style="color:#19177c">root</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Not in a project&#34;</span>)))
+</span></span></code></pre></div><h5 id="tramp-compatiblity">TRAMP compatiblity</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-maybe-configure-for-tramp</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">default-directory</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-maybe-configure-for-tramp</span>)
 </span></span></code></pre></div><h5 id="global-keybindings">Global keybindings</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -10251,6 +10325,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
           <ul>
             <li><a href="#projectile">Projectile</a></li>
             <li><a href="#git-and-magit">Git &amp; Magit</a></li>
+            <li><a href="#forge-and-code-review">Forge and code-review</a></li>
             <li><a href="#editorconfig">Editorconfig</a></li>
             <li><a href="#editing-files">Editing files</a></li>
             <li><a href="#deadgrep">Deadgrep</a></li>
