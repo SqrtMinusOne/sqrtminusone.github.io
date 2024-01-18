@@ -929,8 +929,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">visual-fill-column-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;visual-fill-column-mode-hook</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#008000">setq</span> <span style="color:#19177c">visual-fill-column-center-text</span> <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; How did it get here?</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (add-hook &#39;visual-fill-column-mode-hook</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;           (lambda () (setq visual-fill-column-center-text t)))</span>
+</span></span><span style="display:flex;"><span>  )
 </span></span></code></pre></div><h5 id="accents">Accents</h5>
 <p>Input accented characters.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">accent</span>
@@ -1291,6 +1293,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wakatime-ignore-exit-codes</span> <span style="color:#666">&#39;</span>(<span style="color:#666">0</span> <span style="color:#666">1</span> <span style="color:#666">102</span> <span style="color:#666">112</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;wakatime-init</span> <span style="color:#008000">:after</span> (<span style="color:#008000">lambda</span> () (<span style="color:#008000">setq</span> <span style="color:#19177c">wakatime-cli-path</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/bin/wakatime-cli&#34;</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#ba2121">&#34;~/.wakatime.cfg&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">wakatime-api-key</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;awk &#39;/api-key/{print $NF}&#39; ~/.wakatime.cfg&#34;</span>))))
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq wakatime-cli-path (executable-find &#34;wakatime&#34;))</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">global-wakatime-mode</span>))
 </span></span></code></pre></div><h4 id="activitywatch">ActivityWatch</h4>
@@ -8681,6 +8687,7 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>			     <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;fg</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-emoji-use-images</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-chat-fill-column</span> <span style="color:#666">80</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-root-mode-map</span> <span style="color:#19177c">telega-chat-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -8720,13 +8727,15 @@ Some other optimization settings:</p>
 </span></span></code></pre></div><p>Configuring company backends for the chat buffer, as recommended in the manual:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-chat-setup</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">set</span> (<span style="color:#00f">make-local-variable</span> <span style="color:#19177c">&#39;company-backends</span>)
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">append</span> (<span style="color:#00f">list</span> <span style="color:#19177c">telega-emoji-company-backend</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">append</span> (<span style="color:#00f">list</span> <span style="color:#19177c">&#39;telega-company-emoji</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-username</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-hashtag</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-markdown-precode</span>)
 </span></span><span style="display:flex;"><span>	       (<span style="color:#008000">when</span> (<span style="color:#19177c">telega-chat-bot-p</span> <span style="color:#19177c">telega-chatbuf--chat</span>)
 </span></span><span style="display:flex;"><span>		 <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-company-botcmd</span>))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">company-mode</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">company-mode</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">setopt</span> <span style="color:#19177c">visual-fill-column-width</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">+</span> <span style="color:#19177c">telega-chat-fill-column</span> <span style="color:#666">4</span>)))
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-chat-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-chat-setup</span>)
 </span></span></code></pre></div><p>And custom online status. By default it marks you online when the Emacs frame is active, but I use EXWM, so I change that to when <code>telega.el</code> buffer is active. Otherwise, I&rsquo;m online all the time.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-online-status</span> ()
