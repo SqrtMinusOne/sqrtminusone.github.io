@@ -1801,7 +1801,12 @@
 </span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">ct-edit-lab-l-inc</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">color</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">my/alpha-for-light</span>))
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">acc</span>))
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">acc</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> (<span style="color:#00f">cons</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;dark-%s&#34;</span> <span style="color:#19177c">name</span>)
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">ct-edit-lab-l-dec</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">color</span>
+</span></span><span style="display:flex;"><span>		     <span style="color:#19177c">my/alpha-for-light</span>))
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">acc</span>) )
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">acc</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;black&#34;</span> <span style="color:#ba2121">&#34;red&#34;</span> <span style="color:#ba2121">&#34;green&#34;</span> <span style="color:#ba2121">&#34;yellow&#34;</span> <span style="color:#ba2121">&#34;blue&#34;</span> <span style="color:#ba2121">&#34;magenta&#34;</span> <span style="color:#ba2121">&#34;cyan&#34;</span> <span style="color:#ba2121">&#34;white&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:initial-value</span> <span style="color:#800">nil</span>))
@@ -1870,20 +1875,26 @@
 <td>+</td>
 </tr>
 <tr>
-<td>15</td>
-<td>temperature</td>
-<td>light-cyan</td>
-<td>+</td>
-</tr>
-<tr>
-<td>9</td>
-<td>battery</td>
+<td>16</td>
+<td>nvidia</td>
 <td>light-cyan</td>
 <td>+</td>
 </tr>
 <tr>
 <td>3</td>
 <td>cpu</td>
+<td>cyan</td>
+<td>+</td>
+</tr>
+<tr>
+<td>15</td>
+<td>temperature</td>
+<td>cyan</td>
+<td>+</td>
+</tr>
+<tr>
+<td>9</td>
+<td>battery</td>
 <td>cyan</td>
 <td>+</td>
 </tr>
@@ -1968,6 +1979,26 @@
 <tr>
 <td>DP-1</td>
 <td>battery</td>
+</tr>
+<tr>
+<td>eDP</td>
+<td>nvidia</td>
+</tr>
+<tr>
+<td>eDP-1</td>
+<td>nvidia</td>
+</tr>
+<tr>
+<td>DVI-D-0</td>
+<td>nvidia</td>
+</tr>
+<tr>
+<td>HDMI-A-0</td>
+<td>nvidia</td>
+</tr>
+<tr>
+<td>HDMI-1</td>
+<td>nvidia</td>
 </tr>
 </tbody>
 </table>
@@ -2363,6 +2394,18 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">label</span> <span style="color:#666">=</span> <span style="color:#ba2121">%percentage%%</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;cpu&#34;)&gt;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
+</span></span></code></pre></div><h4 id="nvidia">nvidia</h4>
+<p>Display NVIDIA usage with nvidia-smi</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvidia-smi --query-gpu<span style="color:#666">=</span>utilization.gpu,power.draw,temperature.gpu,memory.used --format<span style="color:#666">=</span>csv,noheader | sed -s <span style="color:#ba2121">&#39;s/ %/%/;s/W, [0-9]\+/&amp;°C/;s/,/  /g&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/nvidia]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">custom/script</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">exec</span> <span style="color:#666">=</span> <span style="color:#ba2121">/home/pavel/bin/polybar/nvidia.sh</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format</span> <span style="color:#666">=</span> <span style="color:#ba2121"> &lt;label&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">; tail = true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-background</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;get-polybar-bg(module=&#34;nvidia&#34;)&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
 </span></span></code></pre></div><h4 id="ram-memory">ram-memory</h4>
 <p>RAM usage</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/ram-memory]</span>
@@ -2633,6 +2676,8 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[module/temperature]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">internal/temperature</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">interval</span> <span style="color:#666">=</span> <span style="color:#ba2121">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">hwmon-path</span> <span style="color:#666">=</span> <span style="color:#ba2121">/sys/devices/platform/coretemp.0/hwmon/hwmon2/temp1_input</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;label&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">format-foreground</span> <span style="color:#666">=</span> <span style="color:#ba2121">${colors.foreground}</span>
@@ -3851,6 +3896,11 @@
 </tr>
 <tr>
 <td>dev</td>
+<td>dnsmasq</td>
+<td></td>
+</tr>
+<tr>
+<td>dev</td>
 <td>git-filter-repo</td>
 <td></td>
 </tr>
@@ -3957,6 +4007,11 @@
 <tr>
 <td>dev</td>
 <td>python-chess</td>
+<td></td>
+</tr>
+<tr>
+<td>dev</td>
+<td>python-cairosvg</td>
 <td></td>
 </tr>
 </tbody>
@@ -4587,6 +4642,7 @@
             <li><a href="#pulseaudio">pulseaudio</a></li>
             <li><a href="#mpd">mpd</a></li>
             <li><a href="#cpu">cpu</a></li>
+            <li><a href="#nvidia">nvidia</a></li>
             <li><a href="#ram-memory">ram-memory</a></li>
             <li><a href="#swap-memory">swap-memory</a></li>
             <li><a href="#network">network</a></li>
