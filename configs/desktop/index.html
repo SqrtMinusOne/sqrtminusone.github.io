@@ -923,6 +923,9 @@
 </span></span><span style="display:flex;"><span>	(<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;&lt;XF86AudioPause&gt;&#34;</span>) <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/app-command</span> <span style="color:#ba2121">&#34;mpc pause&#34;</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;&lt;print&gt;&#34;</span>) <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/app-command</span> <span style="color:#ba2121">&#34;flameshot gui&#34;</span>))
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; Input method</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;M-\\&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">my/toggle-input-method</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic">;; Switch workspace</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-q&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">my/exwm-switch-to-other-monitor</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#666">,</span>(<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;s-w&#34;</span>) <span style="color:#666">.</span> <span style="color:#19177c">exwm-workspace-switch</span>)
@@ -958,11 +961,7 @@
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">exwm-input--update-global-prefix-keys</span>)))
 </span></span></code></pre></div><h4 id="app-shortcuts">App shortcuts</h4>
 <p>A <del>transient</del> hydra for shortcuts for the most frequent apps.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/run-in-background</span> (<span style="color:#19177c">command</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">command-parts</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">command</span> <span style="color:#ba2121">&#34;[ ]+&#34;</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;call-process</span> <span style="color:#666">`</span>(<span style="color:#666">,</span>(<span style="color:#00f">car</span> <span style="color:#19177c">command-parts</span>) <span style="color:#800">nil</span> <span style="color:#666">0</span> <span style="color:#800">nil</span> <span style="color:#666">,@</span>(<span style="color:#00f">cdr</span> <span style="color:#19177c">command-parts</span>)))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">defhydra</span> <span style="color:#19177c">my/exwm-apps-hydra</span> (<span style="color:#008000">:color</span> <span style="color:#19177c">blue</span> <span style="color:#008000">:hint</span> <span style="color:#800">nil</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">defhydra</span> <span style="color:#19177c">my/exwm-apps-hydra</span> (<span style="color:#008000">:color</span> <span style="color:#19177c">blue</span> <span style="color:#008000">:hint</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">^Apps^
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">_t_: Terminal (Alacritty)

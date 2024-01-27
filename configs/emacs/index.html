@@ -360,6 +360,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>By default Emacs and its packages create a lot files in <code>.emacs.d</code> and in other places. <a href="https://github.com/emacscollective/no-littering">no-littering</a> is a collective effort to redirect all of that to two folders in <code>user-emacs-directory</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">no-littering</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><h3 id="helper-functions">Helper functions</h3>
+<h4 id="run-command-in-background">Run command in background</h4>
+<p>I think I&rsquo;ve copied it from somewhere.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/run-in-background</span> (<span style="color:#19177c">command</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">command-parts</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">command</span> <span style="color:#ba2121">&#34;[ ]+&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;call-process</span> <span style="color:#666">`</span>(<span style="color:#666">,</span>(<span style="color:#00f">car</span> <span style="color:#19177c">command-parts</span>) <span style="color:#800">nil</span> <span style="color:#666">0</span> <span style="color:#800">nil</span> <span style="color:#666">,@</span>(<span style="color:#00f">cdr</span> <span style="color:#19177c">command-parts</span>)))))
 </span></span></code></pre></div><h3 id="prevent-emacs-from-closing">Prevent Emacs from closing</h3>
 <p>This adds a confirmation to avoid accidental Emacs closing.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">confirm-kill-emacs</span> <span style="color:#19177c">&#39;y-or-n-p</span>)
@@ -910,10 +916,32 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">default-input-method</span> <span style="color:#ba2121">&#34;russian-computer&#34;</span>)
+</span></span></code></pre></div><p>I also want to call <code>xkb-switch</code> in EXWM buffers with the same keybindig.</p>
+<table>
+<thead>
+<tr>
+<th>Guix dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xkb-switch</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/toggle-input-method</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;exwm-mode</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;xkb-switch -n&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">equal</span> (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;xkb-switch -p&#34;</span>))
+</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34;us&#34;</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">toggle-input-method</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;xkb-switch -s us&#34;</span>))))
 </span></span></code></pre></div><p><code>M-x delete-horizontal-space</code> doesn&rsquo;t feel that useful to me.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;global</span>
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-\\&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">toggle-input-method</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;M-\\&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/toggle-input-method</span>)
 </span></span></code></pre></div><h4 id="other-small-packages">Other small packages</h4>
 <h5 id="managing-parentheses--smartparens">Managing parentheses (smartparens)</h5>
 <p>A minor mode to deal with pairs. Its functionality overlaps with evil-surround, but smartparens provides the most comfortable way to do stuff like automatically insert pairs.</p>
@@ -936,14 +964,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><h5 id="accents">Accents</h5>
 <p>Input accented characters.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">accent</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/accent&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gs&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">accent-menu</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gs&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">accent-company</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#00f">insert</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-n&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">accent-menu</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-n&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">accent-company</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">accent-menu</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
@@ -2239,7 +2267,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dap-ui-expressions</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-dap-ui-expressions-buffer</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dap-ui-sessions</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-dap-ui-sessions-buffer</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;dap-ui-breakpoints</span> <span style="color:#008000">:after</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/fix-dap-ui-breakpoints-buffer</span>))
-</span></span></code></pre></div><h5 id="helper-functions">Helper functions</h5>
+</span></span></code></pre></div><h5 id="helper-functions-1">Helper functions</h5>
 <p>Some helper functions that make debugging with DAP easier.</p>
 <p>DAP seems to mess with window parameters from time to time. This function clears &ldquo;bad&rdquo; window parameters.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/clear-bad-window-parameters</span> ()
@@ -3018,7 +3046,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">aggressive-indent-mode</span>)
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-hook &#39;emacs-lisp-mode-hook #&#39;smartparens-strict-mode)</span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lispy-mode</span>)
-</span></span></code></pre></div><h5 id="helper-functions-1">Helper functions</h5>
+</span></span></code></pre></div><h5 id="helper-functions-2">Helper functions</h5>
 <p>Remove all advice from function. Source: <a href="https://emacs.stackexchange.com/questions/24657/unadvise-a-function-remove-all-advice-from-it">https://emacs.stackexchange.com/questions/24657/unadvise-a-function-remove-all-advice-from-it</a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">advice-unadvice</span> (<span style="color:#19177c">sym</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Remove all advices from symbol SYM.&#34;</span>
@@ -6508,8 +6536,9 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;ll&#34;</span> <span style="color:#ba2121">&#34;ls -la&#34;</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;e&#34;</span> <span style="color:#ba2121">&#34;find-file&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-banner-message</span> <span style="color:#ba2121">&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-visual-commands</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>(<span style="color:#666">,@</span><span style="color:#19177c">eshell-visual-commands</span> <span style="color:#ba2121">&#34;jless&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (setq eshell-visual-commands</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;;       `(,@eshell-visual-commands &#34;jless&#34;))</span>
+</span></span><span style="display:flex;"><span>  )
 </span></span></code></pre></div><h5 id="ui-2">UI</h5>
 <p>I&rsquo;ll try reusing the <a href="https://starship.rs/">Starship</a> prompt.</p>
 <p>The executable can print out the text of the prompt, but somehow it refuses when there&rsquo;s <code>TERM=dumb</code> in the environment. I also advise Eshell to record the execution time for the <code>--cmd-duration</code> flag.</p>
@@ -9702,18 +9731,9 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-nav</span> (<span style="color:#19177c">arg</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">func</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Navigate the filesystem index.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ARG is the prefix argument.  It modifies the behavior of the
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">command as follows:
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- If not in an indexed directory, or in an indexed directory with no
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  indexed children:
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - nil: Select an indexed directory.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(4): Select an indexed directory, and select a child indexed
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    directory if available.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- If in an indexed directory with indexed children (a project):
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - nil: Select another indexed directory from the project.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(4): Select a top-level indexed directory (the same as nil for
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">    the previous case).
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - &#39;(16): The same as &#39;(4) for the previous case.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If ARG is nil, navigate all levels sequentially from the top one.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If ARG is &#39;(4), select another directory from the same level.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FUNC is the function to call with the selected path.  It defaults
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">to </span><span style="color:#19177c">`dired&#39;</span><span style="color:#ba2121"> if used interactively.&#34;</span>
@@ -9722,25 +9742,32 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">current-nav</span> (<span style="color:#19177c">my/index--nav-find-path</span>
 </span></span><span style="display:flex;"><span>		       <span style="color:#19177c">nav</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">default-directory</span>)))
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">current-child-navs</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">current-nav</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span>
-</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">null</span> <span style="color:#19177c">arg</span>) (<span style="color:#00f">null</span> <span style="color:#19177c">current-child-navs</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) <span style="color:#19177c">current-child-navs</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span>
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">func</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>)))
-</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) (<span style="color:#00f">null</span> <span style="color:#19177c">current-child-navs</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">16</span>)) <span style="color:#19177c">current-child-navs</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">selected</span> (<span style="color:#19177c">my/index--nav-find-path</span>
-</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">nav</span>
-</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>))))
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">if-let</span> (<span style="color:#19177c">child-navs</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">selected</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">child-navs</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">selected</span>)))))
-</span></span><span style="display:flex;"><span>     ((<span style="color:#008000">and</span> (<span style="color:#00f">null</span> <span style="color:#19177c">arg</span>) <span style="color:#19177c">current-child-navs</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">current-child-navs</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span> ((<span style="color:#00f">null</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">let</span> ((<span style="color:#19177c">selected</span> (<span style="color:#19177c">my/index--nav-find-path</span>
+</span></span><span style="display:flex;"><span>			    <span style="color:#19177c">nav</span>
+</span></span><span style="display:flex;"><span>			    (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>))))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">if-let</span> (<span style="color:#19177c">child-navs</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:child-navs</span> <span style="color:#19177c">selected</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">child-navs</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">selected</span>)))))
+</span></span><span style="display:flex;"><span>	  ((<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) <span style="color:#19177c">current-child-navs</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">current-child-navs</span>)))
+</span></span><span style="display:flex;"><span>	  ((<span style="color:#008000">and</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)) (<span style="color:#00f">null</span> <span style="color:#19177c">current-child-navs</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">funcall</span> <span style="color:#19177c">func</span> (<span style="color:#19177c">my/index--nav-prompt</span> <span style="color:#19177c">nav</span>))))))
 </span></span></code></pre></div><p>Finally, something that I can bind to a key.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index-nav</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-nav-with-select-file</span> (<span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">current-prefix-arg</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/index-nav</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">arg</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">dir</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">projectile-find-file</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;i&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;index&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index-nav</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index-commands-sync</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/index-nav-with-select-file</span>)
 </span></span></code></pre></div><h4 id="export-tree">Export tree</h4>
 <p>I also need the tree to use in my <code>sqrt-data</code>, so let&rsquo;s export this to JSON.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index-export</span> (<span style="color:#19177c">file</span>)
@@ -10360,6 +10387,11 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#authinfo">authinfo</a></li>
             <li><a href="#private-config">Private config</a></li>
             <li><a href="#no-littering">No littering</a></li>
+          </ul>
+        </li>
+        <li><a href="#helper-functions">Helper functions</a>
+          <ul>
+            <li><a href="#run-command-in-background">Run command in background</a></li>
           </ul>
         </li>
         <li><a href="#prevent-emacs-from-closing">Prevent Emacs from closing</a></li>
