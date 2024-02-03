@@ -4354,6 +4354,30 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-clock-in-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-clock-set-total-clocked</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-clock-out-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-clock-set-total-clocked</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-clock-cancel-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-clock-set-total-clocked</span>)
+</span></span></code></pre></div><h6 id="switch-between-recently-clocked-items">Switch between recently clocked items</h6>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-clock-recent</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">entries</span> (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>		    <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">element-with-markers</span>
+</span></span><span style="display:flex;"><span>		    <span style="color:#008000">:from</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>		    <span style="color:#008000">:where</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">clocked</span> <span style="color:#008000">:from</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">entries-data</span> (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">e</span>)
+</span></span><span style="display:flex;"><span>				 (<span style="color:#00f">cons</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">e</span>) <span style="color:#19177c">e</span>))
+</span></span><span style="display:flex;"><span>			       <span style="color:#19177c">entries</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">entries</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No recently clocked entries!&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">entries-data</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">entry</span> (<span style="color:#19177c">alist-get</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Entry: &#34;</span> <span style="color:#19177c">entries-data</span>)
+</span></span><span style="display:flex;"><span>			     <span style="color:#19177c">entries-data</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">marker</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">entry</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">pop-to-buffer-same-window</span> (<span style="color:#00f">marker-buffer</span> <span style="color:#19177c">marker</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">marker</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;SPC&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-clock-recent</span>))
 </span></span></code></pre></div><h5 id="org-super-agenda">org-super-agenda</h5>
 <p><a href="https://github.com/alphapapa/org-super-agenda">org-super-agenda</a> is alphapapa&rsquo;s extension to group items in org-agenda. I don&rsquo;t use it instead of the standard agenda, but <code>org-ql</code> uses it for some of its views.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-super-agenda</span>
