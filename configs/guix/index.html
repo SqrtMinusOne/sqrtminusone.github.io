@@ -655,7 +655,11 @@
 <p>The script itself:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Adding default route to </span><span style="color:#19177c">$route_vpn_gateway</span><span style="color:#ba2121"> with /0 mask...&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#19177c">IP</span><span style="color:#666">=</span>/run/current-system/profile/sbin/ip
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;/run/current-system/profile/sbin/ip&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">IP</span><span style="color:#666">=</span>/run/current-system/profile/sbin/ip
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">IP</span><span style="color:#666">=</span>/usr/bin/ip
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">$IP</span> route add default via <span style="color:#19177c">$route_vpn_gateway</span>
 </span></span><span style="display:flex;"><span>

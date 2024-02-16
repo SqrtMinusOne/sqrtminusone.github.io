@@ -426,7 +426,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">erase-buffer</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/dump-bindings-recursive</span> <span style="color:#19177c">prefix</span> <span style="color:#666">0</span> <span style="color:#19177c">buffer</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">buffer-read-only</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">switch-to-buffer-other-window</span> <span style="color:#19177c">buffer</span>)))
 </span></span></code></pre></div><h4 id="evil">Evil</h4>
 <p>An entire ecosystem of packages that emulates the main features of Vim. Probably the best vim emulator out there.</p>
@@ -525,28 +526,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">vterm</span> <span style="color:#19177c">flycheck</span> <span style="color:#19177c">profiler</span> <span style="color:#19177c">cider</span> <span style="color:#19177c">explain-pause-mode</span> <span style="color:#19177c">notmuch</span> <span style="color:#19177c">custom</span>
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">xref</span> <span style="color:#19177c">eshell</span> <span style="color:#19177c">helpful</span> <span style="color:#19177c">compile</span> <span style="color:#19177c">comint</span> <span style="color:#19177c">git-timemachine</span> <span style="color:#19177c">magit</span> <span style="color:#19177c">prodigy</span>
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">slime</span> <span style="color:#19177c">forge</span> <span style="color:#19177c">deadgrep</span> <span style="color:#19177c">vc-annonate</span> <span style="color:#19177c">telega</span> <span style="color:#19177c">doc-view</span> <span style="color:#19177c">gnus</span> <span style="color:#19177c">outline</span>)))
-</span></span></code></pre></div><h4 id="avy">Avy</h4>
-<p><a href="https://github.com/abo-abo/avy">Avy</a> is a package that helps navigate Emacs in a tree-like manner.</p>
-<p>References:</p>
-<ul>
-<li><a href="https://karthinks.com/software/avy-can-do-anything/">Avy can do anything</a></li>
-</ul>
-<!--listend-->
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">avy</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">avy-timeout-seconds</span> <span style="color:#666">0.5</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">avy-ignored-modes</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">image-mode</span> <span style="color:#19177c">doc-view-mode</span> <span style="color:#19177c">pdf-view-mode</span> <span style="color:#19177c">exwm-mode</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#800">nil</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;--&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-char-2</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-=&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-symbol-1</span>))
-</span></span></code></pre></div><p><a href="https://github.com/abo-abo/ace-link">ace-link</a> is a package to jump to links with avy.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ace-link</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ace-link-info</span> <span style="color:#19177c">ace-link-help</span> <span style="color:#19177c">ace-link-woman</span> <span style="color:#19177c">ace-link-eww</span>))
 </span></span></code></pre></div><h4 id="my-keybindings">My keybindings</h4>
 <p>Various keybinding settings that I can&rsquo;t put anywhere else.</p>
 <h5 id="escape-key">Escape key</h5>
@@ -968,7 +947,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><h5 id="accents">Accents</h5>
 <p>Input accented characters.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">accent</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/accent&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;eliascotto/accent&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -986,12 +965,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">popup-previous</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">accent-custom</span> <span style="color:#666">&#39;</span>((<span style="color:#19177c">a</span> (<span style="color:#19177c">ā</span>))
 </span></span><span style="display:flex;"><span>			(<span style="color:#19177c">A</span> (<span style="color:#19177c">Ā</span>)))))
-</span></span></code></pre></div><h5 id="binky">binky</h5>
-<p>Experimenting with this package.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">binky</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">binky-binky</span>))
 </span></span></code></pre></div><h3 id="working-with-projects">Working with projects</h3>
 <p>Packages related to managing projects.</p>
 <p>I used to have <a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> here, but in the end decided that dired with <a href="https://github.com/jojojames/dired-sidebar">dired-sidebar</a> does a better job. Dired has its separate section in &ldquo;Applications&rdquo;.</p>
@@ -1133,6 +1106,90 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">deadgrep</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deadgrep--buffer</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deadgrep-fix-buffer-advice</span>))
+</span></span></code></pre></div><h3 id="navigation">Navigation</h3>
+<p>Things to navigate in Emacs.</p>
+<h4 id="registers">Registers</h4>
+<p>References:</p>
+<ul>
+<li><a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html">Registers (GNU Emacs Manual)</a></li>
+</ul>
+<p>Somehow there&rsquo;s no built-in function to clear a register.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/register-clear</span> (<span style="color:#19177c">register</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">register-read-with-preview</span> <span style="color:#ba2121">&#34;Clear register: &#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">register-alist</span> (<span style="color:#00f">delq</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">register</span> <span style="color:#19177c">register-alist</span>) <span style="color:#19177c">register-alist</span>)))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">register-preview-delay</span> <span style="color:#19177c">which-key-idle-delay</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;g&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;registers &amp; marks&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copy-to-register</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;p&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">insert-register</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">point-to-register</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/register-clear</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">jump-to-register</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;R&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">counsel-register</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;w&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">window-configuration-to-register</span>)
+</span></span></code></pre></div><h4 id="marks">Marks</h4>
+<p>References:</p>
+<ul>
+<li><a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Mark.html">The Mark and the Region (GNU Emacs Manual)</a></li>
+<li><a href="https://www.masteringemacs.org/article/fixing-mark-commands-transient-mark-mode">Fixing the mark commands in transient mark mode - Mastering Emacs</a></li>
+</ul>
+<p><code>transient-mark-mode</code> makes using marks for navigation a bit more cumbersome, but I&rsquo;m not sure of potential side effects of disabling it&hellip; As of now, I want only to push a mark without activating it, so here&rsquo;s a function for that (taken from Mickey Peterson&rsquo;s article):</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/push-mark-no-activate</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Pushes </span><span style="color:#19177c">`point&#39;</span><span style="color:#ba2121"> to </span><span style="color:#19177c">`mark-ring&#39;</span><span style="color:#ba2121"> and does not activate the region
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">push-mark</span> (<span style="color:#00f">point</span>) <span style="color:#800">t</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Pushed mark to ring&#34;</span>))
+</span></span></code></pre></div><p>Also a function to clear the current mark ring.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mark-ring-clear</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mark-ring</span> <span style="color:#800">nil</span>))
+</span></span></code></pre></div><p>A variant of <code>counsel-mark-ring</code> to work with <code>global-mark-ring</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/counsel-global-mark-ring</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Browse </span><span style="color:#19177c">`mark-ring&#39;</span><span style="color:#ba2121"> interactively.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Obeys </span><span style="color:#19177c">`widen-automatically&#39;</span><span style="color:#ba2121">, which see.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">counsel--mark-ring-calling-point</span> (<span style="color:#00f">point</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">marks</span> (<span style="color:#00f">copy-sequence</span> <span style="color:#19177c">global-mark-ring</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">marks</span> (<span style="color:#19177c">delete-dups</span> <span style="color:#19177c">marks</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">candidates</span> (<span style="color:#19177c">counsel-mark--get-candidates</span> <span style="color:#19177c">marks</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> <span style="color:#19177c">candidates</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">counsel-mark--ivy-read</span> <span style="color:#ba2121">&#34;Mark: &#34;</span> <span style="color:#19177c">candidates</span> <span style="color:#19177c">&#39;my/counsel-global-mark-ring</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Mark ring is empty&#34;</span>))))
+</span></span></code></pre></div><p>Keybindings:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;g&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;g&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">counsel-mark-ring</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;G&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/counsel-global-mark-ring</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mark-ring-clear</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;global</span>
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;C-SPC&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/push-mark-no-activate</span>)
+</span></span></code></pre></div><h4 id="avy">Avy</h4>
+<p><a href="https://github.com/abo-abo/avy">Avy</a> is a package that helps navigate Emacs in a tree-like manner.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://karthinks.com/software/avy-can-do-anything/">Avy can do anything</a></li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">avy</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">avy-timeout-seconds</span> <span style="color:#666">0.5</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">avy-ignored-modes</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">image-mode</span> <span style="color:#19177c">doc-view-mode</span> <span style="color:#19177c">pdf-view-mode</span> <span style="color:#19177c">exwm-mode</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;--&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-char-2</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-=&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-symbol-1</span>))
+</span></span></code></pre></div><p><a href="https://github.com/abo-abo/ace-link">ace-link</a> is a package to jump to links with avy.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ace-link</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ace-link-info</span> <span style="color:#19177c">ace-link-help</span> <span style="color:#19177c">ace-link-woman</span> <span style="color:#19177c">ace-link-eww</span>))
 </span></span></code></pre></div><h3 id="completion">Completion</h3>
 <h4 id="ivy-counsel-swiper">Ivy, counsel, swiper</h4>
 <p>Minibuffer completion tools for Emacs.</p>
@@ -4417,8 +4474,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-ql-regexp-part-ts-time</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">optional</span> <span style="color:#ba2121">&#34;-&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">1</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>) <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">repeat</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ov&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ql-view</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;oq&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ql-search</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;v&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ql-view</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-ql-search</span>))
 </span></span></code></pre></div><h6 id="add-multi-argument-to-the-property-predicate">Add :multi argument to the property predicate</h6>
 <p>I use the property predicate to find tasks linked to meetings, and I want to link some tasks to multiple meetings. So I modified the property predicate to support that.</p>
 <p>I can&rsquo;t contribute that back to <code>org-ql</code> because it requires copyright assignment, so here it is.</p>
@@ -9641,7 +9700,7 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">symlink-commands</span> (<span style="color:#19177c">my/index-get-symlink-commands</span> <span style="color:#19177c">tree</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/index--commands-display</span> (<span style="color:#00f">append</span> <span style="color:#19177c">mega-commands</span> <span style="color:#19177c">folder-commands</span> <span style="color:#19177c">git-commands</span>
 </span></span><span style="display:flex;"><span>					  <span style="color:#19177c">waka-commands</span> <span style="color:#19177c">symlink-commands</span>)))))
-</span></span></code></pre></div><h4 id="navigation">Navigation</h4>
+</span></span></code></pre></div><h4 id="navigation-1">Navigation</h4>
 <p>The last piece is the navigation interface.</p>
 <p>Of course, plain dired does the job fine, thanks to the relatively low-depth filesystem structure. But I still want a navigation interface like <code>M-x projectile-switch-project</code>.</p>
 <h5 id="navigation-data">Navigation data</h5>
@@ -10449,7 +10508,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#general-dot-el">general.el</a></li>
             <li><a href="#which-key">which-key</a></li>
             <li><a href="#evil">Evil</a></li>
-            <li><a href="#avy">Avy</a></li>
             <li><a href="#my-keybindings">My keybindings</a></li>
           </ul>
         </li>
@@ -10472,6 +10530,13 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#editorconfig">Editorconfig</a></li>
             <li><a href="#editing-files">Editing files</a></li>
             <li><a href="#deadgrep">Deadgrep</a></li>
+          </ul>
+        </li>
+        <li><a href="#navigation">Navigation</a>
+          <ul>
+            <li><a href="#registers">Registers</a></li>
+            <li><a href="#marks">Marks</a></li>
+            <li><a href="#avy">Avy</a></li>
           </ul>
         </li>
         <li><a href="#completion">Completion</a>
@@ -10802,7 +10867,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#implementation">Implementation</a></li>
             <li><a href="#org-tree">Org tree</a></li>
             <li><a href="#commands">Commands</a></li>
-            <li><a href="#navigation">Navigation</a></li>
+            <li><a href="#navigation-1">Navigation</a></li>
             <li><a href="#export-tree">Export tree</a></li>
           </ul>
         </li>
