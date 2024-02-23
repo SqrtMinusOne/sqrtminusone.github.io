@@ -3518,6 +3518,22 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">doc-view-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doc-view-next-line-or-next-page</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doc-view-previous-line-or-previous-page</span>))
+</span></span></code></pre></div><h3 id="gnuplot">Gnuplot</h3>
+<p>Emacs integration for <a href="http://gnuplot.info/">gnuplot</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">gnuplot</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">gnuplot-mode</span> <span style="color:#19177c">gnuplot-make-buffer</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;auto-mode-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;\\.gp\\&#39;&#34;</span> <span style="color:#666">.</span> <span style="color:#19177c">gnuplot-mode</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;gnuplot-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c C-c&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">gnuplot-send-buffer-to-gnuplot</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;gnuplot-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">gnuplot-send-buffer-to-gnuplot</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;gnuplot-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>))
 </span></span></code></pre></div><h3 id="x509">x509</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">x509-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -10700,6 +10716,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#docview">DocView</a></li>
           </ul>
         </li>
+        <li><a href="#gnuplot">Gnuplot</a></li>
         <li><a href="#x509">x509</a></li>
         <li><a href="#java">Java</a></li>
         <li><a href="#go">Go</a></li>
