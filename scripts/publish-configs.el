@@ -124,7 +124,8 @@
         "reverso"
         "micromamba"
         "biome"
-        "org-clock-agg"))
+        "org-clock-agg"
+        "eshell-atuin"))
 
 (defun my/export-packages ()
   (cd (concat (vc-find-root default-directory ".git") "org/packages"))
