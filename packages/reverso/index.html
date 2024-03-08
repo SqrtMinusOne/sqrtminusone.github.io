@@ -83,7 +83,10 @@
             <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=reverso.el&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
             
         </h1>
-        <p>Emacs client for <a href="https://www.reverso.net/">Reverso</a>. The implemented features are:</p>
+        <figure><a href="https://melpa.org/#/reverso"><img src="https://melpa.org/packages/reverso-badge.svg"/></a>
+</figure>
+
+<p>Emacs client for <a href="https://www.reverso.net/">Reverso</a>. The implemented features are:</p>
 <ul>
 <li><a href="https://www.reverso.net/text-translation">Translation</a></li>
 <li><a href="https://context.reverso.net/translation/">Context</a> (AKA bilingual concordances)</li>
@@ -92,9 +95,9 @@
 <li><a href="https://conjugator.reverso.net/conjugation-english.html">Conjugation</a></li>
 </ul>
 <h2 id="installation">Installation</h2>
-<p>The package isn&rsquo;t yet available anywhere but in this repository. My preferred way for such cases is <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/radian-software/straight.el">straight.el</a>:</p>
+<p>The package is available on MELPA. Install it however you normally install packages, e.g. with <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/radian-software/straight.el">straight.el</a>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/reverso.el&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>Or <a href="https://tony-zorman.com/posts/use-package-vc.html">use-package with vc</a>, which works on Emacs 30 out-of-the-box.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">reverso</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:vc</span> (<span style="color:#008000">:url</span> <span style="color:#ba2121">&#34;https://github.com/SqrtMinusOne/reverso.el.git&#34;</span>))
@@ -185,13 +188,13 @@
 <p>Enable <code>reverso-history-mode</code> to keep history:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">reverso-history-mode</span>)
 </span></span></code></pre></div><p>I haven&rsquo;t implemented persistence yet, but I might in the future.</p>
-<p>After enabling the minor mode, <code>M-x reverso-history</code> or <code>M-x reverso h</code> will display recent commans. <code>RET</code> on shows the results of each command.</p>
+<p>After enabling the minor mode, <code>M-x reverso-history</code> or <code>M-x reverso h</code> will display recent commands. <code>RET</code> on shows the results of each command.</p>
 <h2 id="caveats">Caveats</h2>
-<p>Before proceeding further, here are some general caveats to be aware of.</p>
-<p>Firstly, the package uses a reverse-engineered API, so all the typical consequences apply, such as sudden irreparable breakages. Although I&rsquo;ve been using it for over a year, so&hellip; maybe not.</p>
-<p>Secondly, the limit on input size has been mentioned. The obvious is executing commands on a smaller region.</p>
-<p>Thirdly, there have been reports that Reverso dispatches <strong>IP bans</strong> to particularly enthusiastic users, so be cautious if you&rsquo;re sending lots of automated queries. This is also why I didn&rsquo;t implement running one command for multiple consecutive regions.</p>
-<p>Lastly, exercise caution with the content sent to the service. Avoid inadvertently sharing confidential information (like passwords) or anything that could be used against you in other ways. While the service claims to be <a href="https://www.reverso.net/privacy.aspx?lang=EN">GDPR-compliant</a>, we can&rsquo;t actually check that.</p>
+<p>Before proceeding further, here are some caveats to be aware of.</p>
+<p>First, the package uses a reverse-engineered API, so all the typical consequences apply, such as sudden irreparable breakages. Although I&rsquo;ve been using it for over a year, so&hellip; maybe not.</p>
+<p>Second, the limit on input size has been mentioned. The obvious workaround is executing commands on a smaller region.</p>
+<p>Third, there have been reports that Reverso dispatches <strong>IP bans</strong> to particularly enthusiastic users, so be cautious if you&rsquo;re sending lots of automated queries. This is also why I didn&rsquo;t implement running one command for multiple consecutive regions.</p>
+<p>Finally, exercise caution with the content sent to the service. Avoid inadvertently sharing confidential information (like passwords) or anything that could be used against you in other ways. While the service claims to be <a href="https://www.reverso.net/privacy.aspx?lang=EN">GDPR-compliant</a>, we can&rsquo;t actually check that.</p>
 <h2 id="customization">Customization</h2>
 <p>Run <code>M-x customize-group reverso</code> to view the available parameters. Here are a few.</p>
 <p>If you don&rsquo;t need all 17 languages, customize the <code>reverso-languages</code> variable to narrow down the list:</p>
