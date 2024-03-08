@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang=""><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>eshell-atuin</title>
+    <meta name="description" content="Freedom is a state of mind">
+    <meta name="author" content='SqrtMinusOne'>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/researcher.min.css">
+
+    
+        <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
+    
+
+    
+        
+    
+
+    <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
+
+</head>
+
+    <body><div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row text-nowrap p-0">
+        <a class="navbar-brand mx-0 mr-sm-auto" href="https://sqrtminusone.xyz/" title="SqrtMinusOne">
+          
+          SqrtMinusOne
+        </a>
+        <div class="navbar-nav flex-row flex-wrap justify-content-center">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/" title="Index">
+                        Index
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/posts/" title="Posts">
+                        Posts
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/configs/readme" title="Configs">
+                        Configs
+                    </a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/emacs-packages/" title="Emacs packages">
+                        Emacs packages
+                    </a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+<div id="content">
+<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<div class="root">
+    <h1 id="title-small-screen">
+        eshell-atuin
+        
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=eshell-atuin&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        
+    </h1>
+    <div class="container" id="actual-content">
+        <h1 id="title-large-screen" class="dotfiles-title">
+            eshell-atuin
+            
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=eshell-atuin&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            
+        </h1>
+        <p>Integrate <a href="https://www.gnu.org/software/emacs/manual/html_mono/eshell.html">eshell</a> with <a href="https://github.com/atuinsh/atuin">atuin</a>.</p>
+<p><code>atuin</code> stores shell history in a database, which allows for having the same history across multiple shells, sessions, and optionally across different machines. See the project page for the complete list of features.</p>
+<p>This package provides functionality to store and browse eshell history in <code>atuin</code>.</p>
+<h2 id="installation">Installation</h2>
+<p>The package isn&rsquo;t yet available anywhere but in this repository. My preferred way for such cases is <a href="https://github.com/jwiegley/use-package">use-package</a> and <a href="https://github.com/radian-software/straight.el">straight.el</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eshell-atuin</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/eshell-atuin&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">eshell</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">eshell-atuin-mode</span>))
+</span></span></code></pre></div><p>Alternatively, clone the repository, add it to the <code>load-path</code>, and <code>require</code> the package.</p>
+<h2 id="configuration">Configuration</h2>
+<p>If your <code>atuin</code> binary is located in a place unknown to <code>executable-find</code>, set the <code>atuin-executable</code> variable.</p>
+<p>If you are using a vertical completion system such as <a href="https://github.com/abo-abo/swiper">Ivy</a>, <a href="https://github.com/radian-software/selectrum">Selectrum</a>, etc., you can configure the completion interface, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-atuin-search-fields</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">time</span> <span style="color:#19177c">duration</span> <span style="color:#19177c">command</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-atuin-history-format</span> <span style="color:#ba2121">&#34;%-160c %t + %d&#34;</span>)
+</span></span></code></pre></div><p>The available flags are:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>atuin field (see <code>help atuin search</code>)</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%t</td>
+<td><code>time</code></td>
+<td><strong>+</strong></td>
+</tr>
+<tr>
+<td>%c</td>
+<td><code>command</code></td>
+<td><strong>+</strong></td>
+</tr>
+<tr>
+<td>%e</td>
+<td><code>exit</code></td>
+<td></td>
+</tr>
+<tr>
+<td>%d</td>
+<td><code>duration</code></td>
+<td></td>
+</tr>
+<tr>
+<td>%i</td>
+<td><code>directory</code></td>
+<td></td>
+</tr>
+<tr>
+<td>%u</td>
+<td><code>user</code></td>
+<td></td>
+</tr>
+<tr>
+<td>%h</td>
+<td><code>host</code></td>
+<td></td>
+</tr>
+<tr>
+<td>%r</td>
+<td><code>relativetime</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Format-Strings.html">(emacs) Custom Format Strings</a> for information on the general <code>format-spec</code> syntax.</p>
+<p>I suspect the package might be slow if your history has a lot of records (I haven&rsquo;t checked yet). In this case, it might be worth setting a limit:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-atuin-search-options</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;--exit&#34;</span> <span style="color:#ba2121">&#34;0&#34;</span> <span style="color:#ba2121">&#34;--limit&#34;</span> <span style="color:#ba2121">&#34;10000&#34;</span>))
+</span></span></code></pre></div><h2 id="usage">Usage</h2>
+<p>Enable <code>eshell-atuin-mode</code> to turn on storing eshell commands in <code>atuin</code>.</p>
+<p>Run <code>eshell-atuin-history</code> inside an <code>eshell</code> buffer to browse the saved history. Accepting the completion will insert the command.</p>
+<h2 id="implementation-notes">Implementation notes</h2>
+<p>I may have overengineered the package a bit to scale on lots of records.</p>
+<p>The package caches the results of <code>atuin search</code> in <code>eshell-atuin--history-cache</code> (which see on the algorithm), and updates the cache incrementally. A formatted string for each entry is created at the moment of addition; entries are additionally &ldquo;indexed&rdquo; by a hashmap to lookup &ldquo;raw&rdquo; commands by their formatted versions.</p>
+<p>So, the only places I see with the computational complexity of O(N), where N is the number of unique commands in <code>atuin</code>, are:</p>
+<ul>
+<li>populating the cache at the first run of <code>M-x eshell-atuin-history</code>;</li>
+<li>feeding the entirety of the cache to <code>completing-read</code> on each run of <code>M-x eshell-atuin-history</code>.</li>
+</ul>
+
+    </div>
+    <div class="table-of-contents">
+        <div class="table-of-contents-text">
+            <b><a href="#">Table of Contents</a></b>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#implementation-notes">Implementation notes</a></li>
+  </ul>
+</nav>
+        </div>
+        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+    </div>
+</div>
+
+        </div><div id="footer" class="mb-5">
+    <hr>
+    <div class="container text-center">
+        
+    </div>
+    
+    <div class="container text-center">
+        
+        
+        <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="Licensed under CC-BY 4.0"><small>Licensed under CC-BY 4.0</small></a>
+        
+        |
+        
+        
+        <a href="https://plausible.io/" title="Uses Plausible Analytics"><small>Uses Plausible Analytics</small></a>
+        
+        
+        <br>
+        
+        <a href="https://sqrtminusone.xyz/" title="Pavel Korytov, 2023"><small>Pavel Korytov, 2023</small></a>
+    </div>
+    
+</div>
+</body>
+</html>
