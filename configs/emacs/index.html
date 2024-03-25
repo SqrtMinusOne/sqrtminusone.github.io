@@ -258,19 +258,16 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">eval-when-compile</span> (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;use-package</span>))
 </span></span></code></pre></div><h3 id="variables-and-environment">Variables &amp; environment</h3>
 <p>This section is about optioning the Emacs config.</p>
-<p>The following is true if Emacs is meant to be used with TRAMP over slow ssh. Take a look at the <a href="#tramp">TRAMP</a> section for more details.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/slow-ssh</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">or</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">string=</span> (<span style="color:#19177c">getenv</span> <span style="color:#ba2121">&#34;IS_TRAMP&#34;</span>) <span style="color:#ba2121">&#34;true&#34;</span>)))
-</span></span></code></pre></div><p>The following is true is Emacs is run on a remote server where I don&rsquo;t need stuff like my org workflow</p>
+<p>The following is true is Emacs is run on a remote server where I don&rsquo;t need stuff like my org workflow</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/remote-server</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">or</span> (<span style="color:#19177c">string=</span> (<span style="color:#19177c">getenv</span> <span style="color:#ba2121">&#34;IS_REMOTE&#34;</span>) <span style="color:#ba2121">&#34;true&#34;</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;dev-digital&#34;</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;viridian&#34;</span>)))
 </span></span></code></pre></div><p>And the following is true if Emacs is run from termux on Android.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/is-termux</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>) <span style="color:#ba2121">&#34;com.termux&#34;</span> (<span style="color:#00f">*</span> <span style="color:#19177c">nonl</span>)) (<span style="color:#19177c">getenv</span> <span style="color:#ba2121">&#34;HOME&#34;</span>)))
-</span></span></code></pre></div><p>Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). To do that, I set the following environment variable:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;IS_EMACS&#34;</span> <span style="color:#ba2121">&#34;true&#34;</span>)
+</span></span></code></pre></div><p>Also, I sometimes need to know if a program is running inside Emacs (say, inside a terminal emulator). And sometimes I need to know if I&rsquo;m running a nested Emacs session. To do that, I set the following environment variable:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/nested-emacs</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">getenv</span> <span style="color:#ba2121">&#34;IS_EMACS&#34;</span>) <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;IS_EMACS&#34;</span> <span style="color:#ba2121">&#34;true&#34;</span>)
 </span></span></code></pre></div><p>Finally, I want to have a minimal Emacs config for debugging purposes. This has just straight.el, use-packages, and evil.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;minimal&gt;&gt;</span>
 </span></span></code></pre></div><p>To launch Emacs with this config, run</p>
@@ -697,7 +694,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><p>This script is being run from the <a href="/configs/desktop/#i3wm">i3 configuration</a>.</p>
 <p>For this to work, we need to make sure that Emacs starts a server, so here is an expression to do just that:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/remote-server</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/nested-emacs</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-init-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">server-start</span>))
 </span></span></code></pre></div><p>And here is a simple macro to do the Emacs -&gt; i3 part:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">i3-msg</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
@@ -970,7 +967,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>I used to have <a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> here, but in the end decided that dired with <a href="https://github.com/jojojames/dired-sidebar">dired-sidebar</a> does a better job. Dired has its separate section in &ldquo;Applications&rdquo;.</p>
 <h4 id="projectile">Projectile</h4>
 <p><a href="https://github.com/bbatsov/projectile">Projectile</a> gives a bunch of useful functions for managing projects, like finding files within a project, fuzzy-find, replace, etc.</p>
-<p><code>defadvice</code> is meant to speed projectile up with TRAMP a bit.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">projectile</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -1013,7 +1009,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><p><a href="https://github.com/emacsorphanage/git-gutter">git-gutter</a> is shows git changes for each line (added/changed/deleted lines).</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">git-gutter</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">global-git-gutter-mode</span> <span style="color:#666">+1</span>))
 </span></span></code></pre></div><p><a href="https://github.com/emacsmirror/git-timemachine">git-timemachine</a> allows visiting previous versions of a file.</p>
@@ -1137,7 +1132,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">editorconfig</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">my/slow-ssh</span> (<span style="color:#19177c">editorconfig-mode</span> <span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;editorconfig-indentation-alist</span>
 </span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#19177c">emmet-mode</span> <span style="color:#19177c">emmet-indentation</span>)))
 </span></span></code></pre></div><h4 id="editing-files">Editing files</h4>
@@ -2079,7 +2073,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <h5 id="setup">Setup</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lsp-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/slow-ssh</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#19177c">my/remote-server</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#19177c">my/remote-server</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">typescript-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">lsp</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">js-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">lsp</span>)
@@ -3134,7 +3128,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">reverso-languages</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">russian</span> <span style="color:#19177c">english</span> <span style="color:#19177c">german</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">reverso-history-mode</span>))
 </span></span></code></pre></div><h3 id="lisp">Lisp</h3>
-<figure><img src="/ox-hugo/lisp_cycles.png"/>
+<figure><img src="/ox-hugo/lisp_cycles.png">
 </figure>
 
 <h4 id="meta-lisp">Meta Lisp</h4>
@@ -3255,7 +3249,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lsp-pyright</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>			 (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;lsp-pyright</span>)
 </span></span><span style="display:flex;"><span>			 (<span style="color:#008000">setq-local</span> <span style="color:#19177c">lsp-pyright-python-executable-cmd</span> (<span style="color:#19177c">my/get-pipenv-python</span>))
@@ -3269,7 +3262,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">pipenv</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">python-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">pipenv-mode</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">pipenv-projectile-after-switch-function</span>
@@ -3464,10 +3456,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <h4 id="json">JSON</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">json-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.json\\&#39;&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;json-mode</span>))
 </span></span></code></pre></div><h4 id="csv">CSV</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">csv-mode</span>
@@ -3590,7 +3581,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;gnuplot-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>))
 </span></span></code></pre></div><h3 id="x509">x509</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">x509-mode</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;jobbflykt/x509-mode&#34;</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:build</span> (<span style="color:#008000">:not</span> <span style="color:#19177c">native-compile</span>)))
 </span></span></code></pre></div><h3 id="java">Java</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lsp-java</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -5449,6 +5441,27 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-save-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-roam--count-overlay-make-all</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-roam--count-overlay-remove-all</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;after-save-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-roam--count-overlay-remove-all</span> <span style="color:#800">t</span>)))
+</span></span></code></pre></div><h5 id="extract-all-links-from-page">Extract all links from page</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-roam-extract-links</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*roam-links*&#34;</span>))
+</span></span><span style="display:flex;"><span>	<span style="color:#19177c">elems</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-element-map</span> (<span style="color:#19177c">org-element-parse-buffer</span>) <span style="color:#19177c">&#39;link</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">string-equal</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:type</span> <span style="color:#19177c">elem</span>) <span style="color:#ba2121">&#34;id&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">push</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">elems</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">elem</span> <span style="color:#19177c">in</span> <span style="color:#19177c">elems</span>
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">for</span> <span style="color:#19177c">file-name</span> <span style="color:#00f">=</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">file-name-nondirectory</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">caar</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">org-roam-db-query</span>
+</span></span><span style="display:flex;"><span>		  [<span style="color:#008000">:select</span> [<span style="color:#19177c">file</span>]
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:from</span> <span style="color:#19177c">nodes</span>
+</span></span><span style="display:flex;"><span>			   <span style="color:#008000">:where</span> (<span style="color:#00f">=</span> <span style="color:#19177c">id</span> <span style="color:#19177c">$s1</span>)]
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">elem</span>))))
+</span></span><span style="display:flex;"><span>	       <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> <span style="color:#19177c">file-name</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">switch-to-buffer</span> <span style="color:#19177c">buffer</span>)))
 </span></span></code></pre></div><h5 id="org-roam-ui">Org Roam UI</h5>
 <p>A browser frontend to visualize the Roam database as a graph.</p>
 <p>Actually, I don&rsquo;t find this quite as useful as structure nodes, because over time my graph grew somewhat convoluted. But it looks impressive.</p>
@@ -5861,6 +5874,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ox-ipynb</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;jkitchin/ox-ipynb&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">ox</span>)
 </span></span></code></pre></div><h4 id="html-export">Html export</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">htmlize</span>
@@ -6154,7 +6168,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">dired</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;ad&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;ad&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;aD&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-bookmark-open</span>)
 </span></span></code></pre></div><h4 id="addons-1">Addons</h4>
 <p>I used to use <a href="https://www.emacswiki.org/emacs/DiredPlus">dired+</a>, which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">diredfl</span>
@@ -6236,7 +6251,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </table>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">all-the-icons-dired</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/slow-ssh</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">display-graphic-p</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">display-graphic-p</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">dired-mode</span> <span style="color:#666">.</span> (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>			(<span style="color:#008000">unless</span> (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;/gnu/store&#34;</span> <span style="color:#19177c">default-directory</span>)
 </span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">all-the-icons-dired-mode</span>))))
@@ -6263,7 +6278,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">dired-git-info</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">dired</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymap</span> <span style="color:#19177c">&#39;dired-mode-map</span>
@@ -6312,68 +6326,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;dired-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-goto-project-root</span>))
-</span></span></code></pre></div><h4 id="tramp-1">TRAMP</h4>
-<p>TRAMP is a package that provides remote editing capacities. It is particularly useful for remote server management.</p>
-<p>Unfortunately, many Emacs packages don&rsquo;t exactly moderate their rate of filesystem operations, and on TRAMP over network each operation adds additional overhead, so&hellip; it can get pretty slow. To debug these issues, set the following variable to 6:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">tramp-verbose</span> <span style="color:#666">6</span>)
-</span></span></code></pre></div><p>I used to launch a separate Emacs instance for TRAMP, which had some of these packages disabled via environment variables, my <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html">advice</a>-fu got better since then.</p>
-<p>So, to determine if the buffer is in TRAMP:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-p</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">buffer</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">file-remote-p</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#00f">buffer-local-value</span> <span style="color:#19177c">&#39;default-directory</span> (<span style="color:#008000">or</span> <span style="color:#19177c">buffer</span> (<span style="color:#00f">current-buffer</span>)))))
-</span></span></code></pre></div><p>And advice to disable a function for TRAMP-related buffers:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-void-if-tramp</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">my/tramp-p</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-void-if-file-is-tramp</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">file-remote-p</span> (<span style="color:#008000">or</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">default-directory</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">dir</span>)))
-</span></span></code></pre></div><p><code>editorconfig</code>. This lovely package looks for <code>.editorconfig</code> in the file tree.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span> (<span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">filename</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">apply</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;editorconfig</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig-apply</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--disabled-for-filename</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--advice-find-file-noselect</span> <span style="color:#008000">:around</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span>))
-</span></span></code></pre></div><p><code>all-the-icons-dired</code> runs <code>test</code> on every file in the directory.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;all-the-icons-dired</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired-mode</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
-</span></span></code></pre></div><p><code>projectile</code> looks for <code>.git</code>, <code>.svn</code>, etc. to find the project root. Maybe I&rsquo;ll make a more economic implementation if I need one.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;projectile</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">projectile-project-root</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>))
-</span></span></code></pre></div><p><code>lsp</code> does a whole lot of stuff. It probably can be used with TRAMP on faster connections, but not in my case.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;lsp</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lsp</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lsp-deferred</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
-</span></span></code></pre></div><p><code>git-gutter</code> runs <code>git</code> a lot of times.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;git-gutter</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">git-gutter--turn-on</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
-</span></span></code></pre></div><p>At any rate, it&rsquo;s usable, although not perfect.
-Some other optimization settings:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">remote-file-name-inhibit-cache</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">vc-ignore-dir-regexp</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\\(%s\\)\\|\\(%s\\)&#34;</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">vc-ignore-dir-regexp</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">tramp-file-name-regexp</span>))
-</span></span></code></pre></div><p>Set the default shell to <code>bin/bash</code> for TRAMP or on a remote server.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/slow-ssh</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">explicit-shell-file-name</span> <span style="color:#ba2121">&#34;/bin/bash&#34;</span>))
-</span></span></code></pre></div><p>Also, here is a hack to make TRAMP find <code>ls</code> on Guix:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;tramp</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">tramp-remote-path</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">append</span> <span style="color:#19177c">tramp-remote-path</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#666">&#39;</span>(<span style="color:#19177c">tramp-own-remote-path</span>))))
 </span></span></code></pre></div><h4 id="bookmarks">Bookmarks</h4>
 <p>A simple bookmark list for Dired, mainly to use with TRAMP. I may look into a proper bookmarking system later.</p>
 <p>Bookmarks are listed in the <a href=".emacs.d/private.el">private.el</a> file, which has an expression like this:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>(setq my/dired-bookmarks
-</span></span><span style="display:flex;"><span>      &#39;((&#34;sudo&#34; . &#34;/sudo::/&#34;)))
+</span></span><span style="display:flex;"><span>      &#39;((&#34;HOME&#34; . &#34;~&#34;)
+</span></span><span style="display:flex;"><span>        (&#34;sudo&#34; . &#34;/sudo::/&#34;)))
 </span></span></code></pre></div><p>The file itself is encrypted with yadm.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dired-bookmark-open</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -6508,6 +6466,77 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;notmuch-show-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#19177c">&#39;normal</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;. s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-save-to-dired</span>))
+</span></span></code></pre></div><h3 id="tramp">TRAMP</h3>
+<p>TRAMP is a package that provides remote editing capacities. It is particularly useful for remote server management.</p>
+<h4 id="general-settings-4">General settings</h4>
+<p>Some settings I copy-pasted from somewhere:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">remote-file-name-inhibit-cache</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">vc-ignore-dir-regexp</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\\(%s\\)\\|\\(%s\\)&#34;</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">vc-ignore-dir-regexp</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">tramp-file-name-regexp</span>))
+</span></span></code></pre></div><p>Also, a hack to make TRAMP find <code>ls</code> on Guix:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;tramp</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">tramp-remote-path</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">append</span> <span style="color:#19177c">tramp-remote-path</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#666">&#39;</span>(<span style="color:#19177c">tramp-own-remote-path</span>))))
+</span></span></code></pre></div><p>Set the default shell to <code>bin/bash</code> for TRAMP or on a remote server.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">explicit-shell-file-name</span> <span style="color:#ba2121">&#34;/bin/bash&#34;</span>))
+</span></span></code></pre></div><h4 id="package-optimizations">Package optimizations</h4>
+<p>Unfortunately, many Emacs packages don&rsquo;t exactly moderate their rate of filesystem operations, and on TRAMP over network each operation adds additional overhead, so&hellip; it can get pretty slow. To debug these issues, set the following variable to 6:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">tramp-verbose</span> <span style="color:#666">0</span>)
+</span></span></code></pre></div><p>I used to launch a separate Emacs instance for TRAMP to disable these packages with an environment variable, but my <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html">advice</a>-fu got better since then.</p>
+<p>So, to determine if the buffer is in TRAMP:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-p</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">file-remote-p</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">buffer-local-value</span> <span style="color:#19177c">&#39;default-directory</span> (<span style="color:#008000">or</span> <span style="color:#19177c">buffer</span> (<span style="color:#00f">current-buffer</span>)))))
+</span></span></code></pre></div><p>And advice to disable a function for TRAMP-related buffers:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-void-if-tramp</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">my/tramp-p</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tramp-void-if-file-is-tramp</span> (<span style="color:#19177c">fun</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">dir</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">file-remote-p</span> (<span style="color:#008000">or</span> <span style="color:#19177c">dir</span> <span style="color:#19177c">default-directory</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">funcall</span> <span style="color:#19177c">fun</span> <span style="color:#19177c">dir</span>)))
+</span></span></code></pre></div><p><code>editorconfig</code>. This lovely package looks for <code>.editorconfig</code> in the file tree.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span> (<span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">filename</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">apply</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">f</span> <span style="color:#19177c">f1</span> <span style="color:#19177c">filename</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;editorconfig</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig-apply</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--disabled-for-filename</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">editorconfig--advice-find-file-noselect</span> <span style="color:#008000">:around</span>
+</span></span><span style="display:flex;"><span>	      <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/editorconfig--advice-find-file-noselect-around</span>))
+</span></span></code></pre></div><p><code>all-the-icons-dired</code> runs <code>test</code> on every file in the directory.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;all-the-icons-dired</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">all-the-icons-dired-mode</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
+</span></span></code></pre></div><p><code>projectile</code> looks for <code>.git</code>, <code>.svn</code>, etc. to find the project root. Maybe I&rsquo;ll make a more economic implementation if I need one.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;projectile</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">projectile-project-root</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-file-is-tramp</span>))
+</span></span></code></pre></div><p><code>lsp</code> does a whole lot of stuff. It probably can be used with TRAMP on faster connections, but not in my case.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;lsp-mode</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lsp</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">lsp-deferred</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
+</span></span></code></pre></div><p><code>git-gutter</code> runs <code>git</code> a lot of times.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;git-gutter</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">git-gutter--turn-on</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
+</span></span></code></pre></div><p><code>dired-git-info</code> is runs <code>git</code> a lot of times.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;dired-git-info</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-git-info-mode</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
+</span></span></code></pre></div><p><code>pipenv</code>. Don&rsquo;t remember what was the deal with this one.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;pipenv</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">pipenv-mode</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
+</span></span></code></pre></div><p><code>eshell</code> works pretty well, but <code>company-mode</code> gets pretty slow.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/shell-maybe-configure-for-tramp</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/tramp-p</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/shell-maybe-configure-for-tramp</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;shell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/shell-maybe-configure-for-tramp</span>)
 </span></span></code></pre></div><h3 id="shells-terminals">Shells / Terminals</h3>
 <h4 id="vterm">vterm</h4>
 <p><a href="https://github.com/akermu/emacs-libvterm">vterm</a> is a terminal emulator for Emacs.</p>
@@ -6943,12 +6972,6 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">root</span> (<span style="color:#19177c">projectile-project-root</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">eshell/cd</span> <span style="color:#19177c">root</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Not in a project&#34;</span>)))
-</span></span></code></pre></div><h5 id="tramp-compatiblity">TRAMP compatiblity</h5>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/eshell-maybe-configure-for-tramp</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">default-directory</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#800">nil</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/eshell-maybe-configure-for-tramp</span>)
 </span></span></code></pre></div><h5 id="global-keybindings">Global keybindings</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
@@ -6960,10 +6983,12 @@ Some other optimization settings:</p>
 <p>Still, I&rsquo;ll probably switch to <code>eat</code> if <code>eshell</code> doesn&rsquo;t work for me.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">eat</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;*.el&#34;</span> (<span style="color:#ba2121">&#34;term&#34;</span> <span style="color:#ba2121">&#34;term/*.el&#34;</span>) <span style="color:#ba2121">&#34;*.texi&#34;</span>
-</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34;*.ti&#34;</span> (<span style="color:#ba2121">&#34;terminfo/e&#34;</span> <span style="color:#ba2121">&#34;terminfo/e/*&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#ba2121">&#34;terminfo/65&#34;</span> <span style="color:#ba2121">&#34;terminfo/65/*&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#ba2121">&#34;integration&#34;</span> <span style="color:#ba2121">&#34;integration/*&#34;</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;.dir-locals.el&#34;</span> <span style="color:#ba2121">&#34;*-tests.el&#34;</span>))))
+</span></span><span style="display:flex;"><span>		     <span style="color:#ba2121">&#34;*.ti&#34;</span> (<span style="color:#ba2121">&#34;terminfo/e&#34;</span> <span style="color:#ba2121">&#34;terminfo/e/*&#34;</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#ba2121">&#34;terminfo/65&#34;</span> <span style="color:#ba2121">&#34;terminfo/65/*&#34;</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#ba2121">&#34;integration&#34;</span> <span style="color:#ba2121">&#34;integration/*&#34;</span>)
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">:exclude</span> <span style="color:#ba2121">&#34;.dir-locals.el&#34;</span> <span style="color:#ba2121">&#34;*-tests.el&#34;</span>)))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">eat-shell</span> <span style="color:#ba2121">&#34;/bin/bash&#34;</span>))
 </span></span></code></pre></div><p>Yeah, and <code>eat</code> has integration with eshell too.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;eshell-load-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">eat-eshell-mode</span>)
 </span></span></code></pre></div><h4 id="shell-1">shell</h4>
@@ -7027,7 +7052,7 @@ Some other optimization settings:</p>
 </span></span></code></pre></div><h3 id="elfeed">Elfeed</h3>
 <p><a href="https://github.com/skeeto/elfeed">elfeed</a> is one of the most popular Emacs packages, and it&rsquo;s also one in which I ended up investing a lot of effort.</p>
 <p>There&rsquo;s a lot of stuff in this section, so it&rsquo;s here and not in &ldquo;Internet and Multimedia&rdquo;.</p>
-<h4 id="general-settings-4">General settings</h4>
+<h4 id="general-settings-5">General settings</h4>
 <p>The advice there sets <code>shr-use-fonts</code> to nil while rendering HTML, so the <code>elfeed-show</code> buffer will use monospace font.</p>
 <p>Using my own fork until the modifications are merged into master.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">elfeed</span>
@@ -10113,6 +10138,16 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">calendar-latitude</span> <span style="color:#666">59.9375</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">calendar-longitude</span> <span style="color:#666">30.308611</span>)
+</span></span></code></pre></div><h3 id="calc">Calc</h3>
+<p><a href="https://github.com/kickingvegas/Casual">casual</a> is a transient interface for the built-in calc.el</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">casual</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;kickingvegas/Casual&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">calc</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;calc-mode-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">casual-main-menu</span>))
 </span></span></code></pre></div><h3 id="chess">Chess</h3>
 <h4 id="chess-dot-el">chess.el</h4>
 <p>chess.el is a package by John Wiegley.</p>
@@ -10219,8 +10254,8 @@ Some other optimization settings:</p>
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;violet&#34;</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;eminence&#34;</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">string=</span> (<span style="color:#00f">system-name</span>) <span style="color:#ba2121">&#34;iris&#34;</span>))
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> <span style="color:#19177c">my/slow-ssh</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> <span style="color:#19177c">my/remote-server</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">not</span> <span style="color:#19177c">my/nested-emacs</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">elcord-buffer-details-format-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elcord-buffer-details-format-functions</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;elcord--try-update-presence</span> <span style="color:#008000">:filter-args</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elcord-update-presence-mask-advice</span>)
@@ -10890,9 +10925,14 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#addons-1">Addons</a></li>
             <li><a href="#subdirectories">Subdirectories</a></li>
             <li><a href="#other-functions">Other functions</a></li>
-            <li><a href="#tramp-1">TRAMP</a></li>
             <li><a href="#bookmarks">Bookmarks</a></li>
             <li><a href="#integrations-1">Integrations</a></li>
+          </ul>
+        </li>
+        <li><a href="#tramp">TRAMP</a>
+          <ul>
+            <li><a href="#general-settings-4">General settings</a></li>
+            <li><a href="#package-optimizations">Package optimizations</a></li>
           </ul>
         </li>
         <li><a href="#shells-terminals">Shells / Terminals</a>
@@ -10912,7 +10952,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         </li>
         <li><a href="#elfeed">Elfeed</a>
           <ul>
-            <li><a href="#general-settings-4">General settings</a></li>
+            <li><a href="#general-settings-5">General settings</a></li>
             <li><a href="#some-additions">Some additions</a></li>
             <li><a href="#custom-faces">Custom faces</a></li>
             <li><a href="#elfeed-summary">elfeed-summary</a></li>
@@ -10975,6 +11015,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#calendar">Calendar</a></li>
           </ul>
         </li>
+        <li><a href="#calc">Calc</a></li>
         <li><a href="#chess">Chess</a>
           <ul>
             <li><a href="#chess-dot-el">chess.el</a></li>
