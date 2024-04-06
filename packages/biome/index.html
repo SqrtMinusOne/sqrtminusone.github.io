@@ -96,6 +96,13 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">biome</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>Or clone the repository, add it to <code>load-path</code>, and <code>require</code> the package.</p>
+<h3 id="issues-with-termux">Issues with termux?</h3>
+<p>I&rsquo;ve been trying to run this package on termux and had some issues.</p>
+<p>First, for some reason <code>request.el</code> throws the successfully parsed response as error. Use this as a workaround:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">biome-api-try-parse-error-as-response</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Second, somehow the <code>&lt;tab&gt;</code> is not the same as the <code>&lt;TAB&gt;</code> key. The following might be neccessary:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">biome-query-tab-key</span> <span style="color:#ba2121">&#34;&lt;TAB&gt;&#34;</span>)
+</span></span></code></pre></div><p>Be sure to add that before the package initialization.</p>
 <h2 id="usage">Usage</h2>
 <p>The main entry point is <code>M-x biome</code>. Each item under &ldquo;Open Meteo Data&rdquo; corresponds to a particular endpoint of the service. For instance, <code>M-x biome ww</code> is a generic weather forecast. Check out the <a href="https://open-meteo.com/en/docs">API docs</a> for more detailed descriptions.</p>
 <figure><img src="/biome-img/root.png">
@@ -179,7 +186,11 @@
             <b><a href="#">Table of Contents</a></b>
             <nav id="TableOfContents">
   <ul>
-    <li><a href="#installation">Installation</a></li>
+    <li><a href="#installation">Installation</a>
+      <ul>
+        <li><a href="#issues-with-termux">Issues with termux?</a></li>
+      </ul>
+    </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#more-configuration">More configuration</a></li>
     <li><a href="#composite-queries">Composite queries</a></li>

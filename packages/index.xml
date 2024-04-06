@@ -14,7 +14,10 @@
       
       <guid>https://sqrtminusone.xyz/packages/eshell-atuin/</guid>
       <content type="html">
-        &lt;p&gt;Integrate &lt;a href=&#34;https://www.gnu.org/software/emacs/manual/html_mono/eshell.html&#34;&gt;eshell&lt;/a&gt; with &lt;a href=&#34;https://github.com/atuinsh/atuin&#34;&gt;atuin&lt;/a&gt;.&lt;/p&gt;
+        &lt;figure&gt;&lt;a href=&#34;https://melpa.org/#/eshell-atuin&#34;&gt;&lt;img src=&#34;https://melpa.org/packages/eshell-atuin-badge.svg&#34;&gt;&lt;/a&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Integrate &lt;a href=&#34;https://www.gnu.org/software/emacs/manual/html_mono/eshell.html&#34;&gt;eshell&lt;/a&gt; with &lt;a href=&#34;https://github.com/atuinsh/atuin&#34;&gt;atuin&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;atuin&lt;/code&gt; stores shell history in a database, which allows for having the same history across multiple shells, sessions, and optionally across different machines. See the project page for the complete list of features.&lt;/p&gt;
 &lt;p&gt;This package provides functionality to store and browse eshell history in &lt;code&gt;atuin&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;installation&#34;&gt;Installation&lt;/h2&gt;
@@ -360,6 +363,13 @@ Customize the formatting of these records through &lt;code&gt;org-clock-agg-elem
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-emacs-lisp&#34; data-lang=&#34;emacs-lisp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#008000&#34;&gt;use-package&lt;/span&gt; &lt;span style=&#34;color:#19177c&#34;&gt;biome&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#008000&#34;&gt;:straight&lt;/span&gt; &lt;span style=&#34;color:#800&#34;&gt;t&lt;/span&gt;)
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Or clone the repository, add it to &lt;code&gt;load-path&lt;/code&gt;, and &lt;code&gt;require&lt;/code&gt; the package.&lt;/p&gt;
+&lt;h3 id=&#34;issues-with-termux&#34;&gt;Issues with termux?&lt;/h3&gt;
+&lt;p&gt;I&amp;rsquo;ve been trying to run this package on termux and had some issues.&lt;/p&gt;
+&lt;p&gt;First, for some reason &lt;code&gt;request.el&lt;/code&gt; throws the successfully parsed response as error. Use this as a workaround:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-emacs-lisp&#34; data-lang=&#34;emacs-lisp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#008000&#34;&gt;setq&lt;/span&gt; &lt;span style=&#34;color:#19177c&#34;&gt;biome-api-try-parse-error-as-response&lt;/span&gt; &lt;span style=&#34;color:#800&#34;&gt;t&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Second, somehow the &lt;code&gt;&amp;lt;tab&amp;gt;&lt;/code&gt; is not the same as the &lt;code&gt;&amp;lt;TAB&amp;gt;&lt;/code&gt; key. The following might be neccessary:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-emacs-lisp&#34; data-lang=&#34;emacs-lisp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#008000&#34;&gt;setq&lt;/span&gt; &lt;span style=&#34;color:#19177c&#34;&gt;biome-query-tab-key&lt;/span&gt; &lt;span style=&#34;color:#ba2121&#34;&gt;&amp;#34;&amp;lt;TAB&amp;gt;&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Be sure to add that before the package initialization.&lt;/p&gt;
 &lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 &lt;p&gt;The main entry point is &lt;code&gt;M-x biome&lt;/code&gt;. Each item under &amp;ldquo;Open Meteo Data&amp;rdquo; corresponds to a particular endpoint of the service. For instance, &lt;code&gt;M-x biome ww&lt;/code&gt; is a generic weather forecast. Check out the &lt;a href=&#34;https://open-meteo.com/en/docs&#34;&gt;API docs&lt;/a&gt; for more detailed descriptions.&lt;/p&gt;
 &lt;figure&gt;&lt;img src=&#34;https://sqrtminusone.xyz/biome-img/root.png&#34;&gt;
