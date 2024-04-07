@@ -1222,7 +1222,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;g&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;g&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">counsel-mark-ring</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;G&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/counsel-global-mark-ring</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mark-ring-clear</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mark-ring-clear</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/push-mark-no-activate</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;global</span>
@@ -1761,7 +1762,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">load-theme</span> <span style="color:#19177c">theme</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">current-prefix-arg</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/regenerate-desktop</span>)))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/switch-theme</span> <span style="color:#19177c">&#39;ef-duo-light</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">if</span> <span style="color:#19177c">my/is-termux</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/switch-theme</span> <span style="color:#19177c">&#39;modus-operandi-tinted</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/switch-theme</span> <span style="color:#19177c">&#39;ef-duo-light</span>))
 </span></span></code></pre></div><h5 id="extending-current-theme">Extending current theme</h5>
 <p>Colors that aren&rsquo;t set in themes.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;transient</span>
@@ -6094,11 +6097,13 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <h4 id="noweb-evaluations">Noweb evaluations</h4>
 <p>One note is that by default running these commands will require the user to confirm evaluation of each code block. To avoid that, I set <code>org-confirm-babel-evaluate</code> to <code>nil</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-config-files</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;/home/pavel/Emacs.org&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;/home/pavel/Desktop.org&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;/home/pavel/Console.org&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;/home/pavel/Guix.org&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;/home/pavel/Mail.org&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#00f">#&#39;expand-file-name</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;~/Emacs.org&#34;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#ba2121">&#34;~/Desktop.org&#34;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#ba2121">&#34;~/Console.org&#34;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#ba2121">&#34;~/Guix.org&#34;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#ba2121">&#34;~/Mail.org&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#008000">lambda</span> ()
@@ -8936,7 +8941,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </table>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">telega</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">telega</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;a l&#34;</span> (<span style="color:#19177c">my/command-in-persp</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#666">3</span> (<span style="color:#19177c">telega</span>)))
@@ -8964,12 +8969,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-chat-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-image-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-webpage-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>))
-</span></span></code></pre></div><p>Building <code>telega-server</code> can create problems. It requires the latest version of <code>tdlib</code>, which isn&rsquo;t available anywhere, but I can inherit the Guix package definition.</p>
+</span></span></code></pre></div><p>Building <code>telega-server</code> can create problems. On Guix I can use the Guix package definition, on termux just build manually.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-server-build</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-server-libs-prefix</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">string-trim</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;guix build tdlib&#34;</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">if</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;guix&#34;</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;guix build tdlib&#34;</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/bin/td/build/res/usr/local&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">telega-server-build</span> <span style="color:#ba2121">&#34;CC=gcc&#34;</span>))
 </span></span></code></pre></div><p>Setting up the modeline. The default mode string doesn&rsquo;t look great with my other modeline modules, so I override that.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-load-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">telega-mode-line-mode</span>)
@@ -8987,6 +8994,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;]&#34;</span>))
 </span></span></code></pre></div><p>Configuring company backends for the chat buffer, as recommended in the manual:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-chat-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">set</span> (<span style="color:#00f">make-local-variable</span> <span style="color:#19177c">&#39;company-backends</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">append</span> (<span style="color:#00f">list</span> <span style="color:#19177c">&#39;telega-company-emoji</span>
 </span></span><span style="display:flex;"><span>		     <span style="color:#19177c">&#39;telega-company-username</span>
@@ -8996,7 +9004,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>		 <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-company-botcmd</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">company-mode</span> <span style="color:#666">1</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">setopt</span> <span style="color:#19177c">visual-fill-column-width</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">+</span> <span style="color:#19177c">telega-chat-fill-column</span> <span style="color:#666">4</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">+</span> <span style="color:#19177c">telega-chat-fill-column</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">if</span> (<span style="color:#19177c">display-graphic-p</span>) <span style="color:#666">4</span> <span style="color:#666">5</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">split-width-threshold</span> <span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-chat-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-chat-setup</span>)
 </span></span></code></pre></div><p>And custom online status. By default it marks you online when the Emacs frame is active, but I use EXWM, so I change that to when <code>telega.el</code> buffer is active. Otherwise, I&rsquo;m online all the time.</p>
