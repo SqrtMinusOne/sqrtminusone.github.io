@@ -189,9 +189,11 @@
 <p>Notmuch is an email indexer program, which handles labels in a way somewhat similar to Gmail. It also provides a frontend for Emacs, but it&rsquo;s not the only one available.</p>
 <h3 id="config">Config</h3>
 <p>Not much is going on here.</p>
-<p>First, the database path.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[database]</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">path</span><span style="color:#666">=</span><span style="color:#ba2121">/home/pavel/Mail</span>
+<p>First, the database path. It&rsquo;s different on desktop and termux.</p>
+<p><a id="code-snippet--get-maildir-path"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/Mail&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[database]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">path</span><span style="color:#666">=</span><span style="color:#ba2121">&lt;&lt;get-maildir-path()&gt;&gt;</span>
 </span></span></code></pre></div><p>My name and list of emails. It&rsquo;s not like it&rsquo;s a secret anyhow.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[user]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">name</span><span style="color:#666">=</span><span style="color:#ba2121">Pavel Korytov</span>
@@ -200,7 +202,8 @@
 </span></span></code></pre></div><p>A list of tags which will be added by <code>notmuch new</code> and directory names which will be ignored by <code>notmuch new</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[new]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">tags</span><span style="color:#666">=</span><span style="color:#ba2121">new;</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">ignore</span><span style="color:#666">=</span><span style="color:#ba2121">.osync_workdir;.mbsyncstate;.uidvalidity;.lock;/.*gmailieer\.json.*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># ignore=.osync_workdir;.mbsyncstate;.uidvalidity;.lock;/.*gmailieer\.json.*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ignore</span><span style="color:#666">=</span><span style="color:#ba2121">/.*[.](json|lock|bak|osync_workdir|mbsyncstate|uidvalidity)$/</span>
 </span></span></code></pre></div><p>Exclude these tags from search by default.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[search]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">exclude_tags</span><span style="color:#666">=</span><span style="color:#ba2121">trash;spam;</span>
@@ -453,6 +456,10 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">dir</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">dir</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">normal-top-level-add-subdirs-to-load-path</span>))))
+</span></span></code></pre></div><p>On termux the above doesn&rsquo;t work so&hellip;</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">notmuch</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span></code></pre></div><p>Some functions to toggle tags:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/notmuch-toggle-trash</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -583,6 +590,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-saved-searches</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span> <span style="color:#008000">:key</span> <span style="color:#ba2121">&#34;d&#34;</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-show-empty-saved-searches</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">notmuch-hello-mode-map</span>)
