@@ -14,6 +14,7 @@ private = true
 -   GitHub: [https://github.com/SqrtMinusOne](https://github.com/SqrtMinusOne)
 -   Mastodon: [https://emacs.ch/@sqrtminusone](https://emacs.ch/@sqrtminusone)
 -   Telegram: [https://t.me/SqrtMinusTwo](https://t.me/SqrtMinusTwo)
+-   Location: Saint-Petersburg, Russia
 
 
 ## Summary {#summary}
@@ -24,7 +25,7 @@ Current positions:
 -   Assistant Professor at [Department of Software Engineering and Computer Applications](https://etu.ru/en/study/faculties/faculty-of-computing-technologies-and-informatics/departments/department-of-software-engineering-and-computer-applications)
 -   Full-stack developer at Information Systems Department.
 
-Developing information systems for the university. Doing research on the intersection of Natural Language Processing methods and Recommender Systems and teaching students in the meantime.
+Developing information systems for the university. Conducting research on the intersection of Natural Language Processing methods and Recommender Systems and teaching students in the meantime.
 
 
 ## Education {#education}
@@ -101,14 +102,14 @@ Currently an acting supervisor for 3 students (1 bachelor's and 2 master's); 5 i
 -   **Languages**: <span class="underline">Russian</span> (native), <span class="underline">English</span> (~B2/C1)
 -   **RDBMS**:
     -   Primarily: <span class="underline">PostgreSQL</span>
-    -   Also worked with: <span class="underline">SQLite</span>, <span class="underline">MySQL</span>, <span class="underline">MariaDB</span>, <span class="underline">MSSQL</span>.
+    -   Also worked with: <span class="underline">SQLite</span>, <span class="underline">MySQL</span>, <span class="underline">MariaDB</span>, <span class="underline">MSSQL</span>
 -   **NoSQL**:
-    -   Primarily: <span class="underline">Redis</span>, <span class="underline">Apache Drill</span>;
+    -   Primarily: <span class="underline">Redis</span>, <span class="underline">Apache Drill</span>
     -   Also worked with: <span class="underline">MongoDB</span>, <span class="underline">Neo4j</span>
 -   **OLAP**: <span class="underline">ClickHouse</span>; also worked with <span class="underline">Apache Druid</span>
 -   **Programming languages**:
     -   Primarily: <span class="underline">Python</span>, <span class="underline">JavaScript</span>, <span class="underline">TypeScript</span>, <span class="underline">HTML/CSS</span>, <span class="underline">Emacs Lisp</span>
-    -   Also worked with: <span class="underline">C</span>, <span class="underline">C++ (Qt)</span>, <span class="underline">PHP</span>, <span class="underline">Java 8</span>, <span class="underline">MASM</span>, <span class="underline">HLASM</span>, <span class="underline">Clojure</span>, <span class="underline">Scheme</span>, <span class="underline">Hy</span>, <span class="underline">GNU Octave</span>.
+    -   Also worked with: <span class="underline">C</span>, <span class="underline">C++ (Qt)</span>, <span class="underline">PHP</span>, <span class="underline">Java 8</span>, <span class="underline">MASM</span>, <span class="underline">HLASM</span>, <span class="underline">Clojure</span>, <span class="underline">Scheme</span>, <span class="underline">Hy</span>, <span class="underline">GNU Octave</span>
 -   **Technologies/Frameworks**:
     -   ORMs: <span class="underline">Sequelize</span> (node.js), <span class="underline">SQLAlchemy</span> (Python)
     -   Backend: <span class="underline">express.js</span>, <span class="underline">nest.js</span>, <span class="underline">Flask</span> (Python)
@@ -117,9 +118,9 @@ Currently an acting supervisor for 3 students (1 bachelor's and 2 master's); 5 i
     -   ML: <span class="underline">scikit-learn</span>, <span class="underline">spacy</span>; worked with <span class="underline">pytorch</span>, <span class="underline">transformers</span>
 -   **DevOps**:
     -   Web server: <span class="underline">nginx</span>
-    -   CI/CD: <span class="underline">Jenkins</span>, <span class="underline">GitHub Actions</span>, <span class="underline">GitLab Actions</span>.
-    -   Monitoring/Analytics: <span class="underline">Prometheus</span>, <span class="underline">Grafana</span>, <span class="underline">Metabase</span>.
-    -   Misc: <span class="underline">Docker</span>, <span class="underline">POSIX shell</span> &amp; <span class="underline">bash</span>.
+    -   CI/CD: <span class="underline">Jenkins</span>, <span class="underline">GitHub Actions</span>, <span class="underline">GitLab Actions</span>
+    -   Monitoring/Analytics: <span class="underline">Prometheus</span>, <span class="underline">Grafana</span>, <span class="underline">Metabase</span>
+    -   Misc: <span class="underline">Docker</span>, <span class="underline">POSIX shell</span> &amp; <span class="underline">bash</span>
 -   **Misc**: <span class="underline">LaTeX</span>, <span class="underline">GNU Emacs</span>, <span class="underline">GNU Guix</span>
 
 
