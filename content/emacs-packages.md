@@ -10,6 +10,20 @@ Following is the list of Emacs packages I authored.
 See also [the same list with timestamps](/packages/), and the corresponding [RSS feed](/packages/index.xml). This page is somewhat inspired by <https://protesilaos.com/emacs/>, thanks Prot.
 
 
+## eshell-atuin {#eshell-atuin}
+
+Integrate [eshell](https://www.gnu.org/software/emacs/manual/html_mono/eshell.html) with [atuin](https://github.com/atuinsh/atuin).
+
+`atuin` stores shell history in a database, which allows for having the same history across multiple shells, sessions, and optionally across different machines. See the project page for the complete list of features.
+
+This package provides functionality to store and browse eshell history in `atuin`.
+
+-   Package name: `eshell-atuin`
+-   Homepage: <https://sqrtminusone.xyz/packages/eshell-atuin>
+-   Git repo: <https://github.com/SqrtMinusOne/eshell-atuin>
+-   Package at MELPA: <https://melpa.org/#/eshell-atuin>
+
+
 ## org-clock-agg {#org-clock-agg}
 
 Aggregate [org-clock](https://orgmode.org/manual/Clocking-Work-Time.html) records and display the results in a tree form.
@@ -53,6 +67,7 @@ The package uses a reverse-engineered API, but it's been surprisingly stable.
 -   Package name: `reverso`
 -   Homepage: <https://sqrtminusone.xyz/packages/reverso>
 -   Git repo: <https://github.com/SqrtMinusOne/reverso.el>
+-   Package at MELPA: <https://melpa.org/#/reverso>
 
 
 ## Elfeed Sync {#elfeed-sync}
