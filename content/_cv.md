@@ -116,12 +116,19 @@ Currently an acting supervisor for 3 students (1 bachelor's and 2 master's); 5 i
     -   Frontend: <span class="underline">Vue.js</span>, <span class="underline">Bootstrap</span>, <span class="underline">Sass</span>
     -   Data processing: <span class="underline">numpy</span>, <span class="underline">pandas</span>, <span class="underline">matplotlib</span>, <span class="underline">streamlit</span>
     -   ML: <span class="underline">scikit-learn</span>, <span class="underline">spacy</span>; worked with <span class="underline">pytorch</span>, <span class="underline">transformers</span>
+    -   Cloud services: <span class="underline">Yandex.Cloud</span>
+    -   Misc: <span class="underline">LaTeX</span>, <span class="underline">GNU Emacs</span>, <span class="underline">GNU Guix</span>
 -   **DevOps**:
     -   Web server: <span class="underline">nginx</span>
     -   CI/CD: <span class="underline">Jenkins</span>, <span class="underline">GitHub Actions</span>, <span class="underline">GitLab Actions</span>
     -   Monitoring/Analytics: <span class="underline">Prometheus</span>, <span class="underline">Grafana</span>, <span class="underline">Metabase</span>
     -   Misc: <span class="underline">Docker</span>, <span class="underline">POSIX shell</span> &amp; <span class="underline">bash</span>
--   **Misc**: <span class="underline">LaTeX</span>, <span class="underline">GNU Emacs</span>, <span class="underline">GNU Guix</span>
+
+Soft skills:
+
+-   Experience in working with students, individually and in groups
+-   Supervising development work
+-   Communication with customers and stakeholders, figuring out technical requirements
 
 
 ## Publications {#publications}
