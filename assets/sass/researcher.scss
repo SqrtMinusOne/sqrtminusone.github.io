@@ -8,7 +8,14 @@ $black: {{ .Param "style.colorBlack" | default "#222222" }};
 $red: {{ .Param "style.colorRed" | default "#dc3545" }};
 
 // Font
-$font-family: {{ .Param "style.fontFamily" | default "Inconsolata" }};
+// $font-family: {{ .Param "style.fontFamily" | default "Inconsolata" }};
+@font-face {
+  font-family: "Inconsolata LGC";
+  font-style: normal;
+  font-weight: 400;
+  src: local(""), url("fonts/inconsolatalgc-scaled-down.woff2") format('woff2');
+}
+$font-family: "Inconsolata", "Inconsolata LGC";
 
 // Margins
 $y-small: 0.6rem;
@@ -230,6 +237,14 @@ $toc-left-width: $toc-width + $max-width + 25px;
             background-color: #f8f8f8;
         }
     }
+    .table-no-header {
+      th {
+        font-weight: normal;
+      }
+      table {
+        margin: 0rem 0rem 0.5rem 0rem;
+      }
+    }
     blockquote {
         border-left: 4px solid;
         font-style: italic;
@@ -270,6 +285,9 @@ $toc-left-width: $toc-width + $max-width + 25px;
             content: "Abstract: ";
             font-weight: bold;
         }
+    }
+    span.underline {
+        text-decoration: underline;
     }
 }
 #footer {
