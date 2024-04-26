@@ -20,6 +20,9 @@
 
     
         
+  
+
+
     
 
     <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
@@ -3369,7 +3372,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	   (<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-src-edit-buffer-p</span>) (<span style="color:#19177c">org-src-edit-buffer-p</span>))
 </span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">py-isort-buffer</span>))
 </span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">python-black-buffer</span>))))
-</span></span></code></pre></div><h4 id="sphinx-doc">sphinx-doc</h4>
+</span></span></code></pre></div><h4 id="sphinx-doc"><span class="org-todo done OFF">OFF</span> sphinx-doc</h4>
 <p>A package to generate sphinx-compatible docstrings.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sphinx-doc</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -3378,6 +3381,18 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;sphinx-doc-mode-map</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;rd&#34;</span> <span style="color:#19177c">&#39;sphinx-doc</span>))
+</span></span></code></pre></div><h4 id="numpydoc">numpydoc</h4>
+<p><a href="https://github.com/douglasdavis/numpydoc.el">numpydoc.el</a> is a package to generate docstring in Python functions.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">numpydoc</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">numpydoc-generate</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;python-ts-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;rd&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">numpydoc-generate</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">numpydoc-insertion-style</span> <span style="color:#19177c">&#39;prompt</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">numpydoc-insert-return-without-typehint</span> <span style="color:#800">nil</span>))
 </span></span></code></pre></div><h4 id="pytest">pytest</h4>
 <p><a href="https://docs.pytest.org/en/6.2.x/">pytest</a> is a unit testing framework for Python.</p>
 <p>Once again a function to set pytest executable from pipenv.</p>
@@ -3799,27 +3814,29 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#19177c">&#39;org-decrypt-entry</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#19177c">&#39;org-encrypt-entry</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#19177c">&#39;org-latex-preview</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#19177c">&#39;org-redisplay-inline-images</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c d&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-decrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c e&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-encrypt-entry</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-p&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-latex-preview</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-o&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-redisplay-inline-images</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#19177c">&#39;org-shiftright</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#19177c">&#39;org-shiftleft</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#19177c">&#39;org-next-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#19177c">&#39;org-previous-visible-heading</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-babel-next-src-block</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-babel-previous-src-block</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;L&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-shiftright</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;H&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-shiftleft</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;next&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;S-&lt;prior&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-0&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-next-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-9&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-previous-visible-heading</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-0&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-forward-heading-same-level</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-9&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-backward-heading-same-level</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-babel-next-src-block</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-babel-previous-src-block</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-agenda-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#19177c">&#39;org-agenda-later</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#19177c">&#39;org-agenda-earlier</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-]&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-agenda-later</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-[&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-agenda-earlier</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-nmap</span> <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span> <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#19177c">&#39;org-ctrl-c-ctrl-c</span>))
 </span></span></code></pre></div><h4 id="copy-a-link">Copy a link</h4>
@@ -3921,6 +3938,13 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Refresh Jupyter languages&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-jupyter-aliases-from-kernelspecs</span> <span style="color:#800">t</span>))
+</span></span></code></pre></div><p>A function to load <code>jupyter</code>. The problem with doing that on startup is that it tried to locate the <code>jupyter</code> executable, which I have only in an environment.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-load-jupyter</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-babel-do-load-languages</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">&#39;org-babel-load-languages</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#666">&#39;</span>((<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/jupyter-refesh-langs</span>))
 </span></span></code></pre></div><h4 id="hy-1">Hy</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ob-hy</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
@@ -3991,7 +4015,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">shell</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">plantuml</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">octave</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>     <span style="color:#666">,@</span>(<span style="color:#008000">unless</span> <span style="color:#19177c">my/is-termux</span> <span style="color:#666">&#39;</span>((<span style="color:#19177c">jupyter</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">sparql</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">gnuplot</span> <span style="color:#666">.</span> <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>
@@ -4943,7 +4966,18 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <li>Me at 15:05: Sh*t</li>
 </ul>
 <p>Okay, I will set up <del>org-alert</del> some custom alert system.</p>
-<p>I want to have multiple warnings, let it be 10 minutes in advance and 1 minute in advance for now.</p>
+<p>There&rsquo;s also <a href="https://gitlab.com/grinn.amy/org-yaap">org-yaap</a> by Amy Grinn, but I opt for my system for now.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-yaap</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">org-yaap</span> <span style="color:#008000">:type</span> <span style="color:#19177c">git</span> <span style="color:#008000">:host</span> <span style="color:#19177c">gitlab</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/org-yaap&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/nested-emacs</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-yaap-mode</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-yaap-alert-before</span> <span style="color:#666">&#39;</span>(<span style="color:#666">10</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-yaap-alert-title</span> <span style="color:#ba2121">&#34;PROXIMITY ALERT&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-yaap-todo-keywords-only</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;FUTURE&#34;</span>)))
+</span></span></code></pre></div><p>I want to have multiple warnings, let it be 10 minutes in advance and 1 minute in advance for now.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert-notify-times</span> <span style="color:#666">&#39;</span>(<span style="color:#666">600</span> <span style="color:#666">60</span>))
 </span></span></code></pre></div><p>And IDK if that makes much sense, but I&rsquo;ll try to avoid re-creating timers. So, here are functions to schedule showing some label at some time and to check whether the label is scheduled:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-alert--alerts</span> (<span style="color:#00f">make-hash-table</span> <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;equal</span>))
@@ -7709,7 +7743,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <h5 id="running-it-from-emacs">Running it from Emacs</h5>
 <p>Running the program from Emacs is rather straightforward with <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html">asyncronous processes</a>.</p>
 <p>I&rsquo;m using an English-language-only model because that&rsquo;s the only language I need at the moment.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-whisper--direct</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output-dir</span> <span style="color:#19177c">remove-wav</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-whisper--direct</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output-dir</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">remove-wav</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract subtitles from a WAV audio file.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">INPUT is the absolute path to audio file, OUTPUT-DIR is the path to
@@ -7718,8 +7752,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;whisper&#34;</span>))
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">proc</span> (<span style="color:#00f">start-process</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;whisper&#34;</span> <span style="color:#19177c">buffer</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;whisper-cpp&#34;</span> <span style="color:#ba2121">&#34;--model&#34;</span> <span style="color:#ba2121">&#34;/home/pavel/.whisper/ggml-medium.en.bin&#34;</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;-otxt&#34;</span> <span style="color:#ba2121">&#34;-ovtt&#34;</span> <span style="color:#ba2121">&#34;-osrt&#34;</span> <span style="color:#19177c">input</span>)))
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;whisper-cpp&#34;</span> <span style="color:#ba2121">&#34;--model&#34;</span> <span style="color:#ba2121">&#34;/home/pavel/.whisper/ggml-medium.bin&#34;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;-otxt&#34;</span> <span style="color:#ba2121">&#34;-ovtt&#34;</span> <span style="color:#ba2121">&#34;-osrt&#34;</span> <span style="color:#ba2121">&#34;-l&#34;</span> <span style="color:#ba2121">&#34;auto&#34;</span> <span style="color:#19177c">input</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
@@ -8455,6 +8489,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Hide spoilers by default</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-default</span> <span style="color:#19177c">mastodon-toot--content-warning</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-media--avatar-height</span> <span style="color:#666">40</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--timeline-posts-count</span> <span style="color:#ba2121">&#34;40&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--show-avatars</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; The default emojis take two characters for me</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-tl--symbols</span>
@@ -8774,7 +8809,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;alphapapa/ement.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">ement-connect</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ai&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ax&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ement</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-list-auto-update</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ement-room-mark-rooms-read</span> <span style="color:#19177c">&#39;send</span>)
@@ -9082,7 +9117,9 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">google-translate-at-point-reverse</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">google-translate-translation-directions-alist</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;en&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;ru&#34;</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;ru&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;en&#34;</span>))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;ru&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;en&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;de&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;en&#34;</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;en&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;de&#34;</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;at&#34;</span>
@@ -9217,6 +9254,53 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">sx-question-mode-content</span> <span style="color:#008000">:background</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;sx-question-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doom-modeline-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;sx-question-list-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">doom-modeline-mode</span>))
+</span></span></code></pre></div><h3 id="llm">LLM</h3>
+<p>Trying out LLM integrations.</p>
+<p>I don&rsquo;t have access to any proprietary APIs, but LLaMA 3 8b with <a href="https://ollama.com/">ollama</a> works for some purposes.</p>
+<h4 id="gptel">gptel</h4>
+<p><a href="https://github.com/karthink/gptel">gtpel</a> is a package that provides an interface to chat with LLMs.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">gptel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;ai&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;AI&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">gptel</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">gptel</span> <span style="color:#19177c">gptel-send</span> <span style="color:#19177c">gptel-menu</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-model</span> <span style="color:#ba2121">&#34;llama3:latest&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-backend</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">gptel-make-ollama</span> <span style="color:#ba2121">&#34;Ollama&#34;</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#008000">:host</span> <span style="color:#ba2121">&#34;localhost:11434&#34;</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#008000">:stream</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#008000">:models</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;llama3:latest&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">gptel-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span> <span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-&lt;return&gt;&#34;</span> <span style="color:#19177c">&#39;gptel-send</span>))
+</span></span></code></pre></div><h4 id="ellama">ellama</h4>
+<p><a href="https://github.com/s-kostyaev/ellama">ellama</a> provides commands that feed things from Emacs buffers into LLMs with various prompts.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ellama</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-language</span> <span style="color:#ba2121">&#34;English&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;llm-ollama</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;aie&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;ellama&#34;</span> <span style="color:#008000">:keymap</span> <span style="color:#19177c">ellama-command-map</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">which-key-add-key-based-replacements</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e a&#34;</span>) <span style="color:#ba2121">&#34;ask&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e c&#34;</span>) <span style="color:#ba2121">&#34;code&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e d&#34;</span>) <span style="color:#ba2121">&#34;define&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e i&#34;</span>) <span style="color:#ba2121">&#34;improve&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e m&#34;</span>) <span style="color:#ba2121">&#34;make&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e p&#34;</span>) <span style="color:#ba2121">&#34;provider&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e s&#34;</span>) <span style="color:#ba2121">&#34;summarize&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e t&#34;</span>) <span style="color:#ba2121">&#34;translate/complete&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;SPC a i e x&#34;</span>) <span style="color:#ba2121">&#34;context&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-provider</span> (<span style="color:#19177c">make-llm-ollama</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;llama3:latest&#34;</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;llama3:latest&#34;</span>)))
 </span></span></code></pre></div><h3 id="declarative-filesystem-management">Declarative filesystem management</h3>
 <p>My filesystem is, shall we say, not the most orderly place.</p>
 <center>
@@ -10823,7 +10907,8 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#off--yapf"><span class="org-todo done OFF">OFF</span> (OFF) yapf</a></li>
             <li><a href="#black">black</a></li>
             <li><a href="#isort">isort</a></li>
-            <li><a href="#sphinx-doc">sphinx-doc</a></li>
+            <li><a href="#sphinx-doc"><span class="org-todo done OFF">OFF</span> sphinx-doc</a></li>
+            <li><a href="#numpydoc">numpydoc</a></li>
             <li><a href="#pytest">pytest</a></li>
             <li><a href="#code-cells">code-cells</a></li>
             <li><a href="#tensorboard">tensorboard</a></li>
@@ -11030,6 +11115,12 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#man-and-info">man &amp; info</a></li>
             <li><a href="#devdocs-dot-io">devdocs.io</a></li>
             <li><a href="#stackexchange">StackExchange</a></li>
+          </ul>
+        </li>
+        <li><a href="#llm">LLM</a>
+          <ul>
+            <li><a href="#gptel">gptel</a></li>
+            <li><a href="#ellama">ellama</a></li>
           </ul>
         </li>
         <li><a href="#declarative-filesystem-management">Declarative filesystem management</a>
