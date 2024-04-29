@@ -3368,10 +3368,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">python-mode-map</span> <span style="color:#19177c">python-ts-mode-map</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;rr&#34;</span> (<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>	 (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-src-edit-buffer-p</span>) (<span style="color:#19177c">org-src-edit-buffer-p</span>))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">py-isort-buffer</span>))
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">python-black-buffer</span>))))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">unless</span> (<span style="color:#008000">and</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-src-edit-buffer-p</span>) (<span style="color:#19177c">org-src-edit-buffer-p</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">py-isort-buffer</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">python-black-buffer</span>)))
 </span></span></code></pre></div><h4 id="sphinx-doc"><span class="org-todo done OFF">OFF</span> sphinx-doc</h4>
 <p>A package to generate sphinx-compatible docstrings.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">sphinx-doc</span>
@@ -5156,7 +5155,74 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
 </span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
-<h5 id="keybindings-3">Keybindings</h5>
+<h5 id="archiving-records">Archiving records</h5>
+<ul>
+<li><strong>CREDIT</strong>: thanks <a href="https://emacs.ch/@grinn">Amy</a> for pointing me to the right functionality of <code>org-refile</code>.</li>
+</ul>
+<p>I have several org files for long-running projects. They are getting hard to manage because there are lots of different tasks, events, etc.</p>
+<p>So I want to create &ldquo;archive versions&rdquo; of these files which would have the same structure but store items, say, with a timestamp older than 2 months.</p>
+<p>Archive versions are to be stored in the <code>archive</code> subdirectory relative to the current file, e.g., <code>foo.org</code> -&gt; <code>archive/foo.org</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-archive--get-file</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get an archive version of the file.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">archive-file</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">file-name-directory</span> (<span style="color:#00f">buffer-file-name</span>))
+</span></span><span style="display:flex;"><span>	  <span style="color:#ba2121">&#34;archive/&#34;</span> (<span style="color:#00f">file-name-nondirectory</span> (<span style="color:#00f">buffer-file-name</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">archive-file</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">make-empty-file</span> <span style="color:#19177c">archive-file</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">archive-file</span>))
+</span></span></code></pre></div><p>In order to maintain structure, we need to make sure that the archive version has all the necessary headers.</p>
+<p><code>org-refile</code> (or, to be precise, <code>org-refile-get-location</code>) by itself can create the last level of headers with <code>org-refile-allow-creating-parent-nodes</code>. So I can just invoke the same logic for all missing headers:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-refile--assert-path-exists</span> (<span style="color:#19177c">refile-path</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#d2413a;font-weight:bold">cl-assert</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">parts</span> (<span style="color:#19177c">string-split</span> <span style="color:#19177c">refile-path</span> <span style="color:#ba2121">&#34;/&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">tbl</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">cons</span> (<span style="color:#00f">concat</span> (<span style="color:#00f">car</span> <span style="color:#19177c">x</span>) <span style="color:#ba2121">&#34;/&#34;</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">x</span>)))
+</span></span><span style="display:flex;"><span>		   <span style="color:#19177c">org-refile-target-table</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#666">1</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">for</span> <span style="color:#19177c">part</span> <span style="color:#19177c">in</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">parts</span>)
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">for</span> <span style="color:#19177c">target</span> <span style="color:#00f">=</span> (<span style="color:#19177c">org-refile--get-location</span>
+</span></span><span style="display:flex;"><span>			   (<span style="color:#19177c">string-join</span> (<span style="color:#19177c">seq-take</span> <span style="color:#19177c">parts</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">i</span>)) <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>			   <span style="color:#19177c">tbl</span>)
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">unless</span> <span style="color:#19177c">target</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#008000">do</span> (<span style="color:#008000">let</span> ((<span style="color:#19177c">parent-target</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">org-refile--get-location</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">string-join</span> (<span style="color:#19177c">seq-take</span> <span style="color:#19177c">parts</span> <span style="color:#19177c">i</span>) <span style="color:#ba2121">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>			<span style="color:#19177c">tbl</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">push</span> (<span style="color:#19177c">org-refile-new-child</span> <span style="color:#19177c">parent-target</span> <span style="color:#19177c">part</span>) <span style="color:#19177c">tbl</span>)))))
+</span></span></code></pre></div><p>Now we can make a function to archive one record interactively.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-archive-refile</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">org-refile-targets</span> <span style="color:#666">`</span>((<span style="color:#666">,</span>(<span style="color:#19177c">my/org-archive--get-file</span>) <span style="color:#666">.</span> (<span style="color:#008000">:maxlevel</span> <span style="color:#666">.</span> <span style="color:#666">6</span>))))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-refile-target-table</span> (<span style="color:#19177c">org-refile-get-targets</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-refile-history</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-refile-allow-creating-parent-nodes</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">org-outline-path-complete-in-steps</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">refile-path</span> (<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">list</span> (<span style="color:#00f">file-name-nondirectory</span>
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">buffer-file-name</span>)))
+</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">org-get-outline-path</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>		       <span style="color:#ba2121">&#34;/&#34;</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; The path is already known</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">flet</span> ((<span style="color:#00f">completing-read</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>) <span style="color:#19177c">refile-path</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-refile--assert-path-exists</span> <span style="color:#19177c">refile-path</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-refile</span>))))
+</span></span></code></pre></div><p>And a function to archive all records older than the given number of days. I&rsquo;ll use <code>org-ql</code> to find these records.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-archive-refile-all</span> (<span style="color:#19177c">days</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">read-number</span> <span style="color:#ba2121">&#34;Days: &#34;</span> <span style="color:#666">60</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">records</span> (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">element-with-markers</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:from</span> (<span style="color:#00f">current-buffer</span>)
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">ts</span> <span style="color:#008000">:to</span> <span style="color:#666">,</span>(<span style="color:#00f">-</span> <span style="color:#19177c">days</span>)) <span style="color:#19177c">done</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Archive %d records? &#34;</span> (<span style="color:#00f">length</span> <span style="color:#19177c">records</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">record</span> <span style="color:#19177c">records</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">let</span> ((<span style="color:#19177c">marker</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">record</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">org-with-point-at</span> <span style="color:#19177c">marker</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">my/org-archive-refile</span>)))))))
+</span></span></code></pre></div><h5 id="keybindings-3">Keybindings</h5>
 <p>Global keybindings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
@@ -8792,6 +8858,18 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Misc&#34;</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#ba2121">&#34;Quit&#34;</span> <span style="color:#19177c">transient-quit-one</span>)]))
+</span></span></code></pre></div><h4 id="wallabag">wallabag</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">wallabag</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;chenyanming/wallabag.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> <span style="color:#ba2121">&#34;default.css&#34;</span> <span style="color:#ba2121">&#34;emojis.alist&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aE&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">wallabag</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">wallabag</span> <span style="color:#19177c">wallabag-add-entry</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-host</span> <span style="color:#ba2121">&#34;https://wallabag.sqrtminusone.xyz&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-username</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-password</span> (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-clientid</span> (<span style="color:#19177c">password-store-get-field</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span> <span style="color:#ba2121">&#34;client_id&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">wallabag-secret</span> (<span style="color:#19177c">password-store-get-field</span> <span style="color:#ba2121">&#34;Selfhosted/wallabag&#34;</span> <span style="color:#ba2121">&#34;client_secret&#34;</span>)))
 </span></span></code></pre></div><h4 id="ement-dot-el">ement.el</h4>
 <p><a href="https://github.com/alphapapa/ement.el">ement.el</a> is a Matrix client for Emacs. This package turned out to be somewhat complicated to setup.</p>
 <h5 id="general-config">General config</h5>
@@ -10214,8 +10292,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; :straight (:local-repo &#34;~/Code/Emacs/pomm&#34; :files (:defaults &#34;resources&#34;))</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">pomm</span> <span style="color:#19177c">pomm-third-time</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ap&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">pomm-third-time</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ap&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">pomm</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">alert-default-style</span> <span style="color:#19177c">&#39;libnotify</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">pomm-audio-enabled</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">pomm-audio-player-executable</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;mpv&#34;</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">pomm-mode-line-mode</span>))
 </span></span></code></pre></div><h4 id="hledger">hledger</h4>
@@ -11103,6 +11183,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#eww">EWW</a></li>
             <li><a href="#erc">ERC</a></li>
             <li><a href="#mastodon">Mastodon</a></li>
+            <li><a href="#wallabag">wallabag</a></li>
             <li><a href="#ement-dot-el">ement.el</a></li>
             <li><a href="#telega">Telega</a></li>
             <li><a href="#google-translate">Google Translate</a></li>
