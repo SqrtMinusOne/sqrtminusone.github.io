@@ -1757,7 +1757,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#00f">intern</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Load custom theme: &#34;</span>
 </span></span><span style="display:flex;"><span>				  (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;symbol-name</span>
-</span></span><span style="display:flex;"><span>							  (<span style="color:#19177c">custom-available-themes</span>))))))
+</span></span><span style="display:flex;"><span>					  (<span style="color:#19177c">custom-available-themes</span>))))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">in</span> <span style="color:#19177c">custom-enabled-themes</span>
 </span></span><span style="display:flex;"><span>	   <span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">&#39;my-theme-1</span>)
 </span></span><span style="display:flex;"><span>		       (<span style="color:#00f">eq</span> <span style="color:#19177c">enabled-theme</span> <span style="color:#19177c">theme</span>)))
@@ -3862,22 +3862,22 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">regexp</span> <span style="color:#19177c">org-babel-src-block-regexp</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">beginning-of-line</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">beginning-of-line</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">end-of-line</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#00f">bobp</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
-</span></span><span style="display:flex;"><span>			 (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-start</span> <span style="color:#19177c">o</span>))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
-</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">_</span> <span style="color:#800">nil</span>))))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-start</span> <span style="color:#19177c">o</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">_</span> <span style="color:#800">nil</span>))))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-incf</span> <span style="color:#19177c">arg</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">pcase</span> (<span style="color:#00f">get-char-property-and-overlay</span> (<span style="color:#00f">point</span>) <span style="color:#19177c">&#39;invisible</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
-</span></span><span style="display:flex;"><span>			(<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-end</span> <span style="color:#19177c">o</span>))
-</span></span><span style="display:flex;"><span>			(<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#19177c">_</span> (<span style="color:#00f">end-of-line</span>) <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#666">`</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">o</span>)
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">goto-char</span> (<span style="color:#00f">overlay-end</span> <span style="color:#19177c">o</span>))
+</span></span><span style="display:flex;"><span>		(<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">_</span> (<span style="color:#00f">end-of-line</span>) <span style="color:#800">nil</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">re-search-backward</span> <span style="color:#19177c">regexp</span> <span style="color:#800">nil</span> <span style="color:#008000">:move</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-decf</span> <span style="color:#19177c">arg</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">arg</span> <span style="color:#666">0</span>) (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-max</span>)) (<span style="color:#00f">beginning-of-line</span>))))
@@ -4176,7 +4176,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-babel-map-executables</span> <span style="color:#800">nil</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">&gt;=</span> (<span style="color:#00f">point</span>) <span style="color:#00f">point</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#008000">if</span> (<span style="color:#00f">memq</span> (<span style="color:#19177c">org-element-type</span> (<span style="color:#19177c">org-element-context</span>))
-</span></span><span style="display:flex;"><span>			    <span style="color:#666">&#39;</span>(<span style="color:#19177c">babel-call</span> <span style="color:#19177c">inline-babel-call</span>))
+</span></span><span style="display:flex;"><span>		    <span style="color:#666">&#39;</span>(<span style="color:#19177c">babel-call</span> <span style="color:#19177c">inline-babel-call</span>))
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">org-babel-lob-execute-maybe</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">org-babel-execute-src-block</span> <span style="color:#19177c">arg</span>)))))))
 </span></span><span style="display:flex;"><span>
@@ -4188,7 +4188,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-babel-map-executables</span> <span style="color:#800">nil</span>
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">&lt;=</span> (<span style="color:#00f">point</span>) <span style="color:#00f">point</span>)
 </span></span><span style="display:flex;"><span>	  (<span style="color:#008000">if</span> (<span style="color:#00f">memq</span> (<span style="color:#19177c">org-element-type</span> (<span style="color:#19177c">org-element-context</span>))
-</span></span><span style="display:flex;"><span>			    <span style="color:#666">&#39;</span>(<span style="color:#19177c">babel-call</span> <span style="color:#19177c">inline-babel-call</span>))
+</span></span><span style="display:flex;"><span>		    <span style="color:#666">&#39;</span>(<span style="color:#19177c">babel-call</span> <span style="color:#19177c">inline-babel-call</span>))
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">org-babel-lob-execute-maybe</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">org-babel-execute-src-block</span> <span style="color:#19177c">arg</span>)))))))
 </span></span></code></pre></div><p>Some keybindings:</p>
@@ -4706,10 +4706,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; The hack I borrowed from notmuch to make &#34; &#34; a separator</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">crm-separator</span> <span style="color:#ba2121">&#34; &#34;</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">crm-local-completion-map</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
-</span></span><span style="display:flex;"><span>		(<span style="color:#00f">set-keymap-parent</span> <span style="color:#19177c">map</span> <span style="color:#19177c">crm-local-completion-map</span>)
-</span></span><span style="display:flex;"><span>		(<span style="color:#00f">define-key</span> <span style="color:#19177c">map</span> <span style="color:#ba2121">&#34; &#34;</span> <span style="color:#19177c">&#39;self-insert-command</span>)
-</span></span><span style="display:flex;"><span>		<span style="color:#19177c">map</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-keymap-parent</span> <span style="color:#19177c">map</span> <span style="color:#19177c">crm-local-completion-map</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">define-key</span> <span style="color:#19177c">map</span> <span style="color:#ba2121">&#34; &#34;</span> <span style="color:#19177c">&#39;self-insert-command</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">map</span>))
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">ivy-prescient-sort-commands</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">categories</span> (<span style="color:#19177c">completing-read-multiple</span>
 </span></span><span style="display:flex;"><span>		      <span style="color:#ba2121">&#34;Categories: &#34;</span>
@@ -5077,82 +5077,82 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">wholenump</span> <span style="color:#19177c">n</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid number of replications %s&#34;</span> <span style="color:#19177c">n</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">org-before-first-heading-p</span>) (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No subtree to clone&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">beg</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">end-of-tree</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-end-of-subtree</span> <span style="color:#800">t</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">shift</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">or</span> <span style="color:#19177c">shift</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)))
-</span></span><span style="display:flex;"><span>			       (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#19177c">end-of-tree</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">read-from-minibuffer</span>
-</span></span><span style="display:flex;"><span>			   <span style="color:#ba2121">&#34;Date shift per clone (e.g. +1w, empty to copy unchanged): &#34;</span>)
-</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;&#34;</span>)))                   <span style="color:#408080;font-style:italic">;No time shift</span>
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">and</span> (<span style="color:#19177c">org-string-nw-p</span> <span style="color:#19177c">shift</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">or</span> (<span style="color:#00f">string-match</span> <span style="color:#ba2121">&#34;\\`[ \t]*\\([+-]?[0-9]+\\)\\([hdwmy]\\)[ \t]*\\&#39;&#34;</span>
-</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">shift</span>)
-</span></span><span style="display:flex;"><span>			   (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid shift specification %s&#34;</span> <span style="color:#19177c">shift</span>)))))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">end-of-tree</span> (<span style="color:#008000">save-excursion</span> (<span style="color:#19177c">org-end-of-subtree</span> <span style="color:#800">t</span> <span style="color:#800">t</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">or</span> <span style="color:#19177c">shift</span>
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">current-prefix-arg</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>)))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#19177c">end-of-tree</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">read-from-minibuffer</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#ba2121">&#34;Date shift per clone (e.g. +1w, empty to copy unchanged): &#34;</span>)
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;&#34;</span>)))                   <span style="color:#408080;font-style:italic">;No time shift</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">and</span> (<span style="color:#19177c">org-string-nw-p</span> <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">or</span> (<span style="color:#00f">string-match</span> <span style="color:#ba2121">&#34;\\`[ \t]*\\([+-]?[0-9]+\\)\\([hdwmy]\\)[ \t]*\\&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>				 <span style="color:#19177c">shift</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Invalid shift specification %s&#34;</span> <span style="color:#19177c">shift</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end-of-tree</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">bolp</span>) (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">end</span> (<span style="color:#00f">point</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">template</span> (<span style="color:#00f">buffer-substring</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-n</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">shift</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">shift-what</span> (<span style="color:#008000">pcase</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span> <span style="color:#19177c">shift</span>))
-</span></span><span style="display:flex;"><span>				     (<span style="color:#666">`</span><span style="color:#800">nil</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;hour</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;day</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;w&#34;</span> (<span style="color:#008000">setq</span> <span style="color:#19177c">shift-n</span> (<span style="color:#00f">*</span> <span style="color:#666">7</span> <span style="color:#19177c">shift-n</span>)) <span style="color:#19177c">&#39;day</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;month</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#19177c">&#39;year</span>)
-</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">_</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Unsupported time unit&#34;</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmin</span> <span style="color:#666">1</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">nmax</span> <span style="color:#19177c">n</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">n-no-remove</span> <span style="color:#666">-1</span>)
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">org-id-overriding-file-name</span> (<span style="color:#00f">buffer-file-name</span> (<span style="color:#00f">buffer-base-buffer</span>)))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">idprop</span> (<span style="color:#19177c">org-entry-get</span> <span style="color:#19177c">beg</span> <span style="color:#ba2121">&#34;ID&#34;</span>)))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">template</span> (<span style="color:#00f">buffer-substring</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">shift-n</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">shift</span>))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">shift-what</span> (<span style="color:#008000">pcase</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span> <span style="color:#19177c">shift</span>))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#666">`</span><span style="color:#800">nil</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#ba2121">&#34;h&#34;</span> <span style="color:#19177c">&#39;hour</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#ba2121">&#34;w&#34;</span> (<span style="color:#008000">setq</span> <span style="color:#19177c">shift-n</span> (<span style="color:#00f">*</span> <span style="color:#666">7</span> <span style="color:#19177c">shift-n</span>)) <span style="color:#19177c">&#39;day</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#19177c">&#39;month</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#ba2121">&#34;y&#34;</span> <span style="color:#19177c">&#39;year</span>)
+</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">_</span> (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Unsupported time unit&#34;</span>))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">nmin</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">nmax</span> <span style="color:#19177c">n</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">n-no-remove</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">org-id-overriding-file-name</span> (<span style="color:#00f">buffer-file-name</span> (<span style="color:#00f">buffer-base-buffer</span>)))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">idprop</span> (<span style="color:#19177c">org-entry-get</span> <span style="color:#19177c">beg</span> <span style="color:#ba2121">&#34;ID&#34;</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+ [.+]?\\+[0-9]+[hdwmy][^&lt;&gt;\n]*&gt;&#34;</span>
-</span></span><span style="display:flex;"><span>						 <span style="color:#19177c">template</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">end</span> <span style="color:#19177c">beg</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmin</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">nmax</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">nmax</span>))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">setq</span> <span style="color:#19177c">n-no-remove</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">string-match-p</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+ [.+]?\\+[0-9]+[hdwmy][^&lt;&gt;\n]*&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>				 <span style="color:#19177c">template</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">end</span> <span style="color:#19177c">beg</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">nmin</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">nmax</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">nmax</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">n-no-remove</span> <span style="color:#19177c">nmax</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">end</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">n</span> <span style="color:#19177c">from</span> <span style="color:#19177c">nmin</span> <span style="color:#19177c">to</span> <span style="color:#19177c">nmax</span> <span style="color:#008000">do</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#00f">insert</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#408080;font-style:italic">;; Prepare clone.</span>
-</span></span><span style="display:flex;"><span>			(<span style="color:#008000">with-temp-buffer</span>
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">insert</span> <span style="color:#19177c">template</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-mode</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#19177c">org-show-subtree</span>)
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">and</span> <span style="color:#19177c">idprop</span> (<span style="color:#008000">if</span> <span style="color:#19177c">org-clone-delete-id</span>
-</span></span><span style="display:flex;"><span>						  (<span style="color:#19177c">org-entry-delete</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ID&#34;</span>)
-</span></span><span style="display:flex;"><span>						(<span style="color:#19177c">org-id-get-create</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-clock-line-re</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">delete-region</span> (<span style="color:#00f">line-beginning-position</span>)
-</span></span><span style="display:flex;"><span>						     (<span style="color:#00f">line-beginning-position</span> <span style="color:#666">2</span>)))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-drawer-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-remove-empty-drawer-at</span> (<span style="color:#00f">point</span>))))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#408080;font-style:italic">;; Prepare clone.</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">insert</span> <span style="color:#19177c">template</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">org-mode</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">org-show-subtree</span>)
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">and</span> <span style="color:#19177c">idprop</span> (<span style="color:#008000">if</span> <span style="color:#19177c">org-clone-delete-id</span>
+</span></span><span style="display:flex;"><span>				  (<span style="color:#19177c">org-entry-delete</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;ID&#34;</span>)
+</span></span><span style="display:flex;"><span>				(<span style="color:#19177c">org-id-get-create</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-clock-line-re</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">delete-region</span> (<span style="color:#00f">line-beginning-position</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">line-beginning-position</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-drawer-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-remove-empty-drawer-at</span> (<span style="color:#00f">point</span>))))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> <span style="color:#19177c">doshift</span>
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">when</span> <span style="color:#19177c">doshift</span>
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp-both</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">org-timestamp-change</span> (<span style="color:#00f">*</span> <span style="color:#19177c">n</span> <span style="color:#19177c">shift-n</span>) <span style="color:#19177c">shift-what</span>))
 </span></span><span style="display:flex;"><span>		    (<span style="color:#008000">save-excursion</span>
 </span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>		      (<span style="color:#19177c">evil-numbers/inc-at-pt</span> <span style="color:#19177c">n</span> (<span style="color:#00f">point-min</span>)))
-</span></span><span style="display:flex;"><span>			    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
-</span></span><span style="display:flex;"><span>			      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
-</span></span><span style="display:flex;"><span>			      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>				    (<span style="color:#008000">save-excursion</span>
-</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>				      (<span style="color:#008000">when</span> (<span style="color:#00f">looking-at</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+\\( +[.+]?\\+[0-9]+[hdwmy]\\)&#34;</span>)
-</span></span><span style="display:flex;"><span>					(<span style="color:#00f">delete-region</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">1</span>) (<span style="color:#00f">match-end</span> <span style="color:#666">1</span>)))))))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">buffer-string</span>)))))
+</span></span><span style="display:flex;"><span>		    (<span style="color:#008000">unless</span> (<span style="color:#00f">=</span> <span style="color:#19177c">n</span> <span style="color:#19177c">n-no-remove</span>)
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">org-ts-regexp</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>			(<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">goto-char</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">when</span> (<span style="color:#00f">looking-at</span> <span style="color:#ba2121">&#34;&lt;[^&lt;&gt;\n]+\\( +[.+]?\\+[0-9]+[hdwmy]\\)&#34;</span>)
+</span></span><span style="display:flex;"><span>			    (<span style="color:#00f">delete-region</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">1</span>) (<span style="color:#00f">match-end</span> <span style="color:#666">1</span>)))))))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">buffer-string</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
 </span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
 <h5 id="archiving-records">Archiving records</h5>
@@ -5177,9 +5177,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#d2413a;font-weight:bold">cl-assert</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">org-refile-use-outline-path</span> <span style="color:#19177c">&#39;file</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">parts</span> (<span style="color:#19177c">string-split</span> <span style="color:#19177c">refile-path</span> <span style="color:#ba2121">&#34;/&#34;</span>))
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">tbl</span> (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>)
-</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">cons</span> (<span style="color:#00f">concat</span> (<span style="color:#00f">car</span> <span style="color:#19177c">x</span>) <span style="color:#ba2121">&#34;/&#34;</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">x</span>)))
-</span></span><span style="display:flex;"><span>		   <span style="color:#19177c">org-refile-target-table</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">cons</span> (<span style="color:#00f">concat</span> (<span style="color:#00f">car</span> <span style="color:#19177c">x</span>) <span style="color:#ba2121">&#34;/&#34;</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">x</span>)))
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">org-refile-target-table</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#666">1</span>
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">for</span> <span style="color:#19177c">part</span> <span style="color:#19177c">in</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">parts</span>)
 </span></span><span style="display:flex;"><span>	     <span style="color:#19177c">for</span> <span style="color:#19177c">target</span> <span style="color:#00f">=</span> (<span style="color:#19177c">org-refile--get-location</span>
@@ -5306,10 +5306,10 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-mood</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">crm-separator</span> <span style="color:#ba2121">&#34; &#34;</span>)
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">crm-local-completion-map</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
-</span></span><span style="display:flex;"><span>		(<span style="color:#00f">set-keymap-parent</span> <span style="color:#19177c">map</span> <span style="color:#19177c">crm-local-completion-map</span>)
-</span></span><span style="display:flex;"><span>		(<span style="color:#00f">define-key</span> <span style="color:#19177c">map</span> <span style="color:#ba2121">&#34; &#34;</span> <span style="color:#19177c">&#39;self-insert-command</span>)
-</span></span><span style="display:flex;"><span>		<span style="color:#19177c">map</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">set-keymap-parent</span> <span style="color:#19177c">map</span> <span style="color:#19177c">crm-local-completion-map</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">define-key</span> <span style="color:#19177c">map</span> <span style="color:#ba2121">&#34; &#34;</span> <span style="color:#19177c">&#39;self-insert-command</span>)
+</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">map</span>))
 </span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">ivy-prescient-sort-commands</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">mapconcat</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#00f">#&#39;identity</span>
@@ -6534,7 +6534,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">file</span> <span style="color:#19177c">files</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">type</span>
 </span></span><span style="display:flex;"><span>	     (<span style="color:#008000">or</span> (<span style="color:#19177c">mm-default-file-type</span> <span style="color:#19177c">file</span>)
-</span></span><span style="display:flex;"><span>			 <span style="color:#ba2121">&#34;application/octet-stream&#34;</span>)))
+</span></span><span style="display:flex;"><span>		 <span style="color:#ba2121">&#34;application/octet-stream&#34;</span>)))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">mml-attach-file</span>
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">file</span>
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">type</span>
@@ -6952,20 +6952,20 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/shell-unquote-argument-without-process</span> (<span style="color:#00f">string</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-match-data</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">idx</span> <span style="color:#666">0</span>) <span style="color:#19177c">next</span> <span style="color:#19177c">inside</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">quote-chars</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;&#39;&#34;</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#ba2121">&#34;\\&#34;</span>))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">quote-chars</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;&#39;&#34;</span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#ba2121">&#34;\\&#34;</span>))))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">while</span> (<span style="color:#008000">and</span> (<span style="color:#00f">&lt;</span> <span style="color:#19177c">idx</span> (<span style="color:#00f">length</span> <span style="color:#00f">string</span>))
-</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">string-match</span> <span style="color:#19177c">quote-chars</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>)))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#ba2121">?\\</span>)
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
-</span></span><span style="display:flex;"><span>		  ((<span style="color:#008000">and</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#19177c">inside</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>		  (<span style="color:#19177c">inside</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
-</span></span><span style="display:flex;"><span>		  (<span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>))
-</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>)))))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">string-match</span> <span style="color:#19177c">quote-chars</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">cond</span> ((<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#ba2121">?\\</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>	      ((<span style="color:#008000">and</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">=</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>) <span style="color:#19177c">inside</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">inside</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#19177c">next</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">next</span>)))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#19177c">inside</span> (<span style="color:#00f">aref</span> <span style="color:#00f">string</span> <span style="color:#19177c">next</span>))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">replace-match</span> <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">string</span>)))))
 </span></span><span style="display:flex;"><span>      <span style="color:#00f">string</span>)))
 </span></span></code></pre></div><p>Now, verify one suggestion against the current input. At the moment, outside of checking the prefix, it does the following:</p>
 <ul>
@@ -8240,7 +8240,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/emms-lyrics-restore-mode-line-override</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Restore the mode line.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">global-mode-string</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">remove</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:eval</span> <span style="color:#19177c">emms-lyrics-mode-line-string</span>) <span style="color:#19177c">global-mode-string</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">remove</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:eval</span> <span style="color:#19177c">emms-lyrics-mode-line-string</span>) <span style="color:#19177c">global-mode-string</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">force-mode-line-update</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;emms-lyrics</span>
@@ -8399,17 +8399,17 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>So, let&rsquo;s skip videos with null titles.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ytel-draw--buffer-nil-videos-fix</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">current-line</span>      (<span style="color:#19177c">line-number-at-pos</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">current-line</span>      (<span style="color:#19177c">line-number-at-pos</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">erase-buffer</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setf</span> <span style="color:#19177c">header-line-format</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;Search results for &#34;</span>
-</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">propertize</span> <span style="color:#19177c">ytel-search-term</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;ytel-video-published-face</span>)
-</span></span><span style="display:flex;"><span>				  <span style="color:#ba2121">&#34;, page &#34;</span>
-</span></span><span style="display:flex;"><span>				  (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">ytel-current-page</span>)))
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">propertize</span> <span style="color:#19177c">ytel-search-term</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;ytel-video-published-face</span>)
+</span></span><span style="display:flex;"><span>		  <span style="color:#ba2121">&#34;, page &#34;</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">ytel-current-page</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">seq-do</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">v</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#19177c">ytel--insert-video</span> <span style="color:#19177c">v</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">ytel--insert-video</span> <span style="color:#19177c">v</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">seq-filter</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">v</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">ytel-video-title</span> <span style="color:#19177c">v</span>))
