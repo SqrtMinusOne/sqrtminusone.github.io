@@ -4367,10 +4367,13 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>				      (<span style="color:#19177c">not</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">f</span>))))))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-agenda-files</span>
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span> <span style="color:#00f">#&#39;file-exists-p</span>
-</span></span><span style="display:flex;"><span>		      <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;misc/habit.org&#34;</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#ba2121">&#34;contacts.org&#34;</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#666">,@</span><span style="color:#19177c">project-files</span>)))
+</span></span><span style="display:flex;"><span>		      (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>		       <span style="color:#19177c">project-files</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>				 (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>			       <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span>
+</span></span><span style="display:flex;"><span>				 <span style="color:#ba2121">&#34;misc/habit.org&#34;</span>
+</span></span><span style="display:flex;"><span>				 <span style="color:#ba2121">&#34;contacts.org&#34;</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">org-refile-targets</span>
 </span></span><span style="display:flex;"><span>	  <span style="color:#666">`</span>(<span style="color:#666">,@</span>(<span style="color:#00f">mapcar</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) <span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">f</span> <span style="color:#666">.</span> (<span style="color:#008000">:tag</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;refile&#34;</span>)))
@@ -5219,7 +5222,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">records</span> (<span style="color:#19177c">org-ql-query</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">element-with-markers</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:from</span> (<span style="color:#00f">current-buffer</span>)
-</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">ts</span> <span style="color:#008000">:to</span> <span style="color:#666">,</span>(<span style="color:#00f">-</span> <span style="color:#19177c">days</span>)) <span style="color:#19177c">done</span>))))
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">ts</span> <span style="color:#008000">:to</span> <span style="color:#666">,</span>(<span style="color:#00f">-</span> <span style="color:#19177c">days</span>)) (<span style="color:#19177c">done</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Archive %d records? &#34;</span> (<span style="color:#00f">length</span> <span style="color:#19177c">records</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">record</span> <span style="color:#19177c">records</span>)
 </span></span><span style="display:flex;"><span>	(<span style="color:#008000">let</span> ((<span style="color:#19177c">marker</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">record</span>)))
@@ -5787,7 +5790,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#19177c">my/org-review-format-org-roam</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">format-seconds</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> <span style="color:#19177c">last-review-date</span>)))
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> (<span style="color:#19177c">seconds-to-time</span> <span style="color:#19177c">last-review-date</span>))))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">*** Summary
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TODO Write something, maybe? &#34;</span>))))
@@ -9281,6 +9284,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p><a href="https://github.com/karthink/gptel">gtpel</a> is a package that provides an interface to chat with LLMs.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">gptel</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;ai&#34;</span>
@@ -9288,27 +9292,30 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;i&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">gptel</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">gptel</span> <span style="color:#19177c">gptel-send</span> <span style="color:#19177c">gptel-menu</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">my/gptel-switch-backend</span> (<span style="color:#19177c">model</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Model: &#34;</span> <span style="color:#19177c">my/gptel-backends</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-model</span> <span style="color:#19177c">model</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-backend</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">model</span> <span style="color:#19177c">my/gptel-backends</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-mode</span> <span style="color:#ba2121">&#34;llama3:latest&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">gptel-backend</span> (<span style="color:#19177c">gptel-make-ollama</span> <span style="color:#ba2121">&#34;Ollama&#34;</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#008000">:host</span> <span style="color:#ba2121">&#34;localhost:11434&#34;</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#008000">:stream</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#008000">:models</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;llama3:latest&#34;</span> <span style="color:#ba2121">&#34;llama3-gradient&#34;</span>
+</span></span><span style="display:flex;"><span>				  <span style="color:#ba2121">&#34;llama3:instruct&#34;</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/gptel-backends</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#666">`</span>((<span style="color:#ba2121">&#34;llama3:latest&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">gptel-make-ollama</span> <span style="color:#ba2121">&#34;Ollama&#34;</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:host</span> <span style="color:#ba2121">&#34;localhost:11434&#34;</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:stream</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:models</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;llama3:latest&#34;</span> <span style="color:#ba2121">&#34;llama3-gradient&#34;</span>
-</span></span><span style="display:flex;"><span>					  <span style="color:#ba2121">&#34;llama3:instruct&#34;</span>)))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/gptel-switch-backend</span> <span style="color:#ba2121">&#34;llama3:latest&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">gptel-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span> <span style="color:#19177c">normal</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-&lt;return&gt;&#34;</span> <span style="color:#19177c">&#39;gptel-send</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-&lt;return&gt;&#34;</span> <span style="color:#19177c">&#39;gptel-send</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">gptel-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;?&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">gptel-menu</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">gptel-make-gemini</span> <span style="color:#ba2121">&#34;Gemini&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:key</span> (<span style="color:#19177c">my/password-store-get-field</span> <span style="color:#ba2121">&#34;My_Online/Accounts/google-gemini&#34;</span> <span style="color:#ba2121">&#34;api&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:stream</span> <span style="color:#800">t</span>))
 </span></span></code></pre></div><h4 id="ellama">ellama</h4>
 <p><a href="https://github.com/s-kostyaev/ellama">ellama</a> provides commands that feed things from Emacs buffers into LLMs with various prompts.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ellama</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-language</span> <span style="color:#ba2121">&#34;English&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
@@ -9397,7 +9404,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">ellama-provider</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">llm-make-chat-prompt</span>
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">format</span> <span style="color:#19177c">prompt</span> <span style="color:#19177c">text</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">changed-text</span>)
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">when</span> <span style="color:#19177c">is-org-mode</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#008000">setq</span> <span style="color:#19177c">changed-text</span> (<span style="color:#19177c">ellama--translate-markdown-to-org-filter</span> <span style="color:#19177c">changed-text</span>)))
