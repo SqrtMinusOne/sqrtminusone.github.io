@@ -152,7 +152,11 @@
 </span></span><span style="display:flex;"><span>	    . <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_PROFILE</span><span style="color:#ba2121">&#34;</span>/etc/profile
 </span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -d <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>/share/man <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#008000;font-weight:bold">:-$(</span>manpath<span style="color:#008000;font-weight:bold">)</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v manpath; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#008000;font-weight:bold">:-$(</span>manpath<span style="color:#008000;font-weight:bold">)</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
+</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000">export</span> <span style="color:#19177c">XDG_DATA_DIRS</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_DATA_DIRS</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share&#34;</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#008000">unset</span> profile
@@ -1084,14 +1088,35 @@
 </span></span><span style="display:flex;"><span>   <span style="color:#19177c">&lt;&lt;packages</span>()<span style="color:#19177c">&gt;&gt;</span>))
 </span></span></code></pre></div><h2 id="android-notes">Android notes</h2>
 <p>SSH instructions: <a href="https://wiki.termux.com/wiki/Remote_Access">https://wiki.termux.com/wiki/Remote_Access</a></p>
-<p>Don&rsquo;t forget to install the following termux packages:</p>
+<h3 id="installation">Installation</h3>
+<p>First, run</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pkg update
+</span></span></code></pre></div><p>Then install the following packages:</p>
 <table>
 <thead>
 <tr>
-<th>Termux package</th>
+<th>Package</th>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>yadm</td>
+</tr>
+<tr>
+<td>gnupg</td>
+</tr>
+<tr>
+<td>git</td>
+</tr>
+<tr>
+<td>which</td>
+</tr>
+<tr>
+<td>starship</td>
+</tr>
+<tr>
+<td>atuin</td>
+</tr>
 <tr>
 <td>vim</td>
 </tr>
@@ -1099,26 +1124,41 @@
 <td>tmux</td>
 </tr>
 <tr>
-<td>starship</td>
+<td>emacs</td>
 </tr>
 <tr>
-<td>fish</td>
+<td>make</td>
 </tr>
 <tr>
-<td>exa</td>
+<td>clang</td>
 </tr>
 <tr>
-<td>bat</td>
+<td>ripgrep</td>
 </tr>
 <tr>
-<td>git</td>
+<td>cmake</td>
+</tr>
+<tr>
+<td>gperf</td>
 </tr>
 </tbody>
 </table>
+<p>Run</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>termux-setup-storage
+</span></span></code></pre></div><p>Then import ssh and gpg keys. Set the main key to ultimate trust (<code>gpg --edit-key ...</code>, then <code>trust</code>).</p>
+<p>Then:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yadm clone git@github.com/SqrtMinusOne/dotfiles.git
+</span></span></code></pre></div><p>Install nerd fonts: <a href="https://github.com/notflawffles/termux-nerd-installer">https://github.com/notflawffles/termux-nerd-installer</a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/notflawffles/termux-nerd-installer.git
+</span></span><span style="display:flex;"><span><span style="color:#008000">cd</span> termux-nerd-installer
+</span></span><span style="display:flex;"><span>make install
+</span></span></code></pre></div><p>Clone <code>passwords.git</code> to <code>~/.password-store/</code>, <code>org-mode.git</code> to <code>~/30-39 Life/32 org-mode</code>.</p>
+<p>Create the file <code>~/.android-profile</code> with contents:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">ANDROID_NAME</span><span style="color:#666">=</span>&lt;name&gt;
+</span></span></code></pre></div><p>Then <code>emacs</code> should launch fine.</p>
 <p>Also:</p>
 <ul>
 <li>cleanup <code>$PREFIX/etc/motd</code> to remove hello message.</li>
-<li>copy the required font at <code>$HOME/.termux/font.ttf</code> and run <code>termux-reload-settings</code>.</li>
 </ul>
 <h3 id="installation-of-dt-s-colorscripts">Installation of <a href="https://gitlab.com/dwt1/shell-color-scripts">DT&rsquo;s colorscripts</a>:</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://gitlab.com/dwt1/shell-color-scripts.git
@@ -1215,6 +1255,7 @@
     <li><a href="#guix-settings-1">Guix settings</a></li>
     <li><a href="#android-notes">Android notes</a>
       <ul>
+        <li><a href="#installation">Installation</a></li>
         <li><a href="#installation-of-dt-s-colorscripts">Installation of <a href="https://gitlab.com/dwt1/shell-color-scripts">DT&rsquo;s colorscripts</a>:</a></li>
       </ul>
     </li>

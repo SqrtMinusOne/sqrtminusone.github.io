@@ -165,6 +165,16 @@
 </span></span></code></pre></div><h2 id="usage">Usage</h2>
 <p>Enable <code>eshell-atuin-mode</code> to turn on storing eshell commands in <code>atuin</code>.</p>
 <p>Run <code>eshell-atuin-history</code> inside an <code>eshell</code> buffer to browse the saved history. Accepting the completion will insert the command.</p>
+<h3 id="filter-mode">Filter mode</h3>
+<p><code>atuin</code> supports 4 <a href="https://docs.atuin.sh/configuration/config/#filter_mode">filter modes</a>: global (default), host, session, directory. Default filter mode for <code>eshell-atuin</code> can be set as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">eshell-atuin-filter-mode</span> <span style="color:#19177c">&#39;global</span>)
+</span></span></code></pre></div><p>In order to switch the mode at runtime, run <code>M-x eshell-atuin-history</code> with the prefix argument:</p>
+<ul>
+<li><code>C-u 0 M-x eshell-atuin-history</code> for <code>global</code></li>
+<li><code>C-u 1 M-x eshell-atuin-history</code> for <code>host</code></li>
+<li><code>C-u 2 M-x eshell-atuin-history</code> for <code>session</code></li>
+<li><code>C-u 3 M-x eshell-atuin-history</code> for <code>directory</code></li>
+</ul>
 <h2 id="implementation-notes">Implementation notes</h2>
 <p>I may have overengineered the package a bit to scale on lots of records.</p>
 <p>The package caches the results of <code>atuin search</code> in <code>eshell-atuin--history-cache</code> (which see on the algorithm), and updates the cache incrementally. A formatted string for each entry is created at the moment of addition; entries are additionally &ldquo;indexed&rdquo; by a hashmap to lookup &ldquo;raw&rdquo; commands by their formatted versions.</p>
@@ -182,7 +192,11 @@
   <ul>
     <li><a href="#installation">Installation</a></li>
     <li><a href="#configuration">Configuration</a></li>
-    <li><a href="#usage">Usage</a></li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#filter-mode">Filter mode</a></li>
+      </ul>
+    </li>
     <li><a href="#implementation-notes">Implementation notes</a></li>
   </ul>
 </nav>

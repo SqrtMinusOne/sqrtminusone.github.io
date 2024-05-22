@@ -93,6 +93,16 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
 &lt;p&gt;Enable &lt;code&gt;eshell-atuin-mode&lt;/code&gt; to turn on storing eshell commands in &lt;code&gt;atuin&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Run &lt;code&gt;eshell-atuin-history&lt;/code&gt; inside an &lt;code&gt;eshell&lt;/code&gt; buffer to browse the saved history. Accepting the completion will insert the command.&lt;/p&gt;
+&lt;h3 id=&#34;filter-mode&#34;&gt;Filter mode&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;atuin&lt;/code&gt; supports 4 &lt;a href=&#34;https://docs.atuin.sh/configuration/config/#filter_mode&#34;&gt;filter modes&lt;/a&gt;: global (default), host, session, directory. Default filter mode for &lt;code&gt;eshell-atuin&lt;/code&gt; can be set as follows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-emacs-lisp&#34; data-lang=&#34;emacs-lisp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(&lt;span style=&#34;color:#008000&#34;&gt;setq&lt;/span&gt; &lt;span style=&#34;color:#19177c&#34;&gt;eshell-atuin-filter-mode&lt;/span&gt; &lt;span style=&#34;color:#19177c&#34;&gt;&amp;#39;global&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to switch the mode at runtime, run &lt;code&gt;M-x eshell-atuin-history&lt;/code&gt; with the prefix argument:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;C-u 0 M-x eshell-atuin-history&lt;/code&gt; for &lt;code&gt;global&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;C-u 1 M-x eshell-atuin-history&lt;/code&gt; for &lt;code&gt;host&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;C-u 2 M-x eshell-atuin-history&lt;/code&gt; for &lt;code&gt;session&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;C-u 3 M-x eshell-atuin-history&lt;/code&gt; for &lt;code&gt;directory&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;implementation-notes&#34;&gt;Implementation notes&lt;/h2&gt;
 &lt;p&gt;I may have overengineered the package a bit to scale on lots of records.&lt;/p&gt;
 &lt;p&gt;The package caches the results of &lt;code&gt;atuin search&lt;/code&gt; in &lt;code&gt;eshell-atuin--history-cache&lt;/code&gt; (which see on the algorithm), and updates the cache incrementally. A formatted string for each entry is created at the moment of addition; entries are additionally &amp;ldquo;indexed&amp;rdquo; by a hashmap to lookup &amp;ldquo;raw&amp;rdquo; commands by their formatted versions.&lt;/p&gt;
