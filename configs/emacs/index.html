@@ -1940,6 +1940,66 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-irc</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">doom-modeline-buffer-state-icon</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">doom-modeline-mode</span> <span style="color:#666">1</span>))
+</span></span></code></pre></div><h4 id="doom-modeline-as-tab-bar">Doom Modeline as Tab Bar</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/tab-bar-mode-line--format</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;company-box-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-letf</span> (((<span style="color:#00f">symbol-function</span> <span style="color:#19177c">&#39;window-pixel-width</span>)
+</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">&#39;frame-pixel-width</span>)
+</span></span><span style="display:flex;"><span>	      ((<span style="color:#00f">symbol-function</span> <span style="color:#19177c">&#39;window-margins</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">list</span> <span style="color:#800">nil</span>))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">doom-modeline-window-width-limit</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">doom-modeline--limited-width-p</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">format-mode-line</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;%e&#34;</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">:eval</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">doom-modeline-format--main</span>))))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/hide-mode-line-if-only-window</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">windows</span> (<span style="color:#00f">window-list</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">hide-mode-line-p</span> (<span style="color:#19177c">length=</span> <span style="color:#19177c">windows</span> <span style="color:#666">1</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">win</span> <span style="color:#19177c">windows</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">window-buffer</span> <span style="color:#19177c">win</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">unless</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">hide-mode-line-p</span> <span style="color:#19177c">hide-mode-line-mode</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">hide-mode-line-mode</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">if</span> <span style="color:#19177c">hide-mode-line-p</span> <span style="color:#666">+1</span> <span style="color:#666">-1</span>)))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">define-minor-mode</span> <span style="color:#19177c">my/tab-bar-mode-line-mode</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Use tab-bar as mode line mode.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:global</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">my/tab-bar-mode-line-mode</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">tab-bar-mode</span> <span style="color:#666">+1</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">setq</span> <span style="color:#19177c">tab-bar-format</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">my/tab-bar-mode-line--format</span>))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;tab-bar</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;mode-line</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;window-configuration-change-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/hide-mode-line-if-only-window</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">dolist</span> (<span style="color:#19177c">buf</span> (<span style="color:#00f">buffer-list</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">doom-modeline-set-modeline</span> <span style="color:#19177c">&#39;minimal</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">doom-modeline-set-modeline</span> <span style="color:#19177c">&#39;minimal</span> <span style="color:#19177c">&#39;default</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">dolist</span> (<span style="color:#19177c">frame</span> (<span style="color:#00f">frame-list</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">with-selected-frame</span> <span style="color:#19177c">frame</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">my/hide-mode-line-if-only-window</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">cb-frame</span> (<span style="color:#19177c">company-box--get-frame</span> <span style="color:#19177c">frame</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">set-frame-parameter</span> <span style="color:#19177c">cb-frame</span> <span style="color:#19177c">&#39;tab-bar-lines</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;POLYBAR_BOTTOM&#34;</span> <span style="color:#ba2121">&#34;false&#34;</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-run-polybar</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">my/exwm-run-polybar</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">tab-bar-mode</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">tab-bar-format</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#666">&#39;</span>(<span style="color:#19177c">tab-bar-format-history</span> <span style="color:#19177c">tab-bar-format-tabs</span> <span style="color:#19177c">tab-bar-separator</span> <span style="color:#19177c">tab-bar-format-add-tab</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">set-face-attribute</span> <span style="color:#19177c">&#39;tab-bar</span> <span style="color:#800">nil</span> <span style="color:#008000">:inherit</span> <span style="color:#19177c">&#39;default</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;window-configuration-change-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/hide-mode-line-if-only-window</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">global-hide-mode-line-mode</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">buf</span> (<span style="color:#00f">buffer-list</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">doom-modeline-set-modeline</span> <span style="color:#19177c">&#39;main</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">doom-modeline-set-modeline</span> <span style="color:#19177c">&#39;main</span> <span style="color:#19177c">&#39;default</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;POLYBAR_BOTTOM&#34;</span> <span style="color:#ba2121">&#34;true&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/exwm-run-polybar</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/exwm-run-polybar</span>))))
 </span></span></code></pre></div><h3 id="perspective-dot-el">perspective.el</h3>
 <p><a href="https://github.com/nex3/perspective-el">perspective.el</a> is a package that groups buffers in &ldquo;perspectives&rdquo;.</p>
 <p><code>tab-bar.el</code> can be configured to behave in a similar way, but I&rsquo;m too invested in this package already.</p>
@@ -2569,12 +2629,15 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">indent-for-tab-command</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">copilot</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/copilot.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#ba2121">&#34;dist&#34;</span> <span style="color:#ba2121">&#34;*.el&#34;</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;copilot/copilot.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-startup-hook</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;prog-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-mode</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">push</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">copilot</span>) <span style="color:#19177c">warning-suppress-types</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">copilot-node-executable</span> <span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/dev/dev/bin/node&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;company-active-map</span>
@@ -2583,8 +2646,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;copilot-mode-map</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;tab&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/copilot-tab</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-j&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-accept-completion-by-line</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-accept-completion-by-word</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">copilot-lispy-integration</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">copilot-accept-completion-by-word</span>))
 </span></span></code></pre></div><h3 id="web-development">Web development</h3>
 <p>Configs for various web development technologies I&rsquo;m using.</p>
 <h4 id="emmet">Emmet</h4>
@@ -3130,7 +3192,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">langtool-check</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-language-tool-server-jar</span> <span style="color:#ba2121">&#34;/home/pavel/bin/LanguageTool-5.7/languagetool-server.jar&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-language-tool-server-jar</span> <span style="color:#ba2121">&#34;/home/pavel/bin/LanguageTool-6.4/languagetool-server.jar&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-mother-tongue</span> <span style="color:#ba2121">&#34;ru&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">langtool-default-language</span> <span style="color:#ba2121">&#34;en-US&#34;</span>))
 </span></span><span style="display:flex;"><span>
@@ -4219,7 +4281,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>Doing presentations with <a href="https://github.com/rlister/org-present">org-present</a>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">hide-mode-line</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org-present</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">hide-mode-line-mode</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/present-next-with-latex</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
@@ -4334,6 +4396,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	  (<span style="color:#00f">buffer-file-name</span>))
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">name</span> <span style="color:#ba2121">&#34;.csv&#34;</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#ba2121">&#34;orgtbl-to-csv&#34;</span>)))))
+</span></span></code></pre></div><h4 id="partial-scrolling">Partial scrolling</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">phscroll</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;misohena/phscroll&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-phscroll</span>)))
 </span></span></code></pre></div><h3 id="productivity-and-knowledge-management">Productivity &amp; Knowledge management</h3>
 <p>My ongoing effort to <del>get a productivity setup</del> manage something in my life in Org.</p>
 <p>Initial inspirations (<span class="timestamp-wrapper"><span class="timestamp">&lt;2021-06-30 Wed&gt;</span></span>):</p>
@@ -11026,7 +11094,11 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
           </ul>
         </li>
         <li><a href="#text-highlight">Text highlight</a></li>
-        <li><a href="#doom-modeline">Doom Modeline</a></li>
+        <li><a href="#doom-modeline">Doom Modeline</a>
+          <ul>
+            <li><a href="#doom-modeline-as-tab-bar">Doom Modeline as Tab Bar</a></li>
+          </ul>
+        </li>
         <li><a href="#perspective-dot-el">perspective.el</a>
           <ul>
             <li><a href="#functions-to-manage-buffers">Functions to manage buffers</a></li>
@@ -11198,6 +11270,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#transclusion">Transclusion</a></li>
             <li><a href="#drawing">Drawing</a></li>
             <li><a href="#managing-tables">Managing tables</a></li>
+            <li><a href="#partial-scrolling">Partial scrolling</a></li>
           </ul>
         </li>
         <li><a href="#productivity-and-knowledge-management">Productivity &amp; Knowledge management</a>
