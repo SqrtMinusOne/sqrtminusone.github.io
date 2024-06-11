@@ -928,9 +928,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;exwm-mode</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;xkb-switch -n&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">equal</span> (<span style="color:#19177c">string-trim</span>
-</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;xkb-switch -p&#34;</span>))
-</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34;us&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">not</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;xkb-switch&#34;</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">equal</span> (<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">shell-command-to-string</span> <span style="color:#ba2121">&#34;xkb-switch -p&#34;</span>))
+</span></span><span style="display:flex;"><span>		<span style="color:#ba2121">&#34;us&#34;</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">toggle-input-method</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/run-in-background</span> <span style="color:#ba2121">&#34;xkb-switch -s us&#34;</span>))))
 </span></span></code></pre></div><p><code>M-x delete-horizontal-space</code> doesn&rsquo;t feel that useful to me.</p>
@@ -8588,6 +8590,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">transient</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p>Compatibility with termux.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">image-transforms-p</span> () <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">image-types</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">svg</span> <span style="color:#19177c">png</span> <span style="color:#19177c">gif</span> <span style="color:#19177c">tiff</span> <span style="color:#19177c">jpeg</span> <span style="color:#19177c">xpm</span> <span style="color:#19177c">xbm</span> <span style="color:#19177c">pbm</span>)))
 </span></span></code></pre></div><h5 id="ui-and-keymaps">UI and keymaps</h5>
 <p><code>display-line-numbers-mode</code> screws the UI for some reason.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/mastodon-configure</span> ()
