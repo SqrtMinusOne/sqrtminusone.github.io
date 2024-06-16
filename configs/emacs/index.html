@@ -3977,6 +3977,82 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
 </span></span><span style="display:flex;"><span>	     (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
+</span></span></code></pre></div><h3 id="ui-1">UI</h3>
+<h4 id="latex-fragments">LaTeX fragments</h4>
+<p>A function to enable LaTeX native highlighting. Not setting this as default, because it loads LaTeX stuff.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/enable-org-latex</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">customize-set-variable</span> <span style="color:#19177c">&#39;org-highlight-latex-and-related</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">native</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">yas-activate-extra-mode</span> <span style="color:#19177c">&#39;LaTeX-mode</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">sp-local-pair</span> <span style="color:#19177c">&#39;org-mode</span> <span style="color:#ba2121">&#34;$&#34;</span> <span style="color:#ba2121">&#34;$&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">sp--remove-local-pair</span> <span style="color:#ba2121">&#34;&#39;&#34;</span>))
+</span></span></code></pre></div><p>Call the function before opening an org file or reopen a buffer after calling the function.</p>
+<p>Scale latex fragments preview.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-latex-scale</span> <span style="color:#666">1.75</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-format-latex-options</span> (<span style="color:#00f">plist-put</span> <span style="color:#19177c">org-format-latex-options</span> <span style="color:#008000">:scale</span> <span style="color:#19177c">my/org-latex-scale</span>)))
+</span></span></code></pre></div><p>Also, LaTeX fragments preview tends to break whenever the are custom <code>#+LATEX_HEADER</code> entries. To circumvent this, I add a custom header and modify the <code>org-preview-latex-process-alist</code> variable</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/latex-preview-header</span> <span style="color:#ba2121">&#34;\\documentclass{article}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage[usenames]{color}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{graphicx}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{grffile}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{longtable}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{wrapfig}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{rotating}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage[normalem]{ulem}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{amsmath}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{textcomp}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{amssymb}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{capt-of}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{hyperref}
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\pagestyle{empty}&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-preview-latex-process-alist</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">cons</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">car</span> <span style="color:#19177c">item</span>)
+</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">plist-put</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">item</span>) <span style="color:#008000">:latex-header</span> <span style="color:#19177c">my/latex-preview-header</span>)))
+</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">org-preview-latex-process-alist</span>)))
+</span></span></code></pre></div><h4 id="better-headers">Better headers</h4>
+<p><a href="https://github.com/integral-dw/org-superstar-mode">org-superstar-mode</a> is a package that makes Org heading lines look a bit prettier.</p>
+<p>Disabled it for now because of overlapping functionality with org-bars.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-superstar</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">org-superstar-mode</span>))
+</span></span></code></pre></div><p><a href="https://github.com/tonyaldon/org-bars">org-bars</a> highlights Org indentation with bars.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-bars</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;tonyaldon/org-bars&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">org-bars-mode</span>))
+</span></span></code></pre></div><p>Fallback to the standard <code>org-indent-mode</code> on terminal.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-indent-mode</span>))
+</span></span></code></pre></div><p>Remove the ellipsis at the end of folded headlines, as it seems unnecessary with <code>org-bars</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-no-ellipsis-in-headlines</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">remove-from-invisibility-spec</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-invisibility-spec</span> <span style="color:#19177c">&#39;outline</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-bars</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">&#39;org-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)))
+</span></span></code></pre></div><h4 id="override-colors">Override colors</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-colors</span>
+</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>))
+</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block-begin-line</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>)
+</span></span><span style="display:flex;"><span>		       <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;grey</span>)))
+</span></span></code></pre></div><h4 id="hide-stuff-in-buffer">Hide stuff in buffer</h4>
+<p><a href="https://github.com/awth13/org-appear">org-appear</a> is a package that toggles visibility of hidden elements upon entering and leaving them.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-appear</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><p><a href="https://github.com/io12/org-fragtog">org-fragtog</a> does the same for LaTeX fragment previews.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-fragtog</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">org</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="literate-programing">Literate programing</h3>
 <h4 id="python-and-jupyter">Python &amp; Jupyter</h4>
 <p>Use jupyter kernels for Org Mode.</p>
@@ -4807,6 +4883,15 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>				(<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nots&#34;</span>))
 </span></span><span style="display:flex;"><span>				(<span style="color:#19177c">not</span> (<span style="color:#19177c">ts</span> <span style="color:#008000">:from</span> <span style="color:#666">-14</span>)))
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Review: Stale tasks&#34;</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">todo</span> <span style="color:#19177c">priority</span> <span style="color:#19177c">date</span>)
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Unclocked tasks&#34;</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#00f">list</span> <span style="color:#008000">:buffers-files</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-agenda-files</span>
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:query</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">done</span>)
+</span></span><span style="display:flex;"><span>				(<span style="color:#19177c">ts</span> <span style="color:#008000">:from</span> <span style="color:#666">-14</span>)
+</span></span><span style="display:flex;"><span>				(<span style="color:#19177c">not</span> (<span style="color:#19177c">clocked</span>))
+</span></span><span style="display:flex;"><span>				(<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nots&#34;</span>)))
+</span></span><span style="display:flex;"><span>		   <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Review: Unclocked tasks&#34;</span>
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">todo</span> <span style="color:#19177c">priority</span> <span style="color:#19177c">date</span>)
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Recently timestamped&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-ql-view-recent-items</span>)
@@ -5731,6 +5816,18 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;deft</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">deft-parse-title</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/deft-parse-title-around</span>))
+</span></span></code></pre></div><h5 id="notes-display">Notes display</h5>
+<p>I decided to borrow a few UX things from <a href="https://obsidian.md/">Obsidian</a>, namely hiding syntax when cursor leaves the line.</p>
+<p><a href="https://github.com/awth13/org-appear?tab=readme-ov-file">org-appear</a> and <a href="https://github.com/io12/org-fragtog">org-fragtog</a> do pretty much that.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-roam-node-setup</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">org-hide-emphasis-markers</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-appear-mode</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-fragtog-mode</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-latex-preview</span> <span style="color:#666">&#39;</span>(<span style="color:#666">16</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-roam-find-file-hook</span> <span style="color:#19177c">&#39;my/org-roam-node-setup</span>))
 </span></span></code></pre></div><h4 id="review-workflow">Review workflow</h4>
 <p>Tiago Forte has several few interesting blog posts:</p>
 <ul>
@@ -5932,73 +6029,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;RET&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-goto</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-timeblock-todo-set</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">quit-window</span>))
-</span></span></code></pre></div><h3 id="ui-1">UI</h3>
-<h4 id="latex-fragments">LaTeX fragments</h4>
-<p>A function to enable LaTeX native highlighting. Not setting this as default, because it loads LaTeX stuff.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/enable-org-latex</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">customize-set-variable</span> <span style="color:#19177c">&#39;org-highlight-latex-and-related</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">native</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">yas-activate-extra-mode</span> <span style="color:#19177c">&#39;LaTeX-mode</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">sp-local-pair</span> <span style="color:#19177c">&#39;org-mode</span> <span style="color:#ba2121">&#34;$&#34;</span> <span style="color:#ba2121">&#34;$&#34;</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">sp--remove-local-pair</span> <span style="color:#ba2121">&#34;&#39;&#34;</span>))
-</span></span></code></pre></div><p>Call the function before opening an org file or reopen a buffer after calling the function.</p>
-<p>Scale latex fragments preview.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-latex-scale</span> <span style="color:#666">1.75</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-format-latex-options</span> (<span style="color:#00f">plist-put</span> <span style="color:#19177c">org-format-latex-options</span> <span style="color:#008000">:scale</span> <span style="color:#19177c">my/org-latex-scale</span>)))
-</span></span></code></pre></div><p>Also, LaTeX fragments preview tends to break whenever the are custom <code>#+LATEX_HEADER</code> entries. To circumvent this, I add a custom header and modify the <code>org-preview-latex-process-alist</code> variable</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">with-eval-after-load-norem</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/latex-preview-header</span> <span style="color:#ba2121">&#34;\\documentclass{article}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage[usenames]{color}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{graphicx}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{grffile}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{longtable}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{wrapfig}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{rotating}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage[normalem]{ulem}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{amsmath}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{textcomp}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{amssymb}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{capt-of}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\usepackage{hyperref}
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">\\pagestyle{empty}&#34;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-preview-latex-process-alist</span>
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">item</span>)
-</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">cons</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">car</span> <span style="color:#19177c">item</span>)
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">plist-put</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">item</span>) <span style="color:#008000">:latex-header</span> <span style="color:#19177c">my/latex-preview-header</span>)))
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">org-preview-latex-process-alist</span>)))
-</span></span></code></pre></div><h4 id="better-headers">Better headers</h4>
-<p><a href="https://github.com/integral-dw/org-superstar-mode">org-superstar-mode</a> is a package that makes Org heading lines look a bit prettier.</p>
-<p>Disabled it for now because of overlapping functionality with org-bars.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-superstar</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:disabled</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">org-superstar-mode</span>))
-</span></span></code></pre></div><p><a href="https://github.com/tonyaldon/org-bars">org-bars</a> highlights Org indentation with bars.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">org-bars</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;tonyaldon/org-bars&#34;</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">display-graphic-p</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> (<span style="color:#19177c">org-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">org-bars-mode</span>))
-</span></span></code></pre></div><p>Fallback to the standard <code>org-indent-mode</code> on terminal.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#19177c">display-graphic-p</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-indent-mode</span>))
-</span></span></code></pre></div><p>Remove the ellipsis at the end of folded headlines, as it seems unnecessary with <code>org-bars</code>.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-no-ellipsis-in-headlines</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">remove-from-invisibility-spec</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">outline</span> <span style="color:#666">.</span> <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-invisibility-spec</span> <span style="color:#19177c">&#39;outline</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-bars</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">&#39;org-mode</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-no-ellipsis-in-headlines</span>)))
-</span></span></code></pre></div><h4 id="override-colors">Override colors</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/use-colors</span>
-</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>))
-</span></span><span style="display:flex;"><span> (<span style="color:#19177c">org-block-begin-line</span> <span style="color:#008000">:background</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;bg-other</span>)
-</span></span><span style="display:flex;"><span>		       <span style="color:#008000">:foreground</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;grey</span>)))
 </span></span></code></pre></div><h3 id="export">Export</h3>
 <h4 id="hugo">Hugo</h4>
 <p>A package for exporting Org to Hugo. That&rsquo;s how I manage my <a href="https://sqrtminusone.xyz">sqrtminusone.xyz</a>.</p>
@@ -11254,6 +11284,14 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#open-a-file-from-org-directory">Open a file from <code>org-directory</code></a></li>
           </ul>
         </li>
+        <li><a href="#ui-1">UI</a>
+          <ul>
+            <li><a href="#latex-fragments">LaTeX fragments</a></li>
+            <li><a href="#better-headers">Better headers</a></li>
+            <li><a href="#override-colors">Override colors</a></li>
+            <li><a href="#hide-stuff-in-buffer">Hide stuff in buffer</a></li>
+          </ul>
+        </li>
         <li><a href="#literate-programing">Literate programing</a>
           <ul>
             <li><a href="#python-and-jupyter">Python &amp; Jupyter</a></li>
@@ -11289,13 +11327,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#contacts">Contacts</a></li>
             <li><a href="#calendar-view">Calendar view</a></li>
             <li><a href="#org-timeblock">org-timeblock</a></li>
-          </ul>
-        </li>
-        <li><a href="#ui-1">UI</a>
-          <ul>
-            <li><a href="#latex-fragments">LaTeX fragments</a></li>
-            <li><a href="#better-headers">Better headers</a></li>
-            <li><a href="#override-colors">Override colors</a></li>
           </ul>
         </li>
         <li><a href="#export">Export</a>
