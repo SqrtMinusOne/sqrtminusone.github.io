@@ -3255,9 +3255,13 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>A package that checks for the metadata in Emacs Lisp packages.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">flycheck-package</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">flycheck</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">flycheck-package-setup</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">my/flycheck-package-setup</span> ()
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;flycheck-package</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">flycheck-package-setup</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/flycheck-package-setup</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/flycheck-package-setup</span>))
 </span></span></code></pre></div><h5 id="general-settings-2">General settings</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">aggressive-indent-mode</span>)
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-hook &#39;emacs-lisp-mode-hook #&#39;smartparens-strict-mode)</span>
@@ -9198,6 +9202,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>There is a package called <code>devdocs</code> that does more or less the same, but I like <code>devdocs-browser</code> more because it uses <code>eww</code>.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">devdocs-browser</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">devdocs-browser-open</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-open-in</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-install-doc</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-uninstall-doc</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-download-offline-data</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-remove-offline-data</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-upgrade-all-docs</span>
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">devdocs-browser-update-docs</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;hd&#34;</span>

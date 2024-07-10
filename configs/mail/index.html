@@ -467,11 +467,8 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">dir</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">default-directory</span> <span style="color:#19177c">dir</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">normal-top-level-add-subdirs-to-load-path</span>))))
-</span></span></code></pre></div><p>On termux the above doesn&rsquo;t work so&hellip;</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">notmuch</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> <span style="color:#19177c">my/is-termux</span>)
-</span></span></code></pre></div><p>Some functions to toggle tags:</p>
+</span></span></code></pre></div><p>On termux the above doesn&rsquo;t work, and I don&rsquo;t need it here anyway.</p>
+<p>Some functions to toggle tags:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/notmuch-toggle-trash</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-collection-notmuch-toggle-tag</span> <span style="color:#ba2121">&#34;trash&#34;</span> <span style="color:#ba2121">&#34;search&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ignore</span>))
@@ -485,6 +482,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-collection-notmuch-toggle-tag</span> <span style="color:#ba2121">&#34;unread&#34;</span> <span style="color:#ba2121">&#34;search&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ignore</span>))
 </span></span></code></pre></div><p>And notmuch settings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">notmuch</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">my/is-termux</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; :ensure nil</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">notmuch</span> <span style="color:#19177c">notmuch-search</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>

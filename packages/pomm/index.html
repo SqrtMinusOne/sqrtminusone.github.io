@@ -114,24 +114,24 @@ History of the timer can be stored in a CSV file. Eventually, I want to join thi
 <h2 id="usage">Usage</h2>
 <h3 id="pomodoro">Pomodoro</h3>
 <p>Run <code>M-x pomm</code> to open the transient buffer.</p>
-<p>The listed commands are rather self-descriptive and match the Pomodoro ideology.</p>
+<p>The listed commands are self-descriptive and match the Pomodoro ideology.</p>
 <p>The timer can have 3 states:</p>
 <ul>
 <li><strong>Stopped</strong>. Can be started with &ldquo;s&rdquo; or <code>M-x pomm-start</code>. A new iteration of the timer will be started.</li>
-<li><strong>Paused</strong>. Can be continuted with &ldquo;s&rdquo; / <code>M-x pomm-start</code> or stopped competely with &ldquo;S&rdquo; / <code>M-x pomm-stop</code>.</li>
+<li><strong>Paused</strong>. Can be continued with &ldquo;s&rdquo; / <code>M-x pomm-start</code> or stopped completely with &ldquo;S&rdquo; / <code>M-x pomm-stop</code>.</li>
 <li><strong>Running</strong>. Can be paused with &ldquo;p&rdquo; / <code>M-x pomm-pause</code> or stopped with &ldquo;S&rdquo; / <code>M-x pomm-stop</code>.</li>
 </ul>
 <p>The state of the timer can be reset with &ldquo;R&rdquo; or <code>M-x pomm-reset</code>.</p>
 <p>&ldquo;u&rdquo; updates the transient buffer. The update is manual because I didn&rsquo;t figure out how to automate this, and I think this is not <em>really</em> necessary.</p>
-<p>With &ldquo;r&rdquo; or <code>M-x pomm-set-context</code> you can set the current &ldquo;context&rdquo;, that is some description of the task you are currently working on. This description will show up in history and in the csv file. Also, <code>M-x pomm-start-with-context</code> will prompt for the context and then start the timer.</p>
+<p>With &ldquo;r&rdquo; or <code>M-x pomm-set-context</code> you can set the current &ldquo;context&rdquo;, that is some description of the task you are currently working on. This description will show up in history and in the CSV file. Also, <code>M-x pomm-start-with-context</code> will prompt for the context and then start the timer.</p>
 <h3 id="third-time">Third Time</h3>
 <p>Run <code>M-x pomm-third-time</code> to open the transient buffer for the Third Time technique.</p>
 <figure><img src="/pomm-img/screenshot-tt.png">
 </figure>
 
-<p>Essentially, the techique is designed aroud the formula:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Time of break =  1/3 x Time of work.
-</span></span></code></pre></div><p>I.e. you work as long as you want or need, and then take a break with the maximum duration <code>1/3</code> of the time worked. If you take a shorter break, the remaining break time is saved and added to the next break within the same session. <a href="https://www.lesswrong.com/posts/RWu8eZqbwgB9zaerh/third-time-a-better-way-to-work">Here is a more detailed explanation</a>.</p>
+<p>Essentially, the technique is designed around the formula:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Time of break = 1/3 x Time of work.
+</span></span></code></pre></div><p>I.e., you work as long as you want or need, and then take a break with the maximum duration of <code>1/3</code> of the time worked. If you take a shorter break, the remaining break time is saved and added to the next break within the same session. <a href="https://www.lesswrong.com/posts/RWu8eZqbwgB9zaerh/third-time-a-better-way-to-work">Here is a more detailed explanation</a>.</p>
 <p>The Third Time timer can have 2 states:</p>
 <ul>
 <li><strong>Stopped</strong>. Can be started with &ldquo;s&rdquo; or <code>M-x pomm-third-time-start</code>.</li>
@@ -144,7 +144,7 @@ History of the timer can be stored in a CSV file. Eventually, I want to join thi
 <p>The package sends alerts via <code>alert.el</code>. The default style of alert is a plain <code>message</code>, but if you want an actual notification, set <code>alert-default-style</code> accordingly:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">alert-default-style</span> <span style="color:#19177c">&#39;libnotify</span>)
 </span></span></code></pre></div><h3 id="sounds">Sounds</h3>
-<p>By default sounds are disabled. Set <code>pomm-audio-enabled</code> to <code>t</code> to toggle them. Set <code>pomm-audio-tick-enabled</code> to <code>t</code> if you want the ticking sound.</p>
+<p>By default, sounds are disabled. Set <code>pomm-audio-enabled</code> to <code>t</code> to toggle them. Set <code>pomm-audio-tick-enabled</code> to <code>t</code> if you want the ticking sound.</p>
 <p>This functionality needs <code>pomm-audio-player-executable</code> to be set so that the program could be invoked like: <code>&lt;executable&gt; /path/to/sound.wav</code>.</p>
 <p>The package ships with some built-it sounds, which you can replace by customizing the <code>pomm-audio-files</code> variable.</p>
 <h3 id="modeline">Modeline</h3>
@@ -163,7 +163,7 @@ type = custom/script
 exec = /home/pavel/bin/polybar/pomm.sh
 interval = 1
 </code></pre><h3 id="state-file-location">State file location</h3>
-<p>To implement pesistence between Emacs sessions, the package stores its state in the following files:</p>
+<p>To implement persistence between Emacs sessions, the package stores its state in the following files:</p>
 <ul>
 <li><code>pomm-state-file-location</code>, <code>.emacs.d/pomm</code> by default</li>
 <li><code>pomm-third-time-state-file-location</code>, <code>/.emacs.d/pomm-third-time</code> by default</li>
@@ -179,11 +179,19 @@ interval = 1
 <li><code>iteration</code></li>
 <li><code>context</code></li>
 </ul>
-<p>One for the Third Time technique has an extra column called <code>break-time-remaining</code>.</p>
+<p>The one for the Third Time technique has an extra column called <code>break-time-remaining</code>.</p>
 <p>A new entry is written after a particular state of the timer comes into being.</p>
 <p>To customize timestamp, set the <code>pomm-csv-history-file-timestamp-format</code> variable. For example, for traditional <code>YYYY-MM-DD HH:mm:ss</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">pomm-csv-history-file-timestamp-format</span> <span style="color:#ba2121">&#34;%F %T&#34;</span>)
 </span></span></code></pre></div><p>The format is the same as in <code>format-time-string</code>.</p>
+<h3 id="usage-with-org-clock">Usage with <code>org-clock</code></h3>
+<p>The package can be used with <a href="https://orgmode.org/manual/Clocking-commands.html">org-clock</a> in the following way. Set up these two hooks:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;pomm-on-status-changed-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">pomm--sync-org-clock</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;pomm-third-time-on-status-changed-hook</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#00f">#&#39;</span><span style="color:#19177c">pomm-third-time--sync-org-clock</span>
+</span></span></code></pre></div><p>Then, start the timer (either <code>pomm</code> or <code>pomm-third-time</code>) and <code>org-clock-in</code>, in whichever order. The package will call <code>org-clock-out</code> when a break starts and <code>org-clock-in-last</code> when it ends.</p>
+<p>Setting <code>pomm-org-clock-in-immediately</code> to <code>nil</code> &ldquo;defers&rdquo; calling <code>org-clock-in-last</code> until after any command from the user (via <code>post-command-hook</code>). I&rsquo;ve added this because I occasionally return to my PC a few minutes after the break ends, so I don&rsquo;t want these minutes to show up in <code>org-clock</code>.</p>
+<p>Also see <a href="https://github.com/SqrtMinusOne/pomm.el/issues/13#issuecomment-2216868331">this comment</a> (<a href="https://github.com/SqrtMinusOne/pomm.el/issues/13">#13</a>) for an alternative approach.</p>
 <h2 id="alternatives">Alternatives</h2>
 <p>There is a number of packages with a similar purpose, here is a rough comparison of features:</p>
 <table>
@@ -251,13 +259,13 @@ interval = 1
 <td>GTK panel</td>
 <td>CLI</td>
 <td>-</td>
-<td>-, but the program is independent from Emacs</td>
+<td>-, but the program is independent of Emacs</td>
 <td>GTK notifications</td>
 </tr>
 </tbody>
 </table>
 <p>Be sure to check those out if this one doesn&rsquo;t quite fit your workflow!</p>
-<p>(1) Means of timer control with exception of Emacs interactive commands</p>
+<p>(1) Means of timer control with exception to Emacs interactive commands</p>
 <p>Also take a look at <a href="https://github.com/telotortium/org-pomodoro-third-time">org-pomodoro-third-time</a>, which adapts <code>org-pomodoro</code> for the Third Time technique.</p>
 <h2 id="p-dot-s-dot">P.S.</h2>
 <p>The package name is not an abbreviation. I just hope it doesn&rsquo;t mean something horrible in some language I don&rsquo;t know.</p>
@@ -284,6 +292,7 @@ interval = 1
         <li><a href="#polybar-module">Polybar module</a></li>
         <li><a href="#state-file-location">State file location</a></li>
         <li><a href="#history">History</a></li>
+        <li><a href="#usage-with-org-clock">Usage with <code>org-clock</code></a></li>
       </ul>
     </li>
     <li><a href="#alternatives">Alternatives</a></li>
