@@ -1,0 +1,187 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: Determining package dependency tree in Emacs
+#+DATE: 2024-07-11
+#+HUGO_TAGS: emacs
+#+HUGO_DRAFT: true
+
+#+begin_abstract
+The post describes how to determine package dependency tree, using the built-in =load-history= and =use-package=. This is helpful for configuring lazy loading in configs as large as mine.
+#+end_abstract
+
+* Intro
+Hmm?
+
+* Prior work
+Somehow it has been particularly hard to find anything on that topic.
+
+I started with advising =require= (yes, Emacs allows to do that), but then I had found the built-in [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Where-Defined.html#index-load_002dhistory][load-history]]. The variable is an alist, with each item describing one loaded library, including =require= and =provide= forms:
+#+begin_example
+(("<file-name>/foo.el" (require . bar) (require . baz) (provide . foo)) ...)
+#+end_example
+This is all the information needed to restore the dependency graph.
+
+There are packages using this variable, namely the built-in [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/loadhist.el][loadhist]] providing =file-requires= and =file-dependents=. Unfortunately, these functions are neither recursive nor interactive.
+
+The [[https://www.emacswiki.org/emacs/LibraryDependencies][LibraryDependencies]] page on EmacsWiki also has some ideas, of which [[https://www.emacswiki.org/emacs/lib-requires.el][lib-requires.el]] by Drew Adams looks is the closest to what I want, but it seems to require providing filenames for libraries to inspect.
+
+* Code
+First, I want to transform =load-history= into a more accessible hashmap.
+
+Let the key be the feature symbol, and the value the list of features which require this one. Then, the hashmap forms a directed graph of dependencies.
+
+Also, I'll extract the iteration over =load-history= into a macro because I want to reuse it later.
+
+#+begin_src elisp
+(defmacro my/load-history--iter-load-history (&rest body)
+  "Iterate through `load-history'.
+
+The following are bound in BODY in the process:
+- file-item is one item in `load-history' providing a feature, given
+  that it's not \"-autoloads\";
+- provide-symbol is the feature name, provided by the item;
+- requires is the list of feature, required by the item."
+  `(dolist (file-item load-history)
+     (let (provide-symbol requires)
+       (dolist (symbol-item (cdr file-item))
+         (pcase (car-safe symbol-item)
+           ('require (push (cdr symbol-item) requires))
+           ('provide (setq provide-symbol (cdr symbol-item)))))
+       (when (and provide-symbol
+                  (not (string-match-p
+                        (rx "-autoloads" eos)
+                        (symbol-name provide-symbol))))
+         ,@body))))
+
+(defun my/load-history--get-feature-required-by ()
+  "Get the hashmap of which features were required by which.
+
+The key is the feature name; the value is the list of features in
+which it was required."
+  (let ((feature-required-by (make-hash-table)))
+    (my/load-history--iter-load-history
+     (dolist (require-symbol requires)
+       (puthash require-symbol
+                (cons provide-symbol
+                      (gethash require-symbol feature-required-by))
+                feature-required-by)))
+    feature-required-by))
+#+end_src
+
+This graph can be converted to the tree by taking one feature as a root and traversing every possible path, excluding loops. This will create a lot of duplicate nodes, but it's fine for our purposes.
+
+#+begin_src elisp
+(defun my/load-history--get-feature-tree (feature-name feature-hash &optional found-features)
+  "Get the tree of features with FEATURE-NAME as the root.
+
+FEATURE-HASH is the hashmap with features as keys and lists of
+features as values.
+
+FOUND-FEATURES is the recursive paratemer to avoid infinite loop.
+
+The output is a cons cell, with the car being the feature name
+and the cdr being a list cons cell of the same kind."
+  (unless found-features
+    (setq found-features (make-hash-table)))
+  (puthash feature-name t found-features)
+  (prog1
+      (cons feature-name
+            (mapcar
+             (lambda (dependent-feature-name)
+               (if (gethash dependent-feature-name found-features)
+                   (cons dependent-feature-name 'loop)
+                 (my/load-history--get-feature-tree
+                  dependent-feature-name feature-hash found-features)))
+             (gethash feature-name feature-hash)))
+    (remhash feature-name found-features)))
+#+end_src
+
+The resulting feature tree is interesting enough, but I also want to see the subset of tree managed by [[https://github.com/jwiegley/use-package][use-package]].
+
+Fortunately, =use-package= has built-in [[https://github.com/jwiegley/use-package?tab=readme-ov-file#gathering-statistics][statistics functionality]]. To turn it on, set the following variable:
+#+begin_src emacs-lisp
+(setq use-package-compute-statistics t)
+#+end_src
+
+After loading Emacs with this variable enabled, running =M-x use-package-report= will output the per-package statistics, such as loading times, etc. The =use-package-statistics= is a hashmap with the package (feature) name as keys and statistics as values.
+
+This can be used to narrow the tree:
+#+begin_src emacs-lisp
+(defun my/load-history--narrow-tree-by-use-package (tree)
+  "Leave only features managed by `use-package' in TREE."
+  (when (= (hash-table-count use-package-statistics) 0)
+    (user-error "use-package-statistics is empty"))
+  (if (eq (cdr tree) 'loop)
+      (cons (car tree) nil)
+    (let (res)
+      (dolist (child (cdr tree))
+        (let ((found-p (gethash (car child) use-package-statistics))
+              (child-narrowed (my/load-history--narrow-tree-by-use-package child)))
+          (if found-p
+              (push child-narrowed res)
+            (dolist (grandchild (cdr child-narrowed))
+              (push grandchild res)))))
+      (cons (car tree)
+            (seq-uniq
+             (nreverse res)
+             (lambda (a b)
+               (eq (car a) (car b))))))))
+#+end_src
+
+Now, the only remaining thing is to render these results. I've tried Damien Cassou's [[https://github.com/DamienCassou/hierarchy][hierarchy.el]] (now [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/emacs-lisp/hierarchy.el][part of Emacs]]), but [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html][outline-mode]] seems to be more straightforward.
+
+So, render the tree with that in mind:
+#+begin_src emacs-lisp
+(defun my/load-history--render-feature-tree-recur (tree &optional level)
+  "Render the feature tree recursively.
+
+TREE is the output of `my/load-history--get-feature-tree'.  LEVEL is
+the recursion level."
+  (unless level (setq level 1))
+  (insert (make-string level ?*) " " (symbol-name (car tree)))
+  (if (eq (cdr tree) 'loop)
+      (insert ": loop\n")
+    (insert "\n")
+    (dolist (feature (cdr tree))
+      (my/load-history--render-feature-tree-recur feature (1+ level)))))
+#+end_src
+
+I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB=:
+#+begin_src emacs-lisp
+(defvar my/load-history-tree-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map outline-mode-map)
+    (define-key map (kbd "q") (lambda () (interactive) (quit-window t)))
+    (when (fboundp #'evil-define-key*)
+      (evil-define-key* '(normal motion) map
+        (kbd "TAB") #'outline-toggle-children
+        "q" (lambda () (interactive) (quit-window t))))
+    map))
+
+(define-derived-mode my/load-history-tree-mode outline-mode "Load Tree"
+  "Display load tree."
+  (setq-local buffer-read-only t))
+#+end_src
+
+Finally, an interactive function that puts all of that together:
+#+begin_src emacs-lisp
+(defun my/load-history-feature-dependents (feature-name &optional narrow-use-package)
+  "Display the tree of features that depend on FEATURE-NAME.
+
+If NARROW-USE-PACKAGE is non-nil, only show the features that are
+managed by `use-package'."
+  (interactive (list (intern (completing-read "Feature: " features))
+                     (equal current-prefix-arg '(4))))
+  (let* ((feature-required-by (my/load-history--get-feature-required-by))
+         (tree (my/load-history--get-feature-tree feature-name feature-required-by))
+         (buffer (generate-new-buffer (format "*feature-dependents-%s*" feature-name))))
+    (when narrow-use-package
+      (setq tree (my/load-history--narrow-tree-by-use-package tree)))
+    (with-current-buffer buffer
+      (my/load-history--render-feature-tree-recur tree)
+      (my/load-history-tree-mode)
+      (goto-char (point-min)))
+    (switch-to-buffer buffer)))
+#+end_src
+
+* Usage and results
