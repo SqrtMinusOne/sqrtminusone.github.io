@@ -6,11 +6,11 @@
 #+HUGO_DRAFT: true
 
 #+begin_abstract
-The post describes how to determine package dependency tree, using the built-in =load-history= and =use-package=. This is helpful for configuring lazy loading in configs as large as mine.
+The post describes how to determine package dependency tree, using the built-in =load-history= and =use-package=. This is helpful for configuring lazy loading in large configs, such as mine.
 #+end_abstract
 
 * Intro
-Hmm?
+- This document is an awkward middle between a blog post and a package: there's a bit too much code for the former, but too little for the latter, and I don't feel it's general enough anyway. So, for now it's a blog post.
 
 * Prior work
 Somehow it has been particularly hard to find anything on that topic.
@@ -21,7 +21,7 @@ I started with advising =require= (yes, Emacs allows to do that), but then I had
 #+end_example
 This is all the information needed to restore the dependency graph.
 
-There are packages using this variable, namely the built-in [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/loadhist.el][loadhist]] providing =file-requires= and =file-dependents=. Unfortunately, these functions are neither recursive nor interactive.
+There are already packages using this variable, including the built-in [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/loadhist.el][loadhist]] providing =file-requires= and =file-dependents=. Unfortunately, these functions are neither recursive nor interactive.
 
 The [[https://www.emacswiki.org/emacs/LibraryDependencies][LibraryDependencies]] page on EmacsWiki also has some ideas, of which [[https://www.emacswiki.org/emacs/lib-requires.el][lib-requires.el]] by Drew Adams looks is the closest to what I want, but it seems to require providing filenames for libraries to inspect.
 
@@ -96,7 +96,7 @@ and the cdr being a list cons cell of the same kind."
     (remhash feature-name found-features)))
 #+end_src
 
-The resulting feature tree is interesting enough, but I also want to see the subset of tree managed by [[https://github.com/jwiegley/use-package][use-package]].
+This feature tree is already interesting, but for me it's also helpful to find the subset of the tree managed by [[https://github.com/jwiegley/use-package][use-package]]. For instance, I used this to figure out why opening an elisp buffer loads =org-mode= (spolier: [[https://github.com/abo-abo/lispy/blob/fe44efd21573868638ca86fc8313241148fabbe3/lispy.el#L143][lispy]] -> [[https://github.com/abo-abo/zoutline/blob/32857c6c4b9b0bcbed14d825a10b91a98d5fed0a/zoutline.el#L26][zoutline]] -> org).
 
 Fortunately, =use-package= has built-in [[https://github.com/jwiegley/use-package?tab=readme-ov-file#gathering-statistics][statistics functionality]]. To turn it on, set the following variable:
 #+begin_src emacs-lisp
@@ -128,9 +128,9 @@ This can be used to narrow the tree:
                (eq (car a) (car b))))))))
 #+end_src
 
-Now, the only remaining thing is to render these results. I've tried Damien Cassou's [[https://github.com/DamienCassou/hierarchy][hierarchy.el]] (now [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/emacs-lisp/hierarchy.el][part of Emacs]]), but [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html][outline-mode]] seems to be more straightforward.
+Now, the only remaining thing is to render these results. I've also tried Damien Cassou's [[https://github.com/DamienCassou/hierarchy][hierarchy.el]] (now [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/emacs-lisp/hierarchy.el][part of Emacs]]), but I find [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html][outline-mode]] more straightforward.
 
-So, render the tree with that in mind:
+To make a header for =outline-mode=, just prepend the string with the required number of "*":
 #+begin_src emacs-lisp
 (defun my/load-history--render-feature-tree-recur (tree &optional level)
   "Render the feature tree recursively.
@@ -146,7 +146,7 @@ the recursion level."
       (my/load-history--render-feature-tree-recur feature (1+ level)))))
 #+end_src
 
-I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB=:
+I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB= and make the buffer read-only:
 #+begin_src emacs-lisp
 (defvar my/load-history-tree-mode-map
   (let ((map (make-sparse-keymap)))
@@ -163,18 +163,69 @@ I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB=:
   (setq-local buffer-read-only t))
 #+end_src
 
-Finally, an interactive function that puts all of that together:
+Now, putting all of this together.
+
+The completing-read function prompts the user either with a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Named-Features.html#index-features-1][list of features]] or with the list of use-package packages.
+
 #+begin_src emacs-lisp
+(defun my/completing-read-features-or-packages ()
+  "Read a feature name or a `use-package'-package from the minibuffer.
+
+The choice depends on the value of the prefix argument."
+  (intern
+   (if (equal current-prefix-arg '(4))
+       (completing-read "Package: " (cl-loop for p being the hash-keys of
+                                             use-package-statistics
+                                             collect p))
+     (completing-read "Feature: " features))))
+
 (defun my/load-history-feature-dependents (feature-name &optional narrow-use-package)
   "Display the tree of features that depend on FEATURE-NAME.
 
 If NARROW-USE-PACKAGE is non-nil, only show the features that are
 managed by `use-package'."
-  (interactive (list (intern (completing-read "Feature: " features))
+  (interactive (list (my/completing-read-features-or-packages)
                      (equal current-prefix-arg '(4))))
   (let* ((feature-required-by (my/load-history--get-feature-required-by))
          (tree (my/load-history--get-feature-tree feature-name feature-required-by))
          (buffer (generate-new-buffer (format "*feature-dependents-%s*" feature-name))))
+    (when narrow-use-package
+      (setq tree (my/load-history--narrow-tree-by-use-package tree)))
+    (with-current-buffer buffer
+      (my/load-history--render-feature-tree-recur tree)
+      (my/load-history-tree-mode)
+      (goto-char (point-min)))
+    (switch-to-buffer buffer)))
+#+end_src
+
+Having that, we can also reverse the function and build a dependency tree, i.e. find out which features are required by the one in question (rather than vice versa).
+
+To change this, it only takes to swap keys and values in the packages hashmap construction, i.e. reverse all edges in the dependency graph:
+#+begin_src emacs-lisp
+(defun my/load-history--get-feature-requires ()
+  "Get the hashmap of which features require which.
+
+The key is the feature name; the value is the list of features it
+requires."
+  (let ((feature-requires (make-hash-table)))
+    (my/load-history--iter-load-history
+     (dolist (require-symbol requires)
+       (puthash provide-symbol
+                (cons require-symbol
+                      (gethash provide-symbol feature-requires))
+                feature-requires)))
+    feature-requires))
+
+(defun my/load-history-feature-dependencies (feature-name &optional narrow-use-package)
+  "Display the tree of features that FEATURE-NAME depends on.
+
+If NARROW-USE-PACKAGE is non-nil, only show the features that are
+managed by `use-package'."
+  (interactive (list (my/completing-read-features-or-packages)
+                     (equal current-prefix-arg '(4))))
+  (let* ((feature-requires (my/load-history--get-feature-requires))
+         (tree (my/load-history--get-feature-tree feature-name feature-requires))
+         (buffer (generate-new-buffer (format "*feature-dependencies-%s*" feature-name))))
     (when narrow-use-package
       (setq tree (my/load-history--narrow-tree-by-use-package tree)))
     (with-current-buffer buffer
