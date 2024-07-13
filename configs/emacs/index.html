@@ -4619,7 +4619,21 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">org-clock-agg</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ol&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-clock-agg</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ol&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-clock-agg</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Agenda+Archive&#34;</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">thread-last</span> <span style="color:#ba2121">&#34;/projects/archive&#34;</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">directory-files</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>				 (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>				  <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects/archive/&#34;</span> <span style="color:#19177c">f</span>)))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">not</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">f</span>)))))))
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">org-clock-agg-files-preset</span>))
 </span></span></code></pre></div><p>The following enables org-clock persistence between Emacs sessions.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">org-clock-persist</span> <span style="color:#19177c">&#39;clock</span>)
@@ -4848,7 +4862,15 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>				(<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;MEETING&#34;</span>))
 </span></span><span style="display:flex;"><span>				(<span style="color:#19177c">ts</span> <span style="color:#008000">:from</span> <span style="color:#666">-7</span>))
 </span></span><span style="display:flex;"><span>		   <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Meeting&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-ql-meeting-tasks</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Review: Meeting&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-ql-meeting-tasks</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Fix: tasks without TASK_KIND&#34;</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">org-ql-search</span> (<span style="color:#00f">current-buffer</span>)
+</span></span><span style="display:flex;"><span>		 <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">olp</span> <span style="color:#ba2121">&#34;Tasks&#34;</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;TASK_KIND&#34;</span>))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">clocked</span>))
+</span></span><span style="display:flex;"><span>		 <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>)))))))
 </span></span></code></pre></div><h6 id="custom-format-element">Custom format element</h6>
 <p>Changing the default <code>org-ql-view--format-element</code> to include effort estimation and the clocked time. I wish it were more configurable out-of-the-box.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ql-view--format-element-override</span> (<span style="color:#19177c">element</span>)
@@ -5099,14 +5121,15 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> <span style="color:#19177c">my/emacs-started</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-alert-mode</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;emacs-startup-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-alert-mode</span>)))
-</span></span></code></pre></div><h5 id="copying-records">Copying records</h5>
+</span></span></code></pre></div><h5 id="seqeuential-headers">Seqeuential headers</h5>
 <p>I like to add numbers to repeating events, like meetings. E.g.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>* Job meeting 62
 </span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-13 16:00&gt;
 </span></span><span style="display:flex;"><span>* Job meeting 63
 </span></span><span style="display:flex;"><span>SCHEDULED: &lt;2022-11-14 16:00&gt;
 </span></span><span style="display:flex;"><span>...
-</span></span></code></pre></div><p>Naturally, I want a way to copy such records. Org Mode already has a function called <code>org-clone-subtree-with-time-shift</code>, that does everything I want except for updating the numbers.</p>
+</span></span></code></pre></div><h6 id="copying-records">Copying records</h6>
+<p>Naturally, I want a way to copy such records. Org Mode already has a function called <code>org-clone-subtree-with-time-shift</code>, that does everything I want except for updating the numbers.</p>
 <p>Unfortunately, I see no way to advise the original function, so here&rsquo;s my version that makes use of <code>evil-numbers</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-clone-subtree-with-time-shift</span> (<span style="color:#19177c">n</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">shift</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;nNumber of clones to produce: &#34;</span>)
@@ -5191,7 +5214,98 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		  (<span style="color:#00f">buffer-string</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">goto-char</span> <span style="color:#19177c">beg</span>)))
 </span></span></code></pre></div><p>My addition to that is the form with <code>evil-numbers/inc-at-pt</code>.</p>
-<h5 id="archiving-records">Archiving records</h5>
+<h6 id="keeping-consistency-among-sequential-records">Keeping consistency among sequential records</h6>
+<p>I also like to keep such headers consistent. Here are a few tools to help with that.</p>
+<p>First, I need to find and group and such headers. <code>org-ql</code> can help with that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org--headings-in-outline</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:select</span> (<span style="color:#008000">lambda</span> () (<span style="color:#00f">propertize</span>
+</span></span><span style="display:flex;"><span>			(<span style="color:#00f">substring-no-properties</span> (<span style="color:#19177c">org-get-heading</span> <span style="color:#800">t</span> <span style="color:#800">t</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>			<span style="color:#19177c">&#39;marker</span> (<span style="color:#00f">copy-marker</span> (<span style="color:#00f">point</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:from</span> (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">list</span> (<span style="color:#00f">buffer-file-name</span>))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">let</span> ((<span style="color:#19177c">archive</span>
+</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">concat</span> (<span style="color:#00f">file-name-directory</span> (<span style="color:#00f">buffer-file-name</span>))
+</span></span><span style="display:flex;"><span>			  <span style="color:#ba2121">&#34;archive/&#34;</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#00f">file-name-nondirectory</span> (<span style="color:#00f">buffer-file-name</span>)))))
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">archive</span>)
+</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">list</span> <span style="color:#19177c">archive</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">outline-path</span> <span style="color:#666">,@</span>(<span style="color:#19177c">org-get-outline-path</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">level</span> <span style="color:#666">,</span>(<span style="color:#19177c">org-current-level</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org--heading-strip</span> (<span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">heading</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">substring-no-properties</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;(&#34;</span> <span style="color:#ba2121">&#34;[&#34;</span>) (<span style="color:#00f">+</span> <span style="color:#19177c">alnum</span>) (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;]&#34;</span> <span style="color:#ba2121">&#34;)&#34;</span>)) <span style="color:#ba2121">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#00f">+</span> (<span style="color:#008000">or</span> <span style="color:#19177c">digit</span> <span style="color:#ba2121">&#34;.&#34;</span>))) <span style="color:#ba2121">&#34; &#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">replace-regexp-in-string</span> (<span style="color:#008000">rx</span> (<span style="color:#00f">+</span> <span style="color:#ba2121">&#34; &#34;</span>)) <span style="color:#ba2121">&#34; &#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">string-trim</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org--headings-group-seq</span> (<span style="color:#19177c">headings</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">headings</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">seq-group-by</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org--heading-strip</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">seq-sort-by</span> <span style="color:#00f">#&#39;car</span> <span style="color:#00f">#&#39;string-lessp</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">group</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">cons</span> (<span style="color:#00f">car</span> <span style="color:#19177c">group</span>)
+</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">save-match-data</span>
+</span></span><span style="display:flex;"><span>			 (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>			  (<span style="color:#008000">and</span> (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">group</span> (<span style="color:#00f">+</span> <span style="color:#19177c">digit</span>)))
+</span></span><span style="display:flex;"><span>					     <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>			       (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>			  <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>		     <span style="color:#00f">#&#39;&lt;</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#00f">cdr</span> <span style="color:#19177c">group</span>)))))))
+</span></span></code></pre></div><p>Then, display all such headings a buffer:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-headings-seq</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">headings</span> (<span style="color:#19177c">my/org--headings-in-outline</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">headings-seq</span> (<span style="color:#19177c">my/org--headings-group-seq</span> <span style="color:#19177c">headings</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*Sequential Headings in Outline*&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">outline-mode</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">widget-push-button-prefix</span> <span style="color:#ba2121">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">widget-push-button-suffix</span> <span style="color:#ba2121">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">group</span> <span style="color:#19177c">headings-seq</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;* %s\n&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">group</span>)))
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">dolist</span> (<span style="color:#19177c">heading</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">group</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">widget-create</span> <span style="color:#19177c">&#39;push-button</span>
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:marker</span> (<span style="color:#00f">get-text-property</span> <span style="color:#666">0</span> <span style="color:#19177c">&#39;marker</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>			 <span style="color:#008000">:notify</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">widget</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">ignore</span>)
+</span></span><span style="display:flex;"><span>				   (<span style="color:#008000">let</span> ((<span style="color:#19177c">marker</span> (<span style="color:#00f">widget-get</span> <span style="color:#19177c">widget</span> <span style="color:#008000">:marker</span>)))
+</span></span><span style="display:flex;"><span>				     (<span style="color:#19177c">pop-to-buffer</span> (<span style="color:#00f">marker-buffer</span> <span style="color:#19177c">marker</span>))
+</span></span><span style="display:flex;"><span>				     (<span style="color:#00f">goto-char</span> <span style="color:#19177c">marker</span>)))
+</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;** &#34;</span> (<span style="color:#00f">substring-no-properties</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">widget-setup</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">buffer-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">pop-to-buffer</span> <span style="color:#19177c">buffer</span>)))
+</span></span></code></pre></div><p>And insert a similar heading:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-heading-seq-insert</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">headings</span> (<span style="color:#19177c">my/org--headings-in-outline</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">headings-seq</span> (<span style="color:#19177c">my/org--headings-group-seq</span> <span style="color:#19177c">headings</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">heading</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Headings: &#34;</span> <span style="color:#19177c">headings-seq</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">last-number</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">thread-last</span> <span style="color:#19177c">headings-seq</span>
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">assoc</span> <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">cdr</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">x</span>)
+</span></span><span style="display:flex;"><span>				 (<span style="color:#008000">save-match-data</span>
+</span></span><span style="display:flex;"><span>				   (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>				    (<span style="color:#008000">when</span> (<span style="color:#00f">string-match</span> (<span style="color:#008000">rx</span> (<span style="color:#19177c">group</span> (<span style="color:#00f">+</span> <span style="color:#19177c">digit</span>)))
+</span></span><span style="display:flex;"><span>							<span style="color:#19177c">x</span>)
+</span></span><span style="display:flex;"><span>				      (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span> <span style="color:#19177c">x</span>)))
+</span></span><span style="display:flex;"><span>				    <span style="color:#666">1</span>))))
+</span></span><span style="display:flex;"><span>		       (<span style="color:#19177c">seq-max</span>)
+</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">1+</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-insert-heading</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;FUTURE %s %s&#34;</span> <span style="color:#19177c">heading</span> <span style="color:#19177c">last-number</span>))))
+</span></span></code></pre></div><h5 id="archiving-records">Archiving records</h5>
 <ul>
 <li><strong>CREDIT</strong>: thanks <a href="https://emacs.ch/@grinn">Amy</a> for pointing me to the right functionality of <code>org-refile</code>.</li>
 </ul>
