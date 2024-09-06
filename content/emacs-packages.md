@@ -103,15 +103,15 @@ An alternative tree-based interface for [elfeed](https://github.com/skeeto/elfee
 -   Package at MELPA: <https://melpa.org/#/elfeed-summary>
 
 
-## password-store-ivy {#password-store-ivy}
+## password-store-completion {#password-store-completion}
 
-Auto-type fields from [pass](https://www.passwordstore.org/) entries. Essentially, this is a reimplementation of [rofi-pass](https://github.com/carnager/rofi-pass) with [Ivy](https://github.com/abo-abo/swiper) which I made after migrating to [EXWM](https://github.com/ch11ng/exwm). I used to use the package with [ivy-posframe](https://github.com/tumashu/ivy-posframe), but the latter turned out to be unnecessary.
+Auto-type fields from [pass](https://www.passwordstore.org/) entries. Essentially, this is a reimplementation of [rofi-pass](https://github.com/carnager/rofi-pass) with `completing-read` which I made after migrating to [EXWM](https://github.com/ch11ng/exwm).
 
-I might archive this if I switch to a different completion framework (or even ditch the WM), which is why I'm not submitting it anywhere. But the package is pretty simple.
+It was called `password-store-ivy` before, but I've changed the name after I switched to vertico and added `completing-read` (+ embark integration) to the package.
 
--   Package name: `password-store-ivy`
--   Homepage: <https://sqrtminusone.xyz/packages/password-store-ivy>
--   Git repo: <https://github.com/SqrtMinusOne/password-store-ivy>
+-   Package name: `password-store-completion`
+-   Homepage: <https://sqrtminusone.xyz/packages/password-store-completion>
+-   Git repo: <https://github.com/SqrtMinusOne/password-store-completion>
 
 
 ## Org Journal Tags {#org-journal-tags}

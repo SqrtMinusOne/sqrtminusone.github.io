@@ -119,7 +119,7 @@
         "perspective-exwm"
         "org-journal-tags"
         "elfeed-sync"
-        "password-store-ivy"
+        "password-store-completion"
         "avy-dired"
         "reverso"
         "micromamba"
