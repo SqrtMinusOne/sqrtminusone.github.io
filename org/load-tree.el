@@ -1,39 +1,3 @@
-#+HUGO_SECTION: posts
-#+PROPERTY: header-args:emacs-lisp :tangle load-tree.el
-#+HUGO_BASE_DIR: ../
-#+TITLE: Determining package dependency tree in Emacs
-#+DATE: 2024-07-11
-#+HUGO_TAGS: emacs
-#+HUGO_DRAFT: true
-
-#+begin_abstract
-The post describes how to determine package dependency tree, using the built-in =load-history= and =use-package=. This is helpful for configuring lazy loading in large configs, such as mine.
-#+end_abstract
-
-* Intro
-- This document is an awkward middle between a blog post and a package: there's a bit too much code for the former, but too little for the latter, and I don't feel it's general enough anyway. So, for now it's a blog post.
-
-* Prior work
-Somehow it has been particularly hard to find anything on that topic.
-
-I started with advising =require= (yes, Emacs allows to do that), but then I had found the built-in [[https://www.gnu.org/software/emacs/manual/html_node/emacs-lisp/Where-Defined.html#index-load_002dhistory][load-history]]. The variable is an alist, with each item describing one loaded library, including =require= and =provide= forms:
-#+begin_example
-(("<file-name>/foo.el" (require . bar) (require . baz) (provide . foo)) ...)
-#+end_example
-This is all the information needed to restore the dependency graph.
-
-There are already packages using this variable, including the built-in [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/loadhist.el][loadhist]] providing =file-requires= and =file-dependents=. Unfortunately, these functions are neither recursive nor interactive.
-
-The [[https://www.emacswiki.org/emacs/LibraryDependencies][LibraryDependencies]] page on EmacsWiki also has some ideas, of which [[https://www.emacswiki.org/emacs/lib-requires.el][lib-requires.el]] by Drew Adams looks is the closest to what I want, but it seems to require providing filenames for libraries to inspect.
-
-* Code
-First, I want to transform =load-history= into a more accessible hashmap.
-
-Let the key be the feature symbol, and the value the list of features which require this one. Then, the hashmap forms a directed graph of dependencies.
-
-Also, I'll extract the iteration over =load-history= into a macro because I want to reuse it later.
-
-#+begin_src emacs-lisp
 (defmacro my/load-history--iter-load-history (&rest body)
   "Iterate through `load-history'.
 
@@ -67,11 +31,7 @@ which it was required."
                       (gethash require-symbol feature-required-by))
                 feature-required-by)))
     feature-required-by))
-#+end_src
 
-This graph can be converted to the tree by taking one feature as a root and traversing every possible path, excluding loops. This will create a lot of duplicate nodes, but it's fine for our purposes.
-
-#+begin_src emacs-lisp
 (defun my/load-history--get-feature-tree (feature-name feature-hash &optional found-features)
   "Get the tree of features with FEATURE-NAME as the root.
 
@@ -95,19 +55,9 @@ and the cdr being a list cons cell of the same kind."
                   dependent-feature-name feature-hash found-features)))
              (gethash feature-name feature-hash)))
     (remhash feature-name found-features)))
-#+end_src
 
-This feature tree is already interesting, but for me it's also helpful to find the subset of the tree managed by [[https://github.com/jwiegley/use-package][use-package]]. For instance, I used this to figure out why opening an emacs-lisp buffer loads =org-mode= (spolier: [[https://github.com/abo-abo/lispy/blob/fe44efd21573868638ca86fc8313241148fabbe3/lispy.el#L143][lispy]] -> [[https://github.com/abo-abo/zoutline/blob/32857c6c4b9b0bcbed14d825a10b91a98d5fed0a/zoutline.el#L26][zoutline]] -> org).
-
-Fortunately, =use-package= has built-in [[https://github.com/jwiegley/use-package?tab=readme-ov-file#gathering-statistics][statistics functionality]]. To turn it on, set the following variable:
-#+begin_src emacs-lisp
 (setq use-package-compute-statistics t)
-#+end_src
 
-After loading Emacs with this variable enabled, running =M-x use-package-report= will output the per-package statistics, such as loading times, etc. The =use-package-statistics= is a hashmap with the package (feature) name as keys and statistics as values.
-
-This can be used to narrow the tree:
-#+begin_src emacs-lisp
 (defun my/load-history--narrow-tree-by-use-package (tree)
   "Leave only features managed by `use-package' in TREE."
   (when (= (hash-table-count use-package-statistics) 0)
@@ -127,12 +77,7 @@ This can be used to narrow the tree:
              (nreverse res)
              (lambda (a b)
                (eq (car a) (car b))))))))
-#+end_src
 
-Now, the only remaining thing is to render these results. I've also tried Damien Cassou's [[https://github.com/DamienCassou/hierarchy][hierarchy.el]] (now [[https://git.savannah.gnu.org/cgit/emacs.git/tree/lisp/emacs-lisp/hierarchy.el][part of Emacs]]), but I find [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html][outline-mode]] more straightforward.
-
-To make a header for =outline-mode=, just prepend the string with the required number of "*":
-#+begin_src emacs-lisp
 (defun my/load-history--render-feature-tree-recur (tree &optional level)
   "Render the feature tree recursively.
 
@@ -145,10 +90,7 @@ the recursion level."
     (insert "\n")
     (dolist (feature (cdr tree))
       (my/load-history--render-feature-tree-recur feature (1+ level)))))
-#+end_src
 
-I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB= and make the buffer read-only:
-#+begin_src emacs-lisp
 (defvar my/load-history-tree-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map outline-mode-map)
@@ -162,13 +104,7 @@ I'll also make a derived mode from =outline-mode= to redefine =q= and =TAB= and 
 (define-derived-mode my/load-history-tree-mode outline-mode "Load Tree"
   "Display load tree."
   (setq-local buffer-read-only t))
-#+end_src
 
-Now, putting all of this together.
-
-The completing-read function prompts the user either with a [[https://www.gnu.org/software/emacs/manual/html_node/emacs-lisp/Named-Features.html#index-features-1][list of features]] or with the list of use-package packages.
-
-#+begin_src emacs-lisp
 (defun my/completing-read-features-or-packages ()
   "Read a feature name or a `use-package'-package from the minibuffer.
 
@@ -197,12 +133,7 @@ managed by `use-package'."
       (my/load-history-tree-mode)
       (goto-char (point-min)))
     (switch-to-buffer buffer)))
-#+end_src
 
-Having that, we can also reverse the function and build a dependency tree, i.e. find out which features are required by the one in question (rather than vice versa).
-
-To change this, it only takes to swap keys and values in the packages hashmap construction, i.e. reverse all edges in the dependency graph:
-#+begin_src emacs-lisp
 (defun my/load-history--get-feature-requires ()
   "Get the hashmap of which features require which.
 
@@ -234,52 +165,13 @@ managed by `use-package'."
       (my/load-history-tree-mode)
       (goto-char (point-min)))
     (switch-to-buffer buffer)))
-#+end_src
 
-* Usage and results
-So we have two entrypoints:
-
-- =M-x my/load-history-feature-dependents= to list features / packages that depend on the selected one;
-- =M-x my/load-history-feature-dependencies= to list features / packages that the selected one depends on.
-
-For instance, running =C-u M-x my/load-history-feature-dependents= on =dired= on my config yields the following:
-#+begin_example
-,* dired
-,** counsel...
-,** doc-view...
-,** telega...
-,** diredfl...
-,** dired-subtree...
-,** all-the-icons-dired...
-,** dired-git-info...
-,** avy-dired...
-,** org-contacts...
-,** org-ref...
-,** notmuch...
-,** magit...
-,** code-review...
-,** lyrics-fetcher...
-#+end_example
-
-Apparently, [[https://github.com/abo-abo/swiper/blob/master/counsel.el#L48][counsel is responsible]] for loading =dired= at startup. The package isn't merely autoloaded because I call =counsel-mode=.
-
-If you're developing a package, here's one way to work around that. Instead of requiring every feature at the start of the package like this:
-#+begin_src emacs-lisp
 (require 'dired)
-#+end_src
 
-Use =eval-when-compile=:
-#+begin_src emacs-lisp
 (eval-when-compile
   (require 'dired))
-#+end_src
 
-And =require= the feature where it's needed:
-#+begin_src emacs-lisp
 (defun my-function-with-dired ()
   "Do something important with dired."
   (interactive)
   (require 'dired))
-#+end_src
-
-I'd guess =counsel= doesn't do this because it depends on =dired= too heavily.
