@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>password-store-ivy</title>
+    <title>password-store-completion</title>
     <meta name="description" content="Freedom is a state of mind">
     <meta name="author" content='SqrtMinusOne'>
 
@@ -16,13 +16,6 @@
 
     
         <link rel="icon" type="image/ico" href="https://sqrtminusone.xyz/favicon.ico">
-    
-
-    
-        
-  
-
-
     
 
     <script defer data-domain="sqrtminusone.xyz" src="https://plausible.sqrtminusone.xyz/js/plausible.js"></script>
@@ -74,45 +67,50 @@
 <script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
 <div class="root">
     <h1 id="title-small-screen">
-        password-store-ivy
+        password-store-completion
         
-        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=password-store-ivy&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+        <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=password-store-completion&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
         
     </h1>
     <div class="container" id="actual-content">
         <h1 id="title-large-screen" class="dotfiles-title">
-            password-store-ivy
+            password-store-completion
             
-            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=password-store-ivy&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
+            <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=password-store-completion&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
             
         </h1>
-        <p>A <a href="https://www.passwordstore.org/">pass</a> frontend based on <a href="https://github.com/abo-abo/swiper#ivy">Ivy</a>, made primarily to use with <a href="https://github.com/ch11ng/exwm">EXWM</a> and <a href="https://github.com/tumashu/ivy-posframe">ivy-posframe</a>. Types fields from entries.</p>
-<p>Also take a look at Nicolas Petton&rsquo;s <a href="https://github.com/NicolasPetton/pass">pass</a>, <code>password-store-ivy</code> is designed as complementary to the Nicolas&rsquo; package.</p>
-<p>This package is made with Ivy because I need some fine-tuning like actions and turning off sorting in some completions, and Ivy happens to be the completion system I&rsquo;m using now.</p>
+        <p>A completion-based pass frontend inspired by <a href="https://github.com/carnager/rofi-pass">rofi-pass</a>. Integrates with <a href="https://github.com/abo-abo/swiper">Ivy</a> or <a href="https://github.com/oantolin/embark">Embark</a>.</p>
+<p>The main purpose is typing passwords with <code>xdotool</code> (useful in <a href="https://github.com/emacs-exwm/exwm">EXWM</a>).</p>
+<p>Also take a look at Nicolas Petton&rsquo;s <a href="https://github.com/NicolasPetton/pass">pass</a>. <code>password-store-completion</code> is designed as complementary to Nicolas&rsquo; package.</p>
 <h2 id="installation">Installation</h2>
-<p>As the package isn’t yet available anywhere but in this repository, you can clone the repository, add it to the load-path and require the package. My preferred way is <code>use-package</code> with <code>straight</code>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">password-store-ivy</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/password-store-ivy&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">exwm</span>))
-</span></span></code></pre></div><p>This package types stuff with <code>xdotool</code>, so you need to have that available in your <code>$PATH</code>.</p>
-<h2 id="usage">Usage</h2>
+<p>As the package isn&rsquo;t yet available anywhere but in this repository, you can clone the repository, add it to the load-path, and require the package. My preferred way is <code>use-package</code> with <code>straight</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">password-store-completion</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;SqrtMinusOne/password-store-completion&#34;</span>))
+</span></span></code></pre></div><p><code>xdotool</code> has to be available in <code>$PATH</code>.</p>
+<p>For Ivy integration:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;password-store-ivy</span>)
+</span></span></code></pre></div><p>Also be sure to load the main package before Ivy.</p>
+<p>For Embark integration:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">require</span> <span style="color:#19177c">&#39;password-store-embark</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">password-store-embark-mode</span>)
+</span></span></code></pre></div><h2 id="usage">Usage</h2>
 <p>Emacs&rsquo; built-in <a href="https://www.gnu.org/software/emacs/manual/html_node/auth/The-Unix-password-store.html">password store</a> integration has to be set up.</p>
-<p>The only command is <code>M-x password-store-ivy</code>, which invokes Ivy to select an entry from the pass database. Available commands in the selection buffer:</p>
+<p>For Ivy integration, the command is <code>M-x password-store-ivy</code>, which invokes Ivy to select an entry from the pass database. Available commands in the selection buffer:</p>
 <ul>
-<li><code>M-a</code>. Perform autotype</li>
-<li><code>M-p</code>. Type password</li>
-<li><code>M-u</code>. Type username</li>
-<li><code>M-U</code>. Type url</li>
-<li><code>M-f</code>. Select a field to type</li>
+<li><code>M-a</code>: Perform autotype</li>
+<li><code>M-p</code>: Type password</li>
+<li><code>M-u</code>: Type username</li>
+<li><code>M-U</code>: Type URL</li>
+<li><code>M-f</code>: Select a field to type</li>
 </ul>
+<p>For other completion frameworks, run <code>M-x password-store-completion</code>. If Embark integration is enabled, the same actions are added.</p>
 <h2 id="customization">Customization</h2>
-<p>There are a few parameters that control delays:</p>
+<p>The following parameters control delays:</p>
 <ul>
-<li><code>password-store-ivy-initial-wait</code> controls the initial delay before starting to type a sequence (in milliseconds)</li>
-<li><code>password-store-ivy-delay</code> controls the delay between typing characters (in milliseconds)</li>
+<li><code>password-store-completion-initial-wait</code> controls the initial delay before starting to type a sequence (in milliseconds)</li>
+<li><code>password-store-completion-delay</code> controls the delay between typing characters (in milliseconds)</li>
 </ul>
-<p>There is also <code>password-store-ivy-sequences</code> that determines the sequence of actions <code>password-store-ivy</code> performs.</p>
-<p>It is an alist with the following required keys (corresponding to the basic actions):</p>
+<p><code>password-store-completion-sequences</code> determines the steps of sequences. It is an alist; the keys correspond to the default sequences:</p>
 <ul>
 <li><code>autotype</code></li>
 <li><code>password</code></li>
@@ -121,12 +119,12 @@
 </ul>
 <p>The values are lists of the following elements:</p>
 <ul>
-<li><code>wait</code>.  Wait for <code>password-store-ivy-initial-wait</code> milliseconds</li>
-<li><code>(wait &lt;milliseconds&gt;)</code>.  Wait for <code>&lt;milliseconds&gt;</code>.</li>
-<li><code>(key &lt;key&gt;)</code>.  Type <code>&lt;key&gt;</code>.</li>
-<li><code>(field &lt;field&gt;)</code>.  Type <code>&lt;field&gt;</code> of entry.</li>
+<li><code>wait</code>: Wait for <code>password-store-completion-initial-wait</code> milliseconds</li>
+<li><code>(wait &lt;milliseconds&gt;)</code>: Wait for <code>&lt;milliseconds&gt;</code></li>
+<li><code>(key &lt;key&gt;)</code>: Type <code>&lt;key&gt;</code></li>
+<li><code>(field &lt;field&gt;)</code>: Type <code>&lt;field&gt;</code> of entry</li>
 </ul>
-<p>For example, the starting values:</p>
+<p>The default value is as follows:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#666">&#39;</span>((<span style="color:#19177c">autotype</span> <span style="color:#666">.</span> (<span style="color:#19177c">wait</span>
 </span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">field</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;username&#34;</span>)
 </span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">key</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Tab&#34;</span>)
@@ -135,13 +133,19 @@
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">password</span> <span style="color:#666">.</span> (<span style="color:#19177c">wait</span> (<span style="color:#19177c">field</span> <span style="color:#666">.</span> <span style="color:#19177c">secret</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">username</span> <span style="color:#666">.</span> (<span style="color:#19177c">wait</span> (<span style="color:#19177c">field</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;username&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">url</span> <span style="color:#666">.</span> (<span style="color:#19177c">wait</span> (<span style="color:#19177c">field</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;url&#34;</span>))))
-</span></span></code></pre></div><p>In addition to the global override, sequences can be overriden per-entry with a field called <code>sequence-&lt;name&gt;</code>, where <code>&lt;name&gt;</code> is a key of <code>password-store-ivy-sequences</code>.</p>
-<p>For example, here is an override to press <code>Tab</code> twice:</p>
+</span></span></code></pre></div><p>Sequences can also be overridden in a particular entry with a field called <code>sequence-&lt;name&gt;</code>, where <code>&lt;name&gt;</code> is a key of <code>password-store-completion-sequences</code>.</p>
+<p>For example, to press <code>Tab</code> twice in the <code>autotype</code> sequence:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;pass&gt;
 </span></span><span style="display:flex;"><span>username: thexcloud@gmail.com
 </span></span><span style="display:flex;"><span>url: &lt;url&gt;
 </span></span><span style="display:flex;"><span>sequence-autotype: (wait (field . &#34;username&#34;) (key . &#34;Tab&#34;) (key . &#34;Tab&#34;) (field . secret) (key . &#34;Return&#34;))
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>Or, create a custom sequence:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&lt;pass&gt;
+</span></span><span style="display:flex;"><span>username: thexcloud@gmail.com
+</span></span><span style="display:flex;"><span>url: &lt;url&gt;
+</span></span><span style="display:flex;"><span>sequence-doubletab: (wait (field . &#34;username&#34;) (key . &#34;Tab&#34;) (key . &#34;Tab&#34;) (field . secret) (key . &#34;Return&#34;))
+</span></span></code></pre></div><p>Custom sequences can be run in the field selection interface (<code>M-f</code> in Ivy, <code>M-x embark-act f</code> in Embark).</p>
+
     </div>
     <div class="table-of-contents">
         <div class="table-of-contents-text">
