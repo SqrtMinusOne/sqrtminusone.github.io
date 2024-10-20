@@ -458,8 +458,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">evil-set-undo-system</span> <span style="color:#19177c">&#39;undo-tree</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">fboundp</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">general-define-key</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">motion</span>)
-</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;ze&#34;</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">motion</span>))))
 </span></span></code></pre></div><h5 id="addons">Addons</h5>
 <p><a href="https://github.com/emacs-evil/evil-surround">evil-surround</a> emulates one of my favorite vim plugins, surround.vim. Adds a lot of parentheses management options.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">evil-surround</span>
@@ -669,7 +668,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">hs-minor-mode-map</span> <span style="color:#19177c">outline-minor-mode-map</span> <span style="color:#19177c">outline-mode-map</span>)
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
-</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;ze&#34;</span> <span style="color:#19177c">&#39;hs-hide-level</span>
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;TAB&#34;</span> <span style="color:#19177c">&#39;evil-toggle-fold</span>)
 </span></span></code></pre></div><h5 id="zoom-ui">Zoom UI</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/zoom-in</span> ()
@@ -1178,7 +1176,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;editorconfig-indentation-alist</span>
-</span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#19177c">emmet-mode</span> <span style="color:#19177c">emmet-indentation</span>)))
+</span></span><span style="display:flex;"><span>	       <span style="color:#666">&#39;</span>(<span style="color:#19177c">emmet-mode</span> <span style="color:#19177c">emmet-indentation</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">editorconfig-mode</span>))
 </span></span></code></pre></div><h4 id="editing-files">Editing files</h4>
 <p>A minor mode to remember recently edited files.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">recentf-mode</span> <span style="color:#666">1</span>)
@@ -1264,9 +1263,19 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>(<span style="color:#19177c">image-mode</span> <span style="color:#19177c">doc-view-mode</span> <span style="color:#19177c">pdf-view-mode</span> <span style="color:#19177c">exwm-mode</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">motion</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#800">nil</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;--&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-char-2</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-=&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-symbol-1</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;-&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">avy-goto-char-timer</span>))
+</span></span></code></pre></div><p>Integrate avy with embark:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">avy-action-embark</span> (<span style="color:#19177c">pt</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unwind-protect</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#00f">goto-char</span> <span style="color:#19177c">pt</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">embark-act</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">select-window</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">cdr</span> (<span style="color:#19177c">ring-ref</span> <span style="color:#19177c">avy-ring</span> <span style="color:#666">0</span>))))
+</span></span><span style="display:flex;"><span>  <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;avy</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#ba2121">?.</span> <span style="color:#19177c">avy-dispatch-alist</span>) <span style="color:#19177c">&#39;avy-action-embark</span>))
 </span></span></code></pre></div><p><a href="https://github.com/abo-abo/ace-link">ace-link</a> is a package to jump to links with avy.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ace-link</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -1298,7 +1307,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">savehist</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">savehist-mode</span>))
-</span></span></code></pre></div><h4 id="vertico-extensions">Vertico extensions</h4>
+</span></span></code></pre></div><h4 id="vertico-extensions">vertico extensions</h4>
 <p>Vertico has a lot of extensions.</p>
 <p><a href="https://github.com/minad/vertico/blob/main/extensions/vertico-directory.el">vertico-directory</a> simplifies directory navigation.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">vertico-directory</span>
@@ -1333,7 +1342,16 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	<span style="color:#666">&#39;</span>((<span style="color:#19177c">eshell-atuin-history</span> (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">my/index-nav</span> (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>))
 </span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">org-ql-view</span> (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">my/consult-line</span> (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>)))))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">my/consult-line</span> (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#666">.</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">telega-msg-add-reaction</span> <span style="color:#19177c">grid</span>))))
+</span></span></code></pre></div><p><a href="https://github.com/minad/vertico/blob/main/extensions/vertico-quick.el">vertico-quick</a> enables ivy-like bindings to choose candidates.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">vertico-quick</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> <span style="color:#19177c">vertico</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">vertico-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;M-q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">vertico-quick-insert</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">vertico-quick-exit</span>))
 </span></span></code></pre></div><h4 id="orderless">orderless</h4>
 <p><a href="https://github.com/oantolin/orderless">orderless</a> is a flexible completion style framework. Completion style refers to the way entries are filtered in the completion buffer.</p>
 <p>I used to use <a href="https://github.com/radian-software/prescient.el">prescient.el</a> with Ivy; unlike prescient, orderless doesn&rsquo;t sort completion entries.</p>
@@ -1980,15 +1998,17 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">nerd-icons</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h3 id="text-highlight">Text highlight</h3>
-<p>Highlight indent guides.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">highlight-indent-guides</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+<p>Highlight indent guides. I used <a href="https://github.com/DarthFennec/highlight-indent-guides">highlight-indent-guides</a> before but <a href="https://github.com/jdtsmith/indent-bars">indent-bars</a> seems to work better, and also doesn&rsquo;t break with <code>treesit-fold</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">indent-bars</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;jdtsmith/indent-bars&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span>))
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> ((<span style="color:#19177c">prog-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">highlight-indent-guides-mode</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">LaTeX-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">highlight-indent-guides-mode</span>))
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:hook</span> ((<span style="color:#19177c">prog-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">indent-bars-mode</span>)
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">LaTeX-mode</span> <span style="color:#666">.</span> <span style="color:#19177c">indent-bars-mode</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">highlight-indent-guides-method</span> <span style="color:#19177c">&#39;bitmap</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">highlight-indent-guides-bitmap-function</span> <span style="color:#19177c">&#39;highlight-indent-guides--bitmap-line</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;indent-bars-ts</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">setopt</span> <span style="color:#19177c">indent-bars-no-descend-lists</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">indent-bars-treesit-support</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>	  <span style="color:#19177c">indent-bars-width-frac</span> <span style="color:#666">0.3</span>))
 </span></span></code></pre></div><p>Rainbow parentheses.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">rainbow-delimiters</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -2265,27 +2285,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ui-doc-delay</span> <span style="color:#666">2</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-ui-sideline-show-hover</span> <span style="color:#800">nil</span>))
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>t
-</span></span></code></pre></div><h5 id="integrations">Integrations</h5>
-<p>The only integration left now is treemacs.</p>
-<p>Origami should&rsquo;ve leveraged LSP folding, but it was too unstable at the moment I tried it.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (use-package helm-lsp</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :straight t</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :commands helm-lsp-workspace-symbol)</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (use-package origami</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :straight t</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :hook (prog-mode . origami-mode))</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (use-package lsp-origami</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :straight t</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   :config</span>
-</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;   (add-hook &#39;lsp-after-open-hook #&#39;lsp-origami-try-enable))</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lsp-treemacs</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">lsp</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> <span style="color:#19177c">lsp-treemacs-errors-list</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">all-the-icons</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h5 id="keybindings-2">Keybindings</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;l&#34;</span>
@@ -2362,7 +2364,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Override flycheck checker with eslint.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">lsp-diagnostic-package</span> <span style="color:#008000">:none</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">flycheck-checker</span> <span style="color:#19177c">&#39;javascript-eslint</span>))
-</span></span></code></pre></div><h4 id="tree-sitter">Tree Sitter</h4>
+</span></span></code></pre></div><h4 id="tree-sitter">Tree-sitter</h4>
+<h5 id="treesit-dot-el">treesit.el</h5>
 <p>Tree-Sitter integration with Emacs 29.</p>
 <p>References:</p>
 <ul>
@@ -2410,6 +2413,56 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		    (<span style="color:#00f">eval</span> <span style="color:#666">`</span>(<span style="color:#008000">lambda</span> ()
 </span></span><span style="display:flex;"><span>			     (<span style="color:#00f">run-hooks</span>
 </span></span><span style="display:flex;"><span>			      <span style="color:#19177c">&#39;,</span>(<span style="color:#00f">intern</span> (<span style="color:#00f">concat</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">old-mode</span>) <span style="color:#ba2121">&#34;-hook&#34;</span>)))))))))
+</span></span></code></pre></div><h5 id="treesit-fold">treesit-fold</h5>
+<p><a href="https://github.com/emacs-tree-sitter/treesit-fold">treesit-fold</a> uses treesit.el for folding.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">treesit-fold</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#19177c">treesit-fold</span> <span style="color:#008000">:type</span> <span style="color:#19177c">git</span> <span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;emacs-tree-sitter/treesit-fold&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">treesit-fold-mode</span>))
+</span></span></code></pre></div><h6 id="hide-children-of-current-node">Hide children of current node</h6>
+<p>A function to hide children of the current foldable node. This is somewhat similar to <code>hs-hide-level</code>, which I got used to.</p>
+<p>First, find all foldable nodes:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/treesit-fold--get-nodes-to-fold</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let*</span>
+</span></span><span style="display:flex;"><span>      ((<span style="color:#19177c">node</span> (<span style="color:#008000">ignore-errors</span> (<span style="color:#19177c">treesit-buffer-root-node</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">patterns</span> (<span style="color:#19177c">seq-mapcat</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">fold-range</span>) <span style="color:#666">`</span>((<span style="color:#666">,</span>(<span style="color:#00f">car</span> <span style="color:#19177c">fold-range</span>)) <span style="color:#19177c">@name</span>))
+</span></span><span style="display:flex;"><span>			     (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">treesit-fold-range-alist</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">query</span> (<span style="color:#008000">ignore-errors</span>
+</span></span><span style="display:flex;"><span>		(<span style="color:#19177c">treesit-query-compile</span> (<span style="color:#19177c">treesit-node-language</span> <span style="color:#19177c">node</span>)
+</span></span><span style="display:flex;"><span>				       <span style="color:#19177c">patterns</span>)))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">nodes-to-fold</span> (<span style="color:#19177c">treesit-query-capture</span> <span style="color:#19177c">node</span> <span style="color:#19177c">query</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">mode-ranges</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">major-mode</span> <span style="color:#19177c">treesit-fold-range-alist</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">nodes-to-fold</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">cl-remove-if</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">node</span>)
+</span></span><span style="display:flex;"><span>			(<span style="color:#19177c">treesit-fold--non-foldable-node-p</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">node</span>) <span style="color:#19177c">mode-ranges</span>))
+</span></span><span style="display:flex;"><span>		      <span style="color:#19177c">nodes-to-fold</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">nodes-to-fold</span>))
+</span></span></code></pre></div><p>Then filter children of the current foldable node and fold them:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/treesit-fold-hide-children</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">current-node</span> (<span style="color:#19177c">treesit-fold--foldable-node-at-pos</span>))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">all-nodes-to-fold</span> (<span style="color:#19177c">my/treesit-fold--get-nodes-to-fold</span>))
+</span></span><span style="display:flex;"><span>	 <span style="color:#408080;font-style:italic">;; Find foldable children of `current-node&#39;</span>
+</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">target-nodes-to-fold</span>
+</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>	   (<span style="color:#008000">lambda</span> (<span style="color:#19177c">n</span>)
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">cl-block</span> <span style="color:#19177c">tree-iter</span>
+</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">while</span> <span style="color:#19177c">n</span>
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">setq</span> <span style="color:#19177c">n</span> (<span style="color:#19177c">treesit-node-parent</span> <span style="color:#19177c">n</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">n</span> <span style="color:#19177c">current-node</span>)
+</span></span><span style="display:flex;"><span>		   (<span style="color:#008000">cl-return-from</span> <span style="color:#19177c">tree-iter</span> <span style="color:#800">t</span>)))))
+</span></span><span style="display:flex;"><span>	   (<span style="color:#00f">mapcar</span> <span style="color:#00f">#&#39;cdr</span> <span style="color:#19177c">all-nodes-to-fold</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">node</span> <span style="color:#19177c">target-nodes-to-fold</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">treesit-fold-close</span> <span style="color:#19177c">node</span>))))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/evil-fold-hide-level</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">hs-minor-mode</span> (<span style="color:#19177c">hs-hide-level</span>))
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">treesit-fold-mode</span> (<span style="color:#19177c">my/treesit-fold-hide-children</span>))))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;treesit-fold</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;ze&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/evil-fold-hide-level</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">keymap-unset</span> <span style="color:#19177c">evil-motion-state-map</span> <span style="color:#ba2121">&#34;z e&#34;</span> <span style="color:#800">t</span>))
 </span></span></code></pre></div><h4 id="dap">DAP</h4>
 <p>An Emacs client for Debugger Adapter Protocol.</p>
 <p>Okay, so, I tried to use it many times&hellip; Chrome DevTools and ipdb / pudb are just better for me. Maybe I&rsquo;ll check out RealGUD instead&hellip; Will see.</p>
@@ -2697,13 +2750,13 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">or</span> (<span style="color:#19177c">copilot-accept-completion</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">my/should-run-emmet-p</span>) (<span style="color:#19177c">my/emmet-or-tab</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">evil-state</span> <span style="color:#19177c">&#39;normal</span>)
-</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">or</span> <span style="color:#19177c">hs-minor-mode</span> <span style="color:#19177c">outline-minor-mode</span>))
+</span></span><span style="display:flex;"><span>		 (<span style="color:#008000">or</span> <span style="color:#19177c">hs-minor-mode</span> <span style="color:#19177c">treesit-fold-mode</span> <span style="color:#19177c">outline-minor-mode</span>))
 </span></span><span style="display:flex;"><span>	(<span style="color:#19177c">evil-toggle-fold</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">indent-for-tab-command</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">copilot</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;copilot/copilot.el&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;copilot-emacs/copilot.el&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">copilot-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:if</span> (<span style="color:#19177c">not</span> (<span style="color:#008000">or</span> <span style="color:#19177c">my/remote-server</span> <span style="color:#19177c">my/is-termux</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
@@ -2789,12 +2842,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">rainbow-delimiters-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;typescript-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;typescript-mode</span>))
 </span></span></code></pre></div><h4 id="javascript">JavaScript</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;js-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;js-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;js-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;js-mode</span>)
 </span></span></code></pre></div><h4 id="jest">Jest</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jest-test-mode</span>
@@ -2866,14 +2919,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/web-mode-lsp</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">seq-some</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">regex</span>) (<span style="color:#19177c">string-match-p</span> <span style="color:#19177c">regex</span> (<span style="color:#00f">buffer-name</span>)))
+</span></span><span style="display:flex;"><span>	 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">regex</span>) (<span style="color:#19177c">string-match-p</span> <span style="color:#19177c">regex</span> (<span style="color:#00f">buffer-file-name</span>)))
 </span></span><span style="display:flex;"><span>	 <span style="color:#19177c">my/web-mode-lsp-extensions</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">lsp-deferred</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;web-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/web-mode-lsp</span>)
 </span></span></code></pre></div><p>Vue settings</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/web-mode-vue-setup</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.vue&#34;</span> <span style="color:#19177c">eos</span>) (<span style="color:#00f">buffer-name</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.vue&#34;</span> <span style="color:#19177c">eos</span>) (<span style="color:#00f">buffer-file-name</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-script-padding</span> <span style="color:#666">0</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">web-mode-style-padding</span> <span style="color:#666">0</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">create-lockfiles</span> <span style="color:#800">nil</span>)
@@ -3256,7 +3309,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/ltex-need-p</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">lsp</span>)))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;text-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/text-mode-lsp-maybe</span>)
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; (add-hook &#39;text-mode-hook #&#39;my/text-mode-lsp-maybe)</span>
 </span></span></code></pre></div><h4 id="languagetool">LanguageTool</h4>
 <p>LanguageTool is a great offline spell checker. For some reason, the download link is nowhere to be found on the home page, so it is listed in the references as well.</p>
 <p>References:</p>
@@ -3425,7 +3478,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>			 (<span style="color:#19177c">lsp</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;python-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;python-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;python-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>)
 </span></span></code></pre></div><h4 id="pipenv">pipenv</h4>
 <p><a href="https://github.com/pypa/pipenv">Pipenv</a> is a package manager for Python.</p>
 <p>Automatically creates &amp; manages virtualenvs and stores data in <code>Pipfile</code> and <code>Pipfile.lock</code> (like npm&rsquo;s <code>package.json</code> and <code>package-lock.json</code>).</p>
@@ -3640,7 +3693,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.json\\&#39;&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;json-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;json-mode</span>))
 </span></span></code></pre></div><h4 id="csv">CSV</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">csv-mode</span>
@@ -3653,7 +3706,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:mode</span> <span style="color:#ba2121">&#34;\\.yml\\&#39;&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;yaml-mode-hook</span> <span style="color:#19177c">&#39;smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;yaml-mode-hook</span> <span style="color:#19177c">&#39;highlight-indent-guides-mode</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (add-hook &#39;yaml-mode-hook &#39;highlight-indent-guides-mode)</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;auto-mode-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;\\.yml\\&#39;&#34;</span> <span style="color:#666">.</span> <span style="color:#19177c">yaml-mode</span>)))
 </span></span></code></pre></div><h3 id="configuration">Configuration</h3>
 <h4 id="dot-env">.env</h4>
@@ -3788,7 +3841,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;go-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;go-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;go-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;go-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>))
 </span></span></code></pre></div><h3 id="dot-net">.NET</h3>
 <h4 id="c">C#</h4>
 <table>
@@ -3818,7 +3871,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lsp-csharp-server-path</span> (<span style="color:#19177c">executable-find</span> <span style="color:#ba2121">&#34;omnisharp-wrapper&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;csharp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">csharp-tree-sitter-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;csharp-tree-sitter-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;csharp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">hs-minor-mode</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;csharp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">treesit-fold-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/set-smartparens-indent</span> <span style="color:#19177c">&#39;csharp-tree-sitter-mode</span>))
 </span></span></code></pre></div><h4 id="msbuild">MSBuild</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">csproj-mode</span>
@@ -4258,7 +4311,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; (hs-minor-mode -1)</span>
 </span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; (electric-indent-local-mode -1)</span>
 </span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; (rainbow-delimiters-mode -1)</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">highlight-indent-guides-mode</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>	    <span style="color:#408080;font-style:italic">;; (highlight-indent-guides-mode -1)</span>
+</span></span><span style="display:flex;"><span>	    ))
 </span></span></code></pre></div><p>Async code blocks evaluations. Jupyter blocks have a built-in async, so they are set as ignored.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ob-async</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
@@ -4421,6 +4475,29 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>		    <span style="color:#666">&#39;</span>(<span style="color:#19177c">babel-call</span> <span style="color:#19177c">inline-babel-call</span>))
 </span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">org-babel-lob-execute-maybe</span>)
 </span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">org-babel-execute-src-block</span> <span style="color:#19177c">arg</span>)))))))
+</span></span></code></pre></div><p>Execute all code blocks marked with <code>:startup t</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-babel-execute-marked</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> (<span style="color:#19177c">markers</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-element-map</span> (<span style="color:#19177c">org-element-parse-buffer</span>) <span style="color:#19177c">&#39;src-block</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#008000">let</span> ((<span style="color:#19177c">params</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:parameters</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> <span style="color:#19177c">params</span>
+</span></span><span style="display:flex;"><span>		     (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;startup t&#34;</span>) <span style="color:#19177c">params</span>))
+</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">let</span> ((<span style="color:#19177c">m</span> (<span style="color:#00f">make-marker</span>)))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">set-marker</span> <span style="color:#19177c">m</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:begin</span> <span style="color:#19177c">elem</span>))
+</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">set-marker-insertion-type</span> <span style="color:#19177c">m</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">push</span> <span style="color:#19177c">m</span> <span style="color:#19177c">markers</span>))))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">markers</span> (<span style="color:#00f">nreverse</span> <span style="color:#19177c">markers</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">arg</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">markers</span>
+</span></span><span style="display:flex;"><span>	    (<span style="color:#19177c">seq-filter</span>
+</span></span><span style="display:flex;"><span>	     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">m</span>) (<span style="color:#00f">&gt;</span> (<span style="color:#00f">marker-position</span> <span style="color:#19177c">m</span>) (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>	     <span style="color:#19177c">markers</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">m</span> <span style="color:#19177c">markers</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> <span style="color:#19177c">m</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">ignore-errors</span>
+</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">org-babel-execute-src-block</span>)))))
 </span></span></code></pre></div><p>Some keybindings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
@@ -6598,7 +6675,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">assoc</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Dired: &#34;</span> <span style="color:#19177c">bookmarks</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;^&#34;</span>)
 </span></span><span style="display:flex;"><span>       <span style="color:#19177c">bookmarks</span>)))))
-</span></span></code></pre></div><h4 id="integrations-1">Integrations</h4>
+</span></span></code></pre></div><h4 id="integrations">Integrations</h4>
 <p>A few functions to send files from Dired to various places.</p>
 <p>First, a function to get the target buffer.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-good-buffer</span> (<span style="color:#19177c">buffer-major-mode</span> <span style="color:#19177c">prompt</span>)
@@ -8675,7 +8752,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;an&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/mastodon</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-instance-url</span> <span style="color:#ba2121">&#34;https://emacs.ch&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-instance-url</span> <span style="color:#ba2121">&#34;https://mastodon.bsd.cafe&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mastodon-active-user</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span> <span style="color:#19177c">mastodon-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mastodon&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Hide spoilers by default</span>
@@ -9204,6 +9281,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-emoji-use-images</span> <span style="color:#800">nil</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-chat-fill-column</span> <span style="color:#666">80</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">telega-completing-read-function</span> <span style="color:#00f">#&#39;completing-read</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;savehist-additional-variables</span> <span style="color:#19177c">&#39;telega-msg-add-reaction</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;telega-chat-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">telega-chat-auto-fill-mode</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-root-mode-map</span> <span style="color:#19177c">telega-chat-mode-map</span>)
@@ -10808,7 +10887,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;elcord--try-update-presence</span> <span style="color:#008000">:filter-args</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/elcord-update-presence-mask-advice</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;elcord-mode-text-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-chat-mode</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Telega Chat&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;elcord-mode-text-alist</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-root-mode</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;Telega Root&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">elcord-mode</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; (elcord-mode)</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/elcord-symlink</span>))
 </span></span></code></pre></div><h4 id="snow">Snow</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">snow</span>
@@ -11212,7 +11291,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
         <li><a href="#completion">Completion</a>
           <ul>
             <li><a href="#vertico">vertico</a></li>
-            <li><a href="#vertico-extensions">Vertico extensions</a></li>
+            <li><a href="#vertico-extensions">vertico extensions</a></li>
             <li><a href="#orderless">orderless</a></li>
             <li><a href="#consult">consult</a></li>
             <li><a href="#marginalia">marginalia</a></li>
@@ -11280,7 +11359,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#lsp">LSP</a></li>
             <li><a href="#flycheck">Flycheck</a></li>
             <li><a href="#general-additional-config">General additional config</a></li>
-            <li><a href="#tree-sitter">Tree Sitter</a></li>
+            <li><a href="#tree-sitter">Tree-sitter</a></li>
             <li><a href="#dap">DAP</a></li>
             <li><a href="#reformatter">Reformatter</a></li>
             <li><a href="#copilot">copilot</a></li>
@@ -11487,7 +11566,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#subdirectories">Subdirectories</a></li>
             <li><a href="#other-functions">Other functions</a></li>
             <li><a href="#bookmarks">Bookmarks</a></li>
-            <li><a href="#integrations-1">Integrations</a></li>
+            <li><a href="#integrations">Integrations</a></li>
           </ul>
         </li>
         <li><a href="#tramp">TRAMP</a>
