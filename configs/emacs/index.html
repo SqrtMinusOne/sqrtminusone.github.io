@@ -2365,6 +2365,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">lsp-diagnostic-package</span> <span style="color:#008000">:none</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">flycheck-checker</span> <span style="color:#19177c">&#39;javascript-eslint</span>))
 </span></span></code></pre></div><h4 id="tree-sitter">Tree-sitter</h4>
+<p>References:</p>
+<ul>
+<li><a href="https://tree-sitter.github.io/tree-sitter/using-parsers#query-syntax">Tree sitter query syntax</a></li>
+<li><a href="https://www.gnu.org/software/emacs//manual/html_node/elisp/Parsing-Program-Source.html">treesit.el documentation</a></li>
+</ul>
 <h5 id="treesit-dot-el">treesit.el</h5>
 <p>Tree-Sitter integration with Emacs 29.</p>
 <p>References:</p>
@@ -2463,6 +2468,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;ze&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/evil-fold-hide-level</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">keymap-unset</span> <span style="color:#19177c">evil-motion-state-map</span> <span style="color:#ba2121">&#34;z e&#34;</span> <span style="color:#800">t</span>))
+</span></span></code></pre></div><h5 id="combobulate">combobulate</h5>
+<p><a href="https://github.com/mickeynp/combobulate">combobulate</a> is Mickey Peterson&rsquo;s package that uses <code>tree-sitter</code> for structural navigation.</p>
+<p>I&rsquo;m not actually using that, but its query editor is pretty useful to debug <code>tree-sitter</code> queries.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">combobulate</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;mickeynp/combobulate&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:commands</span> (<span style="color:#19177c">combobulate</span>))
 </span></span></code></pre></div><h4 id="dap">DAP</h4>
 <p>An Emacs client for Debugger Adapter Protocol.</p>
 <p>Okay, so, I tried to use it many times&hellip; Chrome DevTools and ipdb / pudb are just better for me. Maybe I&rsquo;ll check out RealGUD instead&hellip; Will see.</p>
@@ -9738,50 +9749,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <ul>
 <li><code>ellama-code-complete</code> is pretty good to write migrations</li>
 </ul>
-<h4 id="model-settings">Model settings</h4>
-<h5 id="llama3-gradient">llama3-gradient</h5>
-<p><a href="https://ollama.com/library/llama3-gradient">llama3-gradient</a> is a version of LLaMA 3 with an extended context size. It requires setting the <code>num_ctx</code> parameter to work correctly. For ellama, the following works.</p>
-<p>It&rsquo;s problematic to load this so I&rsquo;m commenting this out for now.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ellama</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-defstruct</span> (<span style="color:#19177c">llm-ollama-gradient</span> (<span style="color:#008000">:include</span> <span style="color:#19177c">llm-ollama</span>)) <span style="color:#19177c">num-ctx</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">cl-defmethod</span> <span style="color:#19177c">llm-provider-chat-request</span> ((<span style="color:#19177c">provider</span> <span style="color:#19177c">llm-ollama-gradient</span>) <span style="color:#19177c">prompt</span> <span style="color:#19177c">_</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> (<span style="color:#19177c">request-alist</span> <span style="color:#19177c">messages</span> <span style="color:#19177c">options</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">messages</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">interaction</span>)
-</span></span><span style="display:flex;"><span>		      <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;role&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">symbol-name</span> (<span style="color:#19177c">llm-chat-prompt-interaction-role</span> <span style="color:#19177c">interaction</span>)))
-</span></span><span style="display:flex;"><span>			(<span style="color:#ba2121">&#34;content&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-chat-prompt-interaction-content</span> <span style="color:#19177c">interaction</span>))))
-</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">llm-chat-prompt-interactions</span> <span style="color:#19177c">prompt</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">llm-chat-prompt-context</span> <span style="color:#19177c">prompt</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;role&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;system&#34;</span>)
-</span></span><span style="display:flex;"><span>		(<span style="color:#ba2121">&#34;content&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-provider-utils-get-system-prompt</span> <span style="color:#19177c">prompt</span> <span style="color:#19177c">llm-ollama-example-prelude</span>)))
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">messages</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;messages&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">messages</span>) <span style="color:#19177c">request-alist</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;model&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-ollama-chat-model</span> <span style="color:#19177c">provider</span>)) <span style="color:#19177c">request-alist</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">llm-chat-prompt-temperature</span> <span style="color:#19177c">prompt</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;temperature&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-chat-prompt-temperature</span> <span style="color:#19177c">prompt</span>)) <span style="color:#19177c">options</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">llm-chat-prompt-max-tokens</span> <span style="color:#19177c">prompt</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;num_predict&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-chat-prompt-max-tokens</span> <span style="color:#19177c">prompt</span>)) <span style="color:#19177c">options</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">llm-ollama-gradient-num-ctx</span> <span style="color:#19177c">provider</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;num_ctx&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">llm-ollama-gradient-num-ctx</span> <span style="color:#19177c">provider</span>)) <span style="color:#19177c">options</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> <span style="color:#19177c">options</span> (<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;options&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">options</span>) <span style="color:#19177c">request-alist</span>))
-</span></span><span style="display:flex;"><span>      <span style="color:#19177c">request-alist</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">push</span> <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;llama3-gradient&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">make-llm-ollama-gradient</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;llama3-gradient&#34;</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;llama3-gradient&#34;</span>
-</span></span><span style="display:flex;"><span>				<span style="color:#008000">:num-ctx</span> <span style="color:#666">48000</span>))
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">ellama-providers</span>))
-</span></span></code></pre></div><p>For gptel, this approach doesn&rsquo;t work and I&rsquo;ve got no clue why. So&hellip;</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;gptel</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">cl-defmethod</span> <span style="color:#19177c">gptel--request-data</span> <span style="color:#008000">:around</span> ((<span style="color:#19177c">_backend</span> <span style="color:#19177c">gptel-ollama</span>) <span style="color:#19177c">prompts</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">request-alist</span> (<span style="color:#19177c">cl-call-next-method</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">gptel-model</span> <span style="color:#ba2121">&#34;llama3-gradient&#34;</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">plist-put</span> <span style="color:#19177c">request-alist</span> <span style="color:#008000">:options</span>
-</span></span><span style="display:flex;"><span>		   <span style="color:#666">`</span>(<span style="color:#008000">:num_ctx</span> <span style="color:#666">48000</span>
-</span></span><span style="display:flex;"><span>			      <span style="color:#666">,@</span>(<span style="color:#00f">plist-get</span> <span style="color:#19177c">request-alist</span> <span style="color:#008000">:options</span>))))
-</span></span><span style="display:flex;"><span>      <span style="color:#19177c">request-alist</span>)))
-</span></span></code></pre></div><h3 id="declarative-filesystem-management">Declarative filesystem management</h3>
+<h3 id="declarative-filesystem-management">Declarative filesystem management</h3>
 <p>My filesystem is, shall we say, not the most orderly place.</p>
 <center>
 <iframe src="https://emacs.ch/@sqrtminusone/110514686718545191/embed" class="mastodon-embed" style="max-width: 100%; border: 0" width="500" allowfullscreen="allowfullscreen"></iframe><script src="https://emacs.ch/embed.js" async="async"></script>
@@ -11632,7 +11600,6 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
           <ul>
             <li><a href="#gptel">gptel</a></li>
             <li><a href="#ellama">ellama</a></li>
-            <li><a href="#model-settings">Model settings</a></li>
           </ul>
         </li>
         <li><a href="#declarative-filesystem-management">Declarative filesystem management</a>
