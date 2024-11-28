@@ -23,6 +23,11 @@ Graduate student of Saint-Petersburg State Electrotechnical University, Russia.
 
 Watch out if your RSS reader marks updated entries as unread --- entries in the packages feed are updated pretty often.
 
+### Buttons
+<div class="webbuttons">
+{{< figure src="/buttons/button.png" >}}
+</div>
+
 ### Also
 * [My instance of Gitea](https://sqrtminusone.xyz/git/)
 * [My PGP key](/0x914472A1FD6775C166F96EBEED739ADF81C78160.asc)
