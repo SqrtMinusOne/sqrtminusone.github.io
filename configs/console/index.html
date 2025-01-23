@@ -134,6 +134,15 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">GIT_SSL_CAINFO</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSL_CERT_FILE</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">CURL_CA_BUNDLE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSL_CERT_FILE</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span></code></pre></div><h3 id="ssh-agent">ssh-agent</h3>
+<p>I&rsquo;m paranoid so I encrypt my SSH keys.</p>
+<p>Got the idea for below from <a href="https://wiki.archlinux.org/title/SSH_keys#SSH_agents">ArchWiki</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> ! pgrep -u <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$USER</span><span style="color:#ba2121">&#34;</span> ssh-agent &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    ssh-agent -t 1h &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_RUNTIME_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSH_AUTH_SOCK</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">source</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_RUNTIME_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span> &gt;/dev/null
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h3 id="guix-settings">Guix settings</h3>
 <p>Enable extra profiles</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$IS_ANDROID</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$NO_GUIX</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> ; <span style="color:#008000;font-weight:bold">then</span>
@@ -1194,6 +1203,7 @@
         <li><a href="#environment">Environment</a></li>
         <li><a href="#my-paths">My paths</a></li>
         <li><a href="#ssl-certs">SSL Certs</a></li>
+        <li><a href="#ssh-agent">ssh-agent</a></li>
         <li><a href="#guix-settings">Guix settings</a></li>
         <li><a href="#other-package-managers">Other package managers</a>
           <ul>
