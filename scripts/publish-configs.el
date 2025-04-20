@@ -26,7 +26,7 @@
 (require 'use-package)
 
 ;; Org Hugo
-(straight-use-package 'org)
+;; (straight-use-package 'org)
 
 (defvar-local my/org-hugo-heading-slugs nil)
 
@@ -73,10 +73,25 @@
   (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org))
 
 
+;; No clue what's wrong here
+(defun my/org-blackfriday-table-cell-alignment-around (fn &rest args)
+  (condition-case error
+      (apply fn args)
+    (error
+     (apply #'org-export-table-cell-alignment args))))
+
+;; (advice-add #'org-blackfriday-table-cell-alignment
+;;             :around #'my/org-blackfriday-table-cell-alignment-around)
+
 ;; Export dotfiles
 
 (setq my/config-files
-      '("README.org" "Emacs.org" "Desktop.org" "Console.org" "Mail.org" "Guix.org"))
+      '("README.org"
+        "Emacs.org"
+        "Desktop.org"
+        "Console.org"
+        "Mail.org"
+        "Guix.org"))
 
 (defun my/export-dotfiles ()
   (cd (concat (vc-find-root default-directory ".git") "org/configs"))
