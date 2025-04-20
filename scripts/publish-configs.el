@@ -26,6 +26,7 @@
 (require 'use-package)
 
 ;; Org Hugo
+(straight-use-package 'org)
 
 (defvar-local my/org-hugo-heading-slugs nil)
 
