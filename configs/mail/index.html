@@ -75,8 +75,7 @@
             Mail
             <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
         </h1>
-        <p>:TOC:      :include all :depth 3</p>
-<p>My email configration. Currently I use <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
+        <p>My email configration. Currently I use <a href="https://github.com/gauteh/lieer">lieer</a> to fetch emails from Gmail, <a href="http://davmail.sourceforge.net/">davmail</a> &amp; <a href="http://www.offlineimap.org/">offlineimap</a> to fetch emails from MS Exchange, <a href="https://notmuchmail.org/">notmuch</a> to index, <a href="https://marlam.de/msmtp/">msmtp</a> to send emails. Also using notmuch frontend from Emacs.</p>
 <p>My problem with any particular mail setup was that I use Gmail labels quite extensively, and handling these over IMAP is rather awkward. Notmuch seems to be the only software that provides the same first-class support for labels.</p>
 <p>But I also have an Exchange account, with which I communicate via IMAP/SMTP adapter, and in this case, I synchronize notmuch tags and IMAP folders.</p>
 <p>References:</p>
@@ -147,11 +146,15 @@
 </span></span></code></pre></div><p><a id="code-snippet--mail-password"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pass show Job/Digital/Email/pvkorytov@etu.ru | head -n <span style="color:#666">1</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[general]</span>
-</span></span><span style="display:flex;"><span><span style="color:#7d9029">accounts</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">accounts</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov,pvkorytov-mbox</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Account pvkorytov]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">localrepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-local</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">remoterepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-remote</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Account pvkorytov-mbox]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">localrepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-mbox-local</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoterepository</span> <span style="color:#666">=</span> <span style="color:#ba2121">pvkorytov-mbox-remote</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Repository pvkorytov-local]</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">Maildir</span>
@@ -166,6 +169,18 @@
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">starttls</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">ssl</span> <span style="color:#666">=</span> <span style="color:#ba2121">no</span>
 </span></span><span style="display:flex;"><span><span style="color:#7d9029">sslcacertfile</span> <span style="color:#666">=</span> <span style="color:#ba2121">/etc/ssl/certs/ca-certificates.crt</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Repository pvkorytov-mbox-local]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">Maildir</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">localfolders</span> <span style="color:#666">=</span> <span style="color:#ba2121">~/Mail/pvkorytov_etu_mbox/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Repository pvkorytov-mbox-remote]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">type</span> <span style="color:#666">=</span> <span style="color:#ba2121">IMAP</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remotehost</span> <span style="color:#666">=</span> <span style="color:#ba2121">mbox.etu.ru</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoteuser</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;mail-username()&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remotepass</span> <span style="color:#666">=</span> <span style="color:#ba2121">&lt;&lt;mail-password()&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">remoteport</span> <span style="color:#666">=</span> <span style="color:#ba2121">993</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">cert_fingerprint</span> <span style="color:#666">=</span> <span style="color:#ba2121">07bdfab4eaa79f5fc8ab93cd9ad0ba025ea0b4e5</span>
 </span></span></code></pre></div><h2 id="notmuch">Notmuch</h2>
 <table>
   <thead>
@@ -278,6 +293,7 @@
       </tr>
   </tbody>
 </table>
+<p>&amp;BCMENAQwBDsENQQ9BD0ESwQ1-</p>
 <p>And below is a noweb function, which generates the following commands for notmuch to execute:</p>
 <ul>
 <li><em>before</em> sync:
@@ -304,39 +320,40 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">rules</span> <span style="color:#666">&#39;</span>()))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">dolist</span> (<span style="color:#19177c">row</span> <span style="color:#19177c">tags</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">tag</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">row</span>))
-</span></span><span style="display:flex;"><span>	  (<span style="color:#19177c">folder</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">row</span>)))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">folder</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">row</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">make_tag</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch tag +%s \&#34;path:%s/%s/cur/** AND NOT tag:%s\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>		 <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span>)
-</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch tag +%s \&#34;path:%s/%s/cur/** AND NOT tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span>)
+</span></span><span style="display:flex;"><span>         <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">remove</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch tag -%s \&#34;NOT path:%s/%s/cur/** AND tag:%s AND tag:%s\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>		 <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">format</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#ba2121">&#34;notmuch tag -%s \&#34;NOT path:%s/%s/cur/** AND path:%s/** AND tag:%s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#19177c">tag</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">root</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>         <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">move</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">add-to-list</span>
-</span></span><span style="display:flex;"><span>	 <span style="color:#19177c">&#39;rules</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND tag:%s AND tag:%s\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>		  <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span>))
-</span></span><span style="display:flex;"><span>	 <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">add-to-list</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">&#39;rules</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND path:%s/** AND tag:%s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span> <span style="color:#19177c">root</span> <span style="color:#19177c">tag</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">folder</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#800">t</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">archive_root</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-to-list</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#19177c">&#39;rules</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND %s AND tag:%s\&#34;&#34;</span>
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span>
-</span></span><span style="display:flex;"><span>	      (<span style="color:#00f">mapconcat</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#008000">lambda</span> (<span style="color:#19177c">row</span>)
-</span></span><span style="display:flex;"><span>		 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;NOT tag:%s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">row</span>)))
-</span></span><span style="display:flex;"><span>	       <span style="color:#19177c">tags</span>
-</span></span><span style="display:flex;"><span>	       <span style="color:#ba2121">&#34; AND &#34;</span>)
-</span></span><span style="display:flex;"><span>	      <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;notmuch search --output=files \&#34;NOT path:%s/%s/cur/** AND path:%s/** AND %s AND tag:%s\&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span> <span style="color:#19177c">root</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">lambda</span> (<span style="color:#19177c">row</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;NOT tag:%s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">row</span>)))
+</span></span><span style="display:flex;"><span>               <span style="color:#19177c">tags</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#ba2121">&#34; AND &#34;</span>)
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">root_tag</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34; | xargs -I ! mv ! %s/%s/%s/cur/&#34;</span> <span style="color:#19177c">my/maildir-root</span> <span style="color:#19177c">root</span> <span style="color:#19177c">archive_root</span>))
 </span></span><span style="display:flex;"><span>     <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">rules</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
@@ -345,24 +362,31 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 <p>It isn&rsquo;t necessary to run <code>cd</code> for offlineimap, but it&rsquo;s easier to write that way.</p>
 <p><a id="code-snippet--pre-new-pvkorytov-tags"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/mail-format-tags-rules</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;pvkorytov_etu&#34;</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#ba2121">&#34;Archive&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># GMI=&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">GMI</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/Programs/miniconda3/envs/mail/bin/gmi&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#19177c">GMI</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;gmi&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Running pre-new filters&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(move=&#34;t&#34;,archive_root=&#34;Archive&#34;)&gt;&gt;
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">echo &#34;Pre-new filters done&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">parallel --link -j0 &#34;(cd /home/pavel/Mail/{1}/ &amp;&amp; {2} {3})&#34; ::: thexcloud progin6304 pvkorytov_etu ::: &#34;$GMI&#34; &#34;$GMI&#34; &#34;offlineima</span>p<span style="color:#ba2121">&#34; ::: sync sync &#34;&#34;
-</span></span></span></code></pre></div><h4 id="post-new"><code>post_new</code></h4>
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail</span>-tags<span style="color:#666">(</span><span style="color:#19177c">move</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,archive_root<span style="color:#666">=</span><span style="color:#ba2121">&#34;Archive&#34;</span>,root<span style="color:#666">=</span><span style="color:#ba2121">&#34;pvkorytov_etu_mbox&#34;</span><span style="color:#666">)</span>&gt;&gt;
+</span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Pre-new filters done&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parallel --link -j0 <span style="color:#ba2121">&#34;(cd /home/pavel/Mail/{1}/ &amp;&amp; {2} {3})&#34;</span> ::: thexcloud progin6304 pvkorytov_etu ::: <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GMI</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GMI</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;offlineimap&#34;</span> ::: sync sync <span style="color:#ba2121">&#34;&#34;</span>
+</span></span></code></pre></div><h4 id="post-new"><code>post_new</code></h4>
 <p>And this hook tags different mailboxes with different tags.</p>
 <p><a id="code-snippet--post-new-pvkorytov-tags"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/mail-format-tags-rules</span> <span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;pvkorytov_etu&#34;</span> <span style="color:#ba2121">&#34;pvkorytov&#34;</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>notmuch tag +main <span style="color:#ba2121">&#34;path:thexcloud/** AND tag:new&#34;</span>
 </span></span><span style="display:flex;"><span>notmuch tag +progin <span style="color:#ba2121">&#34;path:progin6304/** AND tag:new&#34;</span>
 </span></span><span style="display:flex;"><span>notmuch tag +pvkorytov <span style="color:#ba2121">&#34;path:pvkorytov_etu/** AND tag:new&#34;</span>
+</span></span><span style="display:flex;"><span>notmuch tag +pvkorytov <span style="color:#ba2121">&#34;path:pvkorytov_etu_mbox/** AND tag:new&#34;</span>
+</span></span><span style="display:flex;"><span>notmuch tag +mbox <span style="color:#ba2121">&#34;path:pvkorytov_etu_mbox/** AND tag:new&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Running post-new filters&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(ma</span>ke_tag<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,remove<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span><span style="color:#666">)</span>&gt;&gt;
+</span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail-tags(make_tag=&#34;t&#34;,remove=&#34;t&#34;)&gt;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;mail</span>-tags<span style="color:#666">(</span><span style="color:#19177c">make_tag</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,remove<span style="color:#666">=</span><span style="color:#ba2121">&#34;t&#34;</span>,root<span style="color:#666">=</span><span style="color:#ba2121">&#34;pvkorytov_etu_mbox&#34;</span><span style="color:#666">)</span>&gt;&gt;
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;Post-new filters done&#34;</span>
 </span></span><span style="display:flex;"><span>notmuch tag -new <span style="color:#ba2121">&#34;tag:new&#34;</span>
 </span></span></code></pre></div><h2 id="sync-script">Sync script</h2>
@@ -432,10 +456,11 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>passwordeval <span style="color:#ba2121">&#34;pass show My_Online/ETU/progin6304@gmail.com | head -n 1&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>account pvkorytov
-</span></span><span style="display:flex;"><span>tls off
-</span></span><span style="display:flex;"><span>auth plain
-</span></span><span style="display:flex;"><span>host localhost
-</span></span><span style="display:flex;"><span>port <span style="color:#666">1025</span>
+</span></span><span style="display:flex;"><span>host mbox.etu.ru
+</span></span><span style="display:flex;"><span>port <span style="color:#666">465</span>
+</span></span><span style="display:flex;"><span>tls on
+</span></span><span style="display:flex;"><span>tls_starttls off
+</span></span><span style="display:flex;"><span>tls_fingerprint <span style="color:#666">87</span>:<span style="color:#666">1</span>F:<span style="color:#666">17</span>:<span style="color:#666">1</span>C:<span style="color:#666">12</span>:A4:DE:<span style="color:#666">82</span>:<span style="color:#666">6</span>F:CF:E5:E6:<span style="color:#666">9</span>C:EE:F8:<span style="color:#666">0</span>B:D1:<span style="color:#666">7</span>D:B2:<span style="color:#666">00</span>:F9:<span style="color:#666">7</span>B:<span style="color:#666">2</span>C:<span style="color:#666">96</span>:<span style="color:#666">21</span>:<span style="color:#666">65</span>:FA:<span style="color:#666">0</span>A:F5:<span style="color:#666">24</span>:<span style="color:#666">8</span>E:<span style="color:#666">0</span>E
 </span></span><span style="display:flex;"><span>from pvkorytov@etu.ru
 </span></span><span style="display:flex;"><span>user pvkorytov
 </span></span><span style="display:flex;"><span>passwordeval <span style="color:#ba2121">&#34;pass show Job/Digital/Email/pvkorytov@etu.ru | head -n 1&#34;</span>
@@ -482,6 +507,9 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/use-colors</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">notmuch-wash-cited-text</span> <span style="color:#008000">:foreground</span> (<span style="color:#19177c">doom-color</span> <span style="color:#19177c">&#39;yellow</span>)))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-fcc-dirs</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;pvkorytov@etu.ru&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;pvkorytov_etu_mbox/Sent&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;.*&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;sent&#34;</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mail-specify-envelope-from</span> <span style="color:#800">t</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">message-sendmail-envelope-from</span> <span style="color:#19177c">&#39;header</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">mail-envelope-from</span> <span style="color:#19177c">&#39;header</span>)
@@ -501,7 +529,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-contacts</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-address-command</span> <span style="color:#19177c">&#39;as-is</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-hello-mode-hook</span>
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">0</span>))))
 </span></span></code></pre></div><p>The file is read in <code>init.el</code>.</p>
 <h3 id="keybindings">Keybindings</h3>
 <p>I used to have a more complicated keybinding system here, but that seemed to go against the Dao.</p>
@@ -512,7 +540,8 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-hello-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-search-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-tree-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-message-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-message-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">notmuch-show-mode</span> <span style="color:#666">0</span> <span style="color:#ba2121">&#34;mail&#34;</span>)
 </span></span></code></pre></div><p><a id="table--root-tags"></a></p>
 <table>
   <thead>
@@ -580,18 +609,18 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">add-to-list</span>
 </span></span><span style="display:flex;"><span>       <span style="color:#19177c">&#39;searches</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;(:name \&#34;%s\&#34; :query \&#34;%s\&#34; :key \&#34;%s\&#34;)&#34;</span>
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s (%s)&#34;</span>
-</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>		       (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
-</span></span><span style="display:flex;"><span>		       (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))
-</span></span><span style="display:flex;"><span>			 (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">tag</span>)))
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s (%s)&#34;</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">nth</span> <span style="color:#666">2</span> <span style="color:#19177c">tag</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">root_tag</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-empty-p</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34; AND tag:&#34;</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">tag</span>))))
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">concat</span> (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">root_tag</span>) (<span style="color:#00f">nth</span> <span style="color:#666">1</span> <span style="color:#19177c">tag</span>)))
 </span></span><span style="display:flex;"><span>       <span style="color:#800">t</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span> <span style="color:#19177c">searches</span> <span style="color:#ba2121">&#34;\n&#34;</span>))
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-saved-searches</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;drafts&#34;</span> <span style="color:#008000">:query</span> <span style="color:#ba2121">&#34;tag:draft&#34;</span> <span style="color:#008000">:key</span> <span style="color:#ba2121">&#34;d&#34;</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">&lt;&lt;format-notmuch-saved-searches</span>()<span style="color:#19177c">&gt;&gt;</span>))
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">notmuch-show-empty-saved-searches</span> <span style="color:#800">nil</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">visual</span>)
@@ -603,12 +632,12 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">mml-secure-key-preferences</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#666">&#39;</span>((<span style="color:#19177c">OpenPGP</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>
-</span></span><span style="display:flex;"><span>	  (<span style="color:#ba2121">&#34;thexcloud@gmail.com&#34;</span> <span style="color:#ba2121">&#34;914472A1FD6775C166F96EBEED739ADF81C78160&#34;</span>))
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">CMS</span>
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">sign</span>)
-</span></span><span style="display:flex;"><span>	 (<span style="color:#19177c">encrypt</span>))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">sign</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;thexcloud@gmail.com&#34;</span> <span style="color:#ba2121">&#34;914472A1FD6775C166F96EBEED739ADF81C78160&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">encrypt</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">CMS</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">sign</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">encrypt</span>))))
 </span></span></code></pre></div><h3 id="tuning-signature">Tuning signature</h3>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-08-19 Mon&gt;</span></span>: Apparently this was a feature, not a bug. Disabling this.</p>
 <p>By default, <code>message.el</code> inserts the signature at the bottom of the message, like this:</p>
@@ -643,11 +672,11 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">message-signature-separator</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">move-beginning-of-line</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#19177c">kill-region</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">point-max</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">move-beginning-of-line</span> <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">kill-region</span> (<span style="color:#00f">point</span>) (<span style="color:#00f">point-max</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">message-goto-body</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;sign=pgpmime&#34;</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#00f">forward-line</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">forward-line</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#19177c">current-kill</span> <span style="color:#666">0</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">set-buffer-modified-p</span> <span style="color:#800">nil</span>))))
@@ -657,7 +686,7 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span></code></pre></div><h3 id="warn-if-no-subject">Warn if no subject</h3>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/message-ensure-subject</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">message-field-value</span> <span style="color:#ba2121">&#34;Subject&#34;</span>)
-</span></span><span style="display:flex;"><span>	      (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;No subject. Send? &#34;</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;No subject. Send? &#34;</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Aborting.&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-subject</span>)
@@ -676,20 +705,20 @@ Remove <code>TAG</code> from emails which are outside the matching <code>PATH</c
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">message-goto-body</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-block</span> <span style="color:#800">nil</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">case-fold-search</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">confirmed</span>)
-</span></span><span style="display:flex;"><span>	(<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>	  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">capitalized</span> (<span style="color:#00f">capitalize</span> <span style="color:#19177c">match</span>))
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">beg</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>		 (<span style="color:#19177c">end</span> (<span style="color:#00f">match-end</span> <span style="color:#666">0</span>)))
-</span></span><span style="display:flex;"><span>	    (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> <span style="color:#19177c">confirmed</span>
-</span></span><span style="display:flex;"><span>		    (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Replace %s with %s? &#34;</span>
-</span></span><span style="display:flex;"><span>				      <span style="color:#19177c">match</span> <span style="color:#19177c">capitalized</span>)))
-</span></span><span style="display:flex;"><span>		(<span style="color:#008000">progn</span>
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
-</span></span><span style="display:flex;"><span>		  (<span style="color:#00f">insert</span> <span style="color:#19177c">capitalized</span>)
-</span></span><span style="display:flex;"><span>		  (<span style="color:#008000">setq</span> <span style="color:#19177c">confirmed</span> <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>	      (<span style="color:#008000">cl-return</span>))))))))
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">confirmed</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">while</span> (<span style="color:#00f">re-search-forward</span> <span style="color:#19177c">my/ru-formal-pronous-regex</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let*</span> ((<span style="color:#19177c">match</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">capitalized</span> (<span style="color:#00f">capitalize</span> <span style="color:#19177c">match</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">beg</span> (<span style="color:#00f">match-beginning</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">end</span> (<span style="color:#00f">match-end</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">if</span> (<span style="color:#008000">or</span> <span style="color:#19177c">confirmed</span>
+</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">y-or-n-p</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Replace %s with %s? &#34;</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#19177c">match</span> <span style="color:#19177c">capitalized</span>)))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">delete-region</span> <span style="color:#19177c">beg</span> <span style="color:#19177c">end</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">insert</span> <span style="color:#19177c">capitalized</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">setq</span> <span style="color:#19177c">confirmed</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">cl-return</span>))))))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;notmuch-mua-send-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/message-ensure-capitalized-formal-pronouns</span>)
 </span></span></code></pre></div><h3 id="ensure-password-is-loaded">Ensure password is loaded</h3>

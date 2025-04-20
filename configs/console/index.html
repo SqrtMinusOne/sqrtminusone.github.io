@@ -76,8 +76,7 @@
             <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
         </h1>
         <blockquote>
-<p>No matter from which side you approach penguins, more always come from behind</p>
-</blockquote>
+<p>No matter from which side you approach penguins, more always come from behind</p></blockquote>
 <ul>
 <li>A friend of mine</li>
 </ul>
@@ -90,8 +89,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">color</span>))
 </span></span></code></pre></div><p><a id="code-snippet--get-fg-for-color"></a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">val</span> (<span style="color:#008000">if</span> (<span style="color:#19177c">ct-light-p</span> (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">name</span>))
-</span></span><span style="display:flex;"><span>	       (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;black</span>)
-</span></span><span style="display:flex;"><span>	     (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;white</span>))))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;black</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">my/color-value</span> <span style="color:#19177c">&#39;white</span>))))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">eq</span> <span style="color:#008000">quote</span> <span style="color:#666">1</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> <span style="color:#19177c">val</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">val</span>))
@@ -137,31 +136,38 @@
 </span></span></code></pre></div><h3 id="ssh-agent">ssh-agent</h3>
 <p>I&rsquo;m paranoid so I encrypt my SSH keys.</p>
 <p>Got the idea for below from <a href="https://wiki.archlinux.org/title/SSH_keys#SSH_agents">ArchWiki</a>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> ! pgrep -u <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$USER</span><span style="color:#ba2121">&#34;</span> ssh-agent &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>    ssh-agent -t 1h &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_RUNTIME_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">SSH_AGENT_DIR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/tmp&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$IS_ANDROID</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">==</span> <span style="color:#ba2121">&#34;true&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">SSH_AGENT_DIR</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/data/data/com.termux/files/tmp&#34;</span>
+</span></span><span style="display:flex;"><span>    mkdir -p <span style="color:#19177c">$SSH_AGENT_DIR</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> ! pgrep -u <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$USER</span><span style="color:#ba2121">&#34;</span> ssh-agent &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>    ssh-agent -t 1h &gt; <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSH_AGENT_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> ! -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSH_AUTH_SOCK</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#008000">source</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_RUNTIME_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span> &gt;/dev/null
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">source</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$SSH_AGENT_DIR</span><span style="color:#ba2121">/ssh-agent.env&#34;</span> &gt;/dev/null
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><h3 id="guix-settings">Guix settings</h3>
 <p>Enable extra profiles</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$IS_ANDROID</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#666">[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$NO_GUIX</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> ; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">GUIX_EXTRA_PROFILES</span><span style="color:#666">=</span><span style="color:#19177c">$HOME</span>/.guix-extra-profiles
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> i in <span style="color:#19177c">$GUIX_EXTRA_PROFILES</span>/*; <span style="color:#008000;font-weight:bold">do</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">profile</span><span style="color:#666">=</span><span style="color:#19177c">$i</span>/<span style="color:#008000;font-weight:bold">$(</span>basename <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$i</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>/etc/profile <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#19177c">GUIX_PROFILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>
-</span></span><span style="display:flex;"><span>	    . <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_PROFILE</span><span style="color:#ba2121">&#34;</span>/etc/profile
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -d <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>/share/man <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v manpath; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#008000;font-weight:bold">:-$(</span>manpath<span style="color:#008000;font-weight:bold">)</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">export</span> <span style="color:#19177c">XDG_DATA_DIRS</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_DATA_DIRS</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">unset</span> profile
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">profile</span><span style="color:#666">=</span><span style="color:#19177c">$i</span>/<span style="color:#008000;font-weight:bold">$(</span>basename <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$i</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>/etc/profile <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">GUIX_PROFILE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>            . <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$GUIX_PROFILE</span><span style="color:#ba2121">&#34;</span>/etc/profile
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -d <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">&#34;</span>/share/man <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v manpath &gt;/dev/null 2&gt;/dev/null; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#008000;font-weight:bold">:-$(</span>manpath<span style="color:#008000;font-weight:bold">)</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#008000">export</span> <span style="color:#19177c">MANPATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">MANPATH</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share/man&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">export</span> <span style="color:#19177c">XDG_DATA_DIRS</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$XDG_DATA_DIRS</span><span style="color:#ba2121">:</span><span style="color:#19177c">$profile</span><span style="color:#ba2121">/share&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">unset</span> profile
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">done</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><p>Set Jupyter config PATH. It defaults to readonly directory somewhere in Guix profile.</p>
@@ -276,7 +282,7 @@
 </span></span></code></pre></div><p>If <code>termux-setup-storage</code> is available, then we&rsquo;re running inside termux. It is necessary to source <code>~/.profile</code> manually.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v termux-setup-storage &gt; /dev/null; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> -z <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$IS_ANDROID</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">source</span> ~/.profile
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">source</span> ~/.profile
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span></code></pre></div><p>Source the system-wide file</p>
@@ -298,7 +304,7 @@
 <p>Allow other users to access X server. Necessary for stuff like aw-watcher-window.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xhost +local:root &gt; /dev/null 2&gt;&amp;<span style="color:#666">1</span>
 </span></span></code></pre></div><p>Set manpager to bat</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">export</span> <span style="color:#19177c">MANPAGER</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;sh -c &#39;sed -e s/.\\\\x08//g | bat -l man -p&#39;&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># export MANPAGER=&#34;sh -c &#39;sed -e s/.\\\\x08//g | bat -l man -p&#39;&#34;</span>
 </span></span></code></pre></div><p><a href="https://codeberg.org/akib/emacs-eat">eat</a> integration</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#666">[</span> -n <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$EAT_SHELL_INTEGRATION_DIR</span><span style="color:#ba2121">&#34;</span> <span style="color:#666">]</span> <span style="color:#666">&amp;&amp;</span> <span style="color:#008000">source</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$EAT_SHELL_INTEGRATION_DIR</span><span style="color:#ba2121">/bash&#34;</span>
 </span></span></code></pre></div><h4 id="launch-fish">Launch fish</h4>
@@ -331,17 +337,17 @@
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">use_color</span><span style="color:#b68;font-weight:bold">}</span> ; <span style="color:#008000;font-weight:bold">then</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic"># Enable colors for ls, etc.  Prefer ~/.dir_colors #64489</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">type</span> -P dircolors &gt;/dev/null ; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> -f ~/.dir_colors <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000">eval</span> <span style="color:#008000;font-weight:bold">$(</span>dircolors -b ~/.dir_colors<span style="color:#008000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[[</span> -f /etc/DIR_COLORS <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000">eval</span> <span style="color:#008000;font-weight:bold">$(</span>dircolors -b /etc/DIR_COLORS<span style="color:#008000;font-weight:bold">)</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> -f ~/.dir_colors <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">eval</span> <span style="color:#008000;font-weight:bold">$(</span>dircolors -b ~/.dir_colors<span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">elif</span> <span style="color:#666">[[</span> -f /etc/DIR_COLORS <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">eval</span> <span style="color:#008000;font-weight:bold">$(</span>dircolors -b /etc/DIR_COLORS<span style="color:#008000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">EUID</span><span style="color:#b68;font-weight:bold">}</span> <span style="color:#666">==</span> <span style="color:#666">0</span> <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] &#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] &#39;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] &#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] &#39;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">ls</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;ls --color=auto&#39;</span>
@@ -350,10 +356,10 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">alias</span> <span style="color:#19177c">fgrep</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;fgrep --colour=auto&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">else</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[[</span> <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">EUID</span><span style="color:#b68;font-weight:bold">}</span> <span style="color:#666">==</span> <span style="color:#666">0</span> <span style="color:#666">]]</span> ; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#408080;font-style:italic"># show root@ when we don&#39;t have colors</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\u@\h \W \$ &#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic"># show root@ when we don&#39;t have colors</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\u@\h \W \$ &#39;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\u@\h \w \$ &#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">PS1</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;\u@\h \w \$ &#39;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>
@@ -401,21 +407,20 @@
 </span></span></code></pre></div><h4 id="micromamba">Micromamba</h4>
 <p>I&rsquo;ve moved from conda to <a href="https://github.com/mamba-org/mamba">micromamba</a> because it&rsquo;s faster.</p>
 <blockquote>
-<p>managed by &lsquo;mamba init&rsquo; !!!</p>
-</blockquote>
+<p>managed by &lsquo;mamba init&rsquo; !!!</p></blockquote>
 <p>Yeah, tell this to yourself</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>init_mamba <span style="color:#666">()</span> <span style="color:#666">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">MAMBA_EXE</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/.guix-extra-profiles/dev/dev/bin/micromamba&#34;</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">export</span> <span style="color:#19177c">MAMBA_ROOT_PREFIX</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/micromamba&#34;</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">__mamba_setup</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;</span><span style="color:#008000;font-weight:bold">$(</span><span style="color:#ba2121">&#34;</span><span style="color:#19177c">$MAMBA_EXE</span><span style="color:#ba2121">&#34;</span> shell hook --shell bash --prefix <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$MAMBA_ROOT_PREFIX</span><span style="color:#ba2121">&#34;</span> 2&gt; /dev/null<span style="color:#008000;font-weight:bold">)</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> <span style="color:#19177c">$?</span> -eq <span style="color:#666">0</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">eval</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$__mamba_setup</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">eval</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$__mamba_setup</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	    . <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	    <span style="color:#008000">export</span>  <span style="color:#19177c">PATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/micromamba/bin:</span><span style="color:#19177c">$PATH</span><span style="color:#ba2121">&#34;</span>  <span style="color:#408080;font-style:italic"># extra space after export prevents interference from conda init</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000;font-weight:bold">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#666">[</span> -f <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span> <span style="color:#666">]</span>; <span style="color:#008000;font-weight:bold">then</span>
+</span></span><span style="display:flex;"><span>            . <span style="color:#ba2121">&#34;/home/pavel/micromamba/etc/profile.d/micromamba.sh&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">else</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">export</span>  <span style="color:#19177c">PATH</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;/home/pavel/micromamba/bin:</span><span style="color:#19177c">$PATH</span><span style="color:#ba2121">&#34;</span>  <span style="color:#408080;font-style:italic"># extra space after export prevents interference from conda init</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">unset</span> __mamba_setup
 </span></span><span style="display:flex;"><span><span style="color:#666">}</span>
@@ -456,8 +461,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#00f">starship</span> init <span style="color:#008000">fish</span> <span style="color:#666">|</span> <span style="color:#008000">source
 </span></span></span><span style="display:flex;"><span><span style="color:#008000"></span><span style="color:#008000;font-weight:bold">else</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">function</span> <span style="color:#008000">fish_prompt</span> <span style="color:#7d9029">-d</span> <span style="color:#ba2121">&#34;Write out the prompt&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">printf</span> <span style="color:#ba2121">&#39;%s@%s %s%s%s &gt; &#39;</span> <span style="color:#19177c">$USER</span> <span style="color:#19177c">$hostname</span> <span style="color:#b62;font-weight:bold">\
-</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span>	    <span style="color:#666">(</span><span style="color:#008000">set_color</span> <span style="color:#19177c">$fish_color_cwd</span><span style="color:#666">)</span> <span style="color:#666">(</span><span style="color:#00f">basename</span> <span style="color:#666">(</span><span style="color:#00f">pwd</span><span style="color:#666">))</span> <span style="color:#666">(</span><span style="color:#008000">set_color </span>normal<span style="color:#666">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">printf</span> <span style="color:#ba2121">&#39;%s@%s %s%s%s &gt; &#39;</span> <span style="color:#19177c">$USER</span> <span style="color:#19177c">$hostname</span> <span style="color:#b62;font-weight:bold">\
+</span></span></span><span style="display:flex;"><span><span style="color:#b62;font-weight:bold"></span>            <span style="color:#666">(</span><span style="color:#008000">set_color</span> <span style="color:#19177c">$fish_color_cwd</span><span style="color:#666">)</span> <span style="color:#666">(</span><span style="color:#00f">basename</span> <span style="color:#666">(</span><span style="color:#00f">pwd</span><span style="color:#666">))</span> <span style="color:#666">(</span><span style="color:#008000">set_color </span>normal<span style="color:#666">)</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">end</span>
 </span></span></code></pre></div><p>Enable vi keybindings &amp; aliases. The alias syntax is the same as in bash, so it&rsquo;s just a noweb reference to <code>.bashrc</code>.</p>
@@ -964,6 +969,14 @@
           <td>aria2</td>
           <td>Download tool</td>
       </tr>
+      <tr>
+          <td>man-db</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>pv</td>
+          <td></td>
+      </tr>
   </tbody>
 </table>
 <h3 id="ripgrep-config">ripgrep config</h3>
@@ -1034,9 +1047,9 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>notify <span style="color:#666">()</span> <span style="color:#666">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">command</span> -v notify-send; <span style="color:#008000;font-weight:bold">then</span>
-</span></span><span style="display:flex;"><span>	notify-send -u <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">LEVEL</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#19177c">normal</span><span style="color:#b68;font-weight:bold">}</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$1</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$2</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>        notify-send -u <span style="color:#b68;font-weight:bold">${</span><span style="color:#19177c">LEVEL</span><span style="color:#008000;font-weight:bold">:-</span><span style="color:#19177c">normal</span><span style="color:#b68;font-weight:bold">}</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$1</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$2</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$1</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$2</span><span style="color:#ba2121">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">echo</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$1</span><span style="color:#ba2121">&#34;</span> <span style="color:#ba2121">&#34;</span><span style="color:#19177c">$2</span><span style="color:#ba2121">&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">fi</span>
 </span></span><span style="display:flex;"><span><span style="color:#666">}</span>
 </span></span><span style="display:flex;"><span>
