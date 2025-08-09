@@ -256,16 +256,15 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>Setting up the environment, performance tuning and a few basic settings.</p>
 <p>First things first, lexical binding.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;;; -*- lexical-binding: t -*-</span>
-</span></span></code></pre></div><h3 id="packages">Packages</h3>
-<h4 id="straight-dot-el">straight.el</h4>
-<p>Straight.el is my Emacs package manager of choice. Its advantages &amp; disadvantages over other options are listed pretty thoroughly in the README file in the repo.</p>
-<p>The following is the bootstrap script of <code>straight.el</code>.</p>
+</span></span></code></pre></div><h3 id="straight-dot-el">straight.el</h3>
+<p>Straight.el is my Emacs package manager of choice. The following is its bootstrap script.</p>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/raxod502/straight.el">straight.el repo</a></li>
 </ul>
-<!--listend-->
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">bootstrap-version</span>)
+<p>The following is set to <code>t</code> to support multiple Emacs versions working at the same time. In particular, the Termux and the Android version.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">straight-use-version-specific-build-dir</span> <span style="color:#800">t</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">bootstrap-version</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">let</span> ((<span style="color:#19177c">bootstrap-file</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;straight/repos/straight.el/bootstrap.el&#34;</span> <span style="color:#19177c">user-emacs-directory</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">bootstrap-version</span> <span style="color:#666">5</span>))
@@ -11992,9 +11991,8 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
     <li><a href="#some-remarks">Some remarks</a></li>
     <li><a href="#initial-setup">Initial setup</a>
       <ul>
-        <li><a href="#packages">Packages</a>
+        <li><a href="#straight-dot-el">straight.el</a>
           <ul>
-            <li><a href="#straight-dot-el">straight.el</a></li>
             <li><a href="#use-package">use-package</a></li>
           </ul>
         </li>
