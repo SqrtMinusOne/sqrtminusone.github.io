@@ -725,8 +725,8 @@
 </span></span><span style="display:flex;"><span>        (<span style="color:#008000">cl-loop</span> <span style="color:#008000">while</span> (<span style="color:#19177c">windmove-find-other-window</span> <span style="color:#19177c">opposite-dir</span>)
 </span></span><span style="display:flex;"><span>                 <span style="color:#008000">do</span> (<span style="color:#19177c">windmove-do-window-select</span> <span style="color:#19177c">opposite-dir</span>))))))
 </span></span></code></pre></div><h4 id="update-the-monitor-list">Update the monitor list</h4>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-refresh-monitors</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/exwm-refresh-monitors</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">refresh</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/exwm-monitor-list</span> (<span style="color:#19177c">my/exwm-xrandr-monitor-list</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#666">0</span> <span style="color:#19177c">to</span> (<span style="color:#00f">1-</span> <span style="color:#19177c">exwm-workspace-number</span>)
 </span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">monitor</span> <span style="color:#00f">=</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span>
@@ -735,7 +735,8 @@
 </span></span><span style="display:flex;"><span>           <span style="color:#008000">do</span>
 </span></span><span style="display:flex;"><span>           (<span style="color:#008000">setf</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">exwm-randr-workspace-monitor-plist</span> <span style="color:#19177c">i</span>)
 </span></span><span style="display:flex;"><span>                 (<span style="color:#00f">car</span> <span style="color:#19177c">my/exwm-monitor-list</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">exwm-randr-refresh</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> <span style="color:#19177c">refresh</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">exwm-randr-refresh</span>)))
 </span></span></code></pre></div><h3 id="completions">Completions</h3>
 <p>Setting up some completion interfaces that fit particularly well to use with EXWM. While rofi also works, I want to use Emacs functionality wherever possible to have one completion interface everywhere.</p>
 <h4 id="ivy-posframe">ivy-posframe</h4>
@@ -4189,7 +4190,7 @@
   <tbody>
       <tr>
           <td>office</td>
-          <td>libreoffice</td>
+          <td>libreoffice-fresh</td>
       </tr>
       <tr>
           <td>office</td>

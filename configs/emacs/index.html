@@ -76,7 +76,8 @@
             <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
         </h1>
         <blockquote>
-<p>One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn&rsquo;t today.</p></blockquote>
+<p>One day we won&rsquo;t hate one another, no young boy will march to war and I will clean up my Emacs config. But that day isn&rsquo;t today.</p>
+</blockquote>
 <ul>
 <li>Me, <span class="timestamp-wrapper"><span class="timestamp">&lt;2021-05-27 Thu 17:35&gt; </span></span> in commit 93a0573. Adapted from <a href="https://www.youtube.com/watch?v=pIdBinlW40E">The Dark Element - &ldquo;The Pallbearer Walks Alone&rdquo;</a>. T_T</li>
 </ul>
@@ -892,6 +893,11 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Processed %s as emacs config module&#34;</span> (<span style="color:#00f">buffer-file-name</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-babel-post-tangle-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/modules--post-tangle</span>)
+</span></span></code></pre></div><p>Launch Emacs with the <code>remote</code> env (for TRAMP):</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/emacs-tramp</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">with-environment-variables</span> ((<span style="color:#ba2121">&#34;EMACS_ENV&#34;</span> <span style="color:#ba2121">&#34;remote&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">start-process</span> <span style="color:#ba2121">&#34;emacs-tramp&#34;</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;emacs&#34;</span>)))
 </span></span></code></pre></div><h3 id="performance">Performance</h3>
 <h4 id="measure-startup-speed">Measure startup speed</h4>
 <p>A small function to print out the loading time and number of GCs during the loading. Can be useful as a point of data for optimizing Emacs startup time.</p>
@@ -987,7 +993,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <p>I have a problem with <code>emacs-lisp-mode</code> as <code>initial-major-mode</code> because in my config it loads <code>lispy</code>, which loads <code>org-mode</code>.</p>
 <p>So until I&rsquo;ve made a better loading screen, this will do.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">initial-major-mode</span> <span style="color:#19177c">&#39;fundamental-mode</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">initial-scratch-message</span> <span style="color:#ba2121">&#34;Hello there &lt;3\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">initial-scratch-message</span> <span style="color:#ba2121">&#34;Hallo Leben&#34;</span>)
 </span></span></code></pre></div><h2 id="general-settings">General settings</h2>
 <h3 id="keybindings">Keybindings</h3>
 <h4 id="general-dot-el">general.el</h4>
@@ -1516,7 +1522,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-imap</span> <span style="color:#ba2121">&#34;M-TAB&#34;</span> <span style="color:#19177c">&#39;company-yasnippet</span>)
 </span></span></code></pre></div><h4 id="input-method">Input Method</h4>
 <blockquote>
-<p>I have to switch layouts all the time, especially in LaTeX documents, because for some reason the Bolsheviks abandoned the idea of replacing Russian Cyrillic letters with Latin ones.</p></blockquote>
+<p>I have to switch layouts all the time, especially in LaTeX documents, because for some reason the Bolsheviks abandoned the idea of replacing Russian Cyrillic letters with Latin ones.</p>
+</blockquote>
 <ul>
 <li>Me, <span class="timestamp-wrapper"><span class="timestamp">[2021-04-24 Sat]</span></span>, in a commit to <a href="https://github.com/SystemCrafters/crafter-configs">SystemCrafters/crafter-configs</a>.</li>
 </ul>
@@ -1644,6 +1651,62 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">number</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">line-beginning-position</span>)
 </span></span><span style="display:flex;"><span>       (<span style="color:#00f">line-end-position</span>)))))
+</span></span></code></pre></div><h5 id="edit-string-a-point">Edit string a point</h5>
+<p>A function to edit the string at point in a temporary buffer with chosen major mode. Somewhat like <code>org-edit-special</code>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/edit-elisp-string--window-config</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/edit-elisp-string</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#19177c">org-src-edit-buffer-p</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-edit-src-exit</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">bounds</span> (<span style="color:#19177c">bounds-of-thing-at-point</span> <span style="color:#19177c">&#39;string</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">orig-buf</span> (<span style="color:#00f">current-buffer</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">orig-str</span> (<span style="color:#008000">when</span> <span style="color:#19177c">bounds</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">buffer-substring-no-properties</span> (<span style="color:#00f">car</span> <span style="color:#19177c">bounds</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">bounds</span>)))))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> <span style="color:#19177c">bounds</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No string under cursor&#34;</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#408080;font-style:italic">;; Not sure if there&#39;s a better way</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">mode</span> (<span style="color:#00f">intern</span>
+</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">completing-read</span>
+</span></span><span style="display:flex;"><span>                     <span style="color:#ba2121">&#34;Major mode: &#34;</span> <span style="color:#19177c">obarray</span>
+</span></span><span style="display:flex;"><span>                     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">sym</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#008000">and</span> (<span style="color:#00f">commandp</span> <span style="color:#19177c">sym</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">string-suffix-p</span> <span style="color:#ba2121">&#34;-mode&#34;</span> (<span style="color:#00f">symbol-name</span> <span style="color:#19177c">sym</span>))))
+</span></span><span style="display:flex;"><span>                     <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">edit-buf</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*string-edit*&#34;</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq</span> <span style="color:#19177c">edit-elisp-string--window-config</span> (<span style="color:#00f">current-window-configuration</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">edit-buf</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">insert</span> (<span style="color:#19177c">string-replace</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;\\\&#34;&#34;</span> <span style="color:#ba2121">&#34;\&#34;&#34;</span> (<span style="color:#00f">substring</span> <span style="color:#19177c">orig-str</span> <span style="color:#666">1</span> <span style="color:#666">-1</span>)))
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">funcall</span> <span style="color:#19177c">mode</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">use-local-map</span> (<span style="color:#00f">copy-keymap</span> (<span style="color:#00f">current-local-map</span>)))
+</span></span><span style="display:flex;"><span>          <span style="color:#408080;font-style:italic">;; Confirm edit</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">local-set-key</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-c &#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">let</span> ((<span style="color:#19177c">new-str</span> (<span style="color:#00f">buffer-substring-no-properties</span>
+</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">point-min</span>) (<span style="color:#00f">point-max</span>))))
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">orig-buf</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">delete-region</span> (<span style="color:#00f">car</span> <span style="color:#19177c">bounds</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">bounds</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">goto-char</span> (<span style="color:#00f">car</span> <span style="color:#19177c">bounds</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">insert</span> (<span style="color:#00f">prin1-to-string</span> <span style="color:#19177c">new-str</span>))))
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">kill-buffer</span> <span style="color:#19177c">edit-buf</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">when</span> <span style="color:#19177c">edit-elisp-string--window-config</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">set-window-configuration</span> <span style="color:#19177c">edit-elisp-string--window-config</span>))))
+</span></span><span style="display:flex;"><span>          <span style="color:#408080;font-style:italic">;; Cancel edit</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">local-set-key</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">kbd</span> <span style="color:#ba2121">&#34;C-c C-k&#34;</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">kill-buffer</span> <span style="color:#19177c">edit-buf</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">when</span> <span style="color:#19177c">edit-elisp-string--window-config</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">set-window-configuration</span> <span style="color:#19177c">edit-elisp-string--window-config</span>)))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">pop-to-buffer</span> <span style="color:#19177c">edit-buf</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span> <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">emacs-lisp-mode-map</span> <span style="color:#19177c">lisp-interaction-mode-map</span>)
+</span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;C-c &#39;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/edit-elisp-string</span>)
 </span></span></code></pre></div><h3 id="working-with-projects">Working with projects</h3>
 <p>Packages related to managing projects.</p>
 <p>I used to have <a href="https://github.com/Alexander-Miller/treemacs">Treemacs</a> here, but in the end decided that dired with <a href="https://github.com/jojojames/dired-sidebar">dired-sidebar</a> does a better job. Dired has its separate section in &ldquo;Applications&rdquo;.</p>
@@ -5132,7 +5195,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC b&#34;</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">:wk</span> <span style="color:#ba2121">&#34;org-babel&#34;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC b&#34;</span> <span style="color:#19177c">org-babel-map</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC b&#34;</span> <span style="color:#19177c">org-babel-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;SPC h&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">consult-org-heading</span>))
 </span></span></code></pre></div><h4 id="managing-a-literate-programming-project">Managing a literate programming project</h4>
 <p>A few tricks to do literate programming. I actually have only one (<a href="https://github.com/SqrtMinusOne/sqrt-data">sqrt-data</a>), and I&rsquo;m not convinced in the benefits of the approach&hellip;</p>
 <p>Anyway, Org files are better off in a separated directory (e.g. <code>org</code>). So I&rsquo;ve come up with the following solution to avoid manually prefixing the <code>:tangle</code> arguments.</p>
@@ -6217,21 +6281,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span> (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span> <span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
 </span></span><span style="display:flex;"><span>                     (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Got error: %S&#34;</span> <span style="color:#19177c">error-thrown</span>)))))
 </span></span><span style="display:flex;"><span>  <span style="color:#19177c">my/weather-value</span>)
-</span></span></code></pre></div><p>Let&rsquo;s also try to log the current mood:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/get-mood</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">crm-separator</span> <span style="color:#ba2121">&#34; &#34;</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">crm-local-completion-map</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">map</span> (<span style="color:#00f">make-sparse-keymap</span>)))
-</span></span><span style="display:flex;"><span>            (<span style="color:#00f">set-keymap-parent</span> <span style="color:#19177c">map</span> <span style="color:#19177c">crm-local-completion-map</span>)
-</span></span><span style="display:flex;"><span>            (<span style="color:#00f">define-key</span> <span style="color:#19177c">map</span> <span style="color:#ba2121">&#34; &#34;</span> <span style="color:#19177c">&#39;self-insert-command</span>)
-</span></span><span style="display:flex;"><span>            <span style="color:#19177c">map</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">vertico-sort-function</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">mapconcat</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#00f">#&#39;identity</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">completing-read-multiple</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;How do you feel: &#34;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#19177c">my/mood-list</span>)
-</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34; &#34;</span>)))
 </span></span></code></pre></div><p>And here&rsquo;s the function that creates a drawer with such information. At the moment, it&rsquo;s:</p>
 <ul>
 <li>Emacs version</li>
@@ -6239,7 +6288,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <li>Location</li>
 <li>Weather</li>
 <li>Current EMMS track</li>
-<li>Current mood</li>
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/set-journal-header</span> ()
@@ -6267,9 +6315,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> <span style="color:#19177c">title</span>
 </span></span><span style="display:flex;"><span>            (<span style="color:#008000">setq</span> <span style="color:#00f">string</span> (<span style="color:#00f">concat</span> <span style="color:#00f">string</span> <span style="color:#19177c">title</span>)))
 </span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> (<span style="color:#00f">&gt;</span> (<span style="color:#00f">length</span> <span style="color:#00f">string</span>) <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;EMMS_Track&#34;</span> <span style="color:#00f">string</span>))))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">mood</span> (<span style="color:#19177c">my/get-mood</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;Mood&#34;</span> <span style="color:#19177c">mood</span>)))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;EMMS_Track&#34;</span> <span style="color:#00f">string</span>)))))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-journal-after-entry-create-hook</span>
 </span></span><span style="display:flex;"><span>          <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/set-journal-header</span>)
@@ -6370,7 +6416,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>About installing the package on Guix (<strong>CREDIT</strong>: thanks @Ashraz on the SystemCrafters discord)</p>
 <blockquote>
 <p>So, for all those interested: unfortunately, org-roam (or rather emacsql-sqlite) cannot compile the sqlite.c and emacsql.c due to missing headers (linux/falloc.h) on Guix. You would have to properly set all the include paths on Guix, and also adjust the PATH to have gcc actually find as later on in the compilation process.</p>
-<p>Instead, you should remove all Org-Roam related packages from your Emacs installation (via M-x package-delete org-roam RET and  M-x package-autoremove RET y RET) and then use the Guix package called emacs-org-roam.</p></blockquote>
+<p>Instead, you should remove all Org-Roam related packages from your Emacs installation (via M-x package-delete org-roam RET and  M-x package-autoremove RET y RET) and then use the Guix package called emacs-org-roam.</p>
+</blockquote>
 <p>References:</p>
 <ul>
 <li><a href="https://github.com/org-roam/org-roam/wiki/Hitchhiker%27s-Rough-Guide-to-Org-roam-V2">Hitchhiker&rsquo;s Rough Guide to Org roam V2</a></li>
@@ -7110,7 +7157,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>                 (<span style="color:#ba2121">&#34;beamer&#34;</span> <span style="color:#ba2121">&#34;\\documentclass[presentation]{beamer}&#34;</span>
 </span></span><span style="display:flex;"><span>                  (<span style="color:#ba2121">&#34;\\section{%s}&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;\\section*{%s}&#34;</span>)
 </span></span><span style="display:flex;"><span>                  (<span style="color:#ba2121">&#34;\\subsection{%s}&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;\\subsection*{%s}&#34;</span>)
-</span></span><span style="display:flex;"><span>                  (<span style="color:#ba2121">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;\\subsubsection*{%s}&#34;</span>)))))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#ba2121">&#34;\\subsubsection{%s}&#34;</span> <span style="color:#666">.</span> <span style="color:#ba2121">&#34;\\subsubsection*{%s}&#34;</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ox-beamer</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-beamer-environments-extra</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;dummy&#34;</span> <span style="color:#ba2121">&#34;d&#34;</span> <span style="color:#ba2121">&#34;\\begin{dummyenv}&#34;</span> <span style="color:#ba2121">&#34;\\end{dummyenv}&#34;</span>))))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">;; Make sure to eval the function when org-latex-classes list already exists</span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ox-latex</span>
@@ -9657,7 +9707,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p><a href="https://github.com/wallabag/wallabag">wallabag</a> is a self-hosted &ldquo;read it later&rdquo; app.</p>
 <p>This might be the best online reading advice I&rsquo;ve heard:</p>
 <blockquote>
-<p>I have a different approach: waiting periods. Every time I come across something I may want to read/watch, I’m totally allowed to. No limits! The only requirement is I have to save it to Pocket, and then choose to consume it at a later time.</p></blockquote>
+<p>I have a different approach: waiting periods. Every time I come across something I may want to read/watch, I’m totally allowed to. No limits! The only requirement is I have to save it to Pocket, and then choose to consume it at a later time.</p>
+</blockquote>
 <p>Source: <a href="https://fortelabs.com/blog/the-secret-power-of-read-it-later-apps/">Tiago Forte - The Secret Power of ‘Read It Later’ Apps</a></p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">wallabag</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> (<span style="color:#008000">:host</span> <span style="color:#19177c">github</span> <span style="color:#008000">:repo</span> <span style="color:#ba2121">&#34;chenyanming/wallabag.el&#34;</span> <span style="color:#008000">:files</span> (<span style="color:#008000">:defaults</span> <span style="color:#ba2121">&#34;default.css&#34;</span> <span style="color:#ba2121">&#34;emojis.alist&#34;</span>))
@@ -9802,7 +9853,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>Scroll to the previous mention.</p>
 <blockquote>
 <p>alphapapa 🐃​&gt; And, yes, that is a currently unsolved problem. As I said, in the future we can try using a different API endpoint to access those notifications similarly to Element. In the meantime, you can load old messages (e.g. &ldquo;C-u 1000 M-v&rdquo; to load 1000 old ones at a time), until you find it, maybe using &ldquo;C-s sqrtm&rdquo; to search for messages mentioning you.</p>
-<p>Or you can load up Element for a moment to see what the mention was, if that&rsquo;s easier.</p></blockquote>
+<p>Or you can load up Element for a moment to see what the mention was, if that&rsquo;s easier.</p>
+</blockquote>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ement-about-me-p</span> (<span style="color:#19177c">event</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">me</span> (<span style="color:#19177c">ement-user-id</span> (<span style="color:#19177c">ement-session-user</span> <span style="color:#19177c">ement-session</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">or</span>
@@ -10651,12 +10703,13 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>As I mentioned earlier, my current options to manage a particular node are:</p>
 <ul>
 <li><a href="https://git-scm.com/">git</a>;</li>
-<li><a href="https://mega.nz/">MEGA</a> - for files that don&rsquo;t fit into git, such as DOCX documents, photos, etc.;</li>
+<li><a href="https://mega.nz/">MEGA</a> - for files that don&rsquo;t fit into git, such as DOCX documents, photos, etc. (<strong>UPD 2025.10.22</strong> - MEGA has been banned in Russia, of course&hellip;);</li>
+<li><a href="https://owncloud.dev/ocis/">ownCloud Infinite Scale</a> (self-hosted by me) via <a href="https://rclone.org/docs/">rclone</a> - instead of MEGA.</li>
 <li>&ldquo;nothing&rdquo; - for something that I don&rsquo;t need to sync across machines, e.g. database dumps.</li>
 </ul>
-<p>Another tool I considered was <a href="https://github.com/restic/restic">restic</a>. It&rsquo;s an interesting backup &amp; sync solution with built-in encryption, snapshots, etc.</p>
-<p>However, a challenge I encountered is that its repositories are only accessible via restic. So, even if I use something like MEGA as a backend, I won&rsquo;t be able to use the MEGA file-sharing features, which I occasionally want for document or photo folders. Hence, for now, I&rsquo;m more interested in synchronizing the file tree in MEGA with <a href="https://github.com/meganz/MEGAcmd">MEGAcmd</a> (and also clean up the mess up there).</p>
-<p>Another interesting tool is <a href="https://rclone.org/">rclone</a>, which provides a single interface for multiple services like Google Drive, Dropbox, S3, WebDAV. It also supports MEGA, but it requires turning off the two-factor authentication, which I don&rsquo;t want.</p>
+<p><code>rclone</code> is nice because it provides a single interface for multiple services like Google Drive, Dropbox, S3, WebDAV. It also supported MEGA, but it required turning off 2FA, which I didn&rsquo;t want.</p>
+<p>So the MEGA functionality used <a href="https://github.com/meganz/MEGAcmd">MEGAcmd</a>. I&rsquo;ll keep it for now.</p>
+<p>Another tool I considered was <a href="https://github.com/restic/restic">restic</a>. It&rsquo;s an interesting backup &amp; sync solution with built-in encryption, snapshots, etc., but the repositories are only accessible via restic, which prevents using file-sharing features.</p>
 <h4 id="implementation">Implementation</h4>
 <h5 id="dependencies">Dependencies</h5>
 <p>We&rsquo;ll a package called <a href="https://github.com/daniel-ness/ini.el">ini.el</a> to parse INI files.</p>
@@ -10675,7 +10728,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></code></pre></div><p>Each &ldquo;area&rdquo; is an Org header with the <code>folder</code> tag; the Org hierarchy forms the file tree. A header can have the following properties:</p>
 <ul>
 <li><code>machine</code> - a list of hostnames for which the node is active (or <code>nil</code>)</li>
-<li><code>kind</code> - <code>mega</code>, <code>git</code>, or <code>dummy</code></li>
+<li><code>kind</code> - <code>mega</code>, <code>rclone:&lt;remote&gt;</code>, <code>git</code>, or <code>dummy</code>. For now, only one option per node; I&rsquo;ll probably change that in the future.</li>
 <li><code>remote</code> - remote URL for <code>git</code></li>
 <li><code>symlink</code> - in case the folder has to be symlinked somewhere else</li>
 </ul>
@@ -10689,16 +10742,16 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
 </span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.A Artifacts
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
-</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     rclone:ocis
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
 </span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.D Documents
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
-</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     rclone:ocis
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
 </span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">****</span> 10.03.R Repos
 </span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">*****</span> 10.03.R.00 digital-trajectories-deploy
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
-</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     mega
+</span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:kind:     rclone:ocis
 </span></span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"></span><span style="color:#408080;font-style:italic">:END:</span>
 </span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">*****</span> 10.03.R.01 digital-trajectories-backend
 </span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic">:PROPERTIES:
@@ -10740,14 +10793,17 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:symlink</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">symlink</span>))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:PROJECT</span> <span style="color:#19177c">heading</span>)
 </span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:project</span> <span style="color:#19177c">val</span>) <span style="color:#800">t</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">kind-str</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:KIND</span> <span style="color:#19177c">heading</span>))
-</span></span><span style="display:flex;"><span>                  (<span style="color:#19177c">kind</span> (<span style="color:#00f">intern</span> <span style="color:#19177c">kind-str</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">kind</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">kind</span> <span style="color:#19177c">&#39;git</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">kind-str</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:KIND</span> <span style="color:#19177c">heading</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#19177c">string-match-p</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> <span style="color:#ba2121">&#34;rclone:&#34;</span>) <span style="color:#19177c">kind-str</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">val</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">substring</span> <span style="color:#19177c">kind-str</span> <span style="color:#666">7</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">setq</span> <span style="color:#19177c">kind-str</span> <span style="color:#ba2121">&#34;rclone&#34;</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">kind-str</span> <span style="color:#ba2121">&#34;git&#34;</span>)
 </span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">remote</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:REMOTE</span> <span style="color:#19177c">heading</span>)))
 </span></span><span style="display:flex;"><span>            (<span style="color:#008000">unless</span> <span style="color:#19177c">remote</span>
 </span></span><span style="display:flex;"><span>              (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No remote for %s&#34;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">val</span>)))
-</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">remote</span>))))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">remote</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">val</span>) (<span style="color:#00f">intern</span> <span style="color:#19177c">kind-str</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">val</span>) (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">heading</span>)
 </span></span><span style="display:flex;"><span>            (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">val</span>) <span style="color:#19177c">new-path</span>)
 </span></span><span style="display:flex;"><span>      <span style="color:#19177c">val</span>)))
@@ -11039,6 +11095,258 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>                       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mega-sync -d \&#34;%s\&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>                               (<span style="color:#00f">substring</span> <span style="color:#19177c">path</span> <span style="color:#666">0</span> (<span style="color:#00f">1-</span> (<span style="color:#00f">length</span> <span style="color:#19177c">path</span>))))
 </span></span><span style="display:flex;"><span>                       <span style="color:#ba2121">&#34;Mega remove sync&#34;</span> <span style="color:#666">4</span>)))))
+</span></span></code></pre></div><h5 id="rclone">rclone</h5>
+<p>This section wraps the <a href="https://rclone.org/bisync/">bisync</a> command for rclone, which implements two-way sync.</p>
+<p>The general approach is:</p>
+<ul>
+<li>Consider the directory unsynced if it doesn&rsquo;t have the <code>.rclone-test-&lt;remote&gt;</code> file, which is used with the <a href="https://rclone.org/bisync/#check-access">&ndash;check-access</a> and <a href="https://rclone.org/bisync/#check-filename">&ndash;check-filename</a> path. <code>--check-access</code> prevents rclone from running unless the check file exists in both places (i.e., locally and remotely).</li>
+<li>For unsynced directories, run <code>rclone mkdir</code> to create remote directory, <code>touch</code> and <code>rclone touch</code> to create the check file.</li>
+<li>For unsynced directories, run the sync command with the <a href="https://rclone.org/bisync/#resync">&ndash;resync</a> flag for initial sync.</li>
+<li>For all directories, create a bash script that would run the sync command normally.</li>
+</ul>
+<p>First, default options for <code>rclone bisync</code>:</p>
+<p><a id="code-snippet--rclone-options"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/index--rclone-options</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;--create-empty-src-dirs&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;--resilient&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;--metadata&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;--filters-file&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666">,</span>(<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/.config/rclone/filters-bisync&#34;</span>)))
+</span></span></code></pre></div><p>A <a href="https://rclone.org/bisync/#filtering">filters file</a> for rclone:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>- .*
+</span></span><span style="display:flex;"><span>- ~*
+</span></span><span style="display:flex;"><span>- .debris
+</span></span></code></pre></div><p>Not yet sure what&rsquo;s that supposed to be.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/index--rclone-script-path</span> <span style="color:#ba2121">&#34;~/bin/rclone-scripts/&#34;</span>)
+</span></span></code></pre></div><p>First, get folders to be synced from the tree:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-get-folders</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get TREE nodes to be synced with rclone.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return a list of alists with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:local-path&#39; - path in the local filesystem
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:remote-path&#39; - path in the remote
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:remote&#39; - name of the remote.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">node</span> <span style="color:#19177c">in</span> <span style="color:#19177c">tree</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">if</span> (<span style="color:#00f">eq</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:kind</span> <span style="color:#19177c">node</span>) <span style="color:#19177c">&#39;rclone</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">collect</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#666">`</span>((<span style="color:#008000">:local-path</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">file-name-as-directory</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">node</span>)))
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">:remote-path</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">concat</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">node</span>)
+</span></span><span style="display:flex;"><span>                         <span style="color:#ba2121">&#34;:&#34;</span> (<span style="color:#19177c">my/index--mega-local-path</span>
+</span></span><span style="display:flex;"><span>                              (<span style="color:#00f">file-name-as-directory</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:path</span> <span style="color:#19177c">node</span>)))))
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">:remote</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">alist-get</span> <span style="color:#008000">:remote</span> <span style="color:#19177c">node</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">append</span> (<span style="color:#19177c">my/index--rclone-get-folders</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:children</span> <span style="color:#19177c">node</span>))))
+</span></span></code></pre></div><p>Then, get the sync command:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-make-command</span> (<span style="color:#19177c">local-path</span> <span style="color:#19177c">remote-path</span> <span style="color:#19177c">remote</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Make a bisync command to sync LOCAL-PATH and REMOTE-PATH.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REMOTE is the name of the remote.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;rclone&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;bisync&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#666">,</span>(<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\&#34;%s\&#34;&#34;</span> <span style="color:#19177c">local-path</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#666">,</span>(<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\&#34;%s\&#34;&#34;</span> <span style="color:#19177c">remote-path</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#666">,@</span><span style="color:#19177c">my/index--rclone-options</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#ba2121">&#34;--check-filename&#34;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#666">,</span>(<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;.rclone-test-%s&#34;</span> <span style="color:#19177c">remote</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34; &#34;</span>))
+</span></span></code></pre></div><p>A python script to run rclone.</p>
+<p><a id="code-snippet--rclone-sync-script"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">subprocess</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">json</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">import</span> <span style="color:#00f;font-weight:bold">sys</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>REMOTE <span style="color:#666">=</span> <span style="color:#ba2121">&#39;&lt;rclone-remote&gt;&#39;</span>
+</span></span><span style="display:flex;"><span>FOLDERS <span style="color:#666">=</span> json<span style="color:#666">.</span>loads(<span style="color:#ba2121">&#39;&lt;rclone-folders-json&gt;&#39;</span>)
+</span></span><span style="display:flex;"><span>OPTIONS <span style="color:#666">=</span> json<span style="color:#666">.</span>loads(<span style="color:#ba2121">&#39;&lt;rclone-options&gt;&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">rclone_make_command</span>(local_path, remote_path, remote):
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">return</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;rclone&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;bisync&#39;</span>,
+</span></span><span style="display:flex;"><span>        local_path,
+</span></span><span style="display:flex;"><span>        remote_path,
+</span></span><span style="display:flex;"><span>        <span style="color:#666">*</span>OPTIONS,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;--check-filename&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;.rclone-test-</span><span style="color:#b68;font-weight:bold">{</span>REMOTE<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;--verbose&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;--color&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;NEVER&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;--use-json-log&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;--stats&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ba2121">&#39;9999m&#39;</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">parse_rclone_stats</span>(log_output):
+</span></span><span style="display:flex;"><span>    log <span style="color:#666">=</span> log_output<span style="color:#666">.</span>splitlines()
+</span></span><span style="display:flex;"><span>    log<span style="color:#666">.</span>reverse()
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> line <span style="color:#a2f;font-weight:bold">in</span> log:
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">try</span>:
+</span></span><span style="display:flex;"><span>            log_entry <span style="color:#666">=</span> json<span style="color:#666">.</span>loads(line)
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">if</span> <span style="color:#ba2121">&#39;stats&#39;</span> <span style="color:#a2f;font-weight:bold">in</span> log_entry:
+</span></span><span style="display:flex;"><span>                <span style="color:#008000;font-weight:bold">return</span> log_entry[<span style="color:#ba2121">&#39;stats&#39;</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">except</span> json<span style="color:#666">.</span>JSONDecodeError:
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">return</span> <span style="color:#008000;font-weight:bold">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">process_output</span>(output):
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> output <span style="color:#a2f;font-weight:bold">is</span> <span style="color:#008000;font-weight:bold">None</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">&#39;(empty)&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> line <span style="color:#a2f;font-weight:bold">in</span> output<span style="color:#666">.</span>splitlines():
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">try</span>:
+</span></span><span style="display:flex;"><span>            datum <span style="color:#666">=</span> json<span style="color:#666">.</span>loads(line)
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">print</span>(datum[<span style="color:#ba2121">&#39;msg&#39;</span>])
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">except</span> <span style="color:#d2413a;font-weight:bold">Exception</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">print</span>(line)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">rclone_run</span>(folder):
+</span></span><span style="display:flex;"><span>    command <span style="color:#666">=</span> rclone_make_command(
+</span></span><span style="display:flex;"><span>        folder[<span style="color:#ba2121">&#39;local-path&#39;</span>], folder[<span style="color:#ba2121">&#39;remote-path&#39;</span>], folder[<span style="color:#ba2121">&#39;remote&#39;</span>]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">try</span>:
+</span></span><span style="display:flex;"><span>        result <span style="color:#666">=</span> subprocess<span style="color:#666">.</span>run(command, check<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>, capture_output<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>, text<span style="color:#666">=</span><span style="color:#008000;font-weight:bold">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">except</span> subprocess<span style="color:#666">.</span>CalledProcessError <span style="color:#008000;font-weight:bold">as</span> e:
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;=== Error syncing </span><span style="color:#b68;font-weight:bold">{</span>folder[<span style="color:#ba2121">&#39;local-path&#39;</span>]<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121"> ===&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;Command: </span><span style="color:#b68;font-weight:bold">{</span><span style="color:#ba2121">&#39; &#39;</span><span style="color:#666">.</span>join(command)<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;--- STDOUT ---&#39;</span>)
+</span></span><span style="display:flex;"><span>        process_output(e<span style="color:#666">.</span>stdout)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;--- STDERR ---&#39;</span>)
+</span></span><span style="display:flex;"><span>        process_output(e<span style="color:#666">.</span>stderr)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">return</span> {<span style="color:#ba2121">&#39;success&#39;</span>: <span style="color:#008000;font-weight:bold">False</span>, <span style="color:#ba2121">&#39;stats&#39;</span>: {}}
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">return</span> {<span style="color:#ba2121">&#39;success&#39;</span>: <span style="color:#008000;font-weight:bold">True</span>, <span style="color:#ba2121">&#39;stats&#39;</span>: parse_rclone_stats(result<span style="color:#666">.</span>stderr)}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">notify</span>(summary, body, level<span style="color:#666">=</span><span style="color:#ba2121">&#39;normal&#39;</span>, expire_time<span style="color:#666">=</span><span style="color:#666">5000</span>):
+</span></span><span style="display:flex;"><span>    subprocess<span style="color:#666">.</span>run([<span style="color:#ba2121">&#39;notify-send&#39;</span>, <span style="color:#ba2121">&#39;-u&#39;</span>, level, <span style="color:#ba2121">&#39;-t&#39;</span>, <span style="color:#008000">str</span>(expire_time), summary, body])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#408080;font-style:italic"># Source: https://stackoverflow.com/questions/1094841/get-a-human-readable-version-of-a-file-size</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">sizeof_fmt</span>(num, suffix<span style="color:#666">=</span><span style="color:#ba2121">&#39;B&#39;</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> unit <span style="color:#a2f;font-weight:bold">in</span> (<span style="color:#ba2121">&#39;&#39;</span>, <span style="color:#ba2121">&#39;Ki&#39;</span>, <span style="color:#ba2121">&#39;Mi&#39;</span>, <span style="color:#ba2121">&#39;Gi&#39;</span>, <span style="color:#ba2121">&#39;Ti&#39;</span>, <span style="color:#ba2121">&#39;Pi&#39;</span>, <span style="color:#ba2121">&#39;Ei&#39;</span>, <span style="color:#ba2121">&#39;Zi&#39;</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">abs</span>(num) <span style="color:#666">&lt;</span> <span style="color:#666">1024.0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#008000;font-weight:bold">return</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;</span><span style="color:#b68;font-weight:bold">{</span>num<span style="color:#b68;font-weight:bold">:</span><span style="color:#ba2121">3.1f</span><span style="color:#b68;font-weight:bold">}{</span>unit<span style="color:#b68;font-weight:bold">}{</span>suffix<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>
+</span></span><span style="display:flex;"><span>        num <span style="color:#666">/=</span> <span style="color:#666">1024.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">return</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;</span><span style="color:#b68;font-weight:bold">{</span>num<span style="color:#b68;font-weight:bold">:</span><span style="color:#ba2121">.1f</span><span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">Yi</span><span style="color:#b68;font-weight:bold">{</span>suffix<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">def</span> <span style="color:#00f">rclone_run_all</span>(folders):
+</span></span><span style="display:flex;"><span>    error_folders <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span>    total_bytes <span style="color:#666">=</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>    total_transfers <span style="color:#666">=</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>    total_deleted <span style="color:#666">=</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>    total_renamed <span style="color:#666">=</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">for</span> folder <span style="color:#a2f;font-weight:bold">in</span> folders:
+</span></span><span style="display:flex;"><span>        <span style="color:#008000">print</span>(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;Running rclone for </span><span style="color:#b68;font-weight:bold">{</span>folder<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>)
+</span></span><span style="display:flex;"><span>        res <span style="color:#666">=</span> rclone_run(folder)
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#a2f;font-weight:bold">not</span> res[<span style="color:#ba2121">&#39;success&#39;</span>]:
+</span></span><span style="display:flex;"><span>            error_folders<span style="color:#666">.</span>append(folder[<span style="color:#ba2121">&#39;local-path&#39;</span>])
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">else</span>:
+</span></span><span style="display:flex;"><span>            total_bytes <span style="color:#666">+=</span> res<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;stats&#39;</span>, {})<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;bytes&#39;</span>, <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>            total_transfers <span style="color:#666">+=</span> res<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;stats&#39;</span>, {})<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;transfers&#39;</span>, <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>            total_deleted <span style="color:#666">+=</span> res<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;stats&#39;</span>, {})<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;deletes&#39;</span>, <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>            total_renamed <span style="color:#666">+=</span> res<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;stats&#39;</span>, {})<span style="color:#666">.</span>get(<span style="color:#ba2121">&#39;renames&#39;</span>, <span style="color:#666">0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">len</span>(error_folders) <span style="color:#666">&gt;</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>        error_msg <span style="color:#666">=</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;Sync error for remote </span><span style="color:#b68;font-weight:bold">{</span>REMOTE<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">!&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">for</span> folder <span style="color:#a2f;font-weight:bold">in</span> error_folders:
+</span></span><span style="display:flex;"><span>            error_msg <span style="color:#666">+=</span> <span style="color:#ba2121">&#39;&#39;&#39;</span><span style="color:#b62;font-weight:bold">\n</span><span style="color:#ba2121">- &#39;&#39;&#39;</span> <span style="color:#666">+</span> folder
+</span></span><span style="display:flex;"><span>        notify(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;rclone sync </span><span style="color:#b68;font-weight:bold">{</span>REMOTE<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>, error_msg, level<span style="color:#666">=</span><span style="color:#ba2121">&#39;critical&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">else</span>:
+</span></span><span style="display:flex;"><span>        msg <span style="color:#666">=</span> <span style="color:#ba2121">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> total_transfers <span style="color:#666">&gt;</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>            msg <span style="color:#666">+=</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;&#39;&#39;Transferred </span><span style="color:#b68;font-weight:bold">{</span>total_transfers<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121"> files (</span><span style="color:#b68;font-weight:bold">{</span>sizeof_fmt(total_bytes)<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">)</span><span style="color:#b62;font-weight:bold">\n</span><span style="color:#ba2121">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> total_deleted <span style="color:#666">&gt;</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>            msg <span style="color:#666">+=</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;&#39;&#39;Deleted </span><span style="color:#b68;font-weight:bold">{</span>total_transfers<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121"> files</span><span style="color:#b62;font-weight:bold">\n</span><span style="color:#ba2121">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> total_renamed <span style="color:#666">&gt;</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>            msg <span style="color:#666">+=</span> <span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;&#39;&#39;Renamed </span><span style="color:#b68;font-weight:bold">{</span>total_renamed<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121"> files</span><span style="color:#b62;font-weight:bold">\n</span><span style="color:#ba2121">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#008000;font-weight:bold">if</span> <span style="color:#008000">len</span>(msg) <span style="color:#666">&gt;</span> <span style="color:#666">0</span>:
+</span></span><span style="display:flex;"><span>            notify(<span style="color:#ba2121">f</span><span style="color:#ba2121">&#39;rclone sync </span><span style="color:#b68;font-weight:bold">{</span>REMOTE<span style="color:#b68;font-weight:bold">}</span><span style="color:#ba2121">&#39;</span>, msg)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">if</span> <span style="color:#19177c">__name__</span> <span style="color:#666">==</span> <span style="color:#ba2121">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    rclone_run_all(FOLDERS)
+</span></span></code></pre></div><p>A function that templates the script above:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-script</span> (<span style="color:#19177c">remote</span> <span style="color:#19177c">folders</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">script</span> <span style="color:#ba2121">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;rclone-sync-script&gt;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">script</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">thread-last</span> <span style="color:#19177c">script</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">string-trim</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">string-replace</span> <span style="color:#ba2121">&#34;&lt;rclone-remote&gt;&#34;</span> <span style="color:#19177c">remote</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">string-replace</span> <span style="color:#ba2121">&#34;&lt;rclone-folders-json&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#19177c">json-encode</span> <span style="color:#19177c">folders</span>))
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">string-replace</span> <span style="color:#ba2121">&#34;&lt;rclone-options&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#19177c">json-encode</span> <span style="color:#19177c">my/index--rclone-options</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">script</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-script-loc</span> (<span style="color:#19177c">remote</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">concat</span> (<span style="color:#00f">file-name-as-directory</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">my/index--rclone-script-path</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;rclone_%s.py&#34;</span> <span style="color:#19177c">remote</span>)))
+</span></span></code></pre></div><p>And checks if the script needs to be updated:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-script-saved-p</span> (<span style="color:#19177c">remote</span> <span style="color:#19177c">folders</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">script</span> (<span style="color:#19177c">my/index--rclone-script</span> <span style="color:#19177c">remote</span> <span style="color:#19177c">folders</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">script-loc</span> (<span style="color:#19177c">my/index--rclone-script-loc</span> <span style="color:#19177c">remote</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">script-loc</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">insert-file-contents</span> <span style="color:#19177c">script-loc</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">equal</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#00f">buffer-string</span>)) <span style="color:#19177c">script</span>)))))
+</span></span></code></pre></div><p>Putting everything together:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--rclone-commands</span> (<span style="color:#19177c">tree</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get commands to set up sync with rclone in TREE.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TREE is a form a defined by </span><span style="color:#19177c">`my/index--tree-get&#39;</span><span style="color:#ba2121">.  This is supposed to
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">be the tree narrowed to the current machine (</span><span style="color:#19177c">`my/index--tree-narrow&#39;</span><span style="color:#ba2121">).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is a list of commands as defined by
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121"></span><span style="color:#19177c">`my/index--commands-display&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">folders</span> (<span style="color:#19177c">my/index--rclone-get-folders</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">commands</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#19177c">sync-items-per-remote</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">folder</span> <span style="color:#19177c">folders</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">pcase-let*</span>
+</span></span><span style="display:flex;"><span>          ((<span style="color:#666">`</span>((<span style="color:#008000">:local-path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">local-path</span>) (<span style="color:#008000">:remote-path</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">remote-path</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">:remote</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">remote</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">folder</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">test-file-name</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;.rclone-test-%s&#34;</span> <span style="color:#19177c">remote</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">test-file-local</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">local-path</span> <span style="color:#19177c">test-file-name</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">test-file-remote</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">remote-path</span> <span style="color:#19177c">test-file-name</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">test-file-local</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;touch \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">test-file-local</span>) <span style="color:#ba2121">&#34;Create local test files&#34;</span> <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">commands</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;rclone mkdir \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">remote-path</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#ba2121">&#34;Create remote directories&#34;</span> <span style="color:#666">3</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">commands</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;rclone touch \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">test-file-remote</span>) <span style="color:#ba2121">&#34;Create remote test-file&#34;</span> <span style="color:#666">4</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">commands</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">concat</span> (<span style="color:#19177c">my/index--rclone-make-command</span> <span style="color:#19177c">local-path</span> <span style="color:#19177c">remote-path</span> <span style="color:#19177c">remote</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#ba2121">&#34; --resync&#34;</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Initial sync for %s&#34;</span> <span style="color:#19177c">remote</span>) <span style="color:#666">8</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">commands</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">push</span> <span style="color:#19177c">folder</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">remote</span> <span style="color:#19177c">sync-items-per-remote</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">my/index--rclone-script-path</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">push</span> (<span style="color:#00f">list</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;mkdir -p \&#34;%s\&#34;&#34;</span> (<span style="color:#00f">expand-file-name</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#19177c">my/index--rclone-script-path</span>))
+</span></span><span style="display:flex;"><span>                  <span style="color:#ba2121">&#34;Create rclone sync scripts directory&#34;</span> <span style="color:#666">9</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">commands</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">remote</span> <span style="color:#666">.</span> <span style="color:#19177c">folders</span>) <span style="color:#19177c">in</span> <span style="color:#19177c">sync-items-per-remote</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">unless</span> (<span style="color:#19177c">my/index--rclone-script-saved-p</span> <span style="color:#19177c">remote</span> <span style="color:#19177c">folders</span>)
+</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">list</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;cat &lt;&lt;EOF &gt; %s\n%s\nEOF&#34;</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">my/index--rclone-script-loc</span> <span style="color:#19177c">remote</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">my/index--rclone-script</span> <span style="color:#19177c">remote</span> (<span style="color:#00f">nreverse</span> <span style="color:#19177c">folders</span>)))
+</span></span><span style="display:flex;"><span>                  <span style="color:#ba2121">&#34;Update rclone sync script&#34;</span> <span style="color:#666">10</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">commands</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">nreverse</span> <span style="color:#19177c">commands</span>)))
 </span></span></code></pre></div><h5 id="git-repos">Git repos</h5>
 <p>To sync git, we just need to clone the required git repos. Removing the repos is handled by the folder sync commands.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/index--git-commands</span> (<span style="color:#19177c">tree</span>)
@@ -11226,13 +11534,14 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">full-tree</span> (<span style="color:#19177c">my/index--tree-retrive</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/index--tree-verify</span> <span style="color:#19177c">full-tree</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">tree</span> (<span style="color:#19177c">my/index--tree-narrow</span> <span style="color:#19177c">full-tree</span>))
-</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">mega-commands</span> (<span style="color:#19177c">my/index--mega-commands</span> <span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#408080;font-style:italic">;; (mega-commands (my/index--mega-commands full-tree tree))</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">rclone-commands</span> (<span style="color:#19177c">my/index--rclone-commands</span> <span style="color:#19177c">tree</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#19177c">mapping</span> (<span style="color:#19177c">my/index--filesystem-tree-mapping</span> <span style="color:#19177c">full-tree</span> <span style="color:#19177c">tree</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#19177c">folder-commands</span> (<span style="color:#19177c">my/index--filesystem-commands</span> <span style="color:#19177c">mapping</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#19177c">git-commands</span> (<span style="color:#19177c">my/index--git-commands</span> <span style="color:#19177c">tree</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#19177c">waka-commands</span> (<span style="color:#19177c">my/index--wakatime-commands</span> <span style="color:#19177c">tree</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#19177c">symlink-commands</span> (<span style="color:#19177c">my/index-get-symlink-commands</span> <span style="color:#19177c">tree</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/index--commands-display</span> (<span style="color:#00f">append</span> <span style="color:#19177c">mega-commands</span> <span style="color:#19177c">folder-commands</span> <span style="color:#19177c">git-commands</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/index--commands-display</span> (<span style="color:#00f">append</span> <span style="color:#19177c">rclone-commands</span> <span style="color:#19177c">folder-commands</span> <span style="color:#19177c">git-commands</span>
 </span></span><span style="display:flex;"><span>                                          <span style="color:#19177c">waka-commands</span> <span style="color:#19177c">symlink-commands</span>)))))
 </span></span></code></pre></div><h4 id="navigation-1">Navigation</h4>
 <p>The last piece is the navigation interface.</p>
