@@ -1,0 +1,119 @@
+#+HUGO_SECTION: posts
+#+HUGO_BASE_DIR: ../
+#+TITLE: How and why I switched from GNU Guix to Arch Linux with declarative configuration
+#+DATE: 2026-01-01
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: arch
+
+#+begin_src
+
+#+end_src
+
+#+begin_comment
+Points:
+- Old version of packages disappear in Guix
+- Hard to maintain a custom channel
+- Package is installed forever in Guix, not so in Arch
+- Arch docs are better
+- Packaging for Guix is painful
+- Guix takes a lot of space
+- Ideology stuff with nonguix
+- Guix reimplements so many package managers
+- Sometimes, packages aren't available on Curaiss.
+#+end_comment
+
+* Intro
+I had used [[https://guix.gnu.org/][GNU Guix]] for 4.5 years, largely inspired by David Wilson's [[https://systemcrafters.net/craft-your-system-with-guix/][Guix tutorials]]. I was attracted by the idea of declarative configuration, which means that
+
+#+begin_comment
+TODO a bar chart here
+#+end_comment
+
+- I'm still not a very advanced Guix user. Please correct me if I'm wrong!
+
+* How I used Guix
+** Guix profiles
+I mostly followed the [[https://guix.gnu.org/cookbook/en/html_node/Guix-Profiles-in-Practice.html][Guix Profiles in Practice]] from the [[https://guix.gnu.org/cookbook/en/][Guix Cookbook]] for my configuration. I had multiple profiles, e.g., "emacs", "console", each profile having a separate set of packages defined in its manifest. Different machines had different profiles activated, for instance, I didn't need the LaTeX profile on my work machine.
+
+The manifests themselves were generated via Emacs' Org Mode, which I described in more detail in my [[https://sqrtminusone.xyz/posts/2022-02-12-literate/#guix-dependencies][blog post]] from 2022. Briefly, I had my [[https://leanpub.com/lit-config/#table-of-contents][literate configuration]] interspersed with tables likes this:
+
+#+begin_example
+| Guix dependency |
+|-----------------|
+| difftastic      |
+
+[[https://github.com/pkryger/difftastic.el][difftastic.el]] is a wrapper package for [[https://difftastic.wilfred.me.uk/][difftastic]].
+#+begin_src emacs-lisp
+(use-package difftastic
+  ...)
+#+end_src
+#+end_example
+
+A custom function iterated over this tables to create a manifest:
+#+begin_src scheme
+(specifications->manifest
+ '(
+   ...
+   "difftastic"
+   ...))
+#+end_src
+
+The profiles were activated by a [[https://github.com/daviwil/dotfiles/blob/8141c2a986e81a37bb9b241393925702b626a983/.archive/Systems.org#updating-profiles][script I copied from David]], which runs [[https://guix.gnu.org/manual/en/html_node/Invoking-guix-package.html][guix package]] with the =--profile= flag.
+
+In principle, this allows for full reproducibility, but it requires [[https://guix.gnu.org/manual/en/guix.html#Replicating-Guix][pinning channels]], otherwise different versions of Guix might produce different profiles. For me, this usually became a problem when something was updated in the main channel and broke other, less maintained channels, such as mine (see below on that).
+
+Also, the pinning is global, or was at the time before [[https://guix.gnu.org/manual/en/guix.html#Invoking-guix-time_002dmachine][guix time-machine]] and [[https://guix.gnu.org/manual/en/guix.html#Inferiors][inferiors]]. Which means one couldn't install two profiles created by different Guix versions (or I couldn't figure out how).
+
+This lead to the following workflow: I pin the channels in my config and make sure that everything installs without issues. When the update time comes, I fetch the latest versions of all channels, then update each profile one-by-one, fix whatever issues arise and update the pinned commits in the config.
+
+This allows for an almost unattended install, because it's all but guaranteed that a system built on particular commits will work the same on different machines. I could boostrap the system, clone my dotfiles, run the script to install all packages and go for a walk while the packages download via my 800 Kb/s Internet I had at the time. The only problem is that the install can't recover from an interrupted connection, so it a mobile Internet is out of question.
+
+* Issues and tradeoffs
+So, what went wrong?
+
+** Guix and Linux
+One set of issues comes from the strict adherence to [[https://www.gnu.org/distros/free-system-distribution-guidelines.html][GNU Free System Distribution Guidelines]]. That's how Guix is qualified to the name GNU Guix.
+
+One notable requirement of the FSDG is that only [[https://www.gnu.org/philosophy/free-sw.en.html][Free Software]] should be allowed in the repositories.
+
+This seems innocent at first, because I have almost no proprietary software installed... But the Linux kernel itself includes proprietary drivers as binary blobs. So free distros use a stripped version called [[https://www.fsfla.org/ikiwiki/selibre/linux-libre/][Linux-libre]], which makes them unusable on modern hardware.
+
+Of course, very few people would use such a distro. So there's [[https://gitlab.com/nonguix/nonguix][nonguix]] - a separate channel that includes the full Linux kernel. But the guidelines prohibit mentioning it in the Guix manual and communication channels!
+
+So, essentially, the manual isn't allowed to say how to run the Guix OS on ~99% of hardware.
+
+Now, this post largely is about tradeoffs that trade the wrong way for me. However, adherence to the FSDG is an unnecessary self-inflicted wound that [[https://www.reddit.com/r/GUIX/comments/1h187cm/please_help_me_install_guix_with_nonguix/][limits the potential community size]] while not achieving its stated aim.
+
+And this isn't strictly a problem /for me/. After all, to this day I've spent 367 hours configuring Emacs and 374 hours writing Emacs packages, so I'm not afraid of software with steep learning curve. But this takes a part in causing other consequences, which I discuss below.
+
+** Other non-free software
+Because of the same reason, [[https://lists.gnu.org/archive/html/guix-devel/2018-05/msg00021.html][there is no Firefox]] in the offical channels. Apparently it [[https://lists.gnu.org/archive/html/guix-devel/2020-05/msg00454.html][downloads some proprietary video codecs]], and its license doesn't allow patching it out and keeping the name "Firefox". There's a fully free privacy-focused fork called [[https://icecatbrowser.org/][IceCat]], which is a quite a project for one person to maintain, but it's substantially less up-to-date. Well, Firefox is also available at [[https://gitlab.com/nonguix/nonguix][nonguix]].
+
+There aren't certain fonts like Arial and Times New Roman, which I need for work. So [[https://gitlab.com/nonguix/nonguix/-/blob/master/nongnu/packages/fonts.scm?ref_type=heads][I've packaged them]] for nonguix, and the community has added more nonfree fonts since then.
+
+There is no VirtualBox, but maybe it was a good thing because it made me learn [[https://wiki.qemu.org/Main_Page][QEMU]] and [[https://libvirt.org/][libvirt]] with [[https://virt-manager.org/][virt-manager]], which is a superior technology.
+
+Finally, one day I needed proprietary NVIDIA drivers and CUDA for work, and this I couldn't figure out. So I installed Arch Linux on my main machine, and started [[https://guix.gnu.org/manual/en/html_node/Installation.html][using Guix as a package manager]] on top of Arch Linux (this is called a "foreign distro" setup in the manual). To my surprise, this transition was rather painless, so that's how I kept running Guix for about 2 more years.
+
+I'd say, if you want to try Guix, use it as a foreign distro.
+
+** Guix packaging system
+Guix inherited from Nix a rather pecuilar approach to packaging.
+
+In in a nutshell, a Guix package definition is a [[https://en.wikipedia.org/wiki/Pure_function][pure function]]. Its inputs are the sources to build the package and its dependencies, and the output is the built package, called a "[[https://guix.gnu.org/manual/en/html_node/Derivations.html][derivation]]" (in fact, the system config, system services, profiles, etc. are also derivations).
+
+A "pure" function means that it has to produce the same output for the same input. Such a function can have no internal state, no side effects, no references to unstable parts of the external world (not even time) that can alter the output while input stays the same.
+
+The obvious benefit of this approach, if done correctly, is build reproducibility, which grants supreme reliabilty and stability to the system. So much so that NixOS is used by U.S. military contractors, although that [[https://discourse.nixos.org/t/andurils-threat-is-existential/70811][might yet tear NixOS apart]].
+
+But it also produces very specific restrictions on the build procedure. For starters, the build procedure can't use the Internet. This means, simply calling =pip install=, =cargo install=, =go get=, etc. is out of the question, like it's often done in the AUR packages.
+
+Also, one can't just provide binaries provided by the developer. Why not? Because Guix [[https://hpc.guix.info/blog/2023/06/a-guide-to-reproducible-research-papers/#:~:text=Conversely%2C%20Guix%20is%2C%20at%20its%20core%2C%20about,verifiable%20path%20from%20source%20code%20to%20binary.][requires trusting the full path from source code to binary]], and the binary can, in principle, be compromised. So, every package for Guix has to be actually built. At least this approach also allows for caching and sharing build outputs (these are called "[[https://guix.gnu.org/manual/en/html_node/Substitutes.html][substitutes]]"), so one doesn't have to build everything everywhere.
+
+Then, restrictions apply to build outputs. For instance, the built program can't search anything in =$PATH= (and =$PYTHONPATH=, etc.), because otherwise it might find wrong stuff. So, building a program that runs other executables requires patching the source code /in built time/ to use absolute paths of these executables (which are listed as dependencies in inputs). This makes packaging bash scripts particularly funny.
+
+More generally, build can't interfere with each other --- for example, if on a normal distro binaries go to =/bin=, libraries go to =/lib=, etc., on Guix each build output has its own =/bin= and =/lib= folders, which are stored in =/gnu/store/<package-folder>=. The dependencies, such as shared libraries in =/lib=, Python packages in =/usr/lib/pythonX.XX/site-packages/= are also stored in their respective =/gnu/store= directories, one package per directory. Even =bash= and the ELF interpreter aren't available at =/bin/bash= and =/lib64/ld-linux-x86-64.so.2= by default. The build procedure for Guix has to account for all that.
+
+It boils down to this: Guix has to re-implement a lot of package managers on the hard mode. And while it's not uncommon for distros to include Python, Haskell, even NPM packages, Guix creates truly unique requirements.
+
+TODO. This means implementing [[https://www.haskell.org/cabal/][Cabal]], [[https://doc.rust-lang.org/cargo/][Cargo]], [[https://www.cpan.org/][CPAN]],[[https://pypi.org/project/pip/][pip]],  [[https://rubygems.org/][RubyGems]], [[https://www.tug.org/texlive/][Tex Live]], the Go packaging system, and so on.
