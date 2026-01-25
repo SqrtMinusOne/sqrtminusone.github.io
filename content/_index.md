@@ -7,14 +7,14 @@ title = "Index"
 
 **Pavel Korytov**
 
-Graduate student of Saint-Petersburg State Electrotechnical University, Russia.
+I use Emacs to make money to do stuff with Emacs.
 
 ### Links
 * [e-mail](mailto:thexcloud@gmail.com)
 * [GitHub](https://github.com/SqrtMinusOne)
-* <a rel="me" href="https://mastodon.bsd.cafe/@sqrtminusone">Mastodon</a>
 * [Reddit](https://www.reddit.com/user/XCapitan_1)
 * [Telegram](https://t.me/SqrtMinusTwo)
+* <a rel="me" href="https://mastodon.bsd.cafe/@sqrtminusone">Mastodon</a> (inactive)
 
 ### RSS Feeds
 - [Main feed](/index.xml) with every page.
@@ -29,5 +29,4 @@ Watch out if your RSS reader marks updated entries as unread --- entries in the 
 </div>
 
 ### Also
-* [My instance of Gitea](https://sqrtminusone.xyz/git/)
 * [My PGP key](/0x914472A1FD6775C166F96EBEED739ADF81C78160.asc)

@@ -9,7 +9,7 @@ let headerObserver = null;
 
 function observeHeadings() {
   const links = document.querySelectorAll(`#${tocId} a`);
-  const headings = document.querySelectorAll(`${actualContentId} h1,h2,h3,h4`);
+  const headings = document.querySelectorAll(`#${actualContentId} h1, #${actualContentId} h2, #${actualContentId} h3, #${actualContentId} h4`);
 
   for (const link of links) {
     linksById[link.getAttribute("href")] = link;

@@ -1,0 +1,63 @@
+{{ define "main" }}
+<script defer src="{{ "/js/dynamic-toc.js" | relURL }}"></script>
+{{ range .Params.scripts }}
+<script src="{{ . | urlize | relURL }}"></script>
+{{ end }}
+
+{{ $abstractRE := `(?s)<div class="abstract">\s*(.*?)\s*</div>` }}
+{{ $abstractMatch := findRE $abstractRE .Content 1 }}
+{{ $abstract := "" }}
+{{ with $abstractMatch }}
+  {{ $abstract = replaceRE `(?s)<div class="abstract">\s*(.*?)\s*</div>` "$1" (index . 0) }}
+{{ end }}
+{{ $contentClean := replaceRE $abstractRE "" .Content 1 }}
+
+<div class="post-root">
+  <!-- Header Section -->
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+
+    <div class="post-meta">
+      {{ with .Params.author }}
+      <span class="post-author">{{ delimit . ", " }}</span>
+      {{ end }}
+
+      <time class="post-date">{{ .Date.Format "January 2, 2006" }}</time>
+
+      {{ with .Params.writing_time }}
+      <span class="post-writing-time">Writing time: {{ . }}</span>
+      {{ end }}
+    </div>
+
+    {{ with $abstract }}
+    <div class="post-tldr">
+      <strong>TLDR:</strong> {{ . | safeHTML }}
+    </div>
+    {{ end }}
+
+    {{ with .Params.tags }}
+    <div class="post-tags">
+      <strong>Tags:</strong>
+      {{ range . }}
+      <a href="{{ "/tags/" | relURL }}{{ . | urlize }}">#{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </header>
+
+  <!-- TOC Section -->
+  <nav class="table-of-contents">
+    <div class="table-of-contents-text">
+      <b><a href="#">Table of Contents</a></b>
+      {{ .TableOfContents }}
+    </div>
+    <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+    <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+  </nav>
+
+  <!-- Content Section -->
+  <div class="post-body" id="actual-content">
+    {{ $contentClean | safeHTML }}
+  </div>
+</div>
+{{ end }}

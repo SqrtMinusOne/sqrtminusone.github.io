@@ -69,7 +69,7 @@ $toc-left-width: $toc-width + $max-width + 25px;
     flex-direction: column;
 }
 .table-of-contents {
-    order: 0;
+    order: 2;
     ul {
         padding-left: 1.0rem !important;
         & > li {
@@ -85,7 +85,7 @@ $toc-left-width: $toc-width + $max-width + 25px;
         cursor: pointer;
     }
 
-    @media(max-width: 578px) {
+    @media(max-width: $toc-left-width) {
         align-self: center;
     }
 }
@@ -93,14 +93,94 @@ $toc-left-width: $toc-width + $max-width + 25px;
     max-width: $max-width;
     order: 1
 }
+
+.post {
+    max-width: $max-width;
+    order: 1;
+}
+
+// Title styles for non-post templates
 #title-large-screen {
     display: none;
 }
+
 #title-small-screen {
     margin-left: 15px !important;
+}
 
-    @media(max-width: 578px) {
-        align-self: center;
+// Post-specific grid layout
+.post-root {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "toc"
+        "content";
+    grid-template-columns: minmax(0, 1fr);
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+
+    .post-header {
+        grid-area: header;
+    }
+
+    .table-of-contents {
+        grid-area: toc;
+        order: unset;
+    }
+
+    .post-body {
+        grid-area: content;
+    }
+}
+
+// Post header styles
+.post-header {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.post-title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.post-meta {
+    color: #666;
+    margin-bottom: 1rem;
+
+    > * {
+        display: block;
+        margin: 0.25rem 0;
+    }
+}
+
+.post-tldr {
+    text-align: justify;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-left: 3px solid $red;
+
+    p {
+        display: inline;
+        margin: 0;
+    }
+}
+
+.post-tags {
+    text-align: justify;
+
+    a {
+        margin-right: 0.5rem;
+        color: $red;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
@@ -121,6 +201,9 @@ $toc-left-width: $toc-width + $max-width + 25px;
 @media (min-width: $toc-width * 1.5 + $max-width) {
     .root {
         margin-left: calc((100vw - 750px) / 2);
+    }
+    .post-root {
+        margin-left: calc((100vw - #{$max-width} - #{$toc-width}) / 2);
     }
     #actual-content {
         margin: 0;
@@ -157,6 +240,32 @@ $toc-left-width: $toc-width + $max-width + 25px;
     }
     #title-large-screen {
         display: block;
+    }
+
+    .container {
+        #title-large-screen {
+            text-align: center;
+            width: 600px;
+            margin: 0 auto !important;
+        }
+    }
+
+    // Post-specific desktop layout
+    .post-root {
+        display: grid;
+        grid-template-areas:
+            "header toc"
+            "content toc";
+        grid-template-columns: $max-width $toc-width;
+        grid-template-rows: auto 1fr;
+        max-width: none;
+        padding: 0;
+
+        .table-of-contents {
+            position: sticky;
+            top: 0;
+            align-self: start;
+        }
     }
 }
 
@@ -222,7 +331,7 @@ $toc-left-width: $toc-width + $max-width + 25px;
             padding-right: .5em;
         }
     }
-    .container > ol, .footnotes > ol {
+    .container > ol, .post-body > ol, .footnotes > ol {
         padding-left: 0;
     }
     ul {
@@ -233,7 +342,7 @@ $toc-left-width: $toc-width + $max-width + 25px;
             margin-left: 1em;
         }
     }
-    .container > ul, .footnotes > ul {
+    .container > ul, .post-body > ul, .footnotes > ul {
         padding-left: 0;
     }
     table {
@@ -288,15 +397,45 @@ $toc-left-width: $toc-width + $max-width + 25px;
             margin-bottom: 0px;
         }
     }
-    .abstract {
-        margin-top: 12px;
-        margin-bottom: 12px;
-        padding-left: 72px;
-        padding-right: 72px;
+    details {
+        margin: $y-medium 0;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
 
-        p:first-of-type::before {
-            content: "Abstract: ";
-            font-weight: bold;
+        summary {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 500;
+            user-select: none;
+            background-color: #eee;
+            border-bottom: 1px solid #cccccc;
+
+            &:hover {
+                background-color: #e0e0e0;
+            }
+
+            &::marker {
+                color: #666;
+            }
+        }
+
+        &[open] summary {
+            border-bottom: 1px solid #cccccc;
+        }
+
+        &:not([open]) summary {
+            border-bottom: none;
+        }
+
+        > *:not(summary) {
+            padding: 0 12px;
+        }
+
+        .highlight {
+            margin: 0;
+            border: none;
+            border-top: 1px solid #cccccc;
         }
     }
     span.underline {
