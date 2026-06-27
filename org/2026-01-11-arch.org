@@ -19,6 +19,9 @@ Points:
 - Sometimes, packages aren't available on Curaiss.
 - No reproducible research because the packages aren't there? Analyse https://hpc.guix.info/blog/2023/06/a-guide-to-reproducible-research-papers/ and https://hpc.guix.info/blog/2023/07/reproducible-research-hackathon-experience-report/
 - One package breaks, can't install anything else?
+- https://codeberg.org/guix-science/guix-science/src/commit/06f121ab883ecc89418dd713f9ac58444d870b63/guix-science/packages/python.scm#L587
+- https://dev.to/sleeyax/why-i-stopped-using-nixos-and-went-back-to-arch-4070
+- https://developic.dpdns.org/blog/why-i-switched-back-to-arch-linux
 #+end_comment
 
 #+begin_abstract
@@ -36,7 +39,7 @@ After 4.5 years, I switched to [[https://archlinux.org/][Arch Linux]].
 
 In this post, I give a high-level description of Guix as I understood it, with my thoughts and impressions on using it. I also give the reasons for the switch and some numerical data related to Arch, Guix and other Linux distributions.
 
-I'll also add, despite the time spent, I'm still not a very advanced Guix user, so please correct me if I get anything factually wrong.
+This post took me a while to write. I tried to keep it balanced, though it's fairly critical at times. Also, despite the time spent, I won't call myself an advanced Guix user, so please correct me if I get anything factually wrong.
 
 * Using Guix
 ** Guix profiles
@@ -99,7 +102,7 @@ Even Debian, arguably the most free mainstream Linux distro, [[https://www.gnu.o
 
 And GNU Guix does comply. But how? After all, very few people would use a distro that doesn't work on modern hardware.
 
-So the community has created [[https://gitlab.com/nonguix/nonguix][nonguix]] - a separate channel that includes the full Linux kernel. But the guidelines prohibit mentioning it in the Guix manual and communication channels!
+So the community has created [[https://gitlab.com/nonguix/nonguix][nonguix]] - a separate channel that includes the full Linux kernel. But the guidelines prohibit mentioning it in the Guix manual and communication channels! [fn:5]
 
 The bottom line is: the manual isn't allowed to say how to run the Guix OS on ~99% of hardware, even while almost all Guix OS users do so.
 
@@ -131,7 +134,7 @@ Then, restrictions apply to build outputs. For instance, the built program can't
 
 More generally, build packages can't interfere with each other --- for example, if on a normal distro binaries go to =/bin=, libraries go to =/lib=, etc., on Guix each build output has its own =/bin= and =/lib= folders, which are stored in =/gnu/store/<package-folder>=. The dependencies, such as shared libraries in =/lib=, Python packages in =/usr/lib/pythonX.XX/site-packages/= are also stored in their respective =/gnu/store= directories, one package per directory. Even =bash= and the ELF interpreter aren't available at =/bin/bash= and =/lib64/ld-linux-x86-64.so.2= by default. The build procedure for Guix has to account for all that.
 
-Also, the build outputs can't be changed, so no more editing the config files in =/etc= (there are [[https://guix.gnu.org/manual/devel/en/html_node/Services.html][services]] for that).
+Also, the build outputs can't be changed, so no more editing the config files in =/etc= (but there are [[https://guix.gnu.org/manual/devel/en/html_node/Services.html][services]] for that).
 
 The benefits of this approach are many:
 - If a package is installed, it is installed forever, so no more breakages after updates.
@@ -140,65 +143,69 @@ The benefits of this approach are many:
 - Less vulnerability to supply chain attacks. A hijacked dependency will cause a hash mismatch, a malicious update won't be installed automatically.
 - Less vulnerability to power outages (although I once had to manually repair the linux kernel in =/gnu/store= after an untimely shutdown).
 
-I guess I'd use such a system if I were [[https://discourse.nixos.org/t/anduril-industries-electromagnetic-warfare-team-is-hiring/62569][a U.S. military contractor]].
+I guess that's the paradigm [[https://discourse.nixos.org/t/anduril-industries-electromagnetic-warfare-team-is-hiring/62569][I'd want the DoD contractors to use]].
 
-But the cost is that Guix has to re-implement a lot of package managers on the hard mode. And while it's not uncommon for distros to include Python, Haskell, even NPM packages, Guix creates truly unique requirements.
+But the cost is twofold: the paradigm requies re-implemeting a lot of package managers on the hard mode while also requiring that all packages go through it. And while it's not uncommon for distros to include Python, Haskell, even NPM packages, Guix creates truly unique requirements.
+
+#+begin_comment
+because you have to package everything in that paradigm
+#+end_comment
 
 ** Guix and other complicated software
-As such, the packaging approach prevents other programs from getting to the offical repo. For instance, anything based on NPM is excluded from Guix (but not from Nix).
+The user-facing problem with functional packaging isn't that it's harder per se, but in it's disproportionally harder for many popular packages. So they don't exist on Guix.
+
+For instance, anything based on NPM[fn:4] is excluded from Guix (but not from Nix).
 
 This means there are no Electron apps, not even free ones such as [[https://github.com/VSCodium/vscodium][VSCodium]], [[https://github.com/pulsar-edit/pulsar][Pulsar]] and [[https://github.com/RocketChat/Rocket.Chat.Electron][Rocket.Chat]]. Nonfree apps aren't available even on nonguix - I tried packaging Discord, but gave up after cryptic errors. I'd guess guix shell with the recently added [[https://guix.gnu.org/manual/en/html_node/Invoking-guix-shell.html][--emulate-fhs]] flag has the best chance of success on pure Guix, but it sort of defeats the purpose.
 
-[[https://eclipseide.org/][Eclipse]] and [[https://github.com/dbeaver/dbeaver][DBeaver]] are also missing, although I'm not sure if it's hard to package or no one has tried yet.
+[[https://eclipseide.org/][Eclipse]] and [[https://github.com/dbeaver/dbeaver][DBeaver]] are also missing, although I'm not sure if it's hard to package or no one has tried yet. And I'm thinking, even Guix waives the FSDG, I'm not sure what it would take to package, say, JetBrains IDEs, MS Teams, Spotify (because DRM)...
 
-Unrelated to that, there are only 2 versions of Python and one version of node, which is insufficient for my work purposes. So what to do?
+And since we've mentioned development packages, Guix provides only 2 versions of Python and one version of node.js. For my work purposes, I need more. So what to do?
 
-The answer is to use other package managers. Notably, Nix and [[https://flatpak.org/][Flatpak]] are available on Guix. Nix has all the packages listed above, in part by allowing to download pre-built binaries in package definitions, by having more workarounds implemented and by generally being much larger (so it had the resources to implement NPM import).
+The answer is to use other package managers. Notably, Nix and [[https://flatpak.org/][Flatpak]] are available on Guix. Ironically, Nix has all the packages listed above, in part by allowing to download pre-built binaries in package definitions, by having more workarounds implemented and by generally being much larger (so it had the resources to implement NPM import).
 
-But I went with Flatpak, which also provides these nonfree Electron apps (and Steam). Firefox is available on Flatpak and Nix as well, but I couldn't make native messaging work on the Flatpak version, and the Nix version couldn't see Guix fonts, so I had to use nonguix for that.
+But I went with Flatpak, which also provides these nonfree Electron apps (and Steam). Firefox is also available on both Flatpak and Nix, but I couldn't make native messaging work on the Flatpak version, and the Nix version couldn't see Guix fonts, so I went with nonguix.
 
 Then, to manage Python and Node versions I used [[https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html][micromamba]], which is a [[https://github.com/conda/conda][conda]] rewrite in C++ that is literally orders of magnitude faster. Lately, I've been trying to switch to [[https://docs.astral.sh/uv/][uv]] and [[https://github.com/nvm-sh/nvm][nvm]] because conda's environments aren't transferrable between platforms, which means my colleagues on Windows and MacOS can't use them.
 
-That is to say, workarounds largely exist. For more on that, take a look at Arne Babenhauserheide's [[https://www.draketo.de/software/guix-work.html][impressive list]] of things he does with Guix to make it work. But I feel like that defeats the purpose of declarative configuration, which is why I came to Guix in the first place.
+That is to say, workarounds largely exist. For more on that, take a look at Arne Babenhauserheide's [[https://www.draketo.de/software/guix-work.html][impressive list]] of things they do with Guix to make it work. But this begs the question - does using such a system still makes one's life easier?
 
-** Quantifying the packaging situation
-The result is that there are generally less packages available on Guix. How much less?
+** Guix's single namespace
+However, the discussion of Guix wouldn't be complete without mentioning one more critical trait of its impementation of the functional packaging paradigm.
 
-It's actually hard to tell from the outset. We can start by looking at the [[https://repology.org/repositories/statistics][statistics]] and [[https://dumps.repology.org/][database dumps]] kindly provided by [[https://repology.org/][Repology]]:
+If, as the paradigm dictates, the build procedure must produce the same outputs for the same inputs, then stability of the system depends on the stability of the inputs. But in Guix the inputs are anything but stable, because packages are also inputs for other packages, and in Guix they all live in one namespace with no versioning [fn:6]. So updating one package leads to cascading updates to all its dependents! And of course, each cascading update leads to potential breakages.
 
-| Repository          | Total projects | Outdated | Maintainers |
-|---------------------+----------------+----------+-------------|
-| AUR                 | 81 896         |    30.9% | 17 562      |
-| Arch                | 11 626         |    16.4% | ?           |
-| Debian Unstable     | 39 238         |    27.6% | 3 643       |
-| Gentoo              | 17 836         |    24.0% | 541         |
-| Guix                | 29 522         |    44.4% | ?           |
-| Nixpkgs Unstable    | 110 600        |    12.1% | 4 421       |
-| openSUSE Tumbleweed | 16 057         |    28.4% | ?           |
-| Void Linux          | 8 992          |    41.7% | 760         |
+Why architect the system so then?
 
-Unfortunately, the total count doesn't mean much, because all packages aren't created equal, and because Guix and Nix have to ship a lot of dependencies as packages, which inflates the numbers. Also, Guix has recently [[https://guix.gnu.org/tr/blog/2025/a-new-rust-packaging-model/][reworked its Rust packaging model]] - now they don't ship each crate as a separate package, which had caused a slight drop in the number of packages. At least we can look at funny disturbances in the timeseries plot:
+Well, I guess it was much easier to implement than the alternatives - after all, the packages in Guix are just Lisp forms that refer to each other. Like almost all programming languages, Lisps don't support versioning of its variables. A new version would have to be a new variable with no reference the old one.
 
-[[file:static/images/arch/1_packages_per_day.png]]
+Also, one would think, most system package managers - =apt=, =dnf=, =pacman=, etc. - have the same basic architecture of a single namespace for all packages and cascading updates. But it's not quite the same for Guix.
 
-I think the spike in nixpkgs is them importing the entire Hackage to their repository.
+In fact, the problem of cascading breakages is the sole reason why Ubuntu and Fedora (which use =apt= and =dnf=) are point-release distros. Releasing each new version requires making sure that all packages play nicely together.
 
-The outdated ratio is more informative - Guix has more outdated packages that the rest of the selection, which are all rolling-release repos:
+#+begin_comment
+TODO factcheck sole reason
+#+end_comment
 
-[[file:static/images/arch/4_uptodate_ratio_per_day.png]]
+Rolling-release distros, such as Arch, indeed have a reputation for being less stable. TODO why not?
+- AUR can download binaries
+- ABIs can be backwards compatible.
+- Can Arch download wheels? No
 
-But compared to a point release distro, like Ubuntu, it's quite reasonable:
+But most importantly, Guix also presents itself as a development package manager, replacing, for instance, =pip=.
 
-[[file:static/images/arch/5_guix_vs_ubuntu_uptodate_ratio.png]]
+** Guix's single namespace and packaging for Guix
+So, that's a good place to describe my experience packaging for Guix.
 
-TODO https://nesbitt.io/2025/12/24/package-managers-keep-using-git-as-a-database.html?utm_source=tldrnewsletter
+I'd say one is expected to write custom packages to use the system, because there just aren't enough packages, and many existing packages are obsolete. This brings us to another critical trait of the Guix's functional packaging implementation.
 
-** Packaging on Guix
-So, that's a good place to describe my experience packaging on Guix.
 
-You're
+#+begin_comment
+Technically there's versioning, but one package = one symbol.
+#+end_comment
 
-- You're expected to write your packages to use it. There just aren't enough packages.
+
+
 - Package versions change, but remain under the same symbols.
 - Even package symbols change, e.g. =rust=.
 - =python-build-system= -> =pyproject-build-system=.
@@ -221,6 +228,47 @@ The API isn't mature.
 
 ** Reproducible environments
 Are they usable?
+
+* Some numbers
+** Quantifying the packaging situation
+So, I'm claiming there are generally less packages available on Guix. But how much less?
+
+[[https://repology.org/][Repology]] kindly provides [[https://repology.org/repositories/statistics][statistics]] and [[https://dumps.repology.org/][database dumps]], so we can start by looking at the total number of packages:
+
+[[file:static/images/arch/1_packages_per_day.png]]
+
+The current numbers are:
+| Repository          | Total projects | Outdated | Maintainers |
+|---------------------+----------------+----------+-------------|
+| AUR                 | 81 896         |    30.9% | 17 562      |
+| Arch                | 11 626         |    16.4% | ?           |
+| Debian Unstable     | 39 238         |    27.6% | 3 643       |
+| Gentoo              | 17 836         |    24.0% | 541         |
+| Guix                | 29 522         |    44.4% | ?           |
+| Nixpkgs Unstable    | 110 600        |    12.1% | 4 421       |
+| openSUSE Tumbleweed | 16 057         |    28.4% | ?           |
+| Void Linux          | 8 992          |    41.7% | 760         |
+
+The total count itself isn't very informative because all packages aren't created equal, and because the functional paradigm of Guix and Nix inflates the number by forcing them to ship all the dependencies.
+
+The functional paradigm also creates more discontinuities - the recent drop in Guix packages was caused [[https://guix.gnu.org/tr/blog/2025/a-new-rust-packaging-model/][rework of their Rust packaging model]], because now Guix doesn't ship each crate as a separate package. And I think the largest spike in nixpkgs is them importing the entire Hackage to their repository (not sure what's the deal with AUR though).
+
+A more informative chart is the ratio of outdated packages:
+
+[[file:static/images/arch/4_uptodate_ratio_per_day.png]]
+
+It shows that Guix has more outdated packages the rest of the selection, which are all rolling-release distributions.
+
+However, the ratio seems favourable compared to Ubuntu, which is a point-release distro that only includes security patches and critical fixes in its LTS releases:
+
+[[file:static/images/arch/5_guix_vs_ubuntu_uptodate_ratio.png]]
+
+#+begin_comment
+TODO https://nesbitt.io/2025/12/24/package-managers-keep-using-git-as-a-database.html
+#+end_comment
+
+** Quantifying the community
+
 * Why not Nix?
 Not encouraging
 
@@ -474,13 +522,45 @@ systemctl enable --now pacserve
 
 After that, if two machines are in the same network, one will try to download packages from the other before going to other mirrors.
 
-** shepherd and mcron -> systemd
 
+* Conclusion
+To conclude, here are some of my thoughts on how the above fits into the general Linux Desktop situation.
+
+It's no secret that Windows Desktop is getting worse each passing year. But it's hard to say what it means for the future.
+
+I suspect the market structure - the lock-in effect and decades of near-total domination - largely dampens Microsoft's current mistakes. History shows that such arrangements collapse gradually and then suddenly, once too many mistakes accumulate. [[https://www.economist.com/finance-and-economics/2025/12/01/how-to-spot-a-bubble-bursting][But it's hard to say when]]. Few will short the Microsoft stock the year before.
+
+Maybe that's wrong, and Windows will stay with us until the next paradigm shift in consumer computing.
+
+But I'm more certain that none of the mentioned distros can bring about the Year of the Linux Desktop. The reasons of that are many, but perhaps most are captured by these two issues:
+1. One can't give an unqualified user a Linux PC and except them to be basically fine.
+2. Packaging for Linux is harder and requires constant work.
+
+For instance, on the first issues I totally get why Windows' auto-updates are exruciatingly hard to disable - one [[https://blog.linuxmint.com/?p=4030][many users don't update their systems manually]]. Of course, with modern Windows, getting mandatory security updates also means getting [[https://www.windowscentral.com/microsoft/windows-11/2025-has-been-an-awful-year-for-windows-11-with-infuriating-bugs-and-constant-unwanted-features][intrusive new features, bugs appearing out of nowhere]] and ads in the start menu. But perhaps it's no coincidence that Canonical also [[https://en.wikipedia.org/wiki/Snap_(software)#Automatic_and_atomic_updates][chose this path]] with Snap?
+
+Well, Ubuntu has been around for a while, and I doubt incremental changes to it can lead to breakthrough.
+
+This brings us to functional packaging. Can it offer something here? After all, it's hard to think of a more user-friendly experience than "Install Once, Run Forever" principle plus partial rollbacks.
+
+However, one problem with both Nix and Guix is their unified pool of packages. Updating one package in the pool influences its dependents, which causes downstream bugs. Keeping an old version requires explicitly adding another package definition. Getting from here to "Build Once, Run Forever" would require keeping /all/ package versions and being able to specify them in package definitions. Such a package, in princple, rival Windows EXEs in being able to work in perpetuity on newer OSes.
+
+That would require getting the packages off git ([[https://nesbitt.io/2025/12/24/package-managers-keep-using-git-as-a-database.html][which was never a good idea to begin with]]), and probably making the whole thing as messy as NPM. But it might work. Can such a project succeed now, without decades of headstart that Nix and Arch had? Who knows.
+
+Another thing both Nix and Guix got right is the need to unify the package configuration interface. Indeed, functional packaging forces that. Of course, for a properly user-friendly system that interface should be GUI, neither Lisp nor the bespoke language of Nix. Which is also highly relevant for other aspects of the system - it shouldn't require writing code, period.
+
+Some argue that [[https://biggo.com/news/202509120734_Nix_Gets_AI_Boost_Community_Debates_Tools][AI can help]]. It's true that packaging seems highly amenable to AI automation - AI agents do well with feedback loops to verify their results, and the packaging task does offer a few obivous ones. But the AIs are not /quite/ there yet. And I think, if we're indeed headed to the world where AIs can maintain a functional Linux distro, the desktop OS market would be the least of our concerns.
+
+As for me, I'm sticking with a no-nonsense Linux distribution that isn't founded on neat ideas, that will mostly work and which I'll be able to debug when it fails.
 
 * Footnotes
+[fn:6] Technically one can have multiple package versions in Guix, but they would have to be different symbols. In Guix, one package = one symbol; so different versions of a package are actually different packages.
+
+[fn:5] Remarkably, it's indeed [[https://logs.guix.gnu.org/guix/search?query=nonguix][almost absent]] from the Guix's IRC channel.
+
+[fn:4] Technically, there's [[https://packages.guix.gnu.org/search/?query=node][a handful]] of node packages, but that's not much.
 
 [fn:3] If you're curious, Debian includes Firefox in its free software repository.
 
-[fn:2] It has actually started in ~2014, but I have no written records and my memories from that time are nonexistent for different reasons.
+[fn:2] It has actually started in ~2014, but I have no written records and my memories from that time are unavailable for unrelated reasons.
 
-[fn:1] I've added =flatpak= only for example, I don't actually use it for now because AUR seems to have everything.
+[fn:1] I've added =flatpak= only as an example, I don't actually use it because AUR seems to have everything.
