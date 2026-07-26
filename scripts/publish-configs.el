@@ -104,16 +104,20 @@
   :config
   (setq org-make-toc-link-type-fn #'org-make-toc--link-entry-org))
 
-
 ;; No clue what's wrong here
 (defun my/org-blackfriday-table-cell-alignment-around (fn &rest args)
-  (condition-case error
+  "Fall back to Org's table alignment when ox-hugo uses a stale AST API."
+  (condition-case nil
       (apply fn args)
-    (error
+    (args-out-of-range
      (apply #'org-export-table-cell-alignment args))))
 
-;; (advice-add #'org-blackfriday-table-cell-alignment
-;;             :around #'my/org-blackfriday-table-cell-alignment-around)
+(with-eval-after-load 'ox-blackfriday
+  (unless (advice-member-p
+           #'my/org-blackfriday-table-cell-alignment-around
+           'org-blackfriday-table-cell-alignment)
+    (advice-add 'org-blackfriday-table-cell-alignment :around
+                #'my/org-blackfriday-table-cell-alignment-around)))
 
 ;; Export dotfiles
 
