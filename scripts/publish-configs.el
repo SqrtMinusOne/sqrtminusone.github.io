@@ -26,7 +26,39 @@
 (require 'use-package)
 
 ;; Org Hugo
-;; (straight-use-package 'org)
+(straight-use-package 'org)
+
+(defun my/org-link-search-headlines-case-fold-around
+    (fn words &optional ignore-pipes)
+  "Retry FN case-insensitively when searching for WORDS in headlines."
+  (or (funcall fn words ignore-pipes)
+      (let ((wanted (mapcar #'upcase words))
+            (normalizers (if ignore-pipes
+                             '(statistics-cookies pipe-chars)
+                           '(statistics-cookies))))
+        (goto-char (point-min))
+        (catch :found
+          (while (re-search-forward org-outline-regexp-bol nil t)
+            (when (equal
+                   wanted
+                   (mapcar
+                    #'upcase
+                    (split-string
+                     (org-link-normalize-string
+                      (org-get-heading t t t t)
+                      normalizers))))
+              (throw :found t)))
+          nil))))
+
+;; Org commit 76dc6e358 accidentally made the final headline comparison
+;; case-sensitive.  Keep the old behavior until that regression is fixed.
+(with-eval-after-load 'ol
+  (when (fboundp 'org-link--search-headlines)
+    (unless (advice-member-p
+             #'my/org-link-search-headlines-case-fold-around
+             'org-link--search-headlines)
+      (advice-add 'org-link--search-headlines :around
+                  #'my/org-link-search-headlines-case-fold-around))))
 
 (defvar-local my/org-hugo-heading-slugs nil)
 
