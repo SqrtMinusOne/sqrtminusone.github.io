@@ -2,26 +2,28 @@
 title = "Index"
 +++
 
-## About
-{{< figure class="avatar" src="/logo_sq.png" >}}
+## About me
+{{< figure class="avatar" src="/logo_sq_black_full_sword.png" >}}
 
 **Pavel Korytov**
 
-I use Emacs to make money to do stuff with Emacs.
+I use Emacs to make enough money to do stuff with Emacs. See my [Emacs-related blog posts](/posts) and [Emacs packages](/packages).
+
+I also maintain several bridges in [rss-bridge](https://github.com/RSS-Bridge/rss-bridge) and collect some [stats](/stats) about myself. 
+
+That will be all for now.
 
 ### Links
 * [e-mail](mailto:thexcloud@gmail.com)
 * [GitHub](https://github.com/SqrtMinusOne)
-* [Reddit](https://www.reddit.com/user/XCapitan_1)
 * [Telegram](https://t.me/SqrtMinusTwo)
+* [Reddit](https://www.reddit.com/user/XCapitan_1) (almost inactive)
 * <a rel="me" href="https://mastodon.bsd.cafe/@sqrtminusone">Mastodon</a> (inactive)
 
 ### RSS Feeds
 - [Main feed](/index.xml) with every page.
 - [Posts](/posts/index.xml)
-- [Packages](/packages/index.xml)
-
-Watch out if your RSS reader marks updated entries as unread --- entries in the packages feed are updated pretty often.
+- [Packages](/packages/index.xml) (I hope your RSS reader doesn't mark updated entries as unread)
 
 ### Buttons
 <div class="webbuttons">

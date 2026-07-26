@@ -91,6 +91,7 @@
         "Desktop.org"
         "Console.org"
         "Mail.org"
+        "Arch.org"
         "Guix.org"))
 
 (defun my/export-dotfiles ()

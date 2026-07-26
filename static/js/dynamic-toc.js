@@ -109,13 +109,22 @@ function setUpObserver() {
   }
 }
 
-window.addEventListener("load", (event) => {
-  if ("IntersectionObserver" in window) {
-    setUpObserver();
-    window.addEventListener("resize", setUpObserver);
+function initializeObserver() {
+  if (!("IntersectionObserver" in window)) {
+    return;
   }
-});
 
-window.addEventListener("unload", (event) => {
-  headerObserver.disconnect();
+  setUpObserver();
+  window.addEventListener("resize", setUpObserver);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeObserver);
+} else {
+  initializeObserver();
+}
+
+window.addEventListener("pagehide", () => {
+  headerObserver?.disconnect();
+  window.removeEventListener("resize", setUpObserver);
 });
