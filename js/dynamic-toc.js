@@ -9,7 +9,7 @@ let headerObserver = null;
 
 function observeHeadings() {
   const links = document.querySelectorAll(`#${tocId} a`);
-  const headings = document.querySelectorAll(`${actualContentId} h1,h2,h3,h4`);
+  const headings = document.querySelectorAll(`#${actualContentId} h1, #${actualContentId} h2, #${actualContentId} h3, #${actualContentId} h4`);
 
   for (const link of links) {
     linksById[link.getAttribute("href")] = link;
@@ -109,13 +109,22 @@ function setUpObserver() {
   }
 }
 
-window.addEventListener("load", (event) => {
-  if ("IntersectionObserver" in window) {
-    setUpObserver();
-    window.addEventListener("resize", setUpObserver);
+function initializeObserver() {
+  if (!("IntersectionObserver" in window)) {
+    return;
   }
-});
 
-window.addEventListener("unload", (event) => {
-  headerObserver.disconnect();
+  setUpObserver();
+  window.addEventListener("resize", setUpObserver);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeObserver);
+} else {
+  initializeObserver();
+}
+
+window.addEventListener("pagehide", () => {
+  headerObserver?.disconnect();
+  window.removeEventListener("resize", setUpObserver);
 });

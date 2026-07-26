@@ -32,13 +32,6 @@
             
                 
                 
-                    <a class="nav-item nav-link" href="/" title="Index">
-                        Index
-                    </a>
-                    
-                        <span class="nav-item navbar-text mx-1">/</span>
-                    
-                
                     <a class="nav-item nav-link" href="/posts/" title="Posts">
                         Posts
                     </a>
@@ -57,6 +50,13 @@
                         Emacs packages
                     </a>
                     
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/stats/" title="Stats">
+                        Stats
+                    </a>
+                    
                 
             
         </div>
@@ -64,13 +64,62 @@
 </div>
 <hr>
 <div id="content">
-<script defer language="javascript" type="text/javascript"  src="/js/dynamic-toc.js"></script>
+<script defer src="/js/dynamic-toc.js"></script>
 
-<div class="root">
-    <h1 id="title-small-screen">Running Gource with Emacs</h1>
-    <div class="container" id="actual-content">
-        <h1 id="title-large-screen">Running Gource with Emacs</h1>
-        <figure><img src="/images/gource/gource.png">
+
+
+
+
+
+
+
+<div class="post-root">
+  
+  <header class="post-header">
+    <h1 class="post-title">Running Gource with Emacs</h1>
+
+    <div class="post-meta">
+      
+      <span class="post-author">Pavel Korytov</span>
+      
+
+      <time class="post-date">January 2, 2023</time>
+
+      
+    </div>
+
+    
+
+    
+    <div class="post-tags post-tags--center">
+      <strong>Tags:</strong>
+      
+      <a href="/tags/emacs">#emacs</a>
+      
+    </div>
+    
+  </header>
+
+  
+  <nav class="table-of-contents">
+    <div class="table-of-contents-text">
+      <b><a href="#">Table of Contents</a></b>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#gravatars">Gravatars</a></li>
+    <li><a href="#merging-authors">Merging authors</a></li>
+    <li><a href="#running-for-multiple-repos">Running for multiple repos</a></li>
+    <li><a href="#using-the-function">Using the function</a></li>
+  </ul>
+</nav>
+    </div>
+    <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
+    <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
+  </nav>
+
+  
+  <div class="post-body" id="actual-content">
+    <figure><img src="/images/gource/gource.png">
 </figure>
 
 <p><a href="https://gource.io/">Gource</a> is a program that draws an animated graph of users changing the repository over time.</p>
@@ -85,7 +134,7 @@ It may happen when people use forges like <a href="https://gitlab.com/">GitLab</
 <h2 id="gravatars">Gravatars</h2>
 <p>Much to my surprise, Emacs turned out to have a built-in package called <a href="https://github.com/emacs-mirror/emacs/blob/master/lisp/image/gravatar.el">gravatar.el</a>.</p>
 <p>So, let&rsquo;s make a function to retrieve a gravatar and save it:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-retrieve-sync</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-retrieve-sync</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">file-name</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get gravatar for EMAIL and save it to FILE-NAME.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">gravatar-default-image</span> <span style="color:#ba2121">&#34;identicon&#34;</span>)
 </span></span><span style="display:flex;"><span>        (<span style="color:#19177c">gravatar-size</span> <span style="color:#800">nil</span>)
@@ -96,9 +145,9 @@ It may happen when people use forges like <a href="https://gitlab.com/">GitLab</
 </span></span><span style="display:flex;"><span>     (<span style="color:#19177c">image-property</span> (<span style="color:#19177c">gravatar-retrieve-synchronously</span> <span style="color:#19177c">email</span>) <span style="color:#008000">:data</span>)
 </span></span><span style="display:flex;"><span>     <span style="color:#800">nil</span> <span style="color:#19177c">file-name</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>)))
 </span></span></code></pre></div><p>To use these images, we need to save them to some folder and use usernames as file names. The folder:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#ba2121">&#34;/home/pavel/.cache/gravatars/&#34;</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/gravatar-folder</span> <span style="color:#ba2121">&#34;/home/pavel/.cache/gravatars/&#34;</span>)
 </span></span></code></pre></div><p>And the function that downloads a gravatar if necessary:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">author</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gravatar-save</span> (<span style="color:#19177c">email</span> <span style="color:#19177c">author</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Download gravatar for EMAIL.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHOR is the username.&#34;</span>
@@ -110,7 +159,7 @@ It may happen when people use forges like <a href="https://gitlab.com/">GitLab</
 </span></span></code></pre></div><h2 id="merging-authors">Merging authors</h2>
 <p>Now to merging authors.</p>
 <p>Gource itself uses only usernames (without emails), but we can use <code>git log</code> to get both. The required information can be extracted like that:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git log --pretty<span style="color:#666">=</span>format:<span style="color:#ba2121">&#34;%ae|%an&#34;</span> | sort | uniq -c | sed <span style="color:#ba2121">&#34;s/^[ \t]*//;s/ /|/&#34;</span>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git log --pretty<span style="color:#666">=</span>format:<span style="color:#ba2121">&#34;%ae|%an&#34;</span> | sort | uniq -c | sed <span style="color:#ba2121">&#34;s/^[ \t]*//;s/ /|/&#34;</span>
 </span></span></code></pre></div><p>The output is a list of pipe-separated strings, where the values are:</p>
 <ul>
 <li>Number of occurrences for this combination of username and email</li>
@@ -119,7 +168,7 @@ It may happen when people use forges like <a href="https://gitlab.com/">GitLab</
 </ul>
 <p>Of course, that part would have to be changed appropriately for other version control systems if you happen to use one.</p>
 <p>So, below is one hell of a function that wraps this command and tries to merge emails and usernames belonging to one author:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/git-get-authors</span> (<span style="color:#19177c">repo</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">authors-init</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/git-get-authors</span> (<span style="color:#19177c">repo</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">authors-init</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Extract and merge all combinations of authors &amp; emails from REPO.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPO is the path to a git repository.
@@ -218,7 +267,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
 <p>This section was mostly informed by <a href="https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories">this page</a> in the <a href="https://github.com/acaudwell/Gource/wiki">gource wiki</a>.</p>
 <p>As I said above, by default <code>gource</code> just creates a visualization for the current repo. To change something in it, we need to invoke the program like that: <code>gource --output-custom-log PATH</code>, where <code>PATH</code> is either the path to the log file or <code>-</code> for stdout.</p>
 <p>The log consists of lines of pipe-separated strings, e.g.:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.dockerignore
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.dockerignore
 </span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.editorconfig
 </span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.flake8
 </span></span><span style="display:flex;"><span>1600769568|dsofronov|A|/studentor/.gitignore
@@ -231,7 +280,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
 </ul>
 <p>The file has to be sorted by the timestamp in ascending order.</p>
 <p>So, the function that prepares the log for one repository:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-prepare-log</span> (<span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-prepare-log</span> (<span style="color:#19177c">repo</span> <span style="color:#19177c">authors</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create gource log string for REPO.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">AUTHORS is the output of </span><span style="color:#19177c">`my/git-get-authors&#39;</span><span style="color:#ba2121">.&#34;</span>
@@ -266,7 +315,7 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
 </ul>
 <p>The output is a string in the gource log format as described above.</p>
 <p>Finally, as we need to invoke all of this for multiple repositories, why not do that with <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html">dired</a>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-dired-create-logs</span> (<span style="color:#19177c">repos</span> <span style="color:#19177c">log-name</span>)
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/gource-dired-create-logs</span> (<span style="color:#19177c">repos</span> <span style="color:#19177c">log-name</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create combined gource log for REPOS.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">REPOS is a list of strings, where a string is a path to a git repo.
@@ -306,26 +355,11 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
 <h2 id="using-the-function">Using the function</h2>
 <p>To use the function above, mark the required repos in a dired buffer and run <code>M-x my/gource-dired-create-logs</code>. This also works nicely with <a href="https://github.com/Fuco1/dired-hacks">dired-subtree</a>, in case your repos are located in different folders.</p>
 <p>The function will create a combined log file (by default <code>combined.log</code>). To visualize the log, run:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gource &lt;log-file&gt; --user-image-dir &lt;path-to-gravatars&gt;
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gource &lt;log-file&gt; --user-image-dir &lt;path-to-gravatars&gt;
 </span></span></code></pre></div><p>Check the <a href="https://github.com/acaudwell/Gource">README</a> for possible parameters, such as the speed of visualization, different elements, etc. That&rsquo;s it!</p>
 <p>I thought about making something like a <a href="https://github.com/magit/transient">transient.el</a> wrapper around the <code>gource</code> command but figured it wasn&rsquo;t worth the effort for something that I run just a handful of times in a year.</p>
 
-    </div>
-    <div class="table-of-contents">
-        <div class="table-of-contents-text">
-            <b><a href="#">Table of Contents</a></b>
-            <nav id="TableOfContents">
-  <ul>
-    <li><a href="#gravatars">Gravatars</a></li>
-    <li><a href="#merging-authors">Merging authors</a></li>
-    <li><a href="#running-for-multiple-repos">Running for multiple repos</a></li>
-    <li><a href="#using-the-function">Using the function</a></li>
-  </ul>
-</nav>
-        </div>
-        <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
-        <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
-    </div>
+  </div>
 </div>
 
         </div><div id="footer" class="mb-5">
