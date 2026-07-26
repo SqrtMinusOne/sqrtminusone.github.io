@@ -10,7 +10,7 @@ scripts = ["/js/chart.js", "/js/chartjs-adapter-date-fns.bundle.min.js", "/js/st
 }
 </style>
 
-These are some of my personal stats, collected from different sources and aggredated with my [DETERRED](https://github.com/sqrtMinusOne/deterred) package. They were last updated on **<span data-num="date">[REDACTED]</span>**.
+These are some of my personal stats, collected from different sources and aggregated with my [DETERRED](https://github.com/sqrtMinusOne/deterred) package. They were last updated on **<span data-num="date">[REDACTED]</span>**.
 
 <div hidden>
 If I'm dead, may this serve as a reminder of who I was.
@@ -23,7 +23,7 @@ If I'm dead, may this serve as a reminder of who I was.
 ## Programming
 ### Programming languages
 
-[WakaTime](https://wakatime.com/) is a service that tracks hours spent on programming, which I've used since late 2018. It allows to export all your data for analysis, as all services should, but it's a proprietary service. If you want to reproduce this, you might also want to look at a compatible self-hosted implementation called  [Wakapi](https://github.com/muety/wakapi).
+[WakaTime](https://wakatime.com/) is a service that tracks hours spent on programming, which I've used since late 2018. It allows exporting all your data for analysis, as all services should, but it's a proprietary service. If you want to reproduce this, you might also want to look at a compatible self-hosted implementation called [Wakapi](https://github.com/muety/wakapi).
 
 My numbers are somewhat skewed towards `org-mode` because I switch to it all the time when I'm programming, and because I haven't configured WakaTime to account for AI usage.
 
@@ -37,7 +37,7 @@ And the same data, but grouped by year:
   <canvas id="chart-wakatime-top-languages-per-year" role="img" aria-label="WakaTime hours, stacked by recorded language or category and year."></canvas>
 </div>
 
-Below is the chart that shows the average project age I've in months I've been working on.
+The chart below shows, for each month, the average age of the projects I worked on.
 
 <div class="charts-wrapper">
   <canvas id="chart-wakatime-average-project-age-per-month" role="img" aria-label="Average age of projects with recorded WakaTime activity each month."></canvas>
@@ -45,7 +45,7 @@ Below is the chart that shows the average project age I've in months I've been w
 
 ### AI use
 
-So far I have used AI to the equivalent of **<span data-num="ai-cost-total">$[REDACTED]</span>** in API prices (I have, of course, used subscriptions). Below is the breakdown by month.
+So far, my AI usage would have cost **<span data-num="ai-cost-total">$[REDACTED]</span>** at API prices (although I have, of course, used subscription plans). Below is the breakdown by month.
 
 <div class="charts-wrapper">
   <canvas id="chart-ai-cost-by-model-per-month" role="img" aria-label="Monthly recorded AI cost, stacked by model."></canvas>
@@ -58,7 +58,7 @@ And the breakdown by token use:
 
 ## Emacs use
 
-[Emacs](https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html) is the best thing to ever be created by an intelligent being in the whole Universe. Here's the % of screen time that I used Emacs:
+[Emacs](https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html) is the best thing to ever be created by an intelligent being in the whole Universe. Here's the percentage of my screen time I spent using Emacs:
 
 <div class="charts-wrapper">
   <canvas id="chart-aw-emacs-fraction-per-month" role="img" aria-label="Emacs as a percentage of non-AFK computer time each month."></canvas>
@@ -70,13 +70,13 @@ This data was collected by [ActivityWatch](https://activitywatch.net/).
 
 ### Music
 
-This chart shows the amount of hours I've spent listening to music in [Google Play Music](https://en.wikipedia.org/wiki/Google_Play_Music) and then [MPD](https://www.musicpd.org/).
+This chart shows the number of hours I've spent listening to music using [Google Play Music](https://en.wikipedia.org/wiki/Google_Play_Music) and later [MPD](https://www.musicpd.org/).
 
 <div class="charts-wrapper">
   <canvas id="chart-mpd-listened-by-year" role="img" aria-label="Hours of music recorded by MPD each year."></canvas>
 </div>
 
-Here's that data broken down by albums that first appeared in my collection this year vs. in the previous year:
+Here's that data split between albums that first appeared in my collection that year vs. those that had appeared in earlier years:
 
 <div class="charts-wrapper">
   <canvas id="chart-mpd-new-albums-listened" role="img" aria-label="Music listening hours split by whether an album first appeared that year."></canvas>
@@ -84,9 +84,9 @@ Here's that data broken down by albums that first appeared in my collection this
 
 ### Podcasts
 
-Here's an approximate amount of hours I've spent listening to podcasts in [AntennaPod](https://antennapod.org/). 
+Here's the approximate number of hours I've spent listening to podcasts in [AntennaPod](https://antennapod.org/).
 
-It's not quite accurate: the number for 2022 is deflated because I've unsubscribed from some podcasts and it had deleted the stats; the rest of the numbers might be inflated because the include the time skipped forward as listening time. Also, it doesn't include podcasts I have listened through YouTube and The Economist app. But it will do.
+It's not quite accurate: the number for 2022 is understated because unsubscribing from some podcasts deleted their stats; the rest of the numbers might be inflated because they include time skipped by fast-forwarding as listening time. It also doesn't include podcasts I've listened to via YouTube or The Economist app. But it will do.
 
 <div class="charts-wrapper">
   <canvas id="chart-podcasts-listened-by-year" role="img" aria-label="Recorded podcast listening time by year."></canvas>
@@ -98,7 +98,7 @@ Here's the same data broken down by language:
   <canvas id="chart-podcasts-languages" role="img" aria-label="Podcast listening hours, stacked by language and year."></canvas>
 </div>
 
-And here are my top-15 podcasts, or most of them anyway:
+And here are my top 15 podcasts, or most of them, anyway:
 
 <div class="charts-wrapper">
   <canvas id="chart-podcasts-top-feeds" role="img" aria-label="The 15 podcast feeds with the most recorded listening time."></canvas>
@@ -108,7 +108,7 @@ And here are my top-15 podcasts, or most of them anyway:
 
 I read stuff on the Internet mostly via a read-it-later workflow, currently using a solution called [Readeck](https://readeck.org/en/).
 
-I was inspired by [Tiago Forte's article](https://web.archive.org/web/20241105193056/https://fortelabs.com/blog/the-secret-power-of-read-it-later-apps/) that he since deleted somehow, but it's available in the Internet Archive. So far I've read **<span data-num="read-it-later-count">[REDACTED]</span>** articles.
+I was inspired by [Tiago Forte's article](https://web.archive.org/web/20241105193056/https://fortelabs.com/blog/the-secret-power-of-read-it-later-apps/), which he has since deleted, though it remains available in the Internet Archive. So far I've read **<span data-num="read-it-later-count">[REDACTED]</span>** articles.
 
 <div class="charts-wrapper">
   <canvas id="chart-read-it-later-articles-per-month" role="img" aria-label="Articles added to the read-it-later archive each month."></canvas>
@@ -130,7 +130,7 @@ Here's the number of messages I sent and received per year:
   <canvas id="chart-messengers-sent-received-per-year" role="img" aria-label="Recorded private messages by direction and year, with sent messages below the axis and received messages above it."></canvas>
 </div>
 
-And the sent and received number combined, stacked by platfom:
+And here's the combined number of sent and received messages, stacked by platform:
 
 <div class="charts-wrapper">
   <canvas id="chart-messengers-messenger-per-year" role="img" aria-label="Sent and received messages combined, stacked by messaging platform and year."></canvas>
@@ -138,7 +138,7 @@ And the sent and received number combined, stacked by platfom:
 
 ## Social media
 
-Here's my social media activity grouped by months. Darker bands mean more activity.
+Here's my social media activity grouped by month. Darker bands mean more activity.
 
 <div class="charts-wrapper">
   <canvas id="chart-social-media-usage-bands" role="img" aria-label="Active social-media months by platform, with darker bands indicating greater activity within each activity type."></canvas>
@@ -155,7 +155,7 @@ Here's my public transport use since January 2025:
 
 ### Bicycle
 
-This is distance covered on bicycle per month. Regrettably, the data only starts this year.
+This is the distance covered by bicycle each month. Regrettably, the data only starts this year.
 
 <div class="charts-wrapper">
   <canvas id="chart-fit-distance-per-month" role="img" aria-label="Monthly distance from recorded fitness activities."></canvas>
@@ -169,7 +169,7 @@ Since January 2024 I've been to the uni **<span data-num="uni-visits">[REDACTED]
   <canvas id="chart-uni-visits-per-month" role="img" aria-label="Recorded visits to the university each month."></canvas>
 </div>
 
-Here's this data broken by transport type since January 2025:
+Here's this data broken down by transport type since January 2025:
 
 <div class="charts-wrapper">
   <canvas id="chart-uni-visits-by-transport-per-month" role="img" aria-label="University visits per month, stacked by broad transport class."></canvas>
@@ -177,17 +177,17 @@ Here's this data broken by transport type since January 2025:
 
 ## Work
 
-This is me trying not to work on weekends with varying success. Since I started recording, I've had **<span data-num="org-clock-free-weekends">[REDACTED]</span>** free weekends of **<span data-num="org-clock-total-weekends">[REDACTED]</span>**, and **<span data-num="org-clock-free-weekends-q4">[REDACTED]</span>**/**<span data-num="org-clock-total-weekends-q4">[REDACTED]</span>** in the last 4 quarters.
+This is me trying not to work on weekends, with varying success. Since I started recording, I've had **<span data-num="org-clock-free-weekends">[REDACTED]</span>** free weekends out of **<span data-num="org-clock-total-weekends">[REDACTED]</span>**, and **<span data-num="org-clock-free-weekends-q4">[REDACTED]</span>**/**<span data-num="org-clock-total-weekends-q4">[REDACTED]</span>** in the last 4 quarters.
 
 <div class="charts-wrapper">
   <canvas id="chart-org-clock-free-weekends-per-quarter" role="img" aria-label="Free and non-free weekend days, with clocked weekend hours by quarter."></canvas>
 </div>
 
-This data comes from [org-clock](https://orgmode.org/manual/Clocking-commands.html), which is a time tracking functionality built into Emacs.
+This data comes from [org-clock](https://orgmode.org/manual/Clocking-commands.html), which is a time-tracking feature built into Emacs.
 
 ## Photos
 
-Below is the number of photos I've taken per year. So far I've taken **<span data-num="digikam-photos">[REDACTED]</span>** photo. This comes from [digiKam](https://www.digikam.org/).
+Below is the number of photos I've taken per year. So far I've taken **<span data-num="digikam-photos">[REDACTED]</span>** photos. This comes from [digiKam](https://www.digikam.org/).
 
 <div class="charts-wrapper">
   <canvas id="chart-digikam-photos-per-year" role="img" aria-label="Photos in the digiKam library, grouped by capture year."></canvas>
