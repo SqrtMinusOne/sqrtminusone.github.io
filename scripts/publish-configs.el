@@ -89,7 +89,7 @@
     slug))
 
 (use-package ox-hugo
-  :straight t
+  :straight (:build (:not compile native-compile))
   :config
   (setq org-hugo-anchor-functions '(org-hugo-get-page-or-bundle-name
                                     org-hugo-get-custom-id
