@@ -76,12 +76,798 @@
             <iframe src="https://ghbtns.com/github-btn.html?user=SqrtMinusOne&repo=dotfiles&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe>
         </h1>
         <p>I&rsquo;ve decided to switch to <a href="https://archlinux.org/">Arch Linux</a> and configure it declaratively with <a href="https://github.com/ripytide/metapac">metapac</a>.</p>
+<h2 id="system-installation">System installation</h2>
+<h3 id="installation">Installation</h3>
+<p>On installation, see <a href="https://wiki.archlinux.org/title/Installation_guide">https://wiki.archlinux.org/title/Installation_guide</a> and/or use <code>archinstall</code>.</p>
+<p>Don&rsquo;t forget to run</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pacman -Sy archlinux-keyring
+</span></span></code></pre></div><p>Before <code>archinstall</code>.</p>
+<h3 id="after-installation">After installation</h3>
+<p>Update everything:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -Syyu
+</span></span></code></pre></div><p>Install git, python and yadm:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -Syu python git pacman-contrib yadm
+</span></span></code></pre></div><p>Select top-6 fastest mirrors to work with. Generate a mirrorlist file using this service: <a href="https://archlinux.org/mirrorlist/">https://archlinux.org/mirrorlist/</a>, then use <code>rankmirrors</code> from <code>pacman-contrib</code> (see <a href="https://wiki.archlinux.org/title/Mirrors">Mirrors</a> on Arch Wiki).</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo -i
+</span></span><span style="display:flex;"><span>cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+</span></span><span style="display:flex;"><span>rankmirrors -n <span style="color:#666">6</span> /etc/pacman.d/mirrorlist.backup &gt; /etc/pacman.d/mirrorlist
+</span></span></code></pre></div><p>If there isn&rsquo;t enough RAM (e.g. running in a VM), turn off mounting <code>/tmp</code> as <a href="https://wiki.archlinux.org/title/Tmpfs#Disable_automatic_mount">tmpfs</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl mask tmp.mount
+</span></span></code></pre></div><p>Install <a href="https://github.com/Morganamilo/paru">paru</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -S --needed base-devel
+</span></span><span style="display:flex;"><span>git clone https://aur.archlinux.org/paru.git
+</span></span><span style="display:flex;"><span><span style="color:#008000">cd</span> paru
+</span></span><span style="display:flex;"><span>makepkg -si
+</span></span></code></pre></div><p>Install <a href="https://github.com/ripytide/metapac">metapac</a>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>paru -Syyu metapac
+</span></span></code></pre></div><p>Enable <a href="https://wiki.archlinux.org/title/Official_repositories#multilib">multilib</a> by uncommenting the <code>[multilib]</code> section in <code>/etc/pacman.conf</code>.</p>
+<p>Then install Arch packages with <code>metapac</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir ~/00-Scratch/
+</span></span><span style="display:flex;"><span>git clone https://github.com/SqrtMinusOne/dotfiles.git ~/00-Scratch/dotfiles/
+</span></span><span style="display:flex;"><span>cp -r ~/00-Scratch/dotfiles/.config/metapac ~/.config/
+</span></span><span style="display:flex;"><span>metapac s
+</span></span></code></pre></div><p>Then, install the ssh and gpg keys (put them into the <code>~/.ssh</code> folder). To export gpg keys:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gpg --output private.pgp --armor --export-secret-keys &lt;keyname&gt;
+</span></span></code></pre></div><p>And to import:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gpg --import private.pgp
+</span></span><span style="display:flex;"><span>gpg --edit-key &lt;keyname&gt;
+</span></span><span style="display:flex;"><span>trust
+</span></span></code></pre></div><p>Also the following to <code>~/.ssh/config</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>Host *
+</span></span><span style="display:flex;"><span>    AddKeysToAgent yes
+</span></span></code></pre></div><p>And run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl <span style="color:#008000">enable</span> --user --now ssh-agent
+</span></span></code></pre></div><p>It looks like it is necessary to run at least once.</p>
+<p>Then, clone the dotfiles repo with <code>yadm</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yadm clone git@github.com:SqrtMinusOne/dotfiles.git
+</span></span></code></pre></div><p>Checkout the changed files.</p>
+<p>Clone org-mode and passwords repos:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone ssh://git@git.sqrtminusone.xyz:222/sqrtminusone/org-mode.git <span style="color:#ba2121">&#34;/home/pavel/30-39 Life/32 org-mode&#34;</span>
+</span></span><span style="display:flex;"><span>git clone ssh://git@git.sqrtminusone.xyz:222/sqrtminusone/passwords.git <span style="color:#ba2121">&#34;/home/pavel/.password-store&#34;</span>
+</span></span></code></pre></div><p>And don&rsquo;t forget to configure git:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config --global user.email <span style="color:#ba2121">&#34;thexcloud@gmail.com&#34;</span>
+</span></span><span style="display:flex;"><span>git config --global user.name <span style="color:#ba2121">&#34;SqrtMinusOne&#34;</span>
+</span></span></code></pre></div><p>Install wakatime:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#008000">cd</span> ~/00-Scratch/
+</span></span><span style="display:flex;"><span>git clone https://github.com/wakatime/wakatime-cli.git
+</span></span><span style="display:flex;"><span><span style="color:#008000">cd</span> ./wakatime-cli
+</span></span><span style="display:flex;"><span>go build
+</span></span><span style="display:flex;"><span>mv wakatime-cli ~/bin
+</span></span></code></pre></div><p>And create the <code>~/.wakatime.cfg</code> file with the following contents:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>[settings]
+</span></span><span style="display:flex;"><span>api_key = &lt;api-key&gt;
+</span></span></code></pre></div><p>Then run <code>emacs</code> and make sure it starts. Run:</p>
+<ul>
+<li><code>M-x nerd-icons-install-fonts</code></li>
+<li><code>M-x all-the-icons-install-fonts</code></li>
+<li><code>M-x treesit-install-language-grammar</code></li>
+</ul>
+<p>Run <code>rclone config</code>, configure the remotes. Then <code>M-x my/index-commands-sync</code>.</p>
+<p>If everything works, login into EXWM.</p>
+<p>Create some directories:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p /home/pavel/Pictures/screenshots/
+</span></span><span style="display:flex;"><span>mkdir -p /home/pavel/.mpd/playlists/
+</span></span></code></pre></div><p>Also run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chmod +s /usr/bin/light
+</span></span></code></pre></div><p>For I&rsquo;ve decided to use <code>NetworkManager</code>, but Arch Linux uses <code>iwd</code> by default, which causes issues. Disable it by:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl disable --now iwd
+</span></span><span style="display:flex;"><span>sudo systemctl disable --now systemd-networkd
+</span></span><span style="display:flex;"><span>sudo systemctl <span style="color:#008000">enable</span> --now NetworkManager
+</span></span></code></pre></div><p>And reboot. After the reboot, <code>NetworkManager</code> should run using <code>wpa_supplicant</code> as backend for Wi-Fi.</p>
+<p>Don&rsquo;t forget to sync mail and enable the sync timer.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo usermod -a -G libvirt pavel
+</span></span><span style="display:flex;"><span>sudo usermod -a -G kvm pavel
+</span></span><span style="display:flex;"><span>sudo virsh net-autostart default
+</span></span></code></pre></div><p>Install <a href="https://github.com/retorquere/zotero-better-bibtex">zotero-better-bibtex</a> manually.</p>
+<p>Run <code>init-nvm</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>bash /usr/share/nvm/init-nvm.sh
+</span></span></code></pre></div><p>Add flatpak remote:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+</span></span></code></pre></div><p>To install <code>xrdp</code>, configure an unpriviliged user:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo useradd xrdp -d / -c <span style="color:#ba2121">&#39;xrdp daemon&#39;</span> -s /usr/sbin/nologin
+</span></span></code></pre></div><p>Then uncomment these lines in <code>/etc/xrdp/xrdp.ini</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>runtime_user=xrdp
+</span></span><span style="display:flex;"><span>runtime_group=xrdp
+</span></span></code></pre></div><p>And in <code>/etc/xrdp/sesman.ini</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>SessionSockdirGroup=xrdp
+</span></span></code></pre></div><p>Fix the permissions:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chmod <span style="color:#666">640</span> /etc/xrdp/cert.pem /etc/xrdp/key.pem /etc/xrdp/rsakeys.ini
+</span></span><span style="display:flex;"><span>sudo chown root:xrdp /etc/xrdp/cert.pem /etc/xrdp/key.pem /etc/xrdp/rsakeys.ini
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl <span style="color:#008000">enable</span> --now xrdp
+</span></span></code></pre></div><p>Set the default browser:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xdg-settings <span style="color:#008000">set</span> default-web-browser glide-browser-bin.desktop
+</span></span></code></pre></div><p>Disable systemd coredumps by editing /etc/systemd/coredump.conf</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Coredump]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Storage</span><span style="color:#666">=</span><span style="color:#ba2121">none</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ProcessSizeMax</span><span style="color:#666">=</span><span style="color:#ba2121">0</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl --user <span style="color:#008000">enable</span> --now gnome-keyring-daemon.service gnome-keyring-daemon.socket
+</span></span></code></pre></div><h2 id="metapac-configuration">Metapac configuration</h2>
+<p><a href="https://github.com/ripytide/metapac">metapac</a> is a declarative wrapper around different package managers, including <a href="https://wiki.archlinux.org/title/Pacman">pacman</a> and <a href="https://github.com/Morganamilo/paru">paru</a>. This means the required packages can be listed in configuration files and checked into version control.</p>
+<p>I&rsquo;ve also tried <a href="https://github.com/kiviktnm/decman">decman</a>, but it turned out to be too unstable because it ships its own logic for building AUR packages, which doesn&rsquo;t always work. So wrapping <code>paru</code> seems like a saner approach. Also, sometimes AUR drops packets, and <code>decman</code> can&rsquo;t handle it gracefully.</p>
+<p>In <code>metapac</code>, packages are listed in &ldquo;groups&rdquo;, each group being a TOML file stating which package has to be installed by which package manager. I declare groups as Org tables, see the &ldquo;System configuration&rdquo; section in Emacs.org.</p>
+<p>Below is the table enabling different groups on different hostnames:</p>
+<p><a id="table--metapac-groups"></a></p>
+<table>
+	<thead>
+			<tr>
+					<th>Profile</th>
+					<th>archlinux</th>
+					<th>weiss</th>
+					<th>violet</th>
+					<th>schwarz</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>browsers</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>console</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>desktop</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>desktop-misc</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>desktop-polybar</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>desktop-rofi</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>dev</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>emacs</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>latex</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>mail</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>music</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>nvidia</td>
+					<td></td>
+					<td></td>
+					<td>+</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>office</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>system</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+					<td>+</td>
+			</tr>
+			<tr>
+					<td>printer</td>
+					<td></td>
+					<td></td>
+					<td>+</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>games</td>
+					<td></td>
+					<td></td>
+					<td>+</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>geo</td>
+					<td></td>
+					<td></td>
+					<td>+</td>
+					<td></td>
+			</tr>
+			<tr>
+					<td>remote</td>
+					<td></td>
+					<td></td>
+					<td>+</td>
+					<td></td>
+			</tr>
+	</tbody>
+</table>
+<p>And the code to format it as TOML:</p>
+<p><a id="code-snippet--metapac-groups-format"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">let*</span> ((<span style="color:#19177c">hostnames</span> (<span style="color:#00f">cdr</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">groups</span>)))
+</span></span><span style="display:flex;"><span>       <span style="color:#19177c">groups-by-hostname</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">row</span> <span style="color:#19177c">in</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">groups</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">for</span> <span style="color:#19177c">group</span> <span style="color:#00f">=</span> (<span style="color:#00f">nth</span> <span style="color:#666">0</span> <span style="color:#19177c">row</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">do</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">i</span> <span style="color:#19177c">from</span> <span style="color:#666">0</span>
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">for</span> <span style="color:#19177c">sign</span> <span style="color:#19177c">in</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">row</span>)
+</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">for</span> <span style="color:#19177c">hostname</span> <span style="color:#00f">=</span> (<span style="color:#00f">nth</span> <span style="color:#19177c">i</span> <span style="color:#19177c">hostnames</span>)
+</span></span><span style="display:flex;"><span>                       <span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">sign</span>))
+</span></span><span style="display:flex;"><span>                       <span style="color:#008000">do</span> (<span style="color:#008000">push</span> <span style="color:#19177c">group</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">hostname</span> <span style="color:#19177c">groups-by-hostname</span>
+</span></span><span style="display:flex;"><span>                                                 <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> (<span style="color:#19177c">hostname</span> <span style="color:#666">.</span> <span style="color:#19177c">groups</span>) <span style="color:#19177c">in</span> <span style="color:#19177c">groups-by-hostname</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">concat</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s = [%s]\n&#34;</span> <span style="color:#19177c">hostname</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">mapconcat</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">g</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;\&#34;%s\&#34;&#34;</span> <span style="color:#19177c">g</span>)) <span style="color:#19177c">groups</span> <span style="color:#ba2121">&#34;,&#34;</span>))))
+</span></span></code></pre></div><p>Which is used in the config:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>enabled_backends = [<span style="color:#ba2121">&#34;arch&#34;</span>, <span style="color:#ba2121">&#34;flatpak&#34;</span>]
+</span></span><span style="display:flex;"><span>hostname_groups_enabled = <span style="color:#008000;font-weight:bold">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[hostname_groups]
+</span></span><span style="display:flex;"><span><span style="">&lt;&lt;</span>metapac-groups-format<span style="">()&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[arch]
+</span></span><span style="display:flex;"><span>package_manager = <span style="color:#ba2121">&#34;paru&#34;</span>
+</span></span></code></pre></div><h2 id="paru-configuration">paru configuration</h2>
+<p>Configuring paru to work with <a href="https://github.com/SqrtMinusOne/sqrt-emacs">my custom Emacs build</a>.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cfg" data-lang="cfg"><span style="display:flex;"><span><span style="color:#7d9029">Include</span> <span style="color:#666">=</span> <span style="color:#ba2121">/etc/paru.conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[private]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Url</span> <span style="color:#666">=</span> <span style="color:#ba2121">https://github.com/SqrtMinusOne/sqrt-emacs.git</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">GenerateSrcinfo</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">SkipReview</span>
+</span></span></code></pre></div><h2 id="pacserve">pacserve</h2>
+<p><a href="https://wiki.archlinux.org/title/Pacserve">https://wiki.archlinux.org/title/Pacserve</a></p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependencies</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>pacserve</td>
+			</tr>
+	</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl <span style="color:#008000">enable</span> --now pacserve
+</span></span></code></pre></div><h2 id="system-packages">System packages</h2>
+<p>Some necessary Arch packages:</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>amneziavpn-bin</td>
+			</tr>
+			<tr>
+					<td>base</td>
+			</tr>
+			<tr>
+					<td>base-devel</td>
+			</tr>
+			<tr>
+					<td>debtap</td>
+			</tr>
+			<tr>
+					<td>gnome-keyring-daemon</td>
+			</tr>
+			<tr>
+					<td>grub</td>
+			</tr>
+			<tr>
+					<td>iwd</td>
+			</tr>
+			<tr>
+					<td>lightdm</td>
+			</tr>
+			<tr>
+					<td>lightdm-gtk-greeter</td>
+			</tr>
+			<tr>
+					<td>linux</td>
+			</tr>
+			<tr>
+					<td>linux-firmware</td>
+			</tr>
+			<tr>
+					<td>inetutils</td>
+			</tr>
+			<tr>
+					<td>nano</td>
+			</tr>
+			<tr>
+					<td>networkmanager</td>
+			</tr>
+			<tr>
+					<td>metapac</td>
+			</tr>
+			<tr>
+					<td>openssh</td>
+			</tr>
+			<tr>
+					<td>pacman-contrib</td>
+			</tr>
+			<tr>
+					<td>paru</td>
+			</tr>
+			<tr>
+					<td>pipewire</td>
+			</tr>
+			<tr>
+					<td>pipewire-audio</td>
+			</tr>
+			<tr>
+					<td>pipewire-alsa</td>
+			</tr>
+			<tr>
+					<td>pipewire-pulse</td>
+			</tr>
+			<tr>
+					<td>pipewire-jack</td>
+			</tr>
+			<tr>
+					<td>sof-firmware</td>
+			</tr>
+			<tr>
+					<td>smartmontools</td>
+			</tr>
+			<tr>
+					<td>vim</td>
+			</tr>
+			<tr>
+					<td>xterm</td>
+			</tr>
+			<tr>
+					<td>wget</td>
+			</tr>
+			<tr>
+					<td>wireless_tools</td>
+			</tr>
+			<tr>
+					<td>wireplumber</td>
+			</tr>
+			<tr>
+					<td>yadm</td>
+			</tr>
+			<tr>
+					<td>zram-generator</td>
+			</tr>
+	</tbody>
+</table>
+<p>Various drivers, I&rsquo;m not sure which I actually need, so&hellip;</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>libva-intel-driver</td>
+			</tr>
+			<tr>
+					<td>intel-media-driver</td>
+			</tr>
+			<tr>
+					<td>vulkan-intel</td>
+			</tr>
+			<tr>
+					<td>vulkan-radeon</td>
+			</tr>
+			<tr>
+					<td>xf86-video-amdgpu</td>
+			</tr>
+			<tr>
+					<td>xf86-video-ati</td>
+			</tr>
+	</tbody>
+</table>
+<p>Also <a href="https://github.com/evilsocket/opensnitch">opensnitch</a>, a firewall.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>opensnitch</td>
+			</tr>
+			<tr>
+					<td>apparmor</td>
+			</tr>
+			<tr>
+					<td>firejail</td>
+			</tr>
+	</tbody>
+</table>
+<p>A tool to downgrade a package.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>downgrade</td>
+			</tr>
+	</tbody>
+</table>
+<p>NVIDIA drivers &amp; AI stuff for violet</p>
+<table>
+	<thead>
+			<tr>
+					<th>Category</th>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>nvidia</td>
+					<td>cuda</td>
+			</tr>
+			<tr>
+					<td>nvidia</td>
+					<td>nvidia-utils</td>
+			</tr>
+			<tr>
+					<td>nvidia</td>
+					<td>nvidia-open</td>
+			</tr>
+			<tr>
+					<td>nvidia</td>
+					<td>llama.cpp-vulkan</td>
+			</tr>
+			<tr>
+					<td>nvidia</td>
+					<td>nvidia-container-toolkit</td>
+			</tr>
+	</tbody>
+</table>
+<p>Printer packages.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Category</th>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>printer</td>
+					<td>cups</td>
+			</tr>
+			<tr>
+					<td>printer</td>
+					<td>usbutils</td>
+			</tr>
+			<tr>
+					<td>printer</td>
+					<td>brlaser</td>
+			</tr>
+			<tr>
+					<td>printer</td>
+					<td>naps2-bin</td>
+			</tr>
+			<tr>
+					<td>printer</td>
+					<td>brscan4</td>
+			</tr>
+	</tbody>
+</table>
+<p>Remote connectivity packages.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Category</th>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>remote</td>
+					<td>xorgxrdp</td>
+			</tr>
+	</tbody>
+</table>
+<p>To type stuff</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>xvkbd</td>
+			</tr>
+	</tbody>
+</table>
+<p><a id="code-snippet--packages"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my/format-arch-dependencies</span> <span style="color:#19177c">category</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;packages</span>(<span style="color:#ba2121">&#34;nvidia&#34;</span>)<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;packages</span>(<span style="color:#ba2121">&#34;printer&#34;</span>)<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;packages</span>(<span style="color:#ba2121">&#34;remote&#34;</span>)<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-scheme" data-lang="scheme"><span style="display:flex;"><span><span style="color:#19177c">&lt;&lt;packages</span>()<span style="color:#19177c">&gt;&gt;</span>
+</span></span></code></pre></div><h2 id="notes-on-vms">Notes on VMs</h2>
+<h3 id="linux">Linux</h3>
+<p>Install spice-vdagent and reboot to enable clipboard sharing.</p>
+<p>Check View &gt; Scale Display &gt; Auto resize VM with window. Then, running</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xrandr --output Virtual-1 --auto
+</span></span></code></pre></div><p>Will resize the display to the VM window. <a href="https://superuser.com/questions/1183834/no-auto-resize-with-spice-and-virt-manager">This question</a> has some info on how to automate that, I&rsquo;m fine with executing the command manually.</p>
+<p>To add a shared folder, do:</p>
+<ul>
+<li>Memory &gt; Enable shared memory</li>
+<li>Add hardware &gt; Filesystem with virtiofs, e.g.</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;filesystem</span> <span style="color:#7d9029">type=</span><span style="color:#ba2121">&#34;mount&#34;</span><span style="color:#008000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;source</span> <span style="color:#7d9029">dir=</span><span style="color:#ba2121">&#34;/home/pavel/00-Scratch&#34;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;target</span> <span style="color:#7d9029">dir=</span><span style="color:#ba2121">&#34;shared&#34;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;driver</span> <span style="color:#7d9029">type=</span><span style="color:#ba2121">&#34;virtiofs&#34;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;/filesystem&gt;</span>
+</span></span></code></pre></div><p>Then, in order to mount:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir ~/00-Scratch/
+</span></span><span style="display:flex;"><span>sudo mount -t virtiofs shared /home/pavel/00-Scratch/
+</span></span></code></pre></div><p>To make in permanent, add the following to <code>/etc/fstab</code></p>
+<pre tabindex="0"><code class="language-nil" data-lang="nil">shared /home/pavel/00-Scratch virtiofs defaults 0 0
+</code></pre><h3 id="windows">Windows</h3>
+<p>References:</p>
+<ul>
+<li><a href="https://github.com/winapps-org/winapps/blob/main/docs/libvirt.md">Creating a libvirt windows VM</a></li>
+</ul>
+<p>When creating a VM, check &ldquo;Customize configuration before install&rdquo;. Make the following changes:</p>
+<ol>
+<li>
+<p>In the CPUs tab, select &ldquo;Copy host CPU configuration&rdquo; and click Apply.</p>
+</li>
+<li>
+<p>In the XML version edit the <code>&lt;clock&gt;</code> section as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;clock</span> <span style="color:#7d9029">offset=</span><span style="color:#ba2121">&#39;localtime&#39;</span><span style="color:#008000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;timer</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;rtc&#39;</span> <span style="color:#7d9029">present=</span><span style="color:#ba2121">&#39;no&#39;</span> <span style="color:#7d9029">tickpolicy=</span><span style="color:#ba2121">&#39;catchup&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;timer</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;pit&#39;</span> <span style="color:#7d9029">present=</span><span style="color:#ba2121">&#39;no&#39;</span> <span style="color:#7d9029">tickpolicy=</span><span style="color:#ba2121">&#39;delay&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;timer</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;hpet&#39;</span> <span style="color:#7d9029">present=</span><span style="color:#ba2121">&#39;no&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;timer</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;kvmclock&#39;</span> <span style="color:#7d9029">present=</span><span style="color:#ba2121">&#39;no&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;timer</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;hypervclock&#39;</span> <span style="color:#7d9029">present=</span><span style="color:#ba2121">&#39;yes&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;/clock&gt;</span>
+</span></span></code></pre></div><p>The source says it will disable all timers except for the hypervclocks, reducing idle CPU usage.</p>
+<p>Also enable Hyper-V enlightenments in <code>&lt;hyperv&gt;</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;hyperv&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;relaxed</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;vapic</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;spinlocks</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span> <span style="color:#7d9029">retries=</span><span style="color:#ba2121">&#39;8191&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;vpindex</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;synic</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;stimer</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000;font-weight:bold">&lt;direct</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;/stimer&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;reset</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;frequencies</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;reenlightenment</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;tlbflush</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;ipi</span> <span style="color:#7d9029">state=</span><span style="color:#ba2121">&#39;on&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;/hyperv&gt;</span>
+</span></span></code></pre></div><p>Add this device under <code>&lt;devices&gt;</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;channel</span> <span style="color:#7d9029">type=</span><span style="color:#ba2121">&#39;unix&#39;</span><span style="color:#008000;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;source</span> <span style="color:#7d9029">mode=</span><span style="color:#ba2121">&#39;bind&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;target</span> <span style="color:#7d9029">type=</span><span style="color:#ba2121">&#39;virtio&#39;</span> <span style="color:#7d9029">name=</span><span style="color:#ba2121">&#39;org.qemu.guest_agent.0&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000;font-weight:bold">&lt;address</span> <span style="color:#7d9029">type=</span><span style="color:#ba2121">&#39;virtio-serial&#39;</span> <span style="color:#7d9029">controller=</span><span style="color:#ba2121">&#39;0&#39;</span> <span style="color:#7d9029">bus=</span><span style="color:#ba2121">&#39;0&#39;</span> <span style="color:#7d9029">port=</span><span style="color:#ba2121">&#39;2&#39;</span><span style="color:#008000;font-weight:bold">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">&lt;/channel&gt;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>In the SATA Disk 1 section, section set the Disk bus type to VirtIO.</p>
+</li>
+<li>
+<p>In NIC section, set the device model to virtio.</p>
+</li>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/5/html/virtualization/sect-virtualization-security_for_virtualization-selinux_and_virtualization#sect-Virtualization-Security_for_virtualization-SELinux_and_virtualization">Download VirtIO drivers</a></p>
+</li>
+<li>
+<p>Add a CD-ROM device with the VirtIO driver ISO.</p>
+</li>
+</ol>
+<p>During installation, load the VirtIO driver in <code>\amd64\w11</code>. The disk should appear.</p>
+<p>After installation, open the VirtIO driver ISO and run <code>virtio-win-guest-tools.exe</code>. Then, the option at View &gt; Scale Display / Auto resize VM with window should work.</p>
+<p>Configure DNS to 1.1.1.1</p>
+<p>To configure a shared folder:</p>
+<ol>
+<li>Toggle &ldquo;Enable shared memory&rdquo; in the memory tab.</li>
+<li>Click &ldquo;Add hardware&rdquo; -&gt; Filesystem, select virtiofs as the driver and specify the paths.</li>
+<li>Install <a href="https://github.com/winfsp/winfsp/releases/">WinFSP</a> on the VM.</li>
+<li>Run:
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sc.exe create VirtioFsSvc <span style="color:#19177c">binpath</span><span style="color:#666">=</span> <span style="color:#ba2121">&#34;C:\Program Files\Virtio-Win\VioFS\virtiofs.exe&#34;</span> <span style="color:#19177c">start</span><span style="color:#666">=</span>auto <span style="color:#19177c">depend</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;WinFsp.Launcher/VirtioFsDrv&#34;</span> <span style="color:#19177c">DisplayName</span><span style="color:#666">=</span><span style="color:#ba2121">&#34;Virtio Filesystem Service&#34;</span>
+</span></span><span style="display:flex;"><span>sc.exe start VirtioFsSvc
+</span></span></code></pre></div></li>
+<li>Reboot the VM.</li>
+</ol>
+<h3 id="copying-vms-between-machines">Copying VMs between machines</h3>
+<p>To copy a VM, first, copy the image:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rsync -avP /var/lib/libvirt/images/debian12-vpn.qcow2 /run/media/pavel/A6E5-4138/vms/
+</span></span></code></pre></div><p>Then, export the configuration:</p>
+<pre tabindex="0"><code class="language-nil" data-lang="nil">virsh -c qemu:///system dumpxml debian12-vpn &gt; debian12-vpn.xml
+</code></pre><p>To restore, copy the image back:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo rsync -avP /run/media/pavel/A6E5-4138/vms/debian12-vpn.qcow2 /var/lib/libvirt/images/
+</span></span></code></pre></div><p>And import the configuration:</p>
+<pre tabindex="0"><code class="language-src" data-lang="src">sudo virsh define debian12-vpn.xml
+</code></pre><h3 id="assign-a-static-ip-to-a-vm">Assign a static IP to a VM</h3>
+<p>To assign a static IP to a VM, run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo <span style="color:#19177c">EDITOR</span><span style="color:#666">=</span>vim virsh net-edit default
+</span></span></code></pre></div><p>And inside the <code>&lt;dhcp&gt;</code> section, insert:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>&lt;host <span style="color:#19177c">mac</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;52:54:00:58:7f:82&#39;</span> <span style="color:#19177c">name</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;myvm&#39;</span> <span style="color:#19177c">ip</span><span style="color:#666">=</span><span style="color:#ba2121">&#39;192.168.122.50&#39;</span>/&gt;
+</span></span></code></pre></div><p>After which, restart the network:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo virsh net-destroy default
+</span></span><span style="display:flex;"><span>sudo virsh net-start default
+</span></span></code></pre></div><h3 id="network">Network</h3>
+<p>Don&rsquo;t forget to set <code>iptables</code> in <code>/etc/libvirt/network.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>firewall_backend = <span style="color:#ba2121">&#34;iptables&#34;</span>
+</span></span></code></pre></div><h2 id="notes-on-software">Notes on Software</h2>
+<h3 id="upgrading-python-and-aur-packages">Upgrading Python and AUR packages</h3>
+<p>After upgrading Python from 3.13 to 3.14, <a href="https://aur.archlinux.org/packages/lieer-git">lieer</a> has stopped working</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>$ gmi
+</span></span><span style="display:flex;"><span>Traceback (most recent call last):
+</span></span><span style="display:flex;"><span>  File &#34;/usr/bin/gmi&#34;, line 20, in &lt;module&gt;
+</span></span><span style="display:flex;"><span>    from lieer import Gmailieer
+</span></span><span style="display:flex;"><span>ModuleNotFoundError: No module named &#39;lieer&#39;
+</span></span></code></pre></div><p>The issue is that the package has been installed for Python 3.13:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>pacman -Ql lieer-git | grep -E &#39;\.py$|site-packages&#39;
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/METADATA
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/RECORD
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/WHEEL
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/licenses/
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/licenses/COPYING.GPL-3.0+
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/licenses/LICENSE.md
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer-1.6.dist-info/top_level.txt
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__init__.py
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/__init__.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/__init__.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/gmailieer.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/gmailieer.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/local.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/local.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/nobar.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/nobar.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/remote.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/remote.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/resume.cpython-313.opt-1.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/__pycache__/resume.cpython-313.pyc
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/gmailieer.py
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/local.py
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/nobar.py
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/remote.py
+</span></span><span style="display:flex;"><span>lieer-git /usr/lib/python3.13/site-packages/lieer/resume.py
+</span></span></code></pre></div><p>And the Python version is 3.14:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>$ python --version
+</span></span><span style="display:flex;"><span>Python 3.14.2
+</span></span></code></pre></div><p>Simply rebuilding the package doesn&rsquo;t help because something has been cached. It is neccessary to use the <code>--rebuild</code> tag:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>$ paru -S lieer-git --rebuild
+</span></span></code></pre></div><h3 id="installing-ms-office-2007">Installing MS Office 2007</h3>
+<p>MS Office 2007, which I need for work, installs reasonably well on PlayOnLinux, except for one library that can be downloaded with winetricks:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#19177c">WINEPREFIX</span><span style="color:#666">=</span>~/.PlayOnLinux/wineprefix/Office2007 <span style="color:#19177c">WINE</span><span style="color:#666">=</span>~/.PlayOnLinux/wine/linux-x86/4.0/bin/wine winetricks msxml3
+</span></span></code></pre></div><h3 id="issues-with-dbeaver">Issues with DBeaver</h3>
+<p>In <code>/usr/lib/jvm/java-21-openjdk/conf/security/java.security</code>, in <code>jdk.tls.disabledAlgorithms</code> in lines:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ECDH, TLS_RSA_*, rsa_pkcs1_sha1 usage HandshakeSignature, \
+</span></span><span style="display:flex;"><span>ecdsa_sha1 usage HandshakeSignature, dsa_sha1 usage HandshakeSignature
+</span></span></code></pre></div><p>Leave only ECDH</p>
+<h3 id="running-max-in-firejail">Running MAX in Firejail</h3>
+<p>Firejail config:</p>
+<pre tabindex="0"><code class="language-firejail" data-lang="firejail">include disable-common.inc
+include disable-devel.inc
+include disable-programs.inc
 
+private ~/.sandbox/max
+private-tmp
+private-cache
+private-dev
+
+caps.drop all
+nonewprivs
+</code></pre><pre tabindex="0"><code class="language-conf-desktop" data-lang="conf-desktop">[Desktop Entry]
+Type=Application
+Terminal=false
+Name=MAX
+Exec=firejail --profile=max /usr/share/max/bin/max %U
+DBusActivatable=false
+Icon=/usr/share/pixmaps/max.png
+MimeType=x-scheme-handler/max;
+Comment=MAX Messenger Client Application
+Comment[ru]=Клиентское приложение мессенджера MAX
+StartupWMClass=max
+Categories=Chat;Network;InstantMessaging;Qt;
+Keywords=max;chat;im;messaging;messenger;sms;
+SingleMainWindow=true
+X-GNOME-UsesNotifications=true
+X-GNOME-SingleWindow=true
+</code></pre><p>Don&rsquo;t forget to run:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p ~/.sandbox/max
+</span></span><span style="display:flex;"><span>update-desktop-database ~/.local/share/applications
+</span></span></code></pre></div>
     </div>
     <div class="table-of-contents">
         <div class="table-of-contents-text">
             <b><a href="#">Table of Contents</a></b>
-            <nav id="TableOfContents"></nav>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#system-installation">System installation</a>
+      <ul>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#after-installation">After installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#metapac-configuration">Metapac configuration</a></li>
+    <li><a href="#paru-configuration">paru configuration</a></li>
+    <li><a href="#pacserve">pacserve</a></li>
+    <li><a href="#system-packages">System packages</a></li>
+    <li><a href="#notes-on-vms">Notes on VMs</a>
+      <ul>
+        <li><a href="#linux">Linux</a></li>
+        <li><a href="#windows">Windows</a></li>
+        <li><a href="#copying-vms-between-machines">Copying VMs between machines</a></li>
+        <li><a href="#assign-a-static-ip-to-a-vm">Assign a static IP to a VM</a></li>
+        <li><a href="#network">Network</a></li>
+      </ul>
+    </li>
+    <li><a href="#notes-on-software">Notes on Software</a>
+      <ul>
+        <li><a href="#upgrading-python-and-aur-packages">Upgrading Python and AUR packages</a></li>
+        <li><a href="#installing-ms-office-2007">Installing MS Office 2007</a></li>
+        <li><a href="#issues-with-dbeaver">Issues with DBeaver</a></li>
+        <li><a href="#running-max-in-firejail">Running MAX in Firejail</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
         </div>
         <a id="unhide-all-button" class="hidden">&lt;Expand&gt;</a>
         <a id="hide-all-button" class="hidden">&lt;Collapse&gt;</a>
