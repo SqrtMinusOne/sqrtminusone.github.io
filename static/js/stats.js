@@ -848,6 +848,15 @@
 
     "social-media-usage-bands": socialTimeline,
 
+    "locations-day-away-from-home-per-year": (data) =>
+      singleSeries(data, {
+        periodKey: "year",
+        valueKey: "days",
+        label: "Days away from home",
+        yTitle: "Days",
+        color: "#ff9f40",
+      }),
+
     "fit-distance-per-month": (data) =>
       singleSeries(data, {
         periodKey: "month",

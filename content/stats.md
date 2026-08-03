@@ -1,7 +1,7 @@
 +++
 title = "Stats"
 norss = true
-scripts = ["/js/chart.js", "/js/chartjs-adapter-date-fns.bundle.min.js", "/js/stats.js?v=5"]
+scripts = ["/js/chart.js", "/js/chartjs-adapter-date-fns.bundle.min.js", "/js/stats.js?v=6"]
 +++
 
 <style>
@@ -173,6 +173,14 @@ Here's this data broken down by transport type since January 2025:
 
 <div class="charts-wrapper">
   <canvas id="chart-uni-visits-by-transport-per-month" role="img" aria-label="University visits per month, stacked by broad transport class."></canvas>
+</div>
+
+### Days away from home per year
+
+I haven't been travelling all that much lately.
+
+<div class="charts-wrapper">
+  <canvas id="chart-locations-day-away-from-home-per-year" role="img" aria-label="Days spent away from home, grouped by year."></canvas>
 </div>
 
 ## Work
