@@ -8068,8 +8068,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">dired</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~&#34;</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;ad&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;aD&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-bookmark-open</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;ad&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired</span>)
 </span></span></code></pre></div><h4 id="addons-1">Addons</h4>
 <p>I used to use <a href="https://www.emacswiki.org/emacs/DiredPlus">dired+</a>, which provides a lot of extensions for dired functionality, but it also creates some new problems, so I opt out of it. Fortunately, the one feature I want from this package - adding more colors to dired buffers - is available as a separate package.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">diredfl</span>
@@ -8216,6 +8215,13 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">dired-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-rsync</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gd&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-do-copy</span>))
+</span></span></code></pre></div><h4 id="bookmarks">bookmarks</h4>
+<p>Config for the built-in <code>bookmark.el</code> package.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">bookmark-default-file</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">expand-file-name</span> <span style="color:#ba2121">&#34;~/10-19 Code/11 Config/11.10 dotfiles-private/bookmarks.el&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;gb&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">list-bookmarks</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;gk&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">consult-bookmark</span>)
 </span></span></code></pre></div><h4 id="subdirectories">Subdirectories</h4>
 <p>Subdirectories are one of the interesting features of Dired. It allows displaying multiple folders on the same window.</p>
 <p>I add my own keybindings and some extra functionality.</p>
@@ -8279,24 +8285,6 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#00f">insert</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">dired-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&amp;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-do-async-shell-command</span>))
-</span></span></code></pre></div><h4 id="bookmarks">Bookmarks</h4>
-<p>A simple bookmark list for Dired, mainly to use with TRAMP. I may look into a proper bookmarking system later.</p>
-<p>Bookmarks are listed in the <a href=".emacs.d/private.el">private.el</a> file, which has an expression like this:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>(setq my/dired-bookmarks
-</span></span><span style="display:flex;"><span>      &#39;((&#34;HOME&#34; . &#34;~&#34;)
-</span></span><span style="display:flex;"><span>        (&#34;sudo&#34; . &#34;/sudo::/&#34;)))
-</span></span></code></pre></div><p>The file itself is encrypted with yadm.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dired-bookmark-open</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">bookmarks</span>
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#008000">lambda</span> (<span style="color:#19177c">el</span>) (<span style="color:#00f">cons</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-30s %s&#34;</span> (<span style="color:#00f">car</span> <span style="color:#19177c">el</span>) (<span style="color:#00f">cdr</span> <span style="color:#19177c">el</span>)) (<span style="color:#00f">cdr</span> <span style="color:#19177c">el</span>)))
-</span></span><span style="display:flex;"><span>          <span style="color:#19177c">my/dired-bookmarks</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">dired</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">cdr</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">assoc</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Dired: &#34;</span> <span style="color:#19177c">bookmarks</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;^&#34;</span>)
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">bookmarks</span>)))))
 </span></span></code></pre></div><h4 id="integrations">Integrations</h4>
 <p>A few functions to send files from Dired to various places.</p>
 <p>First, a function to get the target buffer.</p>
@@ -9039,7 +9027,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:init</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;ae&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">el-rss</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">el-rss-tt-rss-url</span> <span style="color:#ba2121">&#34;https://sqrtminusone.xyz/tt-rss/&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">el-rss-tt-rss-url</span> <span style="color:#ba2121">&#34;https://i.sqrtminusone.xyz/tt-rss/&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">el-rss-tt-rss-username</span> <span style="color:#ba2121">&#34;sqrtminusone&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">el-rss-tt-rss-password-function</span>
 </span></span><span style="display:flex;"><span>        (<span style="color:#008000">lambda</span> ()
@@ -10944,10 +10932,10 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>For obvious reasons, podcasts rarely ship with transcripts. So in this <del>post</del> section I&rsquo;ll be using a speech recognition engine to make up for that. The general idea is to obtain the podcast information from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/openai/whisper">OpenAI Whisper</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-10-08 Sat&gt;</span></span>: Changed <a href="https://github.com/alphacep/vosk-api">vosk-api</a> to OpenAI Whisper.</p>
 <p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-11-10 Sun&gt;</span></span>: Moved from elfeed to Not-an-AI, reworked to use <a href="https://github.com/Vaibhavs10/insanely-fast-whisper">insanely-fast-whisper</a>.</p>
+<p>Edit <span class="timestamp-wrapper"><span class="timestamp">&lt;2026-08-12 Wed&gt;</span></span>: Replaced the unmaintained wrapper with my AI-generated <a href="https://github.com/SqrtMinusOne/whisper-cli">whisper-cli</a>, based on <code>faster-whisper</code> and optional pyannote diarization.</p>
 <h5 id="whisper">Whisper</h5>
 <p><a href="https://github.com/openai/whisper">OpenAI Whisper</a> is an amazing speech recognition toolkit.</p>
-<p>I previously used <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> by Georgi Gerganov, but have switched to <a href="https://github.com/Vaibhavs10/insanely-fast-whisper">insanely-fast-whisper</a> since it&rsquo;s easier to run on GPU, it doesn&rsquo;t require converting everything to WAV, and it includes speaker diarization capabilities.</p>
-<p>One disadvantage is that it doesn&rsquo;t produce human-readable output by default, so I make my own.</p>
+<p>I previously used <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> and <a href="https://github.com/Vaibhavs10/insanely-fast-whisper">insanely-fast-whisper</a>. Now I use my own CLI around <a href="https://github.com/SYSTRAN/faster-whisper">faster-whisper</a>, with GPU acceleration, direct SRT/VTT/TXT output, and optional speaker diarization through <a href="https://github.com/pyannote/pyannote-audio">pyannote.audio</a>.</p>
 <table>
 	<thead>
 			<tr>
@@ -10963,91 +10951,66 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 	</tbody>
 </table>
 <h5 id="running-it-from-emacs">Running it from Emacs</h5>
-<p>First, some functions to process the output. These take a JSON formed by <code>insanely-fast-whisper</code> and create a set of files:</p>
-<ul>
-<li>a TXT file with the full text;</li>
-<li>a VTT file;</li>
-<li>if speaker info is available:
-<ul>
-<li>a TXT file with speaker tags;</li>
-<li>a VTT file with speaker tags.</li>
-</ul>
-</li>
-</ul>
-<!--listend-->
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--format-vtt-seconds</span> (<span style="color:#19177c">seconds</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">numberp</span> <span style="color:#19177c">seconds</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let*</span> ((<span style="color:#19177c">hours</span> (<span style="color:#00f">/</span> (<span style="color:#00f">floor</span> <span style="color:#19177c">seconds</span>) (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">60</span>)))
-</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">minutes</span> (<span style="color:#00f">/</span> (<span style="color:#00f">-</span> (<span style="color:#00f">floor</span> <span style="color:#19177c">seconds</span>) (<span style="color:#00f">*</span> <span style="color:#19177c">hours</span> <span style="color:#666">60</span> <span style="color:#666">60</span>)) <span style="color:#666">60</span>))
-</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">sec</span> (<span style="color:#00f">%</span> (<span style="color:#00f">floor</span> <span style="color:#19177c">seconds</span>) <span style="color:#666">60</span>))
-</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">ms</span> (<span style="color:#00f">floor</span> (<span style="color:#00f">*</span> <span style="color:#666">1000</span> (<span style="color:#00f">-</span> <span style="color:#19177c">seconds</span> (<span style="color:#00f">floor</span> <span style="color:#19177c">seconds</span>))))))
-</span></span><span style="display:flex;"><span>        (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%.2d:%.2d:%.2d.%.3d&#34;</span> <span style="color:#19177c">hours</span> <span style="color:#19177c">minutes</span> <span style="color:#19177c">sec</span> <span style="color:#19177c">ms</span>))
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;&#34;</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--save-chucks-vtt</span> (<span style="color:#19177c">path</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">path</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;WEBVTT\n\n&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">chunk</span> <span style="color:#19177c">across</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;chunks</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">start</span> <span style="color:#00f">=</span> (<span style="color:#19177c">my/whisper--format-vtt-seconds</span>
-</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">aref</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;timestamp</span> <span style="color:#19177c">chunk</span>) <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">end</span> <span style="color:#00f">=</span> (<span style="color:#19177c">my/whisper--format-vtt-seconds</span>
-</span></span><span style="display:flex;"><span>                        (<span style="color:#00f">aref</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;timestamp</span> <span style="color:#19177c">chunk</span>) <span style="color:#666">1</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s --&gt; %s&#34;</span> <span style="color:#19177c">start</span> <span style="color:#19177c">end</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;text</span> <span style="color:#19177c">chunk</span>)) <span style="color:#ba2121">&#34;\n\n&#34;</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--save-speakers-vtt</span> (<span style="color:#19177c">path</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">path</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;WEBVTT\n\n&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">chunk</span> <span style="color:#19177c">across</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;speakers</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">start</span> <span style="color:#00f">=</span> (<span style="color:#19177c">my/whisper--format-vtt-seconds</span>
-</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">aref</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;timestamp</span> <span style="color:#19177c">chunk</span>) <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">end</span> <span style="color:#00f">=</span> (<span style="color:#19177c">my/whisper--format-vtt-seconds</span>
-</span></span><span style="display:flex;"><span>                        (<span style="color:#00f">aref</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;timestamp</span> <span style="color:#19177c">chunk</span>) <span style="color:#666">1</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s --&gt; %s&#34;</span> <span style="color:#19177c">start</span> <span style="color:#19177c">end</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span>
-</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;&lt;v %s&gt;&#34;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;speaker</span> <span style="color:#19177c">chunk</span>))
-</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">string-trim</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;text</span> <span style="color:#19177c">chunk</span>)) <span style="color:#ba2121">&#34;\n\n&#34;</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--save-speakers-txt</span> (<span style="color:#19177c">path</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">path</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">with</span> <span style="color:#19177c">prev-speaker</span>
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">chunk</span> <span style="color:#19177c">across</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;speakers</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">for</span> <span style="color:#19177c">speaker</span> <span style="color:#00f">=</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;speaker</span> <span style="color:#19177c">chunk</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">speaker</span> <span style="color:#19177c">prev-speaker</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#008000">progn</span>
-</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">when</span> <span style="color:#19177c">prev-speaker</span>
-</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">fill-region</span>
-</span></span><span style="display:flex;"><span>                     (<span style="color:#00f">line-beginning-position</span>)
-</span></span><span style="display:flex;"><span>                     (<span style="color:#00f">line-end-position</span>))
-</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>))
-</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[%s]&#34;</span> <span style="color:#19177c">speaker</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)
-</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">setq</span> <span style="color:#19177c">prev-speaker</span> <span style="color:#19177c">speaker</span>))
-</span></span><span style="display:flex;"><span>             <span style="color:#008000">do</span> (<span style="color:#00f">insert</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;text</span> <span style="color:#19177c">chunk</span>)) <span style="color:#ba2121">&#34; &#34;</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">fill-region</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">line-beginning-position</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">line-end-position</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--process-output</span> (<span style="color:#19177c">transcript-path</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">data</span> (<span style="color:#19177c">json-read-file</span> <span style="color:#19177c">transcript-path</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;text</span> <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-temp-file</span> (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">file-name-sans-extension</span> <span style="color:#19177c">transcript-path</span>)
-</span></span><span style="display:flex;"><span>                       <span style="color:#ba2121">&#34;.txt&#34;</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#00f">insert</span> (<span style="color:#19177c">string-trim</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;text</span> <span style="color:#19177c">data</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">do-auto-fill</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#19177c">seq-empty-p</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;speakers</span> <span style="color:#19177c">data</span>))
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/whisper--save-speakers-vtt</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">concat</span> (<span style="color:#19177c">file-name-sans-extension</span> <span style="color:#19177c">transcript-path</span>) <span style="color:#ba2121">&#34;-spk.vtt&#34;</span>)
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">data</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/whisper--save-speakers-txt</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">concat</span> (<span style="color:#19177c">file-name-sans-extension</span> <span style="color:#19177c">transcript-path</span>) <span style="color:#ba2121">&#34;-spk.txt&#34;</span>)
-</span></span><span style="display:flex;"><span>       <span style="color:#19177c">data</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/whisper--save-chucks-vtt</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> (<span style="color:#19177c">file-name-sans-extension</span> <span style="color:#19177c">transcript-path</span>) <span style="color:#ba2121">&#34;.vtt&#34;</span>)
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">data</span>)))
-</span></span></code></pre></div><p>Then run the program itself with <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Asynchronous-Processes.html">asyncronous processes</a>.</p>
+<p>The CLI creates the final SRT, VTT, and TXT files, so Emacs only has to start it asynchronously and report completion. Hugging Face credentials are passed through the child environment only when diarization is requested.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar</span> <span style="color:#19177c">my/whisper-path</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/micromamba/envs/insanely-fast-whisper/bin/insanely-fast-whisper&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;/home/pavel/10-19 Code/13 Other Projects/13.15 whisper-cli/.venv/bin/whisper-cli&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--sentinel</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">event</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">memq</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">exit</span> <span style="color:#d2413a;font-weight:bold">signal</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>) <span style="color:#19177c">&#39;exit</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">=</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>) <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">notifications-notify</span> <span style="color:#008000">:body</span> <span style="color:#ba2121">&#34;Audio conversion completed&#34;</span>
+</span></span><span style="display:flex;"><span>                                  <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Whisper&#34;</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Whisper conversion completed&#34;</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">when</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">kill-buffer</span> <span style="color:#19177c">buffer</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">notifications-notify</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#008000">:body</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Conversion failed: %s&#34;</span> (<span style="color:#19177c">string-trim</span> <span style="color:#19177c">event</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Whisper&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#00f">buffer-live-p</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">display-buffer</span> <span style="color:#19177c">buffer</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Whisper failed: %s&#34;</span> (<span style="color:#19177c">string-trim</span> <span style="color:#19177c">event</span>))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--read-diarization</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Prompt for optional diarization and return nil, </span><span style="color:#19177c">`auto&#39;</span><span style="color:#ba2121">, or a speaker count.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;Enable speaker diarization? &#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">num</span> (<span style="color:#19177c">read-number</span> <span style="color:#ba2121">&#34;Number of speakers (0 for automatic): &#34;</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">num</span> <span style="color:#666">0</span>) <span style="color:#19177c">num</span> <span style="color:#19177c">&#39;auto</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper--start</span> (<span style="color:#19177c">source-args</span> <span style="color:#19177c">output-dir</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Start Whisper for SOURCE-ARGS.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NUM-SPEAKERS is nil to disable diarization, </span><span style="color:#19177c">`auto&#39;</span><span style="color:#ba2121"> to infer the count, or a number.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">args</span> (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#19177c">source-args</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--output&#34;</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">output-dir</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">when</span> <span style="color:#19177c">language</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--language&#34;</span> <span style="color:#19177c">language</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">when</span> <span style="color:#19177c">num-speakers</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--diarize&#34;</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">when</span> (<span style="color:#00f">numberp</span> <span style="color:#19177c">num-speakers</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--num-speakers&#34;</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s&#34;</span> <span style="color:#19177c">num-speakers</span>)))))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*whisper*&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">process-environment</span> (<span style="color:#00f">copy-sequence</span> <span style="color:#19177c">process-environment</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">variable</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;http_proxy&#34;</span> <span style="color:#ba2121">&#34;https_proxy&#34;</span> <span style="color:#ba2121">&#34;HTTP_PROXY&#34;</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#ba2121">&#34;HTTPS_PROXY&#34;</span> <span style="color:#ba2121">&#34;all_proxy&#34;</span> <span style="color:#ba2121">&#34;ALL_PROXY&#34;</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">setenv</span> <span style="color:#19177c">variable</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> <span style="color:#19177c">num-speakers</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">setenv</span> <span style="color:#ba2121">&#34;HF_TOKEN&#34;</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">my/password-store-get-field</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#ba2121">&#34;Accounts/huggingface.co&#34;</span> <span style="color:#ba2121">&#34;token&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">process</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">make-process</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:name</span> <span style="color:#ba2121">&#34;whisper&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:buffer</span> <span style="color:#19177c">buffer</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:command</span> (<span style="color:#00f">cons</span> <span style="color:#19177c">my/whisper-path</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:connection-type</span> <span style="color:#19177c">&#39;pipe</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:noquery</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#008000">:sentinel</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/whisper--sentinel</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">display-buffer</span> <span style="color:#19177c">buffer</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">process</span>)))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/invoke-whisper</span> (<span style="color:#19177c">input</span> <span style="color:#19177c">output-dir</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
@@ -11056,141 +11019,16 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">read-directory-name</span> <span style="color:#ba2121">&#34;Output-directory: &#34;</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">lang</span> (<span style="color:#00f">read-string</span> <span style="color:#ba2121">&#34;Language (optional): &#34;</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">lang</span>) <span style="color:#800">nil</span> <span style="color:#19177c">lang</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">num</span> (<span style="color:#19177c">read-number</span> <span style="color:#ba2121">&#34;Number of speakers (optional): &#34;</span> <span style="color:#666">0</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">num</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">num</span>)))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">transcript-path</span> (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>                           (<span style="color:#00f">expand-file-name</span> (<span style="color:#00f">file-name-as-directory</span> <span style="color:#19177c">output-dir</span>))
-</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">file-name-base</span> <span style="color:#19177c">input</span>)
-</span></span><span style="display:flex;"><span>                           <span style="color:#ba2121">&#34;.json&#34;</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">args</span>
-</span></span><span style="display:flex;"><span>          <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;--file-name&#34;</span> <span style="color:#666">,</span>(<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">input</span>)
-</span></span><span style="display:flex;"><span>            <span style="color:#ba2121">&#34;--transcript-path&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">transcript-path</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#ba2121">&#34;--hf-token&#34;</span> <span style="color:#666">,</span>(<span style="color:#19177c">my/password-store-get-field</span> <span style="color:#ba2121">&#34;Accounts/huggingface.co&#34;</span> <span style="color:#ba2121">&#34;token&#34;</span>)
-</span></span><span style="display:flex;"><span>            <span style="color:#666">,@</span>(<span style="color:#008000">when</span> <span style="color:#19177c">language</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;--language&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">language</span>))
-</span></span><span style="display:flex;"><span>            <span style="color:#666">,@</span>(<span style="color:#008000">when</span> <span style="color:#19177c">num-speakers</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;--num-speakers&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">num-speakers</span>))))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">buffer</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*whisper*&#34;</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">proc</span> (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;start-process</span> <span style="color:#ba2121">&#34;whisper&#34;</span> <span style="color:#19177c">buffer</span> <span style="color:#19177c">my/whisper-path</span> <span style="color:#19177c">args</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">set-process-sentinel</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">proc</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">process</span> <span style="color:#19177c">_msg</span>)
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">let</span> ((<span style="color:#19177c">status</span> (<span style="color:#00f">process-status</span> <span style="color:#19177c">process</span>))
-</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">code</span> (<span style="color:#00f">process-exit-status</span> <span style="color:#19177c">process</span>)))
-</span></span><span style="display:flex;"><span>         (<span style="color:#008000">cond</span> ((<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">=</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">my/whisper--process-output</span> <span style="color:#19177c">transcript-path</span>)
-</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">notifications-notify</span> <span style="color:#008000">:body</span> <span style="color:#ba2121">&#34;Audio conversion completed&#34;</span>
-</span></span><span style="display:flex;"><span>                                      <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Whisper&#34;</span>)
-</span></span><span style="display:flex;"><span>                (<span style="color:#00f">kill-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)))
-</span></span><span style="display:flex;"><span>               ((<span style="color:#008000">or</span> (<span style="color:#008000">and</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;exit</span>) (<span style="color:#00f">&gt;</span> <span style="color:#19177c">code</span> <span style="color:#666">0</span>))
-</span></span><span style="display:flex;"><span>                    (<span style="color:#00f">eq</span> <span style="color:#19177c">status</span> <span style="color:#19177c">&#39;signal</span>))
-</span></span><span style="display:flex;"><span>                (<span style="color:#008000">let</span> ((<span style="color:#19177c">err</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">process-buffer</span> <span style="color:#19177c">process</span>)
-</span></span><span style="display:flex;"><span>                             (<span style="color:#00f">buffer-string</span>))))
-</span></span><span style="display:flex;"><span>                  (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Error in Whisper: %s&#34;</span> <span style="color:#19177c">err</span>)))))))))
-</span></span></code></pre></div><p>If run interactively, the defined function prompts for paths to both files.</p>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/whisper--read-diarization</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#00f">file-readable-p</span> <span style="color:#19177c">input</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Input file is not readable: %s&#34;</span> <span style="color:#19177c">input</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/whisper--start</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--file&#34;</span> (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">input</span>))
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">output-dir</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>))
+</span></span></code></pre></div><p>If run interactively, the defined function prompts for paths to both files. Diarization can be disabled, run with automatic speaker counting, or given an exact speaker count.</p>
 <p>The process sentinel sends a <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Desktop-Notifications.html">desktop notification</a> because it&rsquo;s a bit more noticeable than <code>message</code>, and the process is expected to take some time.</p>
-<h5 id="integrating-with-elfeed">Integrating with elfeed</h5>
-<p>To actually run the function from the section above, we need to download the file in question.</p>
-<p>The <code>whisper</code> executable, given the file <code>&lt;file&gt;.&lt;extension&gt;</code>, creates files named <code>&lt;file&gt;.vtt</code>, <code>&lt;file&gt;.srt</code>, <code>&lt;file&gt;.txt</code>. So first we need to save the file under the correct name.</p>
-<p>I use a library called <a href="https://github.com/tkf/emacs-request">request.el</a> to download files elsewhere, so I&rsquo;ll re-use it here. You can just as well invoke <code>curl</code> or <code>wget</code> via a asynchronous process.</p>
-<p>This function downloads the file to a non-temporary folder, which is <code>~/.elfeed/podcast-files/</code> if you didn&rsquo;t move the elfeed database. That is so because a permanently downloaded file works better for the next section.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;elfeed</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defvar</span> <span style="color:#19177c">my/elfeed-whisper-podcast-files-directory</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span> <span style="color:#19177c">elfeed-db-directory</span> <span style="color:#ba2121">&#34;/podcast-files/&#34;</span>)))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-whisper-get-transcript-new</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">url</span> (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>)))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">file-name</span> (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
-</span></span><span style="display:flex;"><span>                     <span style="color:#ba2121">&#34;.&#34;</span>
-</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">file-name-extension</span> <span style="color:#19177c">url</span>)))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">file-path</span> (<span style="color:#00f">expand-file-name</span>
-</span></span><span style="display:flex;"><span>                     (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>                      <span style="color:#19177c">my/elfeed-whisper-podcast-files-directory</span>
-</span></span><span style="display:flex;"><span>                      <span style="color:#19177c">file-name</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">my/elfeed-whisper-podcast-files-directory</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">mkdir</span> <span style="color:#19177c">my/elfeed-whisper-podcast-files-directory</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:complete</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
-</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>           (<span style="color:#00f">write-region</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#19177c">file-path</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Conversion started&#34;</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">my/invoke-whisper</span> <span style="color:#19177c">file-path</span> <span style="color:#19177c">my/elfeed-srt-dir</span>)))
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
-</span></span></code></pre></div><p>I also experimented with a bunch of options to write binary data in Emacs, of which the way with <code>write-region</code> (as implemented in <a href="https://github.com/rejeep/f.el">f.el</a>) seems to be the fastest. <a href="https://emacs.stackexchange.com/questions/59449/how-do-i-save-raw-bytes-into-a-file">This thread on StackExchange</a> suggests that it may screw some bytes towards the end, but whether or not this is the case, mp3 files survive the procedure. The proposed solution with <code>seq-doseq</code> takes at least a few seconds.</p>
-<p>As <code>my/invoke-whisper</code> creates multiple files, here&rsquo;s a function to select related files:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-show-related-files</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>           (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>) (<span style="color:#00f">cons</span> (<span style="color:#19177c">file-name-extension</span> <span style="color:#19177c">file</span>) <span style="color:#19177c">file</span>))
-</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">seq-filter</span>
-</span></span><span style="display:flex;"><span>            (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
-</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">string-match-p</span>
-</span></span><span style="display:flex;"><span>               (<span style="color:#008000">rx</span> <span style="color:#19177c">bos</span> (<span style="color:#19177c">literal</span> (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))) <span style="color:#ba2121">&#34;.&#34;</span>)
-</span></span><span style="display:flex;"><span>               <span style="color:#19177c">file</span>))
-</span></span><span style="display:flex;"><span>            (<span style="color:#00f">directory-files</span> <span style="color:#19177c">my/elfeed-srt-dir</span>))))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">buffer</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">find-file-other-window</span>
-</span></span><span style="display:flex;"><span>           (<span style="color:#00f">concat</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#19177c">my/elfeed-srt-dir</span>
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">alist-get</span>
-</span></span><span style="display:flex;"><span>             (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;File: &#34;</span> <span style="color:#19177c">files</span>)
-</span></span><span style="display:flex;"><span>             <span style="color:#19177c">files</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">entry</span>))))
-</span></span></code></pre></div><p>Finally, we need a function to show the transcript if it exists or invoke <code>my/elfeed-whisper-get-transcript-new</code> if it doesn&rsquo;t. And this is the function that we&rsquo;ll call from an <code>elfeed-entry</code> buffer.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-whisper-get-transcript</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Retrieve transcript for the enclosure of the current elfeed ENTRY.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">enclosure</span> (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">enclosure</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No enclosure found!&#34;</span>))
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">srt-path</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-srt-dir</span>
-</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">elfeed-ref-id</span> (<span style="color:#19177c">elfeed-entry-content</span> <span style="color:#19177c">entry</span>))
-</span></span><span style="display:flex;"><span>                            <span style="color:#ba2121">&#34;.srt&#34;</span>)))
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">if</span> (<span style="color:#00f">file-exists-p</span> <span style="color:#19177c">srt-path</span>)
-</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">buffer</span> (<span style="color:#19177c">find-file-other-window</span> <span style="color:#19177c">srt-path</span>)))
-</span></span><span style="display:flex;"><span>            (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buffer</span>
-</span></span><span style="display:flex;"><span>              (<span style="color:#008000">setq-local</span> <span style="color:#19177c">elfeed-show-entry</span> <span style="color:#19177c">entry</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/elfeed-whisper-get-transcript-new</span> <span style="color:#19177c">entry</span>)))))
-</span></span></code></pre></div><h5 id="integrating-with-subed">Integrating with subed</h5>
-<p>Now that we&rsquo;ve produced a <code>.srt</code> file, we can use a package called <a href="https://github.com/sachac/subed">subed</a> to control the playback, as I have done in the YouTube section.</p>
-<p>By the way, this wasn&rsquo;t the most straightforward thing to figure out, because the MPV window doesn&rsquo;t show up for an audio file, and the player itself starts in the paused state. So I thought nothing was happening until I enabled the debug log.</p>
-<p>With that in mind, here&rsquo;s a function to launch MPV from the buffer generated by <code>my/elfeed-whisper-get-transcript</code>:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/elfeed-whisper-subed</span> (<span style="color:#19177c">entry</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Run MPV for the current Whisper-generated subtitles file.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ENTRY is an instance of </span><span style="color:#19177c">`elfeed-entry&#39;</span><span style="color:#ba2121">.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> <span style="color:#19177c">elfeed-show-entry</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">entry</span>
-</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No entry!&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;subed-mode</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Not subed mode!&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">subed-mpv-video-file</span>
-</span></span><span style="display:flex;"><span>              (<span style="color:#00f">expand-file-name</span>
-</span></span><span style="display:flex;"><span>               (<span style="color:#00f">concat</span> <span style="color:#19177c">my/elfeed-whisper-podcast-files-directory</span>
-</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">my/get-file-name-from-url</span>
-</span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">caar</span> (<span style="color:#19177c">elfeed-entry-enclosures</span> <span style="color:#19177c">entry</span>))))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">subed-mpv--play</span> <span style="color:#19177c">subed-mpv-video-file</span>))
-</span></span></code></pre></div><p>After running <code>M-x my/elfeed-whisper-subed</code>, run <code>M-x subed-toggle-loop-over-current-subtitle</code> (<code>C-c C-l</code>), because somehow it&rsquo;s turned on by default, and <code>M-x subed-toggle-pause-while-typing</code> (<code>C-c C-p</code>), because sometimes this made my instance of MPV lag.</p>
-<p>After that, <code>M-x subed-mpv-toggle-pause</code> should start the playback, which you can control by moving the cursor in the buffer.</p>
-<p>You can also run <code>M-x subed-toggle-sync-point-to-player</code> (<code>C-c .</code>) to toggle syncing the point in the buffer to the currently played subtitle (this automatically gets disabled when you switch buffers).</p>
-<p>Running <code>M-x subed-toggle-sync-player-to-point</code> (<code>C-c ,</code>) does the opposite, i.e. sets the player position to the subtitle under point. These two functions are useful since the MPV window controls aren&rsquo;t available.</p>
 <h5 id="running-it-for-internet-files">Running it for Internet Files</h5>
-<p>And since lately I don&rsquo;t listen to podcasts via elfeed that much, I also want a function that runs whisper on random Internet files.</p>
+<p>This section used to be an elaborate elfeed integration, but I don&rsquo;t use elfeed anymore, so I&rsquo;m fine with running the package on random URLs.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/whisper-url</span> (<span style="color:#19177c">url</span> <span style="color:#19177c">file-name</span> <span style="color:#19177c">output-dir</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
 </span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#00f">read-from-minibuffer</span> <span style="color:#ba2121">&#34;URL: &#34;</span>)
@@ -11198,32 +11036,18 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>         (<span style="color:#19177c">read-directory-name</span> <span style="color:#ba2121">&#34;Output directory: &#34;</span>)
 </span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">lang</span> (<span style="color:#00f">read-string</span> <span style="color:#ba2121">&#34;Language (optional): &#34;</span>)))
 </span></span><span style="display:flex;"><span>           (<span style="color:#008000">if</span> (<span style="color:#19177c">string-empty-p</span> <span style="color:#19177c">lang</span>) <span style="color:#800">nil</span> <span style="color:#19177c">lang</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">num</span> (<span style="color:#19177c">read-number</span> <span style="color:#ba2121">&#34;Number of speakers (optional): &#34;</span> <span style="color:#666">0</span>)))
-</span></span><span style="display:flex;"><span>           (<span style="color:#008000">when</span> (<span style="color:#00f">&gt;</span> <span style="color:#19177c">num</span> <span style="color:#666">0</span>)
-</span></span><span style="display:flex;"><span>             (<span style="color:#00f">number-to-string</span> <span style="color:#19177c">num</span>)))))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file-path</span>
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">concat</span> <span style="color:#19177c">output-dir</span> <span style="color:#19177c">file-name</span> <span style="color:#ba2121">&#34;.&#34;</span> (<span style="color:#19177c">file-name-extension</span> <span style="color:#19177c">url</span>))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Download started&#34;</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">request</span> <span style="color:#19177c">url</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;GET&#34;</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:encoding</span> <span style="color:#19177c">&#39;binary</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:complete</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">data</span> <span style="color:#008000">&amp;allow-other-keys</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">coding-system-for-write</span> <span style="color:#19177c">&#39;binary</span>)
-</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-annotate-functions</span> <span style="color:#800">nil</span>)
-</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">write-region-post-annotation-function</span> <span style="color:#800">nil</span>))
-</span></span><span style="display:flex;"><span>           (<span style="color:#00f">write-region</span> <span style="color:#19177c">data</span> <span style="color:#800">nil</span> <span style="color:#19177c">file-path</span> <span style="color:#800">nil</span> <span style="color:#008000">:silent</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Conversion started&#34;</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">my/invoke-whisper</span> <span style="color:#19177c">file-path</span> <span style="color:#19177c">output-dir</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>)))
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:error</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">cl-function</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;key</span> <span style="color:#19177c">error-thrown</span> <span style="color:#008000">&amp;allow-other-keys</span>)
-</span></span><span style="display:flex;"><span>         (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error!: %S&#34;</span> <span style="color:#19177c">error-thrown</span>))))))
-</span></span></code></pre></div><h5 id="some-observations">Some observations</h5>
-<p>So, the functions above work for my purposes.</p>
-<p>Vosk API works much faster than Whisper. The smallest Vosk model requires ~10 times less than the playback time, and even the <code>tiny.en</code> Whisper model on my PC requires maybe 1.2x playback time.</p>
-<p>However, the quality of the output for Whisper is just so much better so I consider it to be worth the wait. Even with the <code>tiny</code> model, the transcript is almost perfect, provided that the audio is of reasonable quality.</p>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">my/whisper--read-diarization</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/whisper--start</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> <span style="color:#ba2121">&#34;--url&#34;</span> <span style="color:#19177c">url</span> <span style="color:#ba2121">&#34;--name&#34;</span> <span style="color:#19177c">file-name</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#19177c">output-dir</span> <span style="color:#19177c">language</span> <span style="color:#19177c">num-speakers</span>))
+</span></span></code></pre></div><h5 id="integrating-with-subed">Integrating with subed</h5>
+<p>Now that we&rsquo;ve produced a <code>.srt</code> file, we can use a package called <a href="https://github.com/sachac/subed">subed</a> to control the playback, as I have done in the YouTube section.</p>
+<p>By the way, this wasn&rsquo;t the most straightforward thing to figure out, because the MPV window doesn&rsquo;t show up for an audio file, and the player itself starts in the paused state. So I thought nothing was happening until I enabled the debug log.</p>
+<p>Run with <code>M-x subed-mpv-play-from-file</code>.</p>
+<p>After running <code>M-x my/elfeed-whisper-subed</code>, run <code>M-x subed-toggle-loop-over-current-subtitle</code> (<code>C-c C-l</code>), because somehow it&rsquo;s turned on by default, and <code>M-x subed-toggle-pause-while-typing</code> (<code>C-c C-p</code>), because sometimes this made my instance of MPV lag.</p>
+<p>After that, <code>M-x subed-mpv-toggle-pause</code> should start the playback, which you can control by moving the cursor in the buffer.</p>
+<p>You can also run <code>M-x subed-toggle-sync-point-to-player</code> (<code>C-c .</code>) to toggle syncing the point in the buffer to the currently played subtitle (this automatically gets disabled when you switch buffers).</p>
+<p>Running <code>M-x subed-toggle-sync-player-to-point</code> (<code>C-c ,</code>) does the opposite, i.e. sets the player position to the subtitle under point. These two functions are useful since the MPV window controls aren&rsquo;t available.</p>
 <h4 id="ai-agents">AI Agents</h4>
 <h5 id="agent-shell">agent-shell</h5>
 <p>Running AI agents from Emacs. It&rsquo;s pretty nice but I&rsquo;ll wait when plan mode is available in <code>codex-acp</code>.</p>
@@ -12505,6 +12329,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deterred-transport-podorozhnik-password</span>
 </span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Accounts/podorozhnik.spb.ru&#34;</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deterred-org-clock-files</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-agenda-and-archive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">deterred-messengers-discord-non-work</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;System Crafters&#34;</span> <span style="color:#ba2121">&#34;Doom Emacs&#34;</span> <span style="color:#ba2121">&#34;Lisp&#34;</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;llm-openai</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">llm-warn-on-nonfree</span> <span style="color:#800">nil</span>)
@@ -13487,9 +13312,9 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
           <ul>
             <li><a href="#basic-config-and-keybindings">Basic config &amp; keybindings</a></li>
             <li><a href="#addons-1">Addons</a></li>
+            <li><a href="#bookmarks">bookmarks</a></li>
             <li><a href="#subdirectories">Subdirectories</a></li>
             <li><a href="#other-functions">Other functions</a></li>
-            <li><a href="#bookmarks">Bookmarks</a></li>
             <li><a href="#integrations">Integrations</a></li>
           </ul>
         </li>
