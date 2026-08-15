@@ -2669,11 +2669,22 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </ul>
 <!--listend-->
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">if</span> (<span style="color:#00f">x-list-fonts</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font&#34;</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">font</span> <span style="color:#ba2121">&#34;-JB  -JetBrainsMono Nerd Font-medium-normal-normal-*-17-*-*-*-m-0-iso10646-1&#34;</span>))
-</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">set-frame-font</span> <span style="color:#19177c">font</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
-</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;default-frame-alist</span> <span style="color:#666">`</span>(<span style="color:#19177c">font</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">font</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Install JetBrainsMono Nerd Font!&#34;</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">font</span> (<span style="color:#00f">font-spec</span> <span style="color:#008000">:family</span> <span style="color:#ba2121">&#34;JetBrainsMono Nerd Font&#34;</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#008000">:weight</span> <span style="color:#19177c">&#39;medium</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#008000">:size</span> <span style="color:#666">17</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">find-font</span> <span style="color:#19177c">font</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">progn</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">set-frame-font</span> <span style="color:#19177c">font</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">&#39;font</span> <span style="color:#19177c">default-frame-alist</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">frame-parameter</span> <span style="color:#800">nil</span> <span style="color:#19177c">&#39;font</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Install JetBrainsMono Nerd Font!&#34;</span>))))
+</span></span></code></pre></div><p>The 2020 Nerd Font build predates the supplementary private-use glyphs used by current tools.  Preserve its existing glyphs and use Symbols Nerd Font Mono only for ranges that the old font does not contain.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">symbols</span> (<span style="color:#00f">font-spec</span> <span style="color:#008000">:family</span> <span style="color:#ba2121">&#34;Symbols Nerd Font Mono&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">find-font</span> <span style="color:#19177c">symbols</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">dolist</span> (<span style="color:#19177c">range</span> <span style="color:#666">&#39;</span>((<span style="color:#666">#xE62F</span> <span style="color:#666">.</span> <span style="color:#666">#xE6B8</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#666">#xF0001</span> <span style="color:#666">.</span> <span style="color:#666">#xF1AF0</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#00f">set-fontset-font</span> <span style="color:#800">t</span> <span style="color:#19177c">range</span> <span style="color:#19177c">symbols</span> <span style="color:#800">nil</span> <span style="color:#19177c">&#39;prepend</span>)))))
 </span></span></code></pre></div><p>To make the icons work (e.g. in the Doom Modeline), run <code>M-x all-the-icons-install-fonts</code>. The package definition is somewhere later in the config.</p>
 <h4 id="other-fonts">Other fonts</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">when</span> (<span style="color:#19177c">display-graphic-p</span>)
@@ -8422,6 +8433,21 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;. s&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/notmuch-save-to-dired</span>))
 </span></span></code></pre></div><h3 id="tramp">TRAMP</h3>
 <p>TRAMP is a package that provides remote editing capacities. It is particularly useful for remote server management.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Arch dependency</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>gvfs-dnssd</td>
+			</tr>
+			<tr>
+					<td>gvfs-goa</td>
+			</tr>
+	</tbody>
+</table>
 <h4 id="general-settings-4">General settings</h4>
 <p>Some settings I copy-pasted from somewhere:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">remote-file-name-inhibit-cache</span> <span style="color:#800">nil</span>)
@@ -8588,6 +8614,7 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghostel-dedicated</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ghostel</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">ghostel-buffer-name</span> <span style="color:#ba2121">&#34;ghostel-dedicated&#34;</span>)
 </span></span><span style="display:flex;"><span>         (<span style="color:#19177c">dedicated-buffer</span> (<span style="color:#00f">get-buffer</span> <span style="color:#19177c">ghostel-buffer-name</span>)))
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">dedicated-buffer</span>)
@@ -8601,6 +8628,12 @@ buffers.</p>
 </span></span><span style="display:flex;"><span> <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-dedicated</span>
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ghostel</span>)
+</span></span></code></pre></div><h5 id="auto-insert">Auto insert</h5>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghostel-auto-insert</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-insert-state</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ghostel-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-auto-insert</span>)
 </span></span></code></pre></div><h4 id="vterm">vterm</h4>
 <p><a href="https://github.com/akermu/emacs-libvterm">vterm</a> is a terminal emulator for Emacs.</p>
 <p>References:</p>
