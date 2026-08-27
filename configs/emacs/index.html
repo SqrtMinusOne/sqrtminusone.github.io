@@ -4600,6 +4600,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><h4 id="ansible">ansible</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ansible</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">ansible-vault</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><h4 id="jinja2">jinja2</h4>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">jinja2-mode</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>)
@@ -5004,7 +5007,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">thread-last</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span> <span style="color:#ba2121">&#34;learning&#34;</span>)
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
-</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span> (<span style="color:#008000">rx</span> <span style="color:#ba2121">&#34;.org&#34;</span> <span style="color:#19177c">eos</span>))))
+</span></span><span style="display:flex;"><span>                      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;.org&#34;</span>
+</span></span><span style="display:flex;"><span>                                              <span style="color:#ba2121">&#34;.org.gpg&#34;</span>) <span style="color:#19177c">eos</span>))))
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;append</span>)
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
 </span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">string-replace</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">file</span>)))
@@ -8227,6 +8232,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">dired-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-rsync</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gd&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">dired-do-copy</span>))
+</span></span></code></pre></div><p><a href="https://github.com/jwiegley/emacs-async/">dired-async</a> allows makes the built-in dired operations asynchronous by spawning child emacs instances. it&rsquo;s useful when <code>rsync</code> isn&rsquo;t available, which, in my case, is tramp via webdav.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">async</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:straight</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:after</span> (<span style="color:#19177c">dired</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">dired-async-mode</span>))
 </span></span></code></pre></div><h4 id="bookmarks">bookmarks</h4>
 <p>Config for the built-in <code>bookmark.el</code> package.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">bookmark-default-file</span>
@@ -8446,6 +8457,12 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 			<tr>
 					<td>gvfs-goa</td>
 			</tr>
+			<tr>
+					<td>gnome-online-accounts</td>
+			</tr>
+			<tr>
+					<td>gnome-online-accounts-gtk</td>
+			</tr>
 	</tbody>
 </table>
 <h4 id="general-settings-4">General settings</h4>
@@ -8530,9 +8547,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;activity-watch-mode</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">activity-watch--save</span> <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-void-if-tramp</span>))
-</span></span></code></pre></div><p><code>company-mode</code> gets slow when automatic completion probes a remote filesystem.
-Keep manual completion, but disable the idle timer in remote file and shell
-buffers.</p>
+</span></span></code></pre></div><p><code>company-mode</code> gets slow when automatic completion probes a remote filesystem. Keep manual completion, but disable the idle timer in remote file and shell buffers.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/shell-maybe-configure-for-tramp</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#19177c">my/tramp-p</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">company-idle-delay</span> <span style="color:#800">nil</span>)))
@@ -8588,6 +8603,105 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">dired-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/tramp-cleanup-here-maybe</span>))
+</span></span></code></pre></div><h4 id="copy-one-file-over-sftp">Copy one file over SFTP</h4>
+<p>Unfortunately I couldn&rsquo;t find a good way to copy files via TRAMP over SSH other than to launch <code>scp</code> myself. <code>dired-rsync</code> doesn&rsquo;t work without remote <code>rsync</code>; <code>dired-async</code> is opaque and doesn&rsquo;t show progress.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/dired-ssh-copy</span> (<span style="color:#19177c">sources</span> <span style="color:#19177c">target-folder</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#19177c">dired-get-marked-files</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">with-current-buffer</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">my/get-good-buffer</span> <span style="color:#19177c">&#39;dired-mode</span> <span style="color:#ba2121">&#34;Dired buffer: &#34;</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">dired-current-directory</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> <span style="color:#19177c">sources</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No source files selected&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">source-remote-prefix</span> (<span style="color:#19177c">file-remote-p</span> (<span style="color:#00f">car</span> <span style="color:#19177c">sources</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">sources-remote-p</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">null</span> <span style="color:#19177c">source-remote-prefix</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">target-remote-p</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#00f">null</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">target-folder</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">sources-remote-p</span> <span style="color:#19177c">target-remote-p</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Sources and target must be on opposite sides of SSH&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; All sources must be local, or use the same remote connection.</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">source</span> <span style="color:#19177c">sources</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#00f">equal</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">source</span>) <span style="color:#19177c">source-remote-prefix</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;All source files must use the same local or remote connection&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Reject remote methods other than ordinary /ssh: paths.</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">remote-file</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">if</span> <span style="color:#19177c">sources-remote-p</span> <span style="color:#19177c">sources</span> (<span style="color:#00f">list</span> <span style="color:#19177c">target-folder</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">string-prefix-p</span> <span style="color:#ba2121">&#34;/ssh:&#34;</span> <span style="color:#19177c">remote-file</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;%s doesn&#39;t look like an SSH location&#34;</span> <span style="color:#19177c">remote-file</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Check this before converting the TRAMP names.</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">recursive-p</span> (<span style="color:#19177c">seq-some</span> <span style="color:#00f">#&#39;file-directory-p</span> <span style="color:#19177c">sources</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">local-directory</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">if</span> <span style="color:#19177c">sources-remote-p</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">file-name-as-directory</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">expand-file-name</span> <span style="color:#19177c">target-folder</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">file-name-directory</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">expand-file-name</span> (<span style="color:#00f">car</span> <span style="color:#19177c">sources</span>)))))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">scp-sources</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">lambda</span> (<span style="color:#19177c">source</span>) (<span style="color:#19177c">string-remove-prefix</span> <span style="color:#ba2121">&#34;/ssh:&#34;</span> <span style="color:#19177c">source</span>))
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">sources</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">scp-target</span> (<span style="color:#19177c">string-remove-prefix</span> <span style="color:#ba2121">&#34;/ssh:&#34;</span> <span style="color:#19177c">target-folder</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">buf</span> (<span style="color:#00f">get-buffer-create</span> <span style="color:#ba2121">&#34;*dired-copy*&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">process</span> (<span style="color:#00f">get-buffer-process</span> <span style="color:#19177c">buf</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">when</span> (<span style="color:#19177c">process-live-p</span> <span style="color:#19177c">process</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;A Dired copy process is already running&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">comint-mode</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; Ensure `start-file-process&#39; starts scp locally.</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq</span> <span style="color:#19177c">default-directory</span> <span style="color:#19177c">local-directory</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let</span> ((<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">erase-buffer</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq-local</span> <span style="color:#19177c">comint-inhibit-carriage-motion</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#19177c">ansi-color-for-comint-mode</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;comint-output-filter-functions</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#00f">#&#39;</span><span style="color:#19177c">ansi-color-process-output</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">process-connection-type</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">comint-exec</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">buf</span> <span style="color:#ba2121">&#34;dired-copy&#34;</span> <span style="color:#ba2121">&#34;scp&#34;</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> <span style="color:#19177c">recursive-p</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;-r&#34;</span>))
+</span></span><span style="display:flex;"><span>          <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;--&#34;</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#19177c">scp-sources</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">list</span> <span style="color:#19177c">scp-target</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">display-buffer</span> <span style="color:#19177c">buf</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;dired</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">dired-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;gD&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/dired-ssh-copy</span>))
+</span></span></code></pre></div><h4 id="edit-as-sudo">Edit as sudo</h4>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/open-as-sudo-dwim</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">if</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;dired-mode</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">or</span> (<span style="color:#00f">car</span> (<span style="color:#19177c">dired-get-marked-files</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">default-directory</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">buffer-file-name</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">file</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;No file&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">if-let</span> ((<span style="color:#19177c">remote</span> (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">file</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">substring</span> <span style="color:#19177c">remote</span> <span style="color:#666">0</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#ba2121">&#34;|sudo:root@&#34;</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">file</span> <span style="color:#19177c">&#39;host</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#ba2121">&#34;:&#34;</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">file-remote-p</span> <span style="color:#19177c">file</span> <span style="color:#19177c">&#39;localname</span>))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;/sudo::&#34;</span> <span style="color:#19177c">file</span>)))))
 </span></span></code></pre></div><h3 id="shells-terminals">Shells / Terminals</h3>
 <h4 id="ghostel">ghostel</h4>
 <p><a href="https://github.com/dakra/ghostel">ghostel</a> is yet another terminal emulator for Emacs, probably better than all the rest. See the <a href="https://dakra.github.io/ghostel/#ghostel-vs-vterm">feature comparison</a>.</p>
@@ -8601,7 +8715,10 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>        <span style="color:#666">&#39;</span>((<span style="color:#ba2121">&#34;find-file-other-window&#34;</span> <span style="color:#19177c">find-file-other-window</span>)
 </span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;dired-other-window&#34;</span> <span style="color:#19177c">dired-other-window</span>)
 </span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;magit-status-setup-buffer&#34;</span> <span style="color:#19177c">magit-status-setup-buffer</span>)))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ghostel-tramp-shell-integration</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ghostel-tramp-shell-integration</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">ghostel-semi-char-mode</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-c C-k&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ghostel-char-mode</span>))
 </span></span></code></pre></div><h5 id="dedicated-buffer">Dedicated buffer</h5>
 <p>Make a dedicated buffer for ghostel in the bottom of the screen.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;display-buffer-alist</span>
@@ -8629,11 +8746,20 @@ buffers.</p>
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;`&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-dedicated</span>
 </span></span><span style="display:flex;"><span> <span style="color:#ba2121">&#34;~&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ghostel</span>)
 </span></span></code></pre></div><h5 id="auto-insert">Auto insert</h5>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghostel-auto-insert</span> ()
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghostel-setup</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; The terminal owns wrapping; don&#39;t visually wrap its rendered rows.</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">visual-line-mode</span> <span style="color:#666">-1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">word-wrap</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#19177c">truncate-lines</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Keep the gutter stable so Ghostel can size the PTY correctly.</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">display-line-numbers-mode</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">display-line-numbers-width</span> <span style="color:#666">5</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-insert-state</span> <span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ghostel-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-auto-insert</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ghostel-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-setup</span>)
 </span></span></code></pre></div><h4 id="vterm">vterm</h4>
 <p><a href="https://github.com/akermu/emacs-libvterm">vterm</a> is a terminal emulator for Emacs.</p>
 <p>References:</p>
@@ -10412,6 +10538,10 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-chat-mode-map</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;return&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">telega-chatbuf-newline-or-input-send</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">telega-chat-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;T&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">telega-chatbuf-filter-by-topic</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/persp-add-rule</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-root-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#19177c">telega-chat-mode</span> <span style="color:#666">3</span> <span style="color:#ba2121">&#34;telega&#34;</span>
@@ -10591,45 +10721,6 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:comment</span> <span style="color:#ba2121">&#34;local socks5&#34;</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-before-auth-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-setup-proxies</span>)
-</span></span></code></pre></div><h5 id="switch-to-topic-in-forum-chats-dot">Switch to topic in forum chats.</h5>
-<p>Somehow there isn&rsquo;t a built-in function?</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-switch-to-topic</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">topics-data</span> (<span style="color:#00f">gethash</span>
-</span></span><span style="display:flex;"><span>                       (<span style="color:#00f">plist-get</span> <span style="color:#19177c">telega-chatbuf--chat</span> <span style="color:#008000">:id</span>)
-</span></span><span style="display:flex;"><span>                       <span style="color:#19177c">telega--chat-topics</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">topics-string</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#00f">mapcar</span>
-</span></span><span style="display:flex;"><span>           (<span style="color:#008000">lambda</span> (<span style="color:#19177c">topic</span>)
-</span></span><span style="display:flex;"><span>             (<span style="color:#008000">let*</span> ((<span style="color:#19177c">name</span> (<span style="color:#00f">plist-get</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">topic</span> <span style="color:#008000">:info</span>) <span style="color:#008000">:name</span>))
-</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">unread-count</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">topic</span> <span style="color:#008000">:unread_count</span>))
-</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">name-string</span> (<span style="color:#008000">with-temp-buffer</span>
-</span></span><span style="display:flex;"><span>                                   (<span style="color:#19177c">telega-ins--topic-title</span> <span style="color:#19177c">topic</span> <span style="color:#19177c">&#39;with-icon</span>)
-</span></span><span style="display:flex;"><span>                                   (<span style="color:#00f">buffer-string</span>))))
-</span></span><span style="display:flex;"><span>               (<span style="color:#008000">if</span> (<span style="color:#19177c">zerop</span> <span style="color:#19177c">unread-count</span>)
-</span></span><span style="display:flex;"><span>                   <span style="color:#19177c">name-string</span>
-</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%-40s (%s)&#34;</span>
-</span></span><span style="display:flex;"><span>                         <span style="color:#19177c">name-string</span>
-</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">propertize</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%d&#34;</span> <span style="color:#19177c">unread-count</span>)
-</span></span><span style="display:flex;"><span>                                     <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;telega-unread-unmuted-modeline</span>)))))
-</span></span><span style="display:flex;"><span>           <span style="color:#19177c">topics-data</span>))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">topics-collection</span> (<span style="color:#008000">cl-loop</span> <span style="color:#19177c">for</span> <span style="color:#19177c">datum</span> <span style="color:#19177c">in</span> <span style="color:#19177c">topics-data</span>
-</span></span><span style="display:flex;"><span>                                     <span style="color:#19177c">for</span> <span style="color:#00f">string</span> <span style="color:#19177c">in</span> <span style="color:#19177c">topics-string</span>
-</span></span><span style="display:flex;"><span>                                     <span style="color:#19177c">collect</span> (<span style="color:#00f">cons</span> <span style="color:#00f">string</span> <span style="color:#19177c">datum</span>)))
-</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">topic</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Topic: &#34;</span> <span style="color:#19177c">topics-collection</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">telega-chat--goto-thread</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#19177c">telega-chatbuf--chat</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#00f">plist-get</span>
-</span></span><span style="display:flex;"><span>      (<span style="color:#00f">plist-get</span>
-</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">topic</span> <span style="color:#19177c">topics-collection</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)
-</span></span><span style="display:flex;"><span>       <span style="color:#008000">:info</span>)
-</span></span><span style="display:flex;"><span>      <span style="color:#008000">:message_thread_id</span>))))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;telega</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
-</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;telega-chat-mode-map</span>
-</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;T&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-switch-to-topic</span>))
 </span></span></code></pre></div><h4 id="rocket">Rocket</h4>
 <p><a href="https://github.com/SqrtMinusOne/rocket.el">rocket.el</a> is my AI-generated Rocket.Chat client.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">rocket</span>
@@ -10929,80 +11020,15 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-language</span> <span style="color:#ba2121">&#34;English&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:defer</span> <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;llm-ollama</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; I&#39;ve looked for this option for 1.5 hours</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-long-lines-length</span> <span style="color:#666">100000</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-provider</span> (<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                         <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;qwen2.5:32b&#34;</span>
-</span></span><span style="display:flex;"><span>                         <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;qwen2.5:32b&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-coding-provider</span> (<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                                <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;qwen2.5-coder:32b&#34;</span>
-</span></span><span style="display:flex;"><span>                                <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;qwen2.5-coder:32b&#34;</span>))
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-providers</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#666">`</span>((<span style="color:#ba2121">&#34;llama3.1:8b&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;llama3.1:latest&#34;</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;llama3.1:latest&#34;</span>))
-</span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;phi4:latest&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;phi4:latest&#34;</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;phi4:latest&#34;</span>))
-</span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;qwen2.5:32b&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;qwen2.5:32b&#34;</span>
-</span></span><span style="display:flex;"><span>                             <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;qwen2.5:32b&#34;</span>))
-</span></span><span style="display:flex;"><span>          (<span style="color:#ba2121">&#34;qwen2.5-coder:32b&#34;</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">make-llm-ollama</span>
-</span></span><span style="display:flex;"><span>                                   <span style="color:#008000">:chat-model</span> <span style="color:#ba2121">&#34;qwen2.5-coder:32b&#34;</span>
-</span></span><span style="display:flex;"><span>                                   <span style="color:#008000">:embedding-model</span> <span style="color:#ba2121">&#34;qwen2.5-coder:32b&#34;</span>)))))
-</span></span></code></pre></div><p>The keybindings are a bit crazy to use even with <code>which-key</code>, so here goes transient.el.</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ellama</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">transient-define-prefix</span> <span style="color:#19177c">my/ellama-transient</span> ()
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Ellama actions.&#34;</span>
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;General&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;a&#34;</span> <span style="color:#ba2121">&#34;Chat&#34;</span> <span style="color:#19177c">ellama-chat</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Code&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ca&#34;</span> <span style="color:#ba2121">&#34;Add&#34;</span> <span style="color:#19177c">ellama-code-add</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;cc&#34;</span> <span style="color:#ba2121">&#34;Complete&#34;</span> <span style="color:#19177c">ellama-code-complete</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ce&#34;</span> <span style="color:#ba2121">&#34;Edit&#34;</span> <span style="color:#19177c">ellama-code-edit</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;cr&#34;</span> <span style="color:#ba2121">&#34;Review&#34;</span> <span style="color:#19177c">ellama-code-review</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ci&#34;</span> <span style="color:#ba2121">&#34;Improve&#34;</span> <span style="color:#19177c">ellama-code-improve</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Natural Language&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;np&#34;</span> <span style="color:#ba2121">&#34;Proof-read&#34;</span> <span style="color:#19177c">my/ellama-proof-read</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Formatting&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ff&#34;</span> <span style="color:#ba2121">&#34;Format&#34;</span> <span style="color:#19177c">ellama-make-format</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;fm&#34;</span> <span style="color:#ba2121">&#34;List&#34;</span> <span style="color:#19177c">ellama-make-list</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ft&#34;</span> <span style="color:#ba2121">&#34;Table&#34;</span> <span style="color:#19177c">ellama-make-table</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Explain &amp; Summarize&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;es&#34;</span> <span style="color:#ba2121">&#34;Summarize&#34;</span> <span style="color:#19177c">ellama-summarize</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ea&#34;</span> <span style="color:#ba2121">&#34;Ask about&#34;</span> <span style="color:#19177c">ellama-ask-about</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;es&#34;</span> <span style="color:#ba2121">&#34;Send to chat&#34;</span> <span style="color:#19177c">ellama-ask-selection</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ew&#34;</span> <span style="color:#ba2121">&#34;Word definition&#34;</span> <span style="color:#19177c">ellama-define-word</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Context&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;xb&#34;</span> <span style="color:#ba2121">&#34;Add buffer&#34;</span> <span style="color:#19177c">ellama-context-add-buffer</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;xf&#34;</span> <span style="color:#ba2121">&#34;Add file&#34;</span> <span style="color:#19177c">ellama-context-add-file</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;xi&#34;</span> <span style="color:#ba2121">&#34;Add info&#34;</span> <span style="color:#19177c">ellama-context-add-info-node</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;xs&#34;</span> <span style="color:#ba2121">&#34;Add selection&#34;</span> <span style="color:#19177c">ellama-context-add-selection</span>)]
-</span></span><span style="display:flex;"><span>    [<span style="color:#ba2121">&#34;Settings &amp; Sessions&#34;</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#008000">:class</span> <span style="color:#19177c">transient-row</span>
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;sp&#34;</span> <span style="color:#ba2121">&#34;Provider&#34;</span> <span style="color:#19177c">ellama-provider-select</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;ss&#34;</span> <span style="color:#ba2121">&#34;Session&#34;</span> <span style="color:#19177c">ellama-session-switch</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;sr&#34;</span> <span style="color:#ba2121">&#34;Rename ression&#34;</span> <span style="color:#19177c">ellama-session-rename</span>)
-</span></span><span style="display:flex;"><span>     (<span style="color:#ba2121">&#34;sd&#34;</span> <span style="color:#ba2121">&#34;Delete session&#34;</span> <span style="color:#19177c">ellama-session-remove</span>)]))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ellama</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ellama</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#00f">call-interactively</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ellama-transient</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;aie&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ellama</span>)
-</span></span></code></pre></div><h5 id="change-natural-language-text-and-diff-against-the-results">Change natural-language text &amp; diff against the results</h5>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">ellama-provider</span> (<span style="color:#19177c">make-llm-openai-compatible</span> <span style="color:#008000">:url</span> <span style="color:#ba2121">&#34;localhost:8033&#34;</span>)))
+</span></span></code></pre></div><p>There are a lot of built-in commands, none of which I found useful. But I&rsquo;ve made use of the package for some of my workflows.</p>
+<h5 id="change-natural-language-text-and-diff-against-the-results">Change natural-language text &amp; diff against the results</h5>
 <p>One pattern I often want is to change the given text and compare it to the old version.</p>
 <p>LLMs aren&rsquo;t perfectly good at saying what changes they have done, so the pattern here is to query the model and show the changed text together with the diff.</p>
-<p>So first, I need to diff two strings.</p>
+<p>So first, I need to diff two strings. The built-in diff isn&rsquo;t so great, so I prefer difftastic.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/diff-strings</span> (<span style="color:#19177c">str1</span> <span style="color:#19177c">str2</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">file1</span> (<span style="color:#19177c">make-temp-file</span> <span style="color:#ba2121">&#34;diff1&#34;</span>))
 </span></span><span style="display:flex;"><span>        (<span style="color:#19177c">file2</span> (<span style="color:#19177c">make-temp-file</span> <span style="color:#ba2121">&#34;diff2&#34;</span>)))
@@ -11012,11 +11038,12 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">insert</span> <span style="color:#19177c">str1</span>))
 </span></span><span style="display:flex;"><span>          (<span style="color:#008000">with-temp-file</span> <span style="color:#19177c">file2</span>
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">insert</span> <span style="color:#19177c">str2</span>))
-</span></span><span style="display:flex;"><span>          (<span style="color:#008000">with-temp-buffer</span>
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">diff-mode</span>)
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">diff-no-select</span> <span style="color:#19177c">file1</span> <span style="color:#19177c">file2</span> (<span style="color:#19177c">diff-switches</span>) <span style="color:#800">t</span> (<span style="color:#00f">current-buffer</span>))
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">font-lock-fontify-buffer</span>)
-</span></span><span style="display:flex;"><span>            (<span style="color:#00f">buffer-string</span>)))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">ansi-color-apply</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#00f">#&#39;identity</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">process-lines</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#ba2121">&#34;difft&#34;</span> <span style="color:#19177c">file1</span> <span style="color:#19177c">file2</span> <span style="color:#ba2121">&#34;--color&#34;</span> <span style="color:#ba2121">&#34;always&#34;</span> <span style="color:#ba2121">&#34;--display&#34;</span> <span style="color:#ba2121">&#34;inline&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#ba2121">&#34;\n&#34;</span>)))
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">delete-file</span> <span style="color:#19177c">file1</span>)
 </span></span><span style="display:flex;"><span>      (<span style="color:#00f">delete-file</span> <span style="color:#19177c">file2</span>))))
 </span></span></code></pre></div><p>And the function to do the prompting iself. Llama tends to output in Markdown, so I use a function from Ellama to convert the output back to Org-mode, if necessary.</p>
@@ -11048,17 +11075,79 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error: %s&#34;</span> <span style="color:#19177c">err</span>))))
 </span></span></code></pre></div><p>As for prompts, I like the following prompt to proof-read text. It&rsquo;s pretty conservative, but good for fixing typos, missing commas, articles, etc.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/ellama-proof-read-prompt</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;Proof-read the following text. Follow these rules:
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- Fix all grammar errors
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- Keep the original style and punctuation, including linebreaks.
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- Use British spelling
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- Do not replace &#39; with ’, and do not touch other such symbols
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;You are a conservative proofreader. Your job is to correct genuine language errors while preserving the author&#39;s original wording and style as closely as possible.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Output the following and nothing else:
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- The fixed text
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- The string -FIXED TEXT ENDS-
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- List of found errors
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- List of style suggestions
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The input may be in English or Russian. Detect the language of the input text and produce your entire response in that language.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">## Rules for correcting the text
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">1. Fix all genuine grammar, spelling, punctuation, agreement, inflection, and syntax errors.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">2. Preserve the original style.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Keep the author&#39;s word choice whenever it is grammatically acceptable.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Keep abbreviations, contractions, informal expressions, technical terminology, jargon, sentence structure, and level of formality.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not rewrite sentences merely to make them smoother, clearer, more elegant, concise, idiomatic, or literary.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not replace an unusual but valid expression with a more common one.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">3. For English text, use British spelling and conventions where there is a difference between British and American English.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * For example: \&#34;colour\&#34;, \&#34;organise\&#34;, \&#34;centre\&#34;.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not otherwise rewrite vocabulary merely because another word would sound more British.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">4. Preserve symbols exactly whenever possible.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not replace straight quotes with curly quotes or curly quotes with straight quotes.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not change quotation-mark style.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not replace hyphens, en dashes, em dashes, apostrophes, ellipses, brackets, slashes, or other typographical symbols with alternative forms.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Do not normalise typography.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * You may move, add, or remove commas when required by grammar or punctuation rules.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">   * Other punctuation may be corrected only when it is genuinely erroneous; preserve the original character/style where possible.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">5. Preserve formatting, including paragraph breaks, Markdown, lists, and other structural formatting, unless a change is necessary to correct an error.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">6. Make the smallest possible correction that fixes each error.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">## Errors vs style suggestions
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Treat these as two separate categories.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">An **error** is something that should actually be corrected: incorrect grammar, spelling, punctuation, agreement, word form, syntax, or an objectively incorrect use of a word or construction.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">A **style suggestion** is optional. It may make the text clearer, more idiomatic, less awkward, or easier to read, but the original is not actually wrong.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Do NOT apply style suggestions to the corrected text. The corrected text must contain only corrections of genuine errors.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Be conservative with style suggestions. Do not suggest changing wording merely because you personally prefer an alternative.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">## Required output format
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">First output the complete corrected text, without a heading or introductory sentence.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Immediately after it, output this exact string on its own line:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">-FIXED TEXT ENDS-
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Then output:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Errors:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* List every genuine error you found and briefly explain the correction.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* Where useful, show the original and corrected fragments.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* If there were no errors, write that no errors were found.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Style suggestions:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* List optional style improvements separately.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* These suggestions must NOT have been applied to the corrected text.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">* If there are no worthwhile style suggestions, write that there are none.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The \&#34;Errors:\&#34; and \&#34;Style suggestions:\&#34; headings and all explanations must be in the same language as the input text.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Do not add any other commentary before or after this format.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Here is the text to proofread:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">%s&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ellama--text</span> ()
@@ -11070,6 +11159,43 @@ buffers.</p>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">my/ellama--text</span>) (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;org-mode</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ellama</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my/ellama-proof-read--display</span> <span style="color:#19177c">text</span> <span style="color:#19177c">is-org-mode</span> <span style="color:#19177c">my/ellama-proof-read-prompt</span>))
+</span></span></code></pre></div><h5 id="analyze-journal">Analyze journal</h5>
+<p>The prompt:</p>
+<p><a id="code-snippet--analyze-journal-prompt"></a></p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>You see my personal data for a given period, including some aggregated statistics and journal records. Your job is to summarize it.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">## Required output format
+</span></span></span><span style="display:flex;"><span>Please output the summary with the following sections. Make each section a Markdown heading.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">1.</span> Happened to me. A bullet-point list of things happened to me.
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">2.</span> Happened to the world. A bullet-point list of events happened in the world.
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">3.</span> Interactions. Mentioned or inferred from statistics interactions, conflicts, tensions, etc.
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">4.</span> Emotions. A bullet-point list of experienced emotions, moods, etc. and their causes.
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">5.</span> Observations. A free-form text, whatever your thoughts on the above are.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">## Data
+</span></span></span><span style="display:flex;"><span>%s
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/ellama-analyze-journal-prompt</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&lt;&lt;analyze-journal-prompt&gt;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ellama-analyze-journal</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ellama</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">text</span> (<span style="color:#19177c">my/ellama--text</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">llm-chat-async</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">ellama-provider</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">llm-make-chat-prompt</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">format</span> <span style="color:#19177c">my/ellama-analyze-journal-prompt</span> <span style="color:#19177c">text</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">response</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">let</span> ((<span style="color:#19177c">buf</span> (<span style="color:#19177c">generate-new-buffer</span> <span style="color:#ba2121">&#34;*ellama-response*&#34;</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">insert</span> (<span style="color:#19177c">ellama--translate-markdown-to-org-filter</span> <span style="color:#19177c">response</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">org-mode</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">display-buffer</span> <span style="color:#19177c">buf</span>)))
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#008000">&amp;rest</span> <span style="color:#19177c">err</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">message</span> <span style="color:#ba2121">&#34;Error: %s&#34;</span> <span style="color:#19177c">err</span>)))))
 </span></span></code></pre></div><h4 id="podcast-transcripts">Podcast transcripts</h4>
 <p>In my experience, finding something in a podcast can be particularly troublesome. For instance, at times, I want to refer to a specific line in the podcast to make an <a href="https://github.com/org-roam/org-roam">org-roam</a> node, and I need to check if I got that part right. And I have no reasonable way to get there because audio files, in themselves, don&rsquo;t allow for <a href="https://en.wikipedia.org/wiki/Random_access">random access</a>, i.e. there are no &ldquo;landmarks&rdquo; that point to a particular portion of the file. At least if nothing like a transcript is available.</p>
 <p>For obvious reasons, podcasts rarely ship with transcripts. So in this <del>post</del> section I&rsquo;ll be using a speech recognition engine to make up for that. The general idea is to obtain the podcast information from <a href="https://github.com/skeeto/elfeed">elfeed</a>, process it with <a href="https://github.com/openai/whisper">OpenAI Whisper</a> and feed it to <a href="https://github.com/sachac/subed">subed</a> to control the playback in <a href="https://mpv.io/">MPV</a>.</p>
@@ -13466,6 +13592,8 @@ I&rsquo;ve seen a couple of cases where people would swap their username and ema
             <li><a href="#general-settings-4">General settings</a></li>
             <li><a href="#package-optimizations">Package optimizations</a></li>
             <li><a href="#cleanup">Cleanup</a></li>
+            <li><a href="#copy-one-file-over-sftp">Copy one file over SFTP</a></li>
+            <li><a href="#edit-as-sudo">Edit as sudo</a></li>
           </ul>
         </li>
         <li><a href="#shells-terminals">Shells / Terminals</a>
