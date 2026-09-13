@@ -1,7 +1,7 @@
 +++
 title = "Stats"
 norss = true
-scripts = ["/js/chart.js", "/js/chartjs-adapter-date-fns.bundle.min.js", "/js/stats.js?v=6"]
+scripts = ["/js/chart.js", "/js/chartjs-adapter-date-fns.bundle.min.js", "/js/stats.js?v=7"]
 +++
 
 <style>
@@ -82,6 +82,12 @@ Here's that data split between albums that first appeared in my collection that 
   <canvas id="chart-mpd-new-albums-listened" role="img" aria-label="Music listening hours split by whether an album first appeared that year."></canvas>
 </div>
 
+And here's the share of each year's listening time by the music's release decade.
+
+<div class="charts-wrapper">
+  <canvas id="chart-mpd-listened-by-release-decade-per-year" role="img" aria-label="Percentage of recorded music listening time each year, stacked by release decade, including unknown release years."></canvas>
+</div>
+
 ### Podcasts
 
 Here's the approximate number of hours I've spent listening to podcasts in [AntennaPod](https://antennapod.org/).
@@ -118,6 +124,12 @@ And the same data broken down by language:
 
 <div class="charts-wrapper">
   <canvas id="chart-read-it-later-articles-in-language-per-month" role="img" aria-label="Read-it-later articles, stacked by detected language each month."></canvas>
+</div>
+
+Here's how many distinct sites I've read articles from each year:
+
+<div class="charts-wrapper">
+  <canvas id="chart-read-it-later-unique-hosts-per-year" role="img" aria-label="Number of distinct sites represented in the read-it-later archive each year."></canvas>
 </div>
 
 ## Messengers
