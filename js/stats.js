@@ -772,6 +772,32 @@
         }
       ),
 
+    "mpd-listened-by-release-decade-per-year": (data) => {
+      const chart = groupedSeries(
+        [...data].sort((left, right) =>
+          left.decade.localeCompare(right.decade)
+        ),
+        {
+          periodKey: "year",
+          seriesKey: "decade",
+          valueKey: "percentage",
+          yTitle: "Share of listening time",
+          format: "percent",
+          hideZeroTooltip: true,
+          aspectRatio: ASPECT.medium,
+        }
+      );
+      for (const dataset of chart.data.datasets) {
+        const color = dataset.label === "Unknown"
+          ? NAMED_COLORS.Unknown
+          : PALETTE[(parseInt(dataset.label, 10) / 10) % (PALETTE.length - 1)];
+        dataset.backgroundColor = fade(color, 0.78);
+        dataset.borderColor = color;
+      }
+      chart.options.scales.y.max = 100;
+      return chart;
+    },
+
     "podcasts-listened-by-year": (data) =>
       singleSeries(data, {
         periodKey: "year",
@@ -817,6 +843,33 @@
         valueKey: "articles",
         yTitle: "Articles",
       }),
+
+    "read-it-later-unique-hosts-per-year": (data) => {
+      const chart = singleSeries(data, {
+        periodKey: "year",
+        valueKey: "hosts",
+        label: "Distinct sites",
+        yTitle: "Sites",
+        color: "#3a8f5c",
+      });
+      chart.options.scales.y.ticks.precision = 0;
+      return chart;
+    },
+
+    "read-it-later-top-five-hosts-share-per-year": (data) => {
+      const chart = singleSeries(data, {
+        periodKey: "year",
+        valueKey: "percentage",
+        type: "line",
+        label: "Top five sources",
+        yTitle: "Share of articles",
+        format: "percent",
+        color: "#8261bb",
+      });
+      chart.options.scales.y.max = 100;
+      chart.data.datasets[0].tension = 0;
+      return chart;
+    },
 
     "messengers-sent-received-per-year": (data) =>
       columnSeries(
