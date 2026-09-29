@@ -8789,6 +8789,16 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">evil-insert-state</span> <span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;ghostel-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-setup</span>)
+</span></span></code></pre></div><h5 id="tramp-optimizations">TRAMP optimizations</h5>
+<p>When <code>ghostel-tramp-shell-integration</code> is enabled, <code>ghostel</code> writes several remote files during connection with ordinary <code>write-region</code>, creating lockfiles. This slows down the setup.</p>
+<p>This can be helped a bit as follows:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/ghostel-write-remote-file-without-locks</span> (<span style="color:#19177c">original</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">args</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">create-lockfiles</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#19177c">original</span> <span style="color:#19177c">args</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ghostel</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#19177c">&#39;ghostel--write-remote-file</span> <span style="color:#008000">:around</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/ghostel-write-remote-file-without-locks</span>))
 </span></span></code></pre></div><h4 id="vterm">vterm</h4>
 <p><a href="https://github.com/akermu/emacs-libvterm">vterm</a> is a terminal emulator for Emacs.</p>
 <p>References:</p>
