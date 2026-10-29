@@ -330,6 +330,20 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:demand</span> <span style="color:#800">t</span>)
 </span></span></code></pre></div><p>And wrong org-mode.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">straight-use-package</span> <span style="color:#19177c">&#39;org</span>)
+</span></span></code></pre></div><p>Also fixing <code>evil-org</code>&rsquo;s broken backwards compatibility which somehow <code>compat</code> doesn&rsquo;t provide.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">unless</span> (<span style="color:#00f">fboundp</span> <span style="color:#19177c">&#39;custom-initialize-after-file-load</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">custom-initialize-after-file-load</span> (<span style="color:#19177c">symbol</span> <span style="color:#00f">exp</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Initialize SYMBOL from EXP once its defining file has loaded.&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">internal--define-uninitialized-variable</span> <span style="color:#19177c">symbol</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">null</span> <span style="color:#19177c">load-file-name</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">custom-initialize-set</span> <span style="color:#19177c">symbol</span> <span style="color:#00f">exp</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">target</span> <span style="color:#19177c">load-file-name</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">letrec</span> ((<span style="color:#19177c">initialize</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">lambda</span> (<span style="color:#19177c">loaded</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">loaded</span> <span style="color:#19177c">target</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">remove-hook</span> <span style="color:#19177c">&#39;after-load-functions</span> <span style="color:#19177c">initialize</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">custom-initialize-set</span> <span style="color:#19177c">symbol</span> <span style="color:#00f">exp</span>)))))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;after-load-functions</span> <span style="color:#19177c">initialize</span>))))))
 </span></span></code></pre></div><h3 id="modular-configuration-and-environments">Modular configuration &amp; environments</h3>
 <p>I&rsquo;ve made the config sort of modular because I need different parts in different environments. With such a large config as mine, this is important.</p>
 <p>The problem with one large <code>init.el</code> is it&rsquo;s evaluated fully in every envronment, which means <code>use-package</code> will try to download, compile, etc. every package, which takes a lot of time on termux.</p>
@@ -10746,6 +10760,15 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>             (<span style="color:#008000">if</span> (<span style="color:#19177c">display-graphic-p</span>) <span style="color:#666">5</span> <span style="color:#666">6</span>)))
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq-local</span> <span style="color:#19177c">split-width-threshold</span> <span style="color:#666">1</span>))
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-chat-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-chat-setup</span>)
+</span></span></code></pre></div><p>Also a regression related to proxy status display.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;telega-info</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">defun</span> <span style="color:#19177c">telega-proxy-last-used</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">added-proxies</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;Return the most recently used proxy.&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">car</span> (<span style="color:#19177c">cl-sort</span> (<span style="color:#008000">or</span> (<span style="color:#00f">copy-sequence</span> <span style="color:#19177c">added-proxies</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">telega--getProxies</span>))
+</span></span><span style="display:flex;"><span>                  <span style="color:#00f">#&#39;&gt;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#008000">:key</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">proxy</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#008000">or</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">proxy</span> <span style="color:#008000">:last_used_date</span>) <span style="color:#666">0</span>))))))
 </span></span></code></pre></div><p>And custom online status. By default it marks you online when the Emacs frame is active, but I use EXWM, so I change that to when <code>telega.el</code> buffer is active. Otherwise, I&rsquo;m online all the time.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/telega-online-status</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">derived-mode-p</span> <span style="color:#19177c">&#39;telega-root-mode</span> <span style="color:#19177c">&#39;telega-chat-mode</span>
@@ -10875,6 +10898,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">biome-query-tab-key</span> <span style="color:#ba2121">&#34;&lt;TAB&gt;&#34;</span>)
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">biome-api-try-parse-error-as-response</span> <span style="color:#800">t</span>))
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">biome-api-proxy</span> <span style="color:#ba2121">&#34;socks5h://192.168.122.51:1080&#34;</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;biome-query-coords</span>
 </span></span><span style="display:flex;"><span>               <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;Saint-Petersburg, Russia&#34;</span> <span style="color:#666">59.942651</span> <span style="color:#666">30.229930</span>))
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;biome-query-coords</span>
