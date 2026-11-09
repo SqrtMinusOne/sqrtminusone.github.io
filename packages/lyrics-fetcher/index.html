@@ -86,7 +86,8 @@
 <figure><img src="/lyrics-fetcher-img/screenshot.png">
 </figure>
 
-<p>The available backends are <a href="https://genius.com">genius.com</a> and <a href="https://music.163.com/">music.163.com</a>.</p>
+<p>The available backends are <a href="https://lrclib.net/">lrclib.net</a> and <a href="https://music.163.com/">music.163.com</a>.</p>
+<p><a href="https://genius.com/">genius.com</a> is also available to fetch album covers, but fetching lyrics has stopped working after November 2026 because of cloudflare.</p>
 <h2 id="installation">Installation</h2>
 <p>The package is available on MELPA. Install it however you normally install packages, I prefer <code>use-package</code> with <code>straight</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">lyrics-fetcher</span>
@@ -97,6 +98,7 @@
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">lyrics-fetcher-genius-access-token</span>
 </span></span><span style="display:flex;"><span>      (<span style="color:#19177c">password-store-get</span> <span style="color:#ba2121">&#34;My_Online/APIs/genius.com&#34;</span>))
 </span></span></code></pre></div><p>But of course, you can just hardcode the string.</p>
+<p>If you need a proxy, set <code>lyrics-fetcher-proxy</code>, and make sure <code>request</code> uses <code>curl</code> (see <code>request-backend</code>).</p>
 <h2 id="usage">Usage</h2>
 <p>Available commands:</p>
 <ul>
@@ -144,10 +146,11 @@
 <li><code>r</code> - refetch the lyrics in the buffer</li>
 </ul>
 <h2 id="available-backends">Available backends</h2>
-<p>As of now, the available backends are <code>genius</code> and <code>neteasecloud</code> (thanks <a href="https://github.com/Elilif">@Elilif</a>). Backends can be switched with <code>M-x lyrics-fetcher-use-backend</code>, or from the Lisp code:</p>
+<p>As of now, the available backends are <code>lrclib</code>, <code>genius</code> and <code>neteasecloud</code> (thanks <a href="https://github.com/Elilif">@Elilif</a>). Backends can be switched with <code>M-x lyrics-fetcher-use-backend</code>, or from the Lisp code:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">lyrics-fetcher-use-backend</span> <span style="color:#19177c">&#39;neteasecloud</span>)
-</span></span></code></pre></div><p>The <code>genius</code> backend fetches lyrics in a simple text format.</p>
+</span></span></code></pre></div><p><code>genius</code> and <code>lrclib</code> fetch lyrics in a simple text format.</p>
 <p><code>neteasecloud</code> fetches in the <a href="https://en.wikipedia.org/wiki/LRC_(file_format)">LRC</a> format, which contains timestamps for each line of the lyrics text.</p>
+<p><code>lrclib</code> also supports LRC, but I haven&rsquo;t implemented that yet.</p>
 <p>LRC files can also be read by <code>emms-lyrics</code>. <code>lyrics-fetcher-use-backend</code> sets up <code>lyrics-fetcher</code> and EMMS variables so that EMMS could see the lyrics, downloaded by <code>lyrics-fetcher</code>. Running <code>M-x emms-lyrics</code> then should enable lyric display for newly played tracks, or you can run <code>M-x lyrics-fetcher-lyrics-catchup</code> to manually feed the current LRC file to EMMS.</p>
 <h2 id="customization-and-extension">Customization and extension</h2>
 <h3 id="lyrics-file-naming-and-location">Lyrics file naming and location</h3>

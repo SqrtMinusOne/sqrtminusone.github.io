@@ -4210,6 +4210,17 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span></code></pre></div><h5 id="ielm">IELM</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;inferior-emacs-lisp-mode-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">smartparens-mode</span>)
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span> <span style="color:#ba2121">&#34;bi&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ielm</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ielm</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;ielm-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;return&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ielm-return</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;ielm-map</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#00f">insert</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;&lt;return&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ielm-return</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;C-&lt;return&gt;&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">newline</span>))
 </span></span></code></pre></div><h4 id="common-lisp">Common lisp</h4>
 <h5 id="slime">SLIME</h5>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">slime</span>
@@ -9830,6 +9841,8 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:config</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lyrics-fetcher-genius-access-token</span>
 </span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/password-store-get</span> <span style="color:#ba2121">&#34;Service/genius.com&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">lyrics-fetcher-proxy</span> <span style="color:#ba2121">&#34;socks5h://192.168.122.51:1080&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">lyrics-fetcher-use-backend</span> <span style="color:#19177c">&#39;lrclib</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">emacs</span> <span style="color:#19177c">normal</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;emms-browser-mode-map</span>
@@ -10794,6 +10807,82 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:comment</span> <span style="color:#ba2121">&#34;local socks5&#34;</span>))
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;telega-before-auth-hook</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/telega-setup-proxies</span>)
+</span></span></code></pre></div><h5 id="org-capture">Org capture</h5>
+<p>I want to capture telega.el messages to my <code>inbox.org</code>. There&rsquo;s already some built-in functionality in <code>ol-telega</code>, but I don&rsquo;t like the built-in <code>org-telega-store-link</code>.</p>
+<p>So here&rsquo;s my version:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-telega-text</span> (<span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return the plain text or caption of MSG.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">substring-no-properties</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#008000">or</span> (<span style="color:#19177c">telega-msg-content-text</span> <span style="color:#19177c">msg</span>) <span style="color:#ba2121">&#34;[Media message]&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-telega-sender</span> (<span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return the sender&#39;s name for MSG.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">substring-no-properties</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">telega-msg-sender-title</span> (<span style="color:#19177c">telega-msg-sender</span> <span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#008000">:with-badges-p</span> <span style="color:#800">nil</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-telega-body</span> (<span style="color:#19177c">messages</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Format sorted MESSAGES, grouping consecutive messages by sender.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> (<span style="color:#19177c">previous-sender</span> <span style="color:#19177c">parts</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">msg</span> <span style="color:#19177c">messages</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">sender</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">msg</span> <span style="color:#008000">:sender_id</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">text</span> (<span style="color:#19177c">replace-regexp-in-string</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;^\\([ \t]*\\)\\(\\*+[ \t]\\|#\\+\\)&#34;</span> <span style="color:#ba2121">&#34;\\1\u200B\\2&#34;</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">my/org-telega-text</span> <span style="color:#19177c">msg</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">push</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">if</span> (<span style="color:#008000">and</span> <span style="color:#19177c">parts</span> (<span style="color:#00f">equal</span> <span style="color:#19177c">sender</span> <span style="color:#19177c">previous-sender</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;\n&#34;</span> <span style="color:#19177c">text</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">when</span> <span style="color:#19177c">parts</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-link-make-string</span> (<span style="color:#19177c">telega-tme-internal-link-to</span> <span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>                                  (<span style="color:#19177c">my/org-telega-sender</span> <span style="color:#19177c">msg</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34; (%H:%M)\n&#34;</span>
+</span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">seconds-to-time</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">msg</span> <span style="color:#008000">:date</span>)))
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">text</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#19177c">parts</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">setq</span> <span style="color:#19177c">previous-sender</span> <span style="color:#19177c">sender</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">apply</span> <span style="color:#00f">#&#39;concat</span> (<span style="color:#00f">nreverse</span> <span style="color:#19177c">parts</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-telega-store-link</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">_interactive</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Store a link and capture marked messages, or the message at point.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">messages</span> (<span style="color:#008000">or</span> <span style="color:#19177c">telega-chatbuf--marked-messages</span>
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">when-let*</span> ((<span style="color:#19177c">msg</span> (<span style="color:#19177c">telega-msg-at</span> (<span style="color:#00f">point</span>))))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">list</span> <span style="color:#19177c">msg</span>))))
+</span></span><span style="display:flex;"><span>         <span style="color:#408080;font-style:italic">;; Sort a copy so Telega&#39;s marked-message list is unchanged.</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">messages</span> (<span style="color:#19177c">cl-sort</span> (<span style="color:#00f">copy-sequence</span> <span style="color:#19177c">messages</span>) <span style="color:#00f">#&#39;&lt;</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#008000">:key</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">msg</span>) (<span style="color:#00f">plist-get</span> <span style="color:#19177c">msg</span> <span style="color:#008000">:id</span>))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">msg</span> (<span style="color:#00f">car</span> <span style="color:#19177c">messages</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">if</span> (<span style="color:#00f">null</span> <span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">org-telega-store-link</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">unless</span> (<span style="color:#19177c">telega-msg-internal-p</span> <span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let*</span> ((<span style="color:#19177c">text</span> (<span style="color:#19177c">my/org-telega-text</span> <span style="color:#19177c">msg</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">summary</span> (<span style="color:#19177c">truncate-string-to-width</span>
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">mapconcat</span> <span style="color:#00f">#&#39;identity</span> (<span style="color:#19177c">split-string</span> <span style="color:#19177c">text</span>) <span style="color:#ba2121">&#34; &#34;</span>)
+</span></span><span style="display:flex;"><span>                         <span style="color:#666">80</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#ba2121">&#34;…&#34;</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">from</span> (<span style="color:#19177c">my/org-telega-sender</span> <span style="color:#19177c">msg</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">chat</span> (<span style="color:#00f">substring-no-properties</span>
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">telega-chat-title</span> (<span style="color:#19177c">telega-msg-chat</span> <span style="color:#19177c">msg</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>))))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">org-link-store-props</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:type</span> <span style="color:#ba2121">&#34;telega&#34;</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:link</span> (<span style="color:#19177c">telega-tme-internal-link-to</span> <span style="color:#19177c">msg</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:description</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s: %s&#34;</span> <span style="color:#19177c">from</span> <span style="color:#19177c">summary</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:from</span> <span style="color:#19177c">from</span> <span style="color:#008000">:subject</span> <span style="color:#19177c">summary</span> <span style="color:#008000">:chat</span> <span style="color:#19177c">chat</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:date-timestamp-inactive</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">format-time-string</span> (<span style="color:#19177c">org-time-stamp-format</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                               (<span style="color:#19177c">seconds-to-time</span> (<span style="color:#00f">plist-get</span> <span style="color:#19177c">msg</span> <span style="color:#008000">:date</span>)))
+</span></span><span style="display:flex;"><span>           <span style="color:#008000">:body</span> (<span style="color:#19177c">my/org-telega-body</span> <span style="color:#19177c">messages</span>)))))))
+</span></span></code></pre></div><p>Installing it:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;telega</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;ol-telega</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-link-set-parameters</span> <span style="color:#ba2121">&#34;telega&#34;</span> <span style="color:#008000">:store</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-telega-store-link</span>))
+</span></span></code></pre></div><p>And the corresponding capture template:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-capture</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#ba2121">&#34;t&#34;</span> <span style="color:#19177c">org-capture-templates</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;Telegram&#34;</span> <span style="color:#19177c">entry</span> (<span style="color:#19177c">file</span> <span style="color:#ba2121">&#34;inbox.org&#34;</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;* TODO %:from: %:subject %?\n&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;/Entered on/ %U\n&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;/Received on/ %:date-timestamp-inactive\n\n&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;#+begin_quote\n%:body\n#+end_quote\n&#34;</span>))))
 </span></span></code></pre></div><h4 id="rocket">Rocket</h4>
 <p><a href="https://github.com/SqrtMinusOne/rocket.el">rocket.el</a> is my AI-generated Rocket.Chat client.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">use-package</span> <span style="color:#19177c">rocket</span>
