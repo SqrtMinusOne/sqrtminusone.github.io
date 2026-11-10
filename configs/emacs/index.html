@@ -5038,7 +5038,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">files</span>
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">thread-last</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span> <span style="color:#ba2121">&#34;learning&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;projects&#34;</span> <span style="color:#ba2121">&#34;misc&#34;</span> <span style="color:#ba2121">&#34;learning&#34;</span> <span style="color:#ba2121">&#34;planning&#34;</span>)
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
 </span></span><span style="display:flex;"><span>                      (<span style="color:#00f">directory-files</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span> <span style="color:#19177c">f</span>) <span style="color:#800">t</span>
 </span></span><span style="display:flex;"><span>                                       (<span style="color:#008000">rx</span> (<span style="color:#19177c">|</span> <span style="color:#ba2121">&#34;.org&#34;</span>
@@ -5047,7 +5047,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">mapcar</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">file</span>)
 </span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">string-replace</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>) <span style="color:#ba2121">&#34;&#34;</span> <span style="color:#19177c">file</span>)))
 </span></span><span style="display:flex;"><span>            (<span style="color:#00f">append</span>
-</span></span><span style="display:flex;"><span>             <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span> <span style="color:#ba2121">&#34;recurring.org&#34;</span>)))))
+</span></span><span style="display:flex;"><span>             <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;inbox.org&#34;</span> <span style="color:#ba2121">&#34;contacts.org&#34;</span>)))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">find-file</span>
 </span></span><span style="display:flex;"><span>     (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/&#34;</span>
 </span></span><span style="display:flex;"><span>             (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Org file: &#34;</span> <span style="color:#19177c">files</span>)))))
@@ -5834,21 +5834,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#19177c">&#39;org-mode-map</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;SPC&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;C&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-clock-recent</span>))
-</span></span></code></pre></div><h6 id="fix-tasks-without-task-kind">Fix tasks without TASK_KIND</h6>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-fix-task-kind</span> ()
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">entries</span> (<span style="color:#19177c">org-ql-query</span>
-</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">element-with-markers</span>
-</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:from</span> (<span style="color:#00f">current-buffer</span>)
-</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:where</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">olp</span> <span style="color:#ba2121">&#34;Tasks&#34;</span>)
-</span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;TASK_KIND&#34;</span>))
-</span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">clocked</span>)))))
-</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-fold-show-all</span>)
-</span></span><span style="display:flex;"><span>    (<span style="color:#008000">dolist</span> (<span style="color:#19177c">entry</span> <span style="color:#19177c">entries</span>)
-</span></span><span style="display:flex;"><span>      (<span style="color:#008000">let</span> ((<span style="color:#19177c">marker</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">entry</span>)))
-</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">org-with-point-at</span> <span style="color:#19177c">marker</span>
-</span></span><span style="display:flex;"><span>          (<span style="color:#008000">let</span> ((<span style="color:#19177c">value</span> (<span style="color:#19177c">org-read-property-value</span> <span style="color:#ba2121">&#34;TASK_KIND&#34;</span>)))
-</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-set-property</span> <span style="color:#ba2121">&#34;TASK_KIND&#34;</span> <span style="color:#19177c">value</span>)))))))
 </span></span></code></pre></div><h5 id="priority-and-effort-estimation">Priority and effort estimation</h5>
 <p>I&rsquo;ll need more priorities for tasks. A-J will work, I think:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">org-priority-highest</span> <span style="color:#ba2121">?A</span>)
@@ -6147,14 +6132,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>                   <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Fix: Missing timestamps&#34;</span>
 </span></span><span style="display:flex;"><span>                   <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">todo</span> <span style="color:#19177c">date</span>)
 </span></span><span style="display:flex;"><span>                   <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
-</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Fix: tasks without TASK_KIND&#34;</span>
-</span></span><span style="display:flex;"><span>             (<span style="color:#008000">lambda</span> ()
-</span></span><span style="display:flex;"><span>               (<span style="color:#008000">interactive</span>)
-</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">org-ql-search</span> (<span style="color:#00f">current-buffer</span>)
-</span></span><span style="display:flex;"><span>                 <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">olp</span> <span style="color:#ba2121">&#34;Tasks&#34;</span>)
-</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;TASK_KIND&#34;</span>))
-</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">clocked</span>))
-</span></span><span style="display:flex;"><span>                 <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>)))))))
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Focus: View focus&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-view</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">cons</span> <span style="color:#ba2121">&#34;Focus: Tasks without focus&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-view-tasks-without-focus</span>)))
 </span></span></code></pre></div><h6 id="custom-format-element">Custom format element</h6>
 <p>Changing the default <code>org-ql-view--format-element</code> to include effort estimation and the clocked time. I wish it were more configurable out-of-the-box.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-ql-view--format-element-override</span> (<span style="color:#19177c">element</span>)
@@ -6259,6 +6238,648 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;.&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-view-next-habit</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;,&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-habit-stats-view-previous-habit</span>)
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">add-hook</span> <span style="color:#19177c">&#39;org-after-todo-state-change-hook</span> <span style="color:#19177c">&#39;org-habit-stats-update-properties</span>))
+</span></span></code></pre></div><h5 id="focus-pocus">Focus Pocus</h5>
+<p>One trouble I&rsquo;ve found is that I have too many tasks in a lot of different projects, and I&rsquo;m doing whatever comes up with little higher-level prioritization.</p>
+<p>My current idea is this. I want to introduces &ldquo;focuses&rdquo; (foci?). One focus would have:</p>
+<ul>
+<li>tasks assigned to it;</li>
+<li>clear goal of what I want to achieve;</li>
+<li>status;</li>
+<li>overall strategic priority;</li>
+<li>optionally: start and end date;</li>
+</ul>
+<p>For planning, I want to assign focuses for weeks and for days, ideally one primary focus per day. A task can only be asssigned to one focus.</p>
+<p>Then, I want a view with grouping like: day / focus / task, i.e., all tasks in a day, grouped by focus. Each group should also display planned / actual effort per task and per focus.</p>
+<p>TODO:</p>
+<ul>
+<li>Check the integrity of focus ids: all referenced focus ids exist and are unique.</li>
+<li>Views:
+<ul>
+<li>Focus view
+<ul>
+<li>All tasks</li>
+<li>Effort</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h6 id="focus-data">Focus data</h6>
+<p>So, first, a focus file. Let it be <code>focus-pocus.org</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-focus-file</span> (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/planning/focus-pocus.org&#34;</span>))
+</span></span></code></pre></div><p>Add this file to <code>org-id-files</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-id</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">add-to-list</span> <span style="color:#19177c">&#39;org-id-files</span> <span style="color:#19177c">my/org-focus-file</span>))
+</span></span></code></pre></div><p>Each focus is a heading in the file under the &ldquo;Focuses&rdquo; heading. It should always have:</p>
+<ul>
+<li>Status (as org-mode status). The current status model is:
+<ul>
+<li><code>ACTIVE</code></li>
+<li><code>BACKLOG</code></li>
+<li><code>PLANNED</code></li>
+<li><code>DONE</code></li>
+</ul>
+</li>
+<li>Priority (as org-mode&rsquo;s priority)</li>
+<li>The <code>ID</code> property.</li>
+</ul>
+<p>A corresponding capture template:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-capture</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#19177c">org-capture-templates</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;Focus&#34;</span> <span style="color:#19177c">entry</span> (<span style="color:#19177c">file+olp</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-file</span> <span style="color:#ba2121">&#34;Focuses&#34;</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#666">,</span>(<span style="color:#00f">concat</span> <span style="color:#ba2121">&#34;** ACTIVE %?\n&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;%^{ID}p\n&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;/Entered on/ %U\n&#34;</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:prepend</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:jump-to-captured</span> <span style="color:#800">t</span>)))
+</span></span></code></pre></div><p>Now, a few functions. Extract all active focuses, thankfully, <code>org-ql</code> exists:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--find</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find all currently active org focuses.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:select</span> <span style="color:#19177c">&#39;element-with-markers</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:from</span> <span style="color:#19177c">my/org-focus-file</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:where</span> <span style="color:#666">&#39;</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">todo</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">outline-path</span> <span style="color:#ba2121">&#34;Focuses&#34;</span>))))
+</span></span></code></pre></div><p>A function to find one focus by id:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--find-by-id</span> (<span style="color:#19177c">id</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find focus by ID.  Return nil if not found.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">car</span> (<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#008000">:select</span> <span style="color:#19177c">&#39;element-with-markers</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#008000">:from</span> <span style="color:#19177c">my/org-focus-file</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#19177c">property</span> <span style="color:#ba2121">&#34;ID&#34;</span> <span style="color:#666">,</span><span style="color:#19177c">id</span>))))
+</span></span></code></pre></div><p>A function to assign a focus to a particular task:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defconst</span> <span style="color:#19177c">my/org-focus-prop</span> <span style="color:#ba2121">&#34;FOCUS&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-assign-to-task</span> (<span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Assign FOCUS to task under cursor.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">my/org-focus--pick</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-set-property</span> <span style="color:#19177c">my/org-focus-prop</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">focus</span>)))
+</span></span></code></pre></div><p>Get focus under cursor:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--at-point</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get focus under cursor or nil.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">when</span> (<span style="color:#00f">equal</span> (<span style="color:#00f">buffer-file-name</span>) <span style="color:#19177c">my/org-focus-file</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#19177c">seq-contains-p</span> (<span style="color:#19177c">org-get-outline-path</span>) <span style="color:#ba2121">&#34;Focuses&#34;</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let</span> ((<span style="color:#19177c">elem</span> (<span style="color:#19177c">org-element-at-point</span>)))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">elem</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#19177c">elem</span>))))))
+</span></span></code></pre></div><h6 id="planning-data">Planning data</h6>
+<p>Then, planning data. In planning, I want one header per week, and day headers under it. Don&rsquo;t know yet if I&rsquo;ll use it for review or something.</p>
+<p>First, we need functions to work with week specs. A week can be defined by its year and number, so we can start by determining the week boundaries from that:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--week-range</span> (<span style="color:#19177c">year</span> <span style="color:#19177c">number</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Determine week boundaries by YEAR and its NUMBER.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">NUMBER may range from 1 to 53
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return a cons cell of two time values:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- week start (by UTC),
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- week end (by UTC).
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If the week is incomplete (at a start or end of the year), return the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">first or the last day of the year as the boundary.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">year-start</span> <span style="color:#666">`</span>(<span style="color:#666">0</span> <span style="color:#666">0</span> <span style="color:#666">0</span> <span style="color:#666">1</span> <span style="color:#666">1</span> <span style="color:#666">,</span><span style="color:#19177c">year</span> <span style="color:#800">nil</span> <span style="color:#666">-1</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#408080;font-style:italic">;; to get dow</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">year-start</span> (<span style="color:#00f">decode-time</span> (<span style="color:#00f">encode-time</span> <span style="color:#19177c">year-start</span>) <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>         <span style="color:#408080;font-style:italic">;; Monday - 0, Sunday - 6</span>
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">dow</span> (<span style="color:#00f">%</span> (<span style="color:#00f">+</span> (<span style="color:#19177c">decoded-time-weekday</span> <span style="color:#19177c">year-start</span>) <span style="color:#666">6</span>) <span style="color:#666">7</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">year-week-start</span> (<span style="color:#00f">time-add</span> (<span style="color:#00f">encode-time</span> <span style="color:#19177c">year-start</span>) (<span style="color:#00f">*</span> (<span style="color:#00f">-</span> <span style="color:#19177c">dow</span>) <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-start</span> (<span style="color:#00f">time-add</span> <span style="color:#19177c">year-week-start</span> (<span style="color:#00f">*</span> (<span style="color:#00f">1-</span> <span style="color:#19177c">number</span>) <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span> <span style="color:#666">7</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-end</span> (<span style="color:#00f">time-add</span> <span style="color:#19177c">week-start</span> (<span style="color:#00f">*</span> <span style="color:#666">6</span> <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-start-year</span> (<span style="color:#19177c">decoded-time-year</span> (<span style="color:#00f">decode-time</span> <span style="color:#19177c">week-start</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-end-year</span> (<span style="color:#19177c">decoded-time-year</span> (<span style="color:#00f">decode-time</span> <span style="color:#19177c">week-end</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">=</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week-start-year</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">not</span> (<span style="color:#00f">=</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week-end-year</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Wrong week number %s: both boundaries are out of year %s (%s, %s)&#34;</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">number</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week-start-year</span> <span style="color:#19177c">week-end-year</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">=</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week-start-year</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">week-start</span> (<span style="color:#00f">encode-time</span> <span style="color:#19177c">year-start</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">=</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week-end-year</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq</span> <span style="color:#19177c">week-end</span> (<span style="color:#00f">encode-time</span> <span style="color:#666">`</span>(<span style="color:#666">0</span> <span style="color:#666">0</span> <span style="color:#666">0</span> <span style="color:#666">31</span> <span style="color:#666">12</span> <span style="color:#666">,</span><span style="color:#19177c">year</span> <span style="color:#800">nil</span> <span style="color:#666">-1</span> <span style="color:#666">0</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Cast to epoch for consistency: `time-add&#39; returns epochs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; somehow...</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">cons</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">time-convert</span> <span style="color:#19177c">week-start</span> <span style="color:#19177c">&#39;integer</span>)
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">time-convert</span> <span style="color:#19177c">week-end</span> <span style="color:#19177c">&#39;integer</span>))))
+</span></span></code></pre></div><p>Prompting the user for a week is simple enough:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--pick-week</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Prompt the user for a date and return its week.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return a cons cell of two values:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- year (integer)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- week number (integer).&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">time</span> (<span style="color:#19177c">org-read-date</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-year</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y&#34;</span> <span style="color:#19177c">time</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">week-number</span> (<span style="color:#00f">1+</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%W&#34;</span> <span style="color:#19177c">time</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">cons</span> <span style="color:#19177c">week-year</span> <span style="color:#19177c">week-number</span>)))
+</span></span></code></pre></div><p>One week record should contain:</p>
+<ul>
+<li>Header like &ldquo;** YYYY-WNN&rdquo;, where NN is the week number from 01 to 53</li>
+<li>A header per day (Monday, Tuesday, etc.)
+<ul>
+<li>Under each header: a list of links to primary and secondary focuses under the &ldquo;Primary:&rdquo; and &ldquo;Secondary:&rdquo; lines. Ideally, the primary focus should be just one.</li>
+</ul>
+</li>
+</ul>
+<p>More stuff can be added under each header (maybe some weekly reflections, don&rsquo;t know yet), it shouldn&rsquo;t break anything.</p>
+<p>So, a function to return an org template for one week:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-focus-day-format</span> <span style="color:#ba2121">&#34;%A, %Y-%m-%d&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--week-template</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Return a template for the weekly focus planning section.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">pcase-let*</span> ((<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">year</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">week</span>) (<span style="color:#19177c">my/org-focus--pick-week</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">week-start</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">week-end</span>) (<span style="color:#19177c">my/org-focus--week-range</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">fmt</span> (<span style="color:#19177c">org-time-stamp-format</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">add-saturday</span> (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;Add Saturday?&#34;</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">add-sunday</span> (<span style="color:#008000">and</span> <span style="color:#19177c">add-saturday</span>
+</span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">y-or-n-p</span> <span style="color:#ba2121">&#34;Add Sunday?&#34;</span>))))
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Forward ref: check if the week already exists</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">when</span> (<span style="color:#19177c">my/org-focus--find-week</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Week %s-W%s already exists&#34;</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">concat</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;** %d-W%d %s - %s\n&#34;</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">year</span> <span style="color:#19177c">week</span> (<span style="color:#00f">format-time-string</span> <span style="color:#19177c">fmt</span> <span style="color:#19177c">week-start</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">format-time-string</span> <span style="color:#19177c">fmt</span> <span style="color:#19177c">week-end</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">mapconcat</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">lambda</span> (<span style="color:#19177c">dow</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let</span> ((<span style="color:#19177c">time</span> (<span style="color:#00f">time-add</span> <span style="color:#19177c">week-start</span> (<span style="color:#00f">*</span> <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span> <span style="color:#19177c">dow</span>))))
+</span></span><span style="display:flex;"><span>          (<span style="color:#00f">concat</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;*** %s\n&#34;</span> (<span style="color:#00f">format-time-string</span> <span style="color:#19177c">my/org-focus-day-format</span> <span style="color:#19177c">time</span>))
+</span></span><span style="display:flex;"><span>                  <span style="color:#ba2121">&#34;*Primary focuses*:\n&#34;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#ba2121">&#34;\n&#34;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#ba2121">&#34;*Secondary focuses*:\n&#34;</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">number-sequence</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#666">0</span> (<span style="color:#008000">cond</span> (<span style="color:#19177c">add-sunday</span> <span style="color:#666">6</span>) (<span style="color:#19177c">add-saturday</span> <span style="color:#666">5</span>) (<span style="color:#800">t</span> <span style="color:#666">4</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#ba2121">&#34;\n&#34;</span>))))
+</span></span></code></pre></div><p>Add that function to org templates:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#ba2121">&#34;w&#34;</span> <span style="color:#19177c">org-capture-templates</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#666">`</span>(<span style="color:#ba2121">&#34;Focus week&#34;</span> <span style="color:#19177c">entry</span> (<span style="color:#19177c">file+olp</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-file</span> <span style="color:#ba2121">&#34;Planning&#34;</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">function</span> <span style="color:#19177c">my/org-focus--week-template</span>)
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:prepend</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#408080;font-style:italic">;; I prefer to edit that in the full org buffer</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:immediate-finish</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:jump-to-captured</span> <span style="color:#800">t</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#008000">:unnarrowed</span> <span style="color:#800">t</span>)))
+</span></span></code></pre></div><p>Then, we need a function to insert a link to an active focus:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--pick</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Pick an active focus.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">coll</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>) (<span style="color:#00f">cons</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">f</span>) <span style="color:#19177c">f</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">my/org-focus--find</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">focus</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">alist-get</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Focus: &#34;</span> <span style="color:#19177c">coll</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>           <span style="color:#19177c">coll</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">focus</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Focus not selected&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">focus</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-insert-link</span> (<span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Insert a link to a focus under cursor.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FOCUS is an org element with the selected focus heading.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">my/org-focus--pick</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">insert</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[[id:%s][%s]]&#34;</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">focus</span>))))
+</span></span></code></pre></div><p>And a function to parse a week under cursor. I won&rsquo;t use <code>org-element</code> because regexes will be more stable, I think.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--parse-link-list</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Parse paths of links in the list under cursor.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">An example list is:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- [[id:1][link 1]]
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- [[id:2][link 2]]
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The function will return 1, 2.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> (<span style="color:#19177c">links</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">while</span> (<span style="color:#19177c">looking-at-p</span> <span style="color:#ba2121">&#34;- &#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">forward-char</span> <span style="color:#666">2</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">when-let</span> ((<span style="color:#19177c">link</span> (<span style="color:#19177c">org-element-link-parser</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">push</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:path</span> <span style="color:#19177c">link</span>) <span style="color:#19177c">links</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">forward-line</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">nreverse</span> <span style="color:#19177c">links</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--parse-week</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Parse focus week data under cursor.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return an alist with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:week&#39; - a list with two values, year and week number
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:week-start&#39; - start of the week (a time value)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:week-end&#39; - end of the week (a time value)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:day-data&#39; - an alist, where the keys are day timestamps, and the
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  values are alists with the following keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - `:heading&#39; - a string with the day heading
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - `:primary-ids&#39; - ids of primary focuses
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - `:secondary-ids&#39; - ids of secondary focuses.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">search-backward-regexp</span> (<span style="color:#008000">rx</span> <span style="color:#19177c">bol</span> <span style="color:#ba2121">&#34;** &#34;</span> (<span style="color:#19177c">group</span> (<span style="color:#00f">=</span> <span style="color:#666">4</span> <span style="color:#19177c">digit</span>))
+</span></span><span style="display:flex;"><span>                                <span style="color:#ba2121">&#34;-W&#34;</span> (<span style="color:#19177c">group</span> (<span style="color:#00f">=</span> <span style="color:#666">2</span> <span style="color:#19177c">digit</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">pcase-let*</span> ((<span style="color:#19177c">year</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">1</span>)))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">week</span> (<span style="color:#00f">string-to-number</span> (<span style="color:#19177c">match-string</span> <span style="color:#666">2</span>)))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">week-start</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">week-end</span>) (<span style="color:#19177c">my/org-focus--week-range</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week</span>))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">days</span> (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>                        (<span style="color:#008000">lambda</span> (<span style="color:#19177c">dow</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">let</span> ((<span style="color:#19177c">time</span> (<span style="color:#00f">time-add</span> <span style="color:#19177c">week-start</span> (<span style="color:#00f">*</span> <span style="color:#19177c">dow</span> <span style="color:#666">60</span> <span style="color:#666">60</span> <span style="color:#666">24</span>))))
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">cons</span> (<span style="color:#00f">format-time-string</span> <span style="color:#19177c">my/org-focus-day-format</span> <span style="color:#19177c">time</span>)
+</span></span><span style="display:flex;"><span>                                  (<span style="color:#19177c">time-convert</span> <span style="color:#19177c">time</span> <span style="color:#19177c">&#39;integer</span>))))
+</span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">number-sequence</span> <span style="color:#666">0</span> <span style="color:#666">6</span>)))
+</span></span><span style="display:flex;"><span>                 <span style="color:#408080;font-style:italic">;; XXX `pcase-let&#39; doesn&#39;t support (let (arg))?</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#19177c">day-data</span> <span style="color:#800">nil</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">pcase-dolist</span> (<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">heading</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">time</span>) <span style="color:#19177c">days</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#408080;font-style:italic">;; Assuming all days are in order</span>
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">let</span> (<span style="color:#19177c">primary-ids</span> <span style="color:#19177c">secondary-ids</span>)
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> (<span style="color:#00f">search-forward</span> <span style="color:#19177c">heading</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">when</span> (<span style="color:#00f">search-forward</span> <span style="color:#ba2121">&#34;*Primary focuses*:&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">forward-line</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">setq</span> <span style="color:#19177c">primary-ids</span> (<span style="color:#19177c">my/org-focus--parse-link-list</span>))))
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">when</span> (<span style="color:#00f">search-forward</span> <span style="color:#ba2121">&#34;*Secondary focuses*:&#34;</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">forward-line</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#008000">setq</span> <span style="color:#19177c">secondary-ids</span> (<span style="color:#19177c">my/org-focus--parse-link-list</span>)))))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">when</span> (<span style="color:#008000">or</span> <span style="color:#19177c">primary-ids</span> <span style="color:#19177c">secondary-ids</span>)
+</span></span><span style="display:flex;"><span>            (<span style="color:#008000">setf</span> (<span style="color:#19177c">alist-get</span> <span style="color:#19177c">time</span> <span style="color:#19177c">day-data</span>)
+</span></span><span style="display:flex;"><span>                  <span style="color:#666">`</span>((<span style="color:#008000">:heading</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">:primary-ids</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">primary-ids</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#008000">:secondary-ids</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">secondary-ids</span>))))))
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#008000">:week</span> <span style="color:#666">.</span> (<span style="color:#666">,</span><span style="color:#19177c">year</span> <span style="color:#666">,</span><span style="color:#19177c">week</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:week-start</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">week-start</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:week-end</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">week-end</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:day-data</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#00f">nreverse</span> <span style="color:#19177c">day-data</span>))))))
+</span></span></code></pre></div><p>Tonight I&rsquo;ll try to find some kind of peace :-(</p>
+<p>Finally, find data for a particular week:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--find-week-1</span> (<span style="color:#19177c">year</span> <span style="color:#19177c">week</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find the data for a particular week.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">YEAR is the year, WEEK is the week number from 1 to 53.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If the week is found, return the data structure described in
+</span></span></span><span style="display:flex;"><span><span style="color:#19177c">`my/org-focus--parse-week&#39;</span><span style="color:#ba2121">.  Otherwise, return nil.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-current-buffer</span> (<span style="color:#19177c">find-file-noselect</span> <span style="color:#19177c">my/org-focus-file</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>))
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">when</span> (<span style="color:#00f">re-search-forward</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">rx</span> <span style="color:#19177c">bol</span> <span style="color:#ba2121">&#34;** &#34;</span> (<span style="color:#19177c">literal</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%d-W%d&#34;</span> <span style="color:#19177c">year</span> <span style="color:#19177c">week</span>))) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">my/org-focus--parse-week</span>)))))
+</span></span></code></pre></div><p>I also want to cache results. Don&rsquo;t know why there isn&rsquo;t a built-in function? I thought there must be&hellip;</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/cached-fn-tick</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/cached-fn-cache</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defmacro</span> <span style="color:#19177c">my/make-cached-fn</span> (<span style="color:#19177c">name</span> <span style="color:#19177c">fn</span> <span style="color:#19177c">buf-fn</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Make a cached variant of the function FN.  Call it NAME.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">This can only work if FN operates in one and only one buffer.  BUF-FN must return that buffer.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">declare</span> (<span style="color:#19177c">indent</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">arglist</span> (<span style="color:#19177c">ad-arglist</span> <span style="color:#19177c">fn</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#008000">defun</span> <span style="color:#666">,</span><span style="color:#19177c">name</span> (<span style="color:#666">,@</span><span style="color:#19177c">arglist</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#008000">with-current-buffer</span> (<span style="color:#00f">funcall</span> <span style="color:#666">,</span><span style="color:#19177c">buf-fn</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">let</span> ((<span style="color:#19177c">tick</span> (<span style="color:#00f">buffer-chars-modified-tick</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">key</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s-%s&#34;</span> <span style="color:#19177c">&#39;,name</span> (<span style="color:#00f">list</span> <span style="color:#666">,@</span><span style="color:#19177c">arglist</span>))))
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">when</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">eql</span> <span style="color:#19177c">tick</span> <span style="color:#19177c">my/cached-fn-tick</span>))
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">setq</span> <span style="color:#19177c">my/cached-fn-tick</span> <span style="color:#19177c">tick</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#19177c">my/cached-fn-cache</span> (<span style="color:#00f">make-hash-table</span> <span style="color:#008000">:test</span> <span style="color:#00f">#&#39;equal</span>)))
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">let</span> ((<span style="color:#19177c">cached-res</span> (<span style="color:#00f">gethash</span> <span style="color:#19177c">key</span> <span style="color:#19177c">my/cached-fn-cache</span> <span style="color:#008000">:cache-miss</span>)))
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">if</span> (<span style="color:#19177c">not</span> (<span style="color:#00f">eq</span> <span style="color:#19177c">cached-res</span> <span style="color:#008000">:cache-miss</span>))
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">cached-res</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">let</span> ((<span style="color:#19177c">res</span> (<span style="color:#00f">funcall</span> <span style="color:#00f">#&#39;</span><span style="color:#666">,</span><span style="color:#19177c">fn</span> <span style="color:#666">,@</span><span style="color:#19177c">arglist</span>)))
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">puthash</span> <span style="color:#19177c">key</span> <span style="color:#19177c">res</span> <span style="color:#19177c">my/cached-fn-cache</span>)
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">res</span>))))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/make-cached-fn-reset</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Reset the buffer-local cache for </span><span style="color:#19177c">`my/make-cached-fn&#39;</span><span style="color:#ba2121"> functions.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/cached-fn-tick</span> <span style="color:#666">-1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#19177c">my/make-cached-fn</span> <span style="color:#19177c">my/org-focus--find-week</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#19177c">my/org-focus--find-week-1</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">lambda</span> () (<span style="color:#19177c">find-file-noselect</span> <span style="color:#19177c">my/org-focus-file</span>)))
+</span></span></code></pre></div><h6 id="basic-planning">Basic planning</h6>
+<p>Now we need to make the focus data actionable for planning.</p>
+<p>So, a few basic views and functions. Display all tasks in a given focus:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-view-tasks-dwim</span> (<span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;View tasks in FOCUS.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/org-focus--at-point</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">my/org-focus--pick</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">focus</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">title</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;Focus: %s&#34;</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">focus</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-ql-search</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">property</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-prop</span> <span style="color:#666">,</span><span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:title</span> <span style="color:#19177c">title</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">priority</span> <span style="color:#19177c">todo</span> <span style="color:#19177c">deadline</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>)))))
+</span></span></code></pre></div><p>A function to assign a focus to a particular task or go to it:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--get-referenced-at-point</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get focus ID referenced by task at point.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-back-to-heading</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">elem</span> (<span style="color:#19177c">org-element-at-point-no-context</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">focus-id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:FOCUS</span> <span style="color:#19177c">elem</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#19177c">focus-id</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-task-dwim</span> (<span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Assign a focus to the task under cursor or go to it.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">ARG is the prefix arg.  If it&#39;s 4, then always assign a new focus even
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">if it&#39;s already set.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;p&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">focus-id</span> (<span style="color:#19177c">my/org-focus--get-referenced-at-point</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span> ((<span style="color:#008000">or</span> (<span style="color:#00f">null</span> <span style="color:#19177c">focus-id</span>) (<span style="color:#00f">eq</span> <span style="color:#19177c">arg</span> <span style="color:#666">4</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">call-interactively</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-assign-to-task</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#800">t</span> (<span style="color:#19177c">org-id-goto</span> <span style="color:#19177c">focus-id</span>)))))
+</span></span></code></pre></div><p>Find all tasks without focus that either open or were open in the last month.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-view-tasks-without-focus</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find all relevant tasks without focus.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-search</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-prop</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nof&#34;</span> <span style="color:#ba2121">&#34;nots&#34;</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#008000">or</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;TODO&#34;</span> <span style="color:#ba2121">&#34;MAYBE&#34;</span> <span style="color:#ba2121">&#34;HOLD&#34;</span> <span style="color:#ba2121">&#34;WAIT&#34;</span> <span style="color:#ba2121">&#34;PLAN&#34;</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">and</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;DONE&#34;</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#008000">or</span> (<span style="color:#19177c">closed</span> <span style="color:#008000">:from</span> <span style="color:#666">-31</span>)
+</span></span><span style="display:flex;"><span>                       (<span style="color:#19177c">clocked</span> <span style="color:#008000">:from</span> <span style="color:#666">-31</span>)))))
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:title</span> <span style="color:#ba2121">&#34;Tasks without focus&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:sort</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">priority</span> <span style="color:#19177c">todo</span> <span style="color:#19177c">deadline</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:super-groups</span> <span style="color:#666">&#39;</span>((<span style="color:#008000">:auto-outline-path-file</span> <span style="color:#800">t</span>))))
+</span></span></code></pre></div><p>Display unfocused tasks in a sparse tree. Alphapaha has truly thought of everything.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-sparse-tree-tasks-without-focus</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create a sparse tree from all tasks without focus.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-sparse-tree</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> (<span style="color:#19177c">property</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-prop</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nof&#34;</span> <span style="color:#ba2121">&#34;nots&#34;</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#008000">or</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;TODO&#34;</span> <span style="color:#ba2121">&#34;MAYBE&#34;</span> <span style="color:#ba2121">&#34;HOLD&#34;</span> <span style="color:#ba2121">&#34;WAIT&#34;</span> <span style="color:#ba2121">&#34;PLAN&#34;</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#008000">and</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;DONE&#34;</span>)
+</span></span><span style="display:flex;"><span>                  (<span style="color:#008000">or</span> (<span style="color:#19177c">closed</span> <span style="color:#008000">:from</span> <span style="color:#666">-31</span>)
+</span></span><span style="display:flex;"><span>                      (<span style="color:#19177c">clocked</span> <span style="color:#008000">:from</span> <span style="color:#666">-31</span>)))))))
+</span></span></code></pre></div><p>And display focused tasks in a sparse tree.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-sparse-tree-for-focus</span> (<span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Create a sparse tree for tasks in FOCUS.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> (<span style="color:#00f">list</span> (<span style="color:#19177c">my/org-focus--pick</span>)))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">focus</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-ql-sparse-tree</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#666">`</span>(<span style="color:#19177c">property</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-prop</span> <span style="color:#666">,</span><span style="color:#19177c">id</span>))))
+</span></span></code></pre></div><p>The views are added to <code>org-ql-views</code> somewhere above.</p>
+<h6 id="focus-view">Focus view</h6>
+<p>Now, I want a view that would display all the relevant information about a particular focus.</p>
+<p>First, retrive all information about a specific focus:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--select-headline</span> ()
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Parse headline at point for use in the focus view.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">Return an alist with the following values:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:headline&#39; - an instance of headline with markers
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:clocks&#39; - org-clock data (see </span><span style="color:#19177c">`org-clock-agg--parse-clocks&#39;</span><span style="color:#ba2121">)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:clocks-total&#39; - total time clocked (in seconds)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:effort-daily&#39; - planned daily effort per task (see
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  </span><span style="color:#19177c">`my/org-planned-effort-parse&#39;</span><span style="color:#ba2121">)
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:effort-total&#39; - total time planned (in seconds).&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">save-excursion</span> <span style="color:#408080;font-style:italic">;; Why?</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">headline</span> (<span style="color:#19177c">org-element-headline-parser</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">clocks</span> (<span style="color:#008000">when</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:contents-begin</span> <span style="color:#19177c">headline</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">org-clock-agg--parse-clocks</span> <span style="color:#19177c">headline</span>)))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">effort</span> (<span style="color:#19177c">my/org-planned-effort-parse</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">org-ql--add-markers</span> <span style="color:#19177c">headline</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#008000">:headline</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">headline</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:clocks</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">clocks</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:clocks-total</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">when</span> <span style="color:#19177c">clocks</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">seq-reduce</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">v</span>) (<span style="color:#00f">+</span> <span style="color:#19177c">acc</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:duration</span> <span style="color:#19177c">v</span>)))
+</span></span><span style="display:flex;"><span>                                        <span style="color:#19177c">clocks</span> <span style="color:#666">0</span>)))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:effort-daily</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">effort</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:effort-total</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#008000">or</span> (<span style="color:#008000">when</span> <span style="color:#19177c">effort</span>
+</span></span><span style="display:flex;"><span>                  (<span style="color:#19177c">seq-reduce</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">acc</span> <span style="color:#19177c">e</span>) (<span style="color:#00f">+</span> <span style="color:#19177c">acc</span> (<span style="color:#00f">*</span> (<span style="color:#00f">cdr</span> <span style="color:#19177c">e</span>) <span style="color:#666">60</span>))) <span style="color:#19177c">effort</span> <span style="color:#666">0</span>))
+</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">effort-prop</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:EFFORT</span> <span style="color:#19177c">headline</span>))
+</span></span><span style="display:flex;"><span>                  (<span style="color:#00f">floor</span> (<span style="color:#00f">*</span> <span style="color:#666">60</span> (<span style="color:#19177c">org-duration-to-minutes</span> <span style="color:#19177c">effort-prop</span>))))))))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--process-focus</span> (<span style="color:#19177c">focus</span> <span style="color:#008000">&amp;optional</span> <span style="color:#19177c">archive</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Process FOCUS for display.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">If ARCHIVE is non-nil, include archived tasks.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">The return value is an alist with the following values:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:id&#39; - focus id
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:name&#39; - focus heading
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- `:text&#39; - focus description&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">with-current-buffer</span> (<span style="color:#19177c">find-file-noselect</span> <span style="color:#19177c">my/org-focus-file</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let</span> ((<span style="color:#19177c">id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">focus</span>)))
+</span></span><span style="display:flex;"><span>      <span style="color:#666">`</span>((<span style="color:#008000">:id</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">id</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:name</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">focus</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:text</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">string-trim</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">buffer-substring-no-properties</span>
+</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:contents-begin</span> <span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>                    (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:contents-end</span> <span style="color:#19177c">focus</span>))))
+</span></span><span style="display:flex;"><span>        (<span style="color:#008000">:tasks</span> <span style="color:#666">.</span> <span style="color:#666">,</span>(<span style="color:#19177c">org-ql-query</span>
+</span></span><span style="display:flex;"><span>                     <span style="color:#008000">:select</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus--select-headline</span>
+</span></span><span style="display:flex;"><span>                     <span style="color:#008000">:from</span> (<span style="color:#00f">append</span> (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>                                   (<span style="color:#008000">when</span> <span style="color:#19177c">archive</span>
+</span></span><span style="display:flex;"><span>                                     (<span style="color:#19177c">my/org-agenda-archive</span>)))
+</span></span><span style="display:flex;"><span>                     <span style="color:#008000">:where</span> <span style="color:#666">`</span>(<span style="color:#19177c">property</span> <span style="color:#666">,</span><span style="color:#19177c">my/org-focus-prop</span> <span style="color:#666">,</span><span style="color:#19177c">id</span>)))))))
+</span></span></code></pre></div><p>Then render it. I&rsquo;ll have to define a global list of done statuses, <code>org-ql</code> actually has a bug there.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">setq</span> <span style="color:#19177c">my/org-done-statuses</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;NO&#34;</span> <span style="color:#ba2121">&#34;DONE&#34;</span> <span style="color:#ba2121">&#34;PASSED&#34;</span> <span style="color:#ba2121">&#34;OFF&#34;</span>))
+</span></span></code></pre></div><p>We can start by rendering one task, which I copy from org-ql:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--render-task</span> (<span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Render TASK for display.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TASK is an element as returned by </span><span style="color:#19177c">`my/org-focus--select-headline&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; `org-ql&#39; modifes the element</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">element</span> (<span style="color:#19177c">copy-tree</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:headline</span> <span style="color:#19177c">task</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">marker</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:org-marker</span> <span style="color:#19177c">element</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">title</span> (<span style="color:#19177c">--&gt;</span> (<span style="color:#19177c">org-ql-view--add-faces</span> <span style="color:#19177c">element</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">org-link-display-format</span> <span style="color:#19177c">it</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">org-done-keywords</span> <span style="color:#19177c">my/org-done-statuses</span>)
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">todo-keyword</span> (<span style="color:#19177c">-some--&gt;</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:todo-keyword</span> <span style="color:#19177c">element</span>)
+</span></span><span style="display:flex;"><span>                         (<span style="color:#19177c">org-ql-view--add-todo-face</span> <span style="color:#19177c">it</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">priority-string</span> (<span style="color:#19177c">-some-&gt;&gt;</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:priority</span> <span style="color:#19177c">element</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">char-to-string</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[#%s]&#34;</span>)
+</span></span><span style="display:flex;"><span>                            (<span style="color:#19177c">org-ql-view--add-priority-face</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">closed-string</span> (<span style="color:#19177c">-some--&gt;</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:closed</span> <span style="color:#19177c">element</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#19177c">org-timestamp-to-time</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">format-time-string</span> <span style="color:#ba2121">&#34;%Y-%m-%d&#34;</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>                          (<span style="color:#00f">propertize</span> <span style="color:#19177c">it</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;org-done</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">clock-string</span> (<span style="color:#008000">let</span> ((<span style="color:#19177c">effort</span> (<span style="color:#19177c">-some--&gt;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:effort-total</span> <span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#19177c">org-duration-from-minutes</span> (<span style="color:#00f">/</span> <span style="color:#19177c">it</span> <span style="color:#666">60.0</span>))))
+</span></span><span style="display:flex;"><span>                             (<span style="color:#19177c">clocked</span> (<span style="color:#19177c">-some--&gt;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:clocks-total</span> <span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>                                        (<span style="color:#19177c">org-duration-from-minutes</span> (<span style="color:#00f">/</span> <span style="color:#19177c">it</span> <span style="color:#666">60.0</span>)))))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;%s / %s&#34;</span>
+</span></span><span style="display:flex;"><span>                                 (<span style="color:#00f">propertize</span> (<span style="color:#008000">or</span> <span style="color:#19177c">effort</span> <span style="color:#ba2121">&#34;--&#34;</span>) <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;success</span>)
+</span></span><span style="display:flex;"><span>                                 (<span style="color:#00f">propertize</span> (<span style="color:#008000">or</span> <span style="color:#19177c">clocked</span> <span style="color:#ba2121">&#34;--&#34;</span>) <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;warning</span>))
+</span></span><span style="display:flex;"><span>                         (<span style="color:#008000">cond</span>
+</span></span><span style="display:flex;"><span>                          ((<span style="color:#008000">and</span> <span style="color:#19177c">clocked</span> <span style="color:#19177c">effort</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[%s/%s]&#34;</span> <span style="color:#19177c">clocked</span> <span style="color:#19177c">effort</span>))
+</span></span><span style="display:flex;"><span>                          ((<span style="color:#008000">and</span> <span style="color:#19177c">clocked</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">effort</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[%s]&#34;</span> <span style="color:#19177c">clocked</span>)))
+</span></span><span style="display:flex;"><span>                          ((<span style="color:#008000">and</span> (<span style="color:#19177c">not</span> <span style="color:#19177c">clocked</span>) <span style="color:#19177c">effort</span>) (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;[EST: %s]&#34;</span> <span style="color:#19177c">effort</span>)))))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">due-string</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">when-let</span> (<span style="color:#19177c">s</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:relative-due-date</span> <span style="color:#19177c">element</span>))
+</span></span><span style="display:flex;"><span>            (<span style="color:#19177c">org-add-props</span> <span style="color:#19177c">s</span> <span style="color:#800">nil</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;org-ql-view-due-date</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#00f">string</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">s-join</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#ba2121">&#34; &#34;</span> (<span style="color:#19177c">-non-nil</span>
+</span></span><span style="display:flex;"><span>                (<span style="color:#00f">list</span> <span style="color:#19177c">todo-keyword</span> <span style="color:#19177c">priority-string</span> <span style="color:#19177c">clock-string</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#19177c">due-string</span> <span style="color:#19177c">closed-string</span> <span style="color:#19177c">title</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">remove-list-of-text-properties</span> <span style="color:#666">0</span> (<span style="color:#00f">length</span> <span style="color:#00f">string</span>) <span style="color:#666">&#39;</span>(<span style="color:#19177c">line-prefix</span>) <span style="color:#00f">string</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">propertize</span> <span style="color:#00f">string</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#19177c">&#39;org-agenda-type</span> <span style="color:#19177c">&#39;search</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#19177c">&#39;todo-state</span> <span style="color:#19177c">todo-keyword</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#19177c">&#39;org-marker</span> <span style="color:#19177c">marker</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#19177c">&#39;org-hd-marker</span> <span style="color:#19177c">marker</span>)))
+</span></span></code></pre></div><p>Then the multiple tasks and the focus itself:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--sort-task-key</span> (<span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get sort key for TASK.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">element</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:headline</span> <span style="color:#19177c">task</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">priority</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:priority</span> <span style="color:#19177c">element</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">title</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">element</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">-some--&gt;</span> <span style="color:#19177c">element</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:deadline</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;01-%s-%s&#34;</span> <span style="color:#19177c">it</span> <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">-some--&gt;</span> <span style="color:#19177c">element</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:scheduled</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:raw-value</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;02-%s-%s&#34;</span> <span style="color:#19177c">it</span> <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">-some--&gt;</span> <span style="color:#19177c">element</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:priority</span> <span style="color:#19177c">it</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;02-%s-%s&#34;</span> <span style="color:#19177c">it</span> <span style="color:#19177c">title</span>))
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">title</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--render-task-list</span> (<span style="color:#19177c">tasks</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Render TASKS for display as a list.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TASKS is a list, where each element is as returned by
+</span></span></span><span style="display:flex;"><span><span style="color:#19177c">`my/org-focus--select-headline&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">thread-last</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#19177c">tasks</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">seq-sort-by</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus--sort-task-key</span> <span style="color:#00f">#&#39;string-lessp</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">mapcar</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#008000">lambda</span> (<span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>       (<span style="color:#00f">insert</span> (<span style="color:#19177c">my/org-focus--render-task</span> <span style="color:#19177c">task</span>) <span style="color:#ba2121">&#34;\n&#34;</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--render-tasks</span> (<span style="color:#19177c">tasks</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Render TASKS.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">TASKS is a list, where each element is as returned by
+</span></span></span><span style="display:flex;"><span><span style="color:#19177c">`my/org-focus--select-headline&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">groups</span> (<span style="color:#19177c">seq-group-by</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#008000">lambda</span> (<span style="color:#19177c">task</span>)
+</span></span><span style="display:flex;"><span>                   (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:todo-keyword</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:headline</span> <span style="color:#19177c">task</span>)))
+</span></span><span style="display:flex;"><span>                 <span style="color:#19177c">tasks</span>))
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">todo-keyword-order</span> <span style="color:#666">&#39;</span>(<span style="color:#ba2121">&#34;PLAN&#34;</span> <span style="color:#ba2121">&#34;WAIT&#34;</span> <span style="color:#ba2121">&#34;TODO&#34;</span> <span style="color:#ba2121">&#34;DONE&#34;</span> <span style="color:#ba2121">&#34;NO&#34;</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq</span> <span style="color:#19177c">groups</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">seq-sort-by</span>
+</span></span><span style="display:flex;"><span>           (<span style="color:#008000">lambda</span> (<span style="color:#19177c">g</span>) (<span style="color:#008000">or</span> (<span style="color:#19177c">seq-position</span> <span style="color:#19177c">todo-keyword-order</span> (<span style="color:#00f">car</span> <span style="color:#19177c">g</span>)) <span style="color:#666">100</span>))
+</span></span><span style="display:flex;"><span>           <span style="color:#00f">#&#39;&lt;</span> <span style="color:#19177c">groups</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">pcase-dolist</span> (<span style="color:#666">`</span>(<span style="color:#666">,</span><span style="color:#19177c">todo-keyword</span> <span style="color:#666">.</span> <span style="color:#666">,</span><span style="color:#19177c">tasks-group</span>) <span style="color:#19177c">groups</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;** &#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;outline-2</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">propertize</span> (<span style="color:#008000">or</span> <span style="color:#19177c">todo-keyword</span> <span style="color:#ba2121">&#34;&#34;</span>) <span style="color:#19177c">&#39;face</span>
+</span></span><span style="display:flex;"><span>                          (<span style="color:#008000">or</span>
+</span></span><span style="display:flex;"><span>                           (<span style="color:#19177c">org-face-from-face-or-color</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#19177c">&#39;todo</span> <span style="color:#19177c">&#39;org-todo</span>
+</span></span><span style="display:flex;"><span>                            (<span style="color:#00f">cdr</span> (<span style="color:#00f">assoc</span> <span style="color:#19177c">todo-keyword</span> <span style="color:#19177c">org-todo-keyword-faces</span>)))
+</span></span><span style="display:flex;"><span>                           (<span style="color:#008000">and</span> (<span style="color:#00f">member</span> <span style="color:#19177c">todo-keyword</span> <span style="color:#19177c">my/org-done-statuses</span>) <span style="color:#19177c">&#39;org-done</span>)
+</span></span><span style="display:flex;"><span>                           <span style="color:#19177c">&#39;org-todo</span>))
+</span></span><span style="display:flex;"><span>              <span style="color:#ba2121">&#34;\n&#34;</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-focus--render-task-list</span> <span style="color:#19177c">tasks-group</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n&#34;</span>))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus--render-focus-data</span> (<span style="color:#19177c">focus-data</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Render FOCUS-DATA in current buffer.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">FOCUS-DATA is as returned by </span><span style="color:#19177c">`my/org-focus--process-focus&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">inhibit-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>        (<span style="color:#19177c">id</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:id</span> <span style="color:#19177c">focus-data</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">erase-buffer</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;* Focus: %s\n&#34;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">focus-data</span>))
+</span></span><span style="display:flex;"><span>             <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;outline-1</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#008000">with-temp-buffer</span>
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">insert</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:text</span> <span style="color:#19177c">focus-data</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#008000">let</span> (<span style="color:#19177c">org-mode-hook</span>)
+</span></span><span style="display:flex;"><span>                (<span style="color:#19177c">org-mode</span>))
+</span></span><span style="display:flex;"><span>              (<span style="color:#19177c">font-lock-ensure</span>)
+</span></span><span style="display:flex;"><span>              (<span style="color:#00f">buffer-string</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#ba2121">&#34;\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;* Actions\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;outline-1</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">widget-create</span> <span style="color:#19177c">&#39;push-button</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:focus-id</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:notify</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">widget</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#19177c">org-id-goto</span> (<span style="color:#00f">widget-get</span> <span style="color:#19177c">widget</span> <span style="color:#008000">:focus-id</span>)))
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;Goto&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34; &#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">widget-create</span> <span style="color:#19177c">&#39;push-button</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:focus-id</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#008000">:notify</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">widget</span> <span style="color:#008000">&amp;rest</span> <span style="color:#19177c">_</span>)
+</span></span><span style="display:flex;"><span>                             (<span style="color:#19177c">my/org-focus-view-tasks-dwim</span>
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">my/org-focus--find-by-id</span>
+</span></span><span style="display:flex;"><span>                               (<span style="color:#00f">widget-get</span> <span style="color:#19177c">widget</span> <span style="color:#008000">:focus-id</span>))))
+</span></span><span style="display:flex;"><span>                   <span style="color:#ba2121">&#34;Org QL Tasks&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> <span style="color:#ba2121">&#34;\n\n&#34;</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">propertize</span> <span style="color:#ba2121">&#34;* Tasks\n&#34;</span> <span style="color:#19177c">&#39;face</span> <span style="color:#19177c">&#39;outline-1</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">my/org-focus--render-tasks</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:tasks</span> <span style="color:#19177c">focus-data</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">widget-setup</span>)))
+</span></span></code></pre></div><p>And hook the rendering into a view buffer:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">define-derived-mode</span> <span style="color:#19177c">my/org-focus-view-mode</span> <span style="color:#19177c">fundamental-mode</span> <span style="color:#ba2121">&#34;Focus Pocus&#34;</span>
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">setq-local</span> <span style="color:#19177c">buffer-read-only</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">outline-minor-mode</span> <span style="color:#666">1</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">defvar-keymap</span> <span style="color:#19177c">my/org-focus-view-mode-map</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:doc</span> <span style="color:#ba2121">&#34;Keymap for org-focus-view-mode&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">my/org-focus-view-mode-map</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#008000">:states</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">normal</span> <span style="color:#19177c">emacs</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;q&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/quit-window-and-buffer</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-view-revert</span> (<span style="color:#19177c">_ignore-auto</span> <span style="color:#19177c">_noconfirm</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Refresh the current focus view buffer.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">unless</span> (<span style="color:#19177c">derived-mode-p</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-view-mode</span>)
+</span></span><span style="display:flex;"><span>    (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Not it my/org-focus-view-mode&#34;</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">id</span> (<span style="color:#19177c">org-element-property</span> <span style="color:#008000">:ID</span> <span style="color:#19177c">my/org-focus-focus</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">unless</span> <span style="color:#19177c">id</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#d2413a;font-weight:bold">user-error</span> <span style="color:#ba2121">&#34;Can&#39;t find the focus id&#34;</span>))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">let*</span> ((<span style="color:#19177c">focus</span> (<span style="color:#19177c">my/org-focus--find-by-id</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#19177c">focus-data</span> (<span style="color:#19177c">my/org-focus--process-focus</span> <span style="color:#19177c">focus</span>))
+</span></span><span style="display:flex;"><span>           (<span style="color:#00f">point</span> (<span style="color:#00f">point</span>)))
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-focus--render-focus-data</span> <span style="color:#19177c">focus-data</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">max</span> (<span style="color:#00f">point-min</span>) <span style="color:#00f">point</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/org-focus-focus</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;A focus headline displayed in the current focus view.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defvar-local</span> <span style="color:#19177c">my/org-focus-focus-data</span> <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Focus data displayed in the current focus view.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-view</span> (<span style="color:#19177c">focus</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Display information about FOCUS.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#00f">list</span> (<span style="color:#008000">or</span> (<span style="color:#19177c">my/org-focus--at-point</span>)
+</span></span><span style="display:flex;"><span>             (<span style="color:#19177c">my/org-focus--pick</span>))))
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">require</span> <span style="color:#19177c">&#39;org-clock-agg</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">focus-data</span> (<span style="color:#19177c">my/org-focus--process-focus</span> <span style="color:#19177c">focus</span>))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">buf</span> (<span style="color:#00f">get-buffer-create</span>
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;*Focus: %s*&#34;</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:name</span> <span style="color:#19177c">focus-data</span>)))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#008000">with-current-buffer</span> <span style="color:#19177c">buf</span>
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-focus-view-mode</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#008000">setq-local</span> <span style="color:#19177c">my/org-focus-focus</span> <span style="color:#19177c">focus</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#19177c">my/org-focus-focus-data</span> <span style="color:#19177c">focus-data</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#19177c">revert-buffer-function</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-view-revert</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">my/org-focus--render-focus-data</span> <span style="color:#19177c">focus-data</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#19177c">toggle-truncate-lines</span> <span style="color:#666">1</span>)
+</span></span><span style="display:flex;"><span>      (<span style="color:#00f">goto-char</span> (<span style="color:#00f">point-min</span>)))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">pop-to-buffer</span> <span style="color:#19177c">buf</span>)))
+</span></span></code></pre></div><h6 id="keybindings-3">Keybindings</h6>
+<p>Not sure if this will break the definition below or not.</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;SPC&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#008000">:keymaps</span> <span style="color:#666">&#39;</span>(<span style="color:#19177c">org-mode-map</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-task-dwim</span>))
 </span></span></code></pre></div><h5 id="custom-agendas">Custom agendas</h5>
 <p>Custom agendas to fit with my workflow.</p>
 <h6 id="exclude-tags-from-agenda">Exclude tags from agenda</h6>
@@ -6333,7 +6954,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>        <span style="color:#19177c">effort-data</span> <span style="color:#800">nil</span> <span style="color:#800">nil</span> <span style="color:#00f">#&#39;equal</span>))
 </span></span><span style="display:flex;"><span>     (<span style="color:#008000">unless</span> <span style="color:#19177c">due</span>
 </span></span><span style="display:flex;"><span>       (<span style="color:#19177c">my/org-agenda-clock--clocked-at-point</span> <span style="color:#19177c">start</span> (<span style="color:#00f">1+</span> <span style="color:#19177c">end</span>))))))
-</span></span></code></pre></div><p>Get clocked time at point. I think it&rsquo;s find to do one by one because <code>org-ql</code> caches actions:</p>
+</span></span></code></pre></div><p>Get clocked time at point. I think it&rsquo;s fine to do one by one because <code>org-ql</code> caches actions:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/utils-ts-to-day-start</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">timestamp</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Move TIMESTAMP to start of day.&#34;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let</span> ((<span style="color:#19177c">time</span> (<span style="color:#00f">decode-time</span> <span style="color:#19177c">timestamp</span>)))
@@ -6947,9 +7568,8 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">org-with-point-at</span> <span style="color:#19177c">marker</span>
 </span></span><span style="display:flex;"><span>            (<span style="color:#19177c">my/org-archive-refile</span>)))))))
 </span></span></code></pre></div><p>Get all agenda files and archive:</p>
-<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-agenda-and-archive</span> ()
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-agenda-archive</span> ()
 </span></span><span style="display:flex;"><span>  (<span style="color:#00f">append</span>
-</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">org-agenda-files</span>)
 </span></span><span style="display:flex;"><span>   (<span style="color:#19177c">thread-last</span> <span style="color:#ba2121">&#34;/projects/archive&#34;</span>
 </span></span><span style="display:flex;"><span>                (<span style="color:#00f">concat</span> <span style="color:#19177c">org-directory</span>)
 </span></span><span style="display:flex;"><span>                (<span style="color:#00f">directory-files</span>)
@@ -6958,7 +7578,12 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>                           <span style="color:#19177c">org-directory</span> <span style="color:#ba2121">&#34;/projects/archive/&#34;</span> <span style="color:#19177c">f</span>)))
 </span></span><span style="display:flex;"><span>                (<span style="color:#19177c">seq-filter</span> (<span style="color:#008000">lambda</span> (<span style="color:#19177c">f</span>)
 </span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">not</span> (<span style="color:#00f">file-directory-p</span> <span style="color:#19177c">f</span>)))))))
-</span></span></code></pre></div><h5 id="keybindings-3">Keybindings</h5>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-agenda-and-archive</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#00f">append</span>
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">org-agenda-files</span>)
+</span></span><span style="display:flex;"><span>   (<span style="color:#19177c">my/org-agenda-archive</span>)))
+</span></span></code></pre></div><h5 id="keybindings-4">Keybindings</h5>
 <p>Global keybindings:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#19177c">my-leader-def</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#008000">:infix</span> <span style="color:#ba2121">&#34;o&#34;</span>
@@ -6982,7 +7607,9 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;E&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-planned-effort-add-daily</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;R&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-planned-effort-remove-daily</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-priority</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-meeting-link</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-meeting-link</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Focus</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-assign-to-task</span>))
 </span></span></code></pre></div><h4 id="org-journal-1">Org Journal</h4>
 <p><a href="https://github.com/bastibe/org-journal">org-journal</a> is a package for maintaining a journal in org mode.</p>
 <p>This part turned out to be great. I even consulted the journal a few times to check if something actually happened, which makes me uneasy now that I think about it&hellip;</p>
@@ -7243,7 +7870,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-roam-ql-search</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#666">&#39;</span>(<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;fleeting&#34;</span>)
 </span></span><span style="display:flex;"><span>   <span style="color:#ba2121">&#34;Fleeting notes&#34;</span>))
-</span></span></code></pre></div><h5 id="keybindings-4">Keybindings</h5>
+</span></span></code></pre></div><h5 id="keybindings-5">Keybindings</h5>
 <p>A set of keybindings to quickly access things in Org Roam.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;org-roam</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">my-leader-def</span>
@@ -10433,7 +11060,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span><span style="display:flex;"><span>  <span style="color:#408080;font-style:italic">;; Fix the anti-synergy with major mode re-activation in `ement-room-list-revert&#39;</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">advice-add</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">ement-room-list-revert</span>
 </span></span><span style="display:flex;"><span>              <span style="color:#008000">:around</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/perspective-assign-ignore-advice</span>))
-</span></span></code></pre></div><h5 id="keybindings-5">Keybindings</h5>
+</span></span></code></pre></div><h5 id="keybindings-6">Keybindings</h5>
 <p>Some custom keymaps for room lists:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">with-eval-after-load</span> <span style="color:#19177c">&#39;ement-room-list</span>
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">general-define-key</span>
