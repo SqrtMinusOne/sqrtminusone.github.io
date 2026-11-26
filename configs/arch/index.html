@@ -748,6 +748,65 @@
 </span></span></code></pre></div><h3 id="network">Network</h3>
 <p>Don&rsquo;t forget to set <code>iptables</code> in <code>/etc/libvirt/network.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-vim" data-lang="vim"><span style="display:flex;"><span>firewall_backend = <span style="color:#ba2121">&#34;iptables&#34;</span>
+</span></span></code></pre></div><h3 id="forward-requests-through-a-vm">Forward requests through a VM</h3>
+<p>Enable IP forwarding inside the VM:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo sysctl -w net.ipv4.ip_forward<span style="color:#666">=</span><span style="color:#666">1</span>
+</span></span></code></pre></div><p>For persistence, add</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>net.ipv4.ip_forward = 1
+</span></span></code></pre></div><p>to <code>/etc/sysctl.d/99-routing.conf</code>.</p>
+<p>Now, configure NAT. Create a table called <code>vpn_nat</code> and a NAT chain and a masquerading rule</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo nft add table ip vpn_nat
+</span></span><span style="display:flex;"><span>sudo nft <span style="color:#ba2121">&#39;add chain ip vpn_nat postrouting { type nat hook postrouting priority srcnat; policy accept; }&#39;</span>
+</span></span><span style="display:flex;"><span>sudo nft add rule ip vpn_nat postrouting oifname <span style="color:#ba2121">&#34;tun0&#34;</span> ip saddr 192.168.122.0/24 masquerade
+</span></span></code></pre></div><p>For persistence, add this to <code>/etc/nftables.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>table ip vpn_nat {
+</span></span><span style="display:flex;"><span>    chain postrouting {
+</span></span><span style="display:flex;"><span>        type nat hook postrouting priority srcnat;
+</span></span><span style="display:flex;"><span>        policy accept;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        oifname &#34;tun0&#34; ip saddr 192.168.122.0/24 masquerade
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And enable nftables:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl <span style="color:#008000">enable</span> --now nftables
+</span></span></code></pre></div><p>Then, adding the route should work:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo ip route add 10.0.0.0/8 via 192.168.122.50
+</span></span></code></pre></div><p>I won&rsquo;t persist it.</p>
+<p>The only remaining issue is DNS. Thankfully, <code>systemd-resolved</code> exists.</p>
+<p>First, enable it with NetworkManager, e.g. <code>/etc/NetworkManager/conf.d/dns.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[main]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">dns</span><span style="color:#666">=</span><span style="color:#ba2121">systemd-resolved</span>
+</span></span></code></pre></div><p>Then</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo ln -sfn /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+</span></span><span style="display:flex;"><span>sudo nmcli general reload
+</span></span></code></pre></div><p>First, to disable fallback dns in <code>systemd-resolved</code>, create a folder:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mkdir /etc/systemd/resolved.conf.d/
+</span></span></code></pre></div><p>And a file <code>/etc/systemd/resolved.conf.d/no-fallback.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Resolve]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">FallbackDNS</span><span style="color:#666">=</span>
+</span></span></code></pre></div><p>Then</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl restart systemd-resolved
+</span></span></code></pre></div><p>Then there&rsquo;s the issue that <code>virbr0</code> is managed by <code>libvirt</code> and not <code>NetworkManager</code>, so I&rsquo;ll just create a small systemd service <code>/etc/systemd/system/uni-dns.service</code>:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Unit]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Description</span><span style="color:#666">=</span><span style="color:#ba2121">Uni split DNS</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Requires</span><span style="color:#666">=</span><span style="color:#ba2121">systemd-resolved.service</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Requires</span><span style="color:#666">=</span><span style="color:#ba2121">sys-subsystem-net-devices-virbr0.device</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">After</span><span style="color:#666">=</span><span style="color:#ba2121">systemd-resolved.service</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">After</span><span style="color:#666">=</span><span style="color:#ba2121">sys-subsystem-net-devices-virbr0.device</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Service]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">Type</span><span style="color:#666">=</span><span style="color:#ba2121">oneshot</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ExecStart</span><span style="color:#666">=</span><span style="color:#ba2121">/usr/bin/resolvectl dns virbr0 10.128.0.26</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ExecStart</span><span style="color:#666">=</span><span style="color:#ba2121">/usr/bin/resolvectl domain virbr0 ~etu.ru ~eltech.ru</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">ExecStart</span><span style="color:#666">=</span><span style="color:#ba2121">/usr/bin/resolvectl default-route virbr0 no</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008000;font-weight:bold">[Install]</span>
+</span></span><span style="display:flex;"><span><span style="color:#7d9029">WantedBy</span><span style="color:#666">=</span><span style="color:#ba2121">multi-user.target</span>
+</span></span></code></pre></div><p>To start the service:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl daemon-reload  <span style="color:#408080;font-style:italic"># First time</span>
+</span></span><span style="display:flex;"><span>sudo systemctl start uni-dns
+</span></span></code></pre></div><p>To stop:</p>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo resolvectl revert virbr0
 </span></span></code></pre></div><h2 id="notes-on-software">Notes on Software</h2>
 <h3 id="upgrading-python-and-aur-packages">Upgrading Python and AUR packages</h3>
 <p>After upgrading Python from 3.13 to 3.14, <a href="https://aur.archlinux.org/packages/lieer-git">lieer</a> has stopped working</p>
@@ -856,6 +915,7 @@ X-GNOME-SingleWindow=true
         <li><a href="#copying-vms-between-machines">Copying VMs between machines</a></li>
         <li><a href="#assign-a-static-ip-to-a-vm">Assign a static IP to a VM</a></li>
         <li><a href="#network">Network</a></li>
+        <li><a href="#forward-requests-through-a-vm">Forward requests through a VM</a></li>
       </ul>
     </li>
     <li><a href="#notes-on-software">Notes on Software</a>

@@ -6087,7 +6087,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#19177c">org-ql-search</span> (<span style="color:#19177c">org-agenda-files</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#666">`</span>(<span style="color:#008000">and</span> (<span style="color:#19177c">todo</span>)
-</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;WAIT&#34;</span>))
+</span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;WAIT&#34;</span> <span style="color:#ba2121">&#34;DELEGATED&#34;</span>))
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">deadline</span>))
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">scheduled</span>))
 </span></span><span style="display:flex;"><span>          (<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nb&#34;</span>))
@@ -6112,6 +6112,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">clocked</span>)
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">priority</span>))
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;WAIT&#34;</span>))
+</span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;DELEGATED&#34;</span>))
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">todo</span> <span style="color:#ba2121">&#34;PLAN&#34;</span>))
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">tags</span> <span style="color:#ba2121">&#34;nots&#34;</span>))
 </span></span><span style="display:flex;"><span>                                (<span style="color:#19177c">not</span> (<span style="color:#19177c">ts</span> <span style="color:#008000">:from</span> <span style="color:#666">-14</span>)))
@@ -6286,19 +6287,16 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 <ul>
 <li>Check the integrity of focus ids: all referenced focus ids exist and are unique.</li>
 <li>Add effort aggregation to focus view</li>
-<li>Add org-clock-add integration</li>
+<li>Add org-clock-agg integration</li>
 <li>Views:
 <ul>
-<li>Focus view
-<ul>
-<li>Effort</li>
-</ul>
-</li>
-<li>Focus overview: all focuses and tasks (org-ql)</li>
 <li>Agenda view</li>
+<li>Backlog per focus vief</li>
 </ul>
 </li>
 <li>GitLab integration?</li>
+<li>Review delegated tasks somehow</li>
+<li>Review: no backlog in areas</li>
 </ul>
 <h6 id="focus-data">Focus data</h6>
 <p>So, first, a focus file. Let it be <code>focus-pocus.org</code>:</p>
@@ -6659,7 +6657,14 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    (<span style="color:#008000">cond</span> (<span style="color:#19177c">focus-object</span> (<span style="color:#19177c">my/org-focus-view</span> <span style="color:#19177c">focus-object</span>))
 </span></span><span style="display:flex;"><span>          ((<span style="color:#008000">or</span> (<span style="color:#00f">null</span> <span style="color:#19177c">focus-id</span>) (<span style="color:#00f">eq</span> <span style="color:#19177c">arg</span> <span style="color:#666">4</span>))
 </span></span><span style="display:flex;"><span>           (<span style="color:#00f">call-interactively</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-assign-to-task</span>))
-</span></span><span style="display:flex;"><span>          (<span style="color:#800">t</span> (<span style="color:#19177c">org-id-goto</span> <span style="color:#19177c">focus-id</span>)))))
+</span></span><span style="display:flex;"><span>          <span style="color:#408080;font-style:italic">;; XXX I don&#39;t want `pop-to-buffer-same-window&#39; from `org-id-goto&#39;</span>
+</span></span><span style="display:flex;"><span>          (<span style="color:#800">t</span> (<span style="color:#008000">let</span> ((<span style="color:#19177c">m</span> (<span style="color:#19177c">org-id-find</span> <span style="color:#19177c">focus-id</span> <span style="color:#19177c">&#39;marker</span>)))
+</span></span><span style="display:flex;"><span>               (<span style="color:#008000">unless</span> <span style="color:#19177c">m</span>
+</span></span><span style="display:flex;"><span>                 (<span style="color:#d2413a;font-weight:bold">error</span> <span style="color:#ba2121">&#34;Cannot find entry with ID \&#34;%s\&#34;&#34;</span> <span style="color:#19177c">id</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">pop-to-buffer</span> (<span style="color:#00f">marker-buffer</span> <span style="color:#19177c">m</span>))
+</span></span><span style="display:flex;"><span>               (<span style="color:#00f">goto-char</span> <span style="color:#19177c">m</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">move-marker</span> <span style="color:#19177c">m</span> <span style="color:#800">nil</span>)
+</span></span><span style="display:flex;"><span>               (<span style="color:#19177c">org-fold-show-context</span>))))))
 </span></span></code></pre></div><p>Find all tasks without focus that either open or were open in the last month.</p>
 <div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-focus-view-tasks-without-focus</span> ()
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Find all relevant tasks without focus.&#34;</span>
@@ -6808,7 +6813,6 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Get a sort key for TASK.
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">VALUES is a list of parameters to extract from the task.&#34;</span>
-</span></span><span style="display:flex;"><span>  (<span style="color:#008000">setq</span> <span style="color:#19177c">my/test</span> <span style="color:#19177c">task</span>)
 </span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">element</span> (<span style="color:#19177c">alist-get</span> <span style="color:#008000">:headline</span> <span style="color:#19177c">task</span>))
 </span></span><span style="display:flex;"><span>         (<span style="color:#19177c">todo-keyword</span> (<span style="color:#008000">or</span>
 </span></span><span style="display:flex;"><span>                        (<span style="color:#19177c">cl-position</span>
@@ -7742,6 +7746,31 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>                       (<span style="color:#00f">1+</span>))))
 </span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-insert-heading</span> <span style="color:#666">&#39;</span>(<span style="color:#666">4</span>))
 </span></span><span style="display:flex;"><span>    (<span style="color:#00f">insert</span> (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;FUTURE %s %s&#34;</span> <span style="color:#19177c">heading</span> <span style="color:#19177c">last-number</span>))))
+</span></span></code></pre></div><h5 id="miscellaneous-1">Miscellaneous</h5>
+<h6 id="insert-a-link-to-org-heading">Insert a link to org heading</h6>
+<div class="highlight"><pre tabindex="0" style=";-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="display:flex;"><span>(<span style="color:#008000">defun</span> <span style="color:#19177c">my/org-insert-heading-link</span> (<span style="color:#008000">&amp;optional</span> <span style="color:#19177c">arg</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#ba2121">&#34;Insert a link to an Org heading.
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">With prefix ARG, choose a file from </span><span style="color:#19177c">`org-agenda-files&#39;</span><span style="color:#ba2121">.&#34;</span>
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">interactive</span> <span style="color:#ba2121">&#34;P&#34;</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#008000">let*</span> ((<span style="color:#19177c">file</span> (<span style="color:#008000">if</span> <span style="color:#19177c">arg</span>
+</span></span><span style="display:flex;"><span>                   (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;File: &#34;</span> (<span style="color:#19177c">org-agenda-files</span>) <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                 (<span style="color:#00f">buffer-file-name</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">headings</span> (<span style="color:#008000">with-current-buffer</span> (<span style="color:#19177c">find-file-noselect</span> <span style="color:#19177c">file</span>)
+</span></span><span style="display:flex;"><span>                     (<span style="color:#19177c">org-map-entries</span>
+</span></span><span style="display:flex;"><span>                      (<span style="color:#008000">lambda</span> ()
+</span></span><span style="display:flex;"><span>                        (<span style="color:#00f">cons</span> (<span style="color:#19177c">string-join</span>
+</span></span><span style="display:flex;"><span>                               (<span style="color:#00f">append</span> (<span style="color:#19177c">org-get-outline-path</span>)
+</span></span><span style="display:flex;"><span>                                       (<span style="color:#00f">list</span> (<span style="color:#19177c">org-get-heading</span> <span style="color:#800">t</span> <span style="color:#800">nil</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>                               <span style="color:#ba2121">&#34; / &#34;</span>)
+</span></span><span style="display:flex;"><span>                              (<span style="color:#19177c">org-get-heading</span> <span style="color:#800">t</span> <span style="color:#800">t</span> <span style="color:#800">t</span> <span style="color:#800">t</span>)))
+</span></span><span style="display:flex;"><span>                      <span style="color:#800">nil</span> <span style="color:#19177c">&#39;file</span>)))
+</span></span><span style="display:flex;"><span>         (<span style="color:#19177c">heading</span> (<span style="color:#00f">cdr</span> (<span style="color:#00f">assoc</span> (<span style="color:#00f">completing-read</span> <span style="color:#ba2121">&#34;Heading: &#34;</span> <span style="color:#19177c">headings</span> <span style="color:#800">nil</span> <span style="color:#800">t</span>)
+</span></span><span style="display:flex;"><span>                              <span style="color:#19177c">headings</span>))))
+</span></span><span style="display:flex;"><span>    (<span style="color:#19177c">org-insert-link</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#800">nil</span>
+</span></span><span style="display:flex;"><span>     (<span style="color:#00f">format</span> <span style="color:#ba2121">&#34;file:%s::*%s&#34;</span> (<span style="color:#19177c">file-relative-name</span> <span style="color:#19177c">file</span>) <span style="color:#19177c">heading</span>)
+</span></span><span style="display:flex;"><span>     <span style="color:#19177c">heading</span>)))
 </span></span></code></pre></div><h5 id="archiving-records">Archiving records</h5>
 <ul>
 <li><strong>CREDIT</strong>: thanks <a href="https://emacs.ch/@grinn">Amy</a> for pointing me to the right functionality of <code>org-refile</code>.</li>
@@ -7850,7 +7879,7 @@ Emacs is also particularly great at writing Lisp code, e.g. Clojure, Common Lisp
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;E&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-planned-effort-add-daily</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;R&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-planned-effort-remove-daily</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;r&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">org-priority</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;m&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-meeting-link</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;l&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-insert-heading-link</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#408080;font-style:italic">;; Focus</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ba2121">&#34;f&#34;</span> <span style="color:#00f">#&#39;</span><span style="color:#19177c">my/org-focus-task-dwim</span>)
 </span></span><span style="display:flex;"><span>
@@ -8329,6 +8358,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 <p>TODO:</p>
 <ul>
 <li>Implement one function to process a task (effort, focus, refile, deadline / scheduled, backlog?)</li>
+<li>Implement a function to auto-create recurring tasks</li>
 </ul>
 <h5 id="data-from-git">Data from git</h5>
 <p>First, as I have <a href="/configs/console/#autocommit">autocommit</a> set up in my org directory, here is a function to get an alist of changed files in a form <code>(status . path)</code>. The <code>rev</code> parameter can be a commit, tag, etc. but here I&rsquo;m interested in the date form (e.g. <code>@{2021-08-30}</code>).</p>
@@ -8492,7 +8522,7 @@ Didn&rsquo;t work out as I expected, so I&rsquo;ve made <code>org-journal-tags</
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - [[elisp:(org-ql-view \&#34;Fix: Passed events\&#34;)][org-ql: Fix passed events]]
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - [[elisp:(org-ql-view \&#34;Review: Missed deadlines\&#34;)][org-ql: Review missed deadlines]] - move to backlog or reschedule
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - [[elisp:(org-ql-view \&#34;Review: Stale tasks\&#34;)][org-ql: Stale tasks]] - move to backlog or reschedule
-</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- [ ] [[file:/home/planning/focus-pocus.org::*Focuses][Focus]] check:
+</span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- [ ] [[file:../planning/focus-pocus.org::*Focuses][Focus]] check:
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - Review currently active focuses
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">- [ ] Agenda check:
 </span></span></span><span style="display:flex;"><span><span style="color:#ba2121">  - Check [[file:/home/planning/focus-pocus.org::*Planning][Focused planning]] with agenda (-1 / +2 weeks)
